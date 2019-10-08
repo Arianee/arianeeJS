@@ -7,10 +7,9 @@
   "scripts": {
     "start": "./node_modules/.bin/tsc --watch",
     "launch": "node ./dist/example/myexample.js",
-    "test": "npm run test:e2e && npm run test:unit",
+    "test": "",
     "lint": "./node_modules/.bin/tslint -c tslint.json  -t verbose --fix 'src/core/**/*.ts'",
     "doc": "./node_modules/.bin/typedoc  --out doc/ src/ --mode file --ignoreCompilerErrors --includeDeclarations --excludeExternals",
-    "build": "echo build",
     "build-web": "webpack -p --mode production --env browser",
     "build-node": "./node_modules/.bin/tsc"
   },
