@@ -1,0 +1,7 @@
+[
+    {
+      "generator": "typechain",
+      "files": "./src/config/prod/abi/*.json",
+      "target": "web3-1.0.0"
+    }
+  ]
