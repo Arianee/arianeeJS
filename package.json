@@ -26,6 +26,10 @@
   ],
   "author": "",
   "license": "ISC",
+  "repository" : {
+    "type" : "git",
+    "url": "https://github.com/Arianee/arianeeJS"
+  },
   "devDependencies": {
     "@babel/core": "^7.6.2",
     "@babel/plugin-proposal-class-properties": "^7.5.5",

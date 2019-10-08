@@ -1,9 +1,4 @@
-// oxcert
-// Travis
-
-# Arianee JS SDK
-
-One Paragraph of project description goes here
+# ArianeeJS
 
 ## Getting Started
 
