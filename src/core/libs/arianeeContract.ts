@@ -2,7 +2,7 @@ import { flatPromise } from "./flat-promise";
 import { Transaction, TransactionObject } from "web3/eth/types";
 import Contract from "web3/eth/contract";
 import { ServicesHub } from "../servicesHub";
-import { ArianeeWallet } from "../wallet/arianeeWallet";
+import ArianeeWallet from "../wallet";
 
 export class ArianeeContract<ContractImplementation extends Contract> {
     public key: ContractImplementation;

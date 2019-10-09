@@ -14,7 +14,7 @@
     "test": "npm run test:e2e && npm run test:unit",
     "lint": "./node_modules/.bin/tslint -c tslint.json  -t verbose --fix 'src/core/**/*.ts'",
     "doc": "./node_modules/.bin/typedoc  --out doc/ src/ --mode file --ignoreCompilerErrors --includeDeclarations --excludeExternals",
-    "prepare":"npm run build",
+    "prepare": "npm run build",
     "prepare:publish": "npm run build && npm run test",
     "build": "npm run build-web && npm run build-node",
     "build-web": "webpack -p --mode production --env browser",
@@ -26,8 +26,8 @@
   ],
   "author": "",
   "license": "ISC",
-  "repository" : {
-    "type" : "git",
+  "repository": {
+    "type": "git",
     "url": "https://github.com/Arianee/arianeeJS"
   },
   "devDependencies": {
