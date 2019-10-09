@@ -34,6 +34,7 @@ export class WalletCustomMethods {
       createCertificateTransferLink: this.createCertificateTransferLink.bind(this),
       createCertificateProofLink: this.createCertificateProofLink.bind(this),
       getCertificateFromLink: this.getCertificateFromLink.bind(this),
+      getCertificateTransferEvents: this.getCertificateTransferEvents,
       ...this.overridedMethods
     };
   }
@@ -71,7 +72,7 @@ export class WalletCustomMethods {
     }
   };
 
-  private getIdentity = async (address: string): Promise<CertificateSummary> => {
+    private getIdentity = async (address: string): Promise<CertificateSummary> => {
     /*
               00. Un objet certificat
               1. this.smartAssetContract.methods.tokenURI => j'ai l'url du certificat
@@ -87,36 +88,38 @@ export class WalletCustomMethods {
       .addressURI(address)
       .call();
 
-    console.assert(
-      identityURI === undefined,
-      `uri of identity of ${address} is undefined`
-    );
+      if(identityURI){
+      const identityContent = await this.servicesHub.httpClient
+        .fetch(identityURI);
 
-    const identityContent = await this.servicesHub.httpClient
-      .fetch(identityURI);
+      const identityContentData = identityContent;
 
-    const identityContentData = identityContent;
+      const identityContentSchema = await this.servicesHub.httpClient
+        .fetch(identityContentData.$schema)
 
-    const identityContentSchema = await this.servicesHub.httpClient
-      .fetch(identityContentData.$schema)
+      const hash = await this.utils.cert(
+        identityContentSchema,
+        identityContentData
+      );
 
-    const hash = await this.utils.cert(
-      identityContentSchema,
-      identityContentData
-    );
+      //address
 
-    //address
+      const addressImprint = await this.wallet.identityContract.methods
+        .addressImprint(address)
+        .call();
 
-    const addressImprint = await this.wallet.identityContract.methods
-      .addressImprint(address)
-      .call();
+      // const isTokenValid=await this.smartAssetContract.methods.isTokenValid(tokenId)
 
-    // const isTokenValid=await this.smartAssetContract.methods.isTokenValid(tokenId)
+      return {
+        ...identityContentData,
+        addressImprint,
+        identityExist:true
+      };
+    }
+    else{
+      return undefined;
+    }
 
-    return {
-      ...identityContentData,
-      addressImprint
-    };
   };
 
   private async getMyCertificates(): Promise<CertificateSummary[]> {
@@ -391,4 +394,14 @@ export class WalletCustomMethods {
       .call();
     return balance / 100000000;
   };
+
+  private getCertificateTransferEvents = async (tokenId: number): Promise<any> =>{
+    const sortedEvents = await this.servicesHub.contracts.smartAssetContract.getPastEvents('Transfer',
+        {filter:{_tokenId:tokenId}, fromBlock:0, toBlock:'latest'}).then(events=>events.sort(this.utils.sortEvents));
+
+    return Promise.all(sortedEvents
+        .map(event => this.getIdentity(event.returnValues._to)
+            .then(identity=>( {...event,identity:identity}))));
+  };
+
 }
