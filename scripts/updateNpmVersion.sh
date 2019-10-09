@@ -1,6 +1,0 @@
-#!/bin/bash
-git pull develop
-npm version minor
-git add package.json
-git commit -m "bump npm version"
-git push origin develop
