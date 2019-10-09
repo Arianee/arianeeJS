@@ -4,13 +4,3 @@ node_js:
 before_script:
   - npm run build
 
-deploy:
-  provider: npm
-  email: "tech@arianee.org"
-  api_key:
-    secure: "s+3yVfQDXGEm9Cs/EdDR3Ih+JpPVjiz9PJb4HYkpFlBaJCXGqKZNJ1GGBouw3Bvc3rcTAz0x/S+8nhhPJ96oEzktRPDcDIebqvuL+ci1/veJgg/uV3LBJHsa4VyQmEVqtm9dvjx39vQVnut364TZHH0872s8SiVll4sPR0FIh9s92LOYUOWS2WwCQvpZqp5wo+GxmMmIHZZf60ZGBgHz3bR02vUUThND83mL0syvZGBZ7ALD2l3gfAT7lKvuuNkQqOWGd8RCKVnQ01L0gd6GxKF2XtrP7KXWHG3ONrMNQ3su1IfWTjxgAklKtzrZdlggLL0L/RKKkaGEVmVk7fYrYX4Agfn4/EN9XMjxZFP1CXEbGgx6+sX68LcE+FgK7LAkZKs23hKeZeYR3vuVHBFQei+xSC3+TXAxQjSZlJndHY16BeBOYF0SxE3eMVoBM5L3RWWRM+UvdIcmgV3to5B3SHaqHMHgjEBmL8m8fQq9imvVv96ZNE6pc4zEfN3QgTR/xPT9Af1RH8FGtQURI5MXrMLM6NRFCgZzyaltF8P7dTRQ8zCU0zGFru+s2mRVeO4o7Ja+OIq1ZJ3YkwA8BBKL3Ucmy4KHmke5NIaT09ju4whuVcbI2MQlOM5AI7so6DtEj6m4dt6nG0xKKuqwgqFPj/7AzCnH0LT2PCmWjXC/VUE="
-  after_deploy:
-    - ./script/updateNpmVersion.sh
-  on:
-    branch: master
-
