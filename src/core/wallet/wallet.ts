@@ -23,7 +23,7 @@ export class ArianeeWallet {
   public whitelistContract: ArianeeWhitelist;
   public stakingContract: ArianeeStaking;
   public eventContract: ArianeeEvent;
-  public utils = new Utils(this.servicesHub.web3);
+  public utils = new Utils(this.servicesHub.web3, this.servicesHub);
 
   private customMethods=new WalletCustomMethods(this);
 

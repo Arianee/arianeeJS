@@ -31,6 +31,9 @@ export class WalletCustomMethods {
       getMyCertificates: this.getMyCertificates,
       balanceOfAria: <any>this.wallet.ariaContract.methods.balanceOf,
       balanceOfGas: this.servicesHub.web3.eth.getBalance,
+      createCertificateTransferLink: this.createCertificateTransferLink.bind(this),
+      createCertificateProofLink: this.createCertificateProofLink.bind(this),
+      getCertificateFromLink: this.getCertificateFromLink.bind(this),
       ...this.overridedMethods
     };
   }
@@ -146,6 +149,12 @@ export class WalletCustomMethods {
 
   // Ajouter une passphrase à un token
   //  this.smartAssetContract.methods.addTokenAccess()
+
+  private getCertificateFromLink(link: string) {
+    const { tokenId, passphrase } = this.utils.readLink(link);
+
+    return this.getCertificate(tokenId, passphrase)
+  }
 
   private getCertificate = async (
     tokenId: string | number | any,
@@ -331,6 +340,36 @@ export class WalletCustomMethods {
       }));
   };
 
+
+
+  private async createCertificateTransferLink(tokenId: number, passphrase?: string) {
+    if (!passphrase) {
+      passphrase = this.utils.createPassphrase()
+    }
+    await this.setPassphrase(tokenId, passphrase, 1)
+
+    return this.utils.createLink(tokenId, passphrase);
+  }
+
+  private async createCertificateProofLink(tokenId: number, passphrase?: string) {
+    if (!passphrase) {
+      passphrase = this.utils.createPassphrase()
+    }
+    await this.setPassphrase(tokenId, passphrase, 2)
+
+    return this.utils.createLink(tokenId, passphrase);
+  }
+
+  private async setPassphrase(tokenId: number, passphrase: string, type: number) {
+    const temporaryWallet = ArianeeFactory().fromPassPhrase(passphrase);
+
+    return this.wallet
+      .smartAssetContract
+      .methods
+      .addTokenAccess(tokenId, temporaryWallet.publicKey, true, type)
+      .send();
+
+  }
   public getFaucet = (): Promise<any> => {
     return this.servicesHub.httpClient.fetch(this.servicesHub.arianeeConfig.faucetUrl +
       "&address=" +

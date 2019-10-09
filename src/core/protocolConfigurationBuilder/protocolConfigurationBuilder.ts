@@ -12,11 +12,11 @@ export class ProtocolConfigurationBuilder {
             creditHistory: { abi: undefined, address: undefined },
             staking: { abi: undefined, address: undefined },
             whitelist: { abi: undefined, address: undefined },
-            eventArianee:{abi:undefined,address:undefined},
+            eventArianee: { abi: undefined, address: undefined },
             provider: undefined,
             chainId: undefined,
             faucetUrl: undefined,
-
+            deepLink: undefined,
             walletReward: { address: undefined },
             brandDataHubReward: { address: undefined },
         };
@@ -64,6 +64,11 @@ export class ProtocolConfigurationBuilder {
 
     public setEventArianee(val: any) {
         this.config.eventArianee.abi = val;
+        return this;
+    }
+
+    public setDeepLink(deepLink: string) {
+        this.config.deepLink = deepLink;
         return this;
     }
 

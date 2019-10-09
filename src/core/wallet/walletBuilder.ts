@@ -1,6 +1,6 @@
 import { ethers, Wallet as etherWallet } from "ethers";
 import { ArianeeConfig } from "../../models/ariaanee-config";
-import { ArianeeWallet } from ".";
+import { ArianeeWallet } from "./wallet";
 import { ServicesHubBuilder } from "../servicesHub";
 
 export class ArianeeWalletBuilder {

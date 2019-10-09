@@ -12,12 +12,13 @@ export interface ArianeeConfig {
   whitelist: Contract;
   store: Contract;
   aria: Contract;
-  eventArianee:Contract,
+  eventArianee: Contract,
   provider: string;
   chainId: number;
   faucetUrl: string;
   walletReward: { address: string };
   brandDataHubReward: { address: string };
+  deepLink: string;
 }
 
 

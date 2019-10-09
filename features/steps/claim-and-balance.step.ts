@@ -9,8 +9,8 @@ When('user{int} claims faucet', async function (userIndex) {
     return waitFor();
 })
 
-When('user{int} with valid wallet and aria and faucet',async function(userIndex){
-    const wallet=await CreateWalletWithPOAAndAria();
+When('user{int} with valid wallet and aria and faucet', async function (userIndex) {
+    const wallet = await CreateWalletWithPOAAndAria();
     this.store.storeWallet(userIndex, wallet);
 
     return Promise.resolve();
@@ -21,11 +21,20 @@ When('user{int} claims Aria', async function (userIndex) {
     return waitFor();
 })
 
-When('user{int} buys credit', async function (userIndex) {
+When('user{int} buys {int} credit of type {word}', async function (userIndex, quantity, creditType) {
+    const creditTypesEnum = {
+        creation: 0,
+        message: 1,
+        event: 2
+    };
+
+    if (!creditTypesEnum.hasOwnProperty(creditType)) {
+        throw new Error('this credit type does not exist !!! ' + creditType);
+    }
     const wallet = this.store.getUserWallet(userIndex);
 
     await wallet.storeContract.methods
-        .buyCredit(0, 5, wallet.publicKey)
+        .buyCredit(creditTypesEnum[creditType], quantity, wallet.publicKey)
         .send();
 
     return waitFor();
@@ -36,7 +45,7 @@ Then('user{int} has postive Aria balance', async function (userIndex) {
     const balance = await wallet.ariaContract.methods.balanceOf(wallet.publicKey).call();
 
     expect(+balance > 0).equals(true, `actual aria balance ${balance} and should be positive`);
-    
+
     return Promise.resolve();
 })
 
