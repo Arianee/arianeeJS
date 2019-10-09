@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Arianee/arianeeJS.svg?branch=master)](https://travis-ci.org/Arianee/arianeeJS)
+[![npm version](https://img.shields.io/npm/v/@arianee/arianeejs.svg?style=flat)](https://www.npmjs.com/package/@arianee/arianeejs)
 
 # ArianeeJS
 
