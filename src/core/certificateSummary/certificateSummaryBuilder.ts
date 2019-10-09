@@ -1,5 +1,5 @@
 import { CertificateContent, CertificateSummary } from "./certificateSummary";
-import { Wallet } from "../wallet";
+import { ArianeeWallet } from "../wallet";
 
 export class CertificateSummaryBuilder {
     private _content: CertificateContent;
@@ -7,7 +7,7 @@ export class CertificateSummaryBuilder {
     private _owner: string;
     private _isCertificateValid: boolean;
   
-    constructor(private wallet: Wallet) {}
+    constructor(private wallet: ArianeeWallet) {}
   
     public setContent(content: CertificateContent): CertificateSummaryBuilder {
       this._content = content;

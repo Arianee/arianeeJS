@@ -1,4 +1,4 @@
-import { Wallet } from "../../core/wallet";
+import { ArianeeWallet } from "../../core/wallet";
 import { Arianee } from "../..";
 import { waitFor } from "../../../features/steps/helpers/waitFor";
 import * as assert from "assert";
@@ -6,7 +6,7 @@ import * as assert from "assert";
 export async function CreateWalletWithPOAAndAria(
   fromPrivateKey?: string,
   force = false
-): Promise<Wallet> {
+): Promise<ArianeeWallet> {
   let wallet;
   if (fromPrivateKey) {
     wallet = Arianee().fromPrivateKey(fromPrivateKey);

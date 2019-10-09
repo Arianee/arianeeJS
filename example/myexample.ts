@@ -83,8 +83,8 @@ const createAndTransfertCertificates = async () => {
     .ownerOf(tokenId)
     .call();
 
-  await nextOwnerWallet
-    .getCertificate(tokenId)
+  await nextOwnerWallet.
+    methods.getCertificate(tokenId)
     .then(i => console.log(i.isOwner));
 
   console.log("FINISH!!");
@@ -94,7 +94,7 @@ const getAllCertificates = async () => {
   const wallet = await CreateWalletWithPOAAndAria(
     "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
   );
-  const result = await wallet.getMyCertificates();
+  const result = await wallet.methods.getMyCertificates();
   console.log("result", result);
 };
 
@@ -102,7 +102,7 @@ const getCertificate = async (tokenId, passphrase) => {
   const wallet = await CreateWalletWithPOAAndAria(
     "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
   );
-  const result = await wallet.getCertificate(tokenId, passphrase);
+  const result = await wallet.methods.getCertificate(tokenId, passphrase);
   console.log("certificate", result);
   return;
 };
@@ -112,33 +112,33 @@ const asynEvent = async (tokenId) => {
     "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
   );
 
-/*
-
-  const uri = await wallet.eventContract.methods.getEvent(tokenId).call()
-
-  await wallet.storeContract.methods.buyCredit(2, 5, wallet.publicKey).send();
-
-  const js = {
-    $schema: "https://cert.arianee.org/version1/ArianeeEvent-i18n.json",
-    title: "My first event",
-    eventType: "service",
-    description: "event description"
-  };
-
-  const schemaResult = await fetch(js.$schema).then(i => i.json());
-
-  const imprint = await wallet.utils.cert(schemaResult, js);
-  const eventId = Math.random();
-  const i = await wallet.storeContract.methods
-    .createEvent(
-        eventId,
-      9330,
-      imprint,
-      "",
-      "0xE11BA2b4D45Eaed5996Cd0823791E0C93114882d"
-    )
-    .send();
-*/
+  /*
+  
+    const uri = await wallet.eventContract.methods.getEvent(tokenId).call()
+  
+    await wallet.storeContract.methods.buyCredit(2, 5, wallet.publicKey).send();
+  
+    const js = {
+      $schema: "https://cert.arianee.org/version1/ArianeeEvent-i18n.json",
+      title: "My first event",
+      eventType: "service",
+      description: "event description"
+    };
+  
+    const schemaResult = await fetch(js.$schema).then(i => i.json());
+  
+    const imprint = await wallet.utils.cert(schemaResult, js);
+    const eventId = Math.random();
+    const i = await wallet.storeContract.methods
+      .createEvent(
+          eventId,
+        9330,
+        imprint,
+        "",
+        "0xE11BA2b4D45Eaed5996Cd0823791E0C93114882d"
+      )
+      .send();
+  */
 };
 
-getCertificate(8186301,'9ilva4r6swwl');
+getCertificate(8186301, '9ilva4r6swwl');

@@ -1,16 +1,16 @@
 import { World } from "cucumber";
-import { Wallet } from "../../../src/core/wallet";
+import { ArianeeWallet } from "../../../src/core/wallet";
 
 export class CCStore{
 
-    private users:Wallet[]=[];
+    private users:ArianeeWallet[]=[];
     private tokens:number[]=[];
 
-    public getUserWallet(userIndex:number):Wallet{
+    public getUserWallet(userIndex:number):ArianeeWallet{
         return this.users[userIndex]
     }
 
-    public storeWallet(userIndex:number,wallet:Wallet){
+    public storeWallet(userIndex:number,wallet:ArianeeWallet){
         this.users[userIndex]=wallet;
     }
 

@@ -1,6 +1,6 @@
 import { Given, Then } from "cucumber";
 import { expect } from "chai";
-import { ArianeeWallet } from "../../src/core/wallet/arianeeWallet";
+import { ArianeeWallet } from "../../src/core/wallet";
 import { Arianee } from "../../src";
 
 Given("user{int} has a valid wallet", function (userIndex) {
