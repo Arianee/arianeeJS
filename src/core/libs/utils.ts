@@ -1,9 +1,10 @@
 import { Cert } from "@0xcert/cert";
 import { schema88, Object88 } from "@0xcert/conventions";
+import { ServicesHub } from "../servicesHub";
 
 export class Utils {
-  constructor(private web3) {}
-  
+  constructor(private web3, private servicesHub: ServicesHub) { }
+
   public signProofForRequestToken(
     tokenId: number,
     publicKeyNextOwner: string,
@@ -30,7 +31,7 @@ export class Utils {
     );
   }
 
-  public  signProof(data:string | Array<any>, privateKey: string) {
+  public signProof(data: string | Array<any>, privateKey: string) {
     return this.web3.eth.accounts.sign(data, privateKey);
   }
 
@@ -42,7 +43,7 @@ export class Utils {
 
     const cleanData = this.cleanObject(data);
 
-    const certif=await cert.imprint(cleanData);
+    const certif = await cert.imprint(cleanData);
 
     return "0x" + certif;
   }
@@ -58,5 +59,38 @@ export class Utils {
       }
     }
     return obj;
+  }
+
+  public isRightChain(hostname: string) {
+    if (hostname === this.servicesHub.arianeeConfig.deepLink) {
+      return true;
+    } else {
+      throw new Error('You are not in the right chain');
+    }
+  }
+
+  public createLink(tokenId, passphrase): { tokenId: number, passphrase: string, link: string } {
+    const link = `https://${this.servicesHub.arianeeConfig.deepLink}/${tokenId},${passphrase}`
+    return {
+      tokenId: tokenId,
+      passphrase: passphrase,
+      link
+    }
+  }
+
+  public readLink(link) {
+    const url = new URL(link);
+
+    this.isRightChain(url.hostname);
+
+    const pathName=url.pathname.substr(1);
+    const tokenId = parseInt(pathName.split(",")[0]);
+    const passphrase = pathName.split(",")[1];
+
+    return {
+      tokenId,
+      passphrase
+
+    }
   }
 }

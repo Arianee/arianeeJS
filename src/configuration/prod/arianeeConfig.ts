@@ -31,5 +31,6 @@ export default {
   },
   "provider": "https://sokol.poa.network/",
   "chainId": 77,
-  "faucetUrl": "https://faucet.arianee.org/faucet?network=testnet"
+  "faucetUrl": "https://faucet.arianee.org/faucet?network=testnet",
+  "deepLink":"test.arian.ee"
 }

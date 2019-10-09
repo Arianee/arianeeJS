@@ -1,9 +1,8 @@
 import { Given, Then, When } from "cucumber";
 import { expect } from "chai";
 import { waitFor } from "./helpers/waitFor";
-const web3 = require("web3");
 
-Given("user{int} has positive credit certificate balance", async function(
+Given("user{int} has positive credit certificate balance", async function (
   userIndex
 ) {
   const wallet = this.store.getUserWallet(userIndex);
@@ -18,7 +17,7 @@ Given("user{int} has positive credit certificate balance", async function(
 When(
   "user{int} creates a new certificate{int} with uri {string}",
   { timeout: 45000 },
-  async function(userIndex, tokenIndex, uri) {
+  async function (userIndex, tokenIndex, uri) {
     const wallet = this.store.getUserWallet(userIndex);
     const hash = wallet.web3.utils.keccak256("ezofnzefon");
 
@@ -44,7 +43,7 @@ When(
   "user{int} creates a new certificate{int} with uri {string} and passphrase {word}",
   { timeout: 45000 },
 
-  async function(userIndex, tokenIndex, uri, password) {
+  async function (userIndex, tokenIndex, uri, password) {
     const wallet = this.store.getUserWallet(userIndex);
 
     const hash = wallet.web3.utils.keccak256("ezofnzefon");
@@ -67,7 +66,7 @@ When(
   }
 );
 
-Then("user{int} is the owner of the certificate{int}", async function(
+Then("user{int} is the owner of the certificate{int}", async function (
   userIndex,
   certificateIndex
 ) {
@@ -80,7 +79,7 @@ Then("user{int} is the owner of the certificate{int}", async function(
 
 Then(
   "user{int} is the owner of the certificate{int} with uri {string}",
-  async function(userIndex, tokenIndex, expectedUri) {
+  async function (userIndex, tokenIndex, expectedUri) {
     const token = this.store.getToken(tokenIndex);
     const wallet = this.store.getUserWallet(userIndex);
 
@@ -96,12 +95,42 @@ Then(
   }
 );
 
-Given(
-  "user{int} requests created certificate{int} with passprase {word}",
-  async function(userIndex, tokenIndex, passphrase) {
+Given("user{int} requests certificate{int} with passprase {word}",
+  async function (userIndex, tokenIndex, passphrase) {
     const wallet = this.store.getUserWallet(userIndex);
     const tokenId = this.store.getToken(tokenIndex);
     await wallet.methods.requestToken(tokenId, passphrase);
     await waitFor();
   }
 );
+
+Given("user{int} makes certificate{int} {word} with passphrase {word}",
+  async function (userIndex, tokenIndex, actionType, passphrase) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const tokenId = this.store.getToken(tokenIndex);
+
+    return wallet.methods.createCertificateTransferLink(tokenId, passphrase);
+  })
+
+Given("user{int} makes certificate{int} {word} without passphrase",
+  async function (userIndex, tokenIndex, actionType, ) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const tokenId = this.store.getToken(tokenIndex);
+
+    const linkObject = await wallet.methods.createCertificateTransferLink(tokenId);
+    this.store.storeCustom('linkObject', linkObject);
+    return;
+  })
+
+  Given("user{int} requests certificate{int} with the link",
+  async function (userIndex, tokenIndex) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const tokenId = this.store.getToken(tokenIndex);
+
+   const linkObject =this.store.getCustom('linkObject');
+
+   await wallet.methods.requestToken(linkObject.tokenId, linkObject.passphrase);
+
+    return;
+  })
+

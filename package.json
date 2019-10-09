@@ -9,7 +9,7 @@
     "launch": "node ./dist/example/myexample.js",
     "test:watch": "./node_modules/.bin/jest --watch",
     "test:e2e": "./node_modules/.bin/cucumber-js features/implemented/**/*.feature --require 'dist/features/steps/*.step.js' --format node_modules/cucumber-pretty",
-    "test:e2e-dev": "./node_modules/.bin/cucumber-js features/dev/**/*.feature --require 'dist/features/steps/*.step.js' --format node_modules/cucumber-pretty --parallel 4",
+    "test:e2e-dev": "./node_modules/.bin/cucumber-js features/dev/**/*.feature --require 'dist/features/steps/*.step.js' --format node_modules/cucumber-pretty",
     "test:unit": "./node_modules/.bin/jest",
     "test": "npm run test:e2e && npm run test:unit",
     "lint": "./node_modules/.bin/tslint -c tslint.json  -t verbose --fix 'src/core/**/*.ts'",
