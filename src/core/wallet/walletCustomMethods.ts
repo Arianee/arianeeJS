@@ -31,9 +31,9 @@ export class WalletCustomMethods {
       getMyCertificates: this.getMyCertificates,
       balanceOfAria: <any>this.wallet.ariaContract.methods.balanceOf,
       balanceOfGas: this.servicesHub.web3.eth.getBalance,
-      createCertificateTransferLink: this.createCertificateTransferLink.bind(this),
-      createCertificateProofLink: this.createCertificateProofLink.bind(this),
-      getCertificateFromLink: this.getCertificateFromLink.bind(this),
+      createCertificateTransferLink: this.createCertificateTransferLink,
+      createCertificateProofLink: this.createCertificateProofLink,
+      getCertificateFromLink: this.getCertificateFromLink,
       getCertificateTransferEvents: this.getCertificateTransferEvents,
       ...this.overridedMethods
     };
@@ -345,7 +345,7 @@ export class WalletCustomMethods {
 
 
 
-  private async createCertificateTransferLink(tokenId: number, passphrase?: string) {
+  private  createCertificateTransferLink=async (tokenId: number, passphrase?: string) =>{
     if (!passphrase) {
       passphrase = this.utils.createPassphrase()
     }
@@ -354,7 +354,7 @@ export class WalletCustomMethods {
     return this.utils.createLink(tokenId, passphrase);
   }
 
-  private async createCertificateProofLink(tokenId: number, passphrase?: string) {
+  private  createCertificateProofLink=async(tokenId: number, passphrase?: string)=> {
     if (!passphrase) {
       passphrase = this.utils.createPassphrase()
     }
