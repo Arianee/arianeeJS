@@ -1,17 +1,17 @@
 import {
   Aria,
   ArianeeCreditHistory,
+  ArianeeEvent,
   ArianeeIdentity,
+  ArianeeSmartAsset,
   ArianeeStaking,
   ArianeeStore,
-  ArianeeWhitelist,
-  ArianeeSmartAsset,
-  ArianeeEvent
+  ArianeeWhitelist
 } from "@arianee/arianee-abi";
 
+import { ArianeeContract } from "../libs/arianeeContract";
 import { Utils } from "../libs/utils";
 import { ServicesHub } from "../servicesHub/servicesHub";
-import { ArianeeContract } from "../libs/arianeeContract";
 import { WalletCustomMethods } from "./walletCustomMethods";
 
 export class ArianeeWallet {
@@ -86,7 +86,6 @@ export class ArianeeWallet {
     return this.account.address;
   }
 
-
   public get privateKey(): string {
     return this.account.privateKey;
   }
@@ -108,6 +107,6 @@ export class ArianeeWallet {
   }
 
   public get getAria(){
-    return this.customMethods.getAria
+    return this.customMethods.getAria;
   }
 }

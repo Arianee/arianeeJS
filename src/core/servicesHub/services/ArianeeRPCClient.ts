@@ -20,5 +20,5 @@ export class ArianeeRPC {
     });
 
     return client;
-  };
+  }
 }

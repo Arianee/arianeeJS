@@ -26,6 +26,7 @@ export class ProtocolConfigurationBuilder {
     public setSmartContractConfiguration(name: string, abi: object, address: string) {
         this.config[name].address = address;
         this.config[name].abi = abi;
+
         return this;
     }
 
@@ -37,17 +38,20 @@ export class ProtocolConfigurationBuilder {
     }
     public setDeepLink(deepLink: string) {
         this.config.deepLink = deepLink;
+
         return this;
     }
 
     public setFaucetUrl(faucetUrl: string) {
         this.config.faucetUrl = faucetUrl;
+
         return this;
     }
 
     public build(): ArianeeWalletBuilder {
         if (this.isReadyForBuild().isValid) {
             const arianeeProtocol = new ArianeeWalletBuilder(this.config);
+
             return arianeeProtocol;
         } else {
             throw new Error(`It is missing some settings: ${this.isReadyForBuild().missingProperties.join(" ")}`);
@@ -58,7 +62,12 @@ export class ProtocolConfigurationBuilder {
         const properties = ['provider', 'chainId'];
         const missingProperties = properties.filter((property) => isNullOrUndefined(this.config[property]));
         const contracts = ["store", "aria", "smartAsset", "identity", "staking", "whitelist", "creditHistory"];
-        const missingAbi = contracts.filter((property) => isNullOrUndefined(this.config[property].abi) || isNullOrUndefined(this.config[property].address));
+        const missingAbi = contracts
+            .filter(
+                (property) =>
+                    isNullOrUndefined(this.config[property].abi)
+                    || isNullOrUndefined(this.config[property].address));
+                    
         return {
             missingProperties: [...missingAbi, ...missingProperties],
             isValid: [...missingAbi, ...missingProperties].length === 0,

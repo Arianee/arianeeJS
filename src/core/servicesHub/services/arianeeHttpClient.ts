@@ -8,7 +8,7 @@ export class ArianeeHttpClient {
             headers: {
                 "Content-Type": "application/json"
             }
-        }
+        };
     }
     public static fetch(url: string, config: any = {...ArianeeHttpClient.defaultConfig}) {
         if (config.body) {
@@ -16,8 +16,7 @@ export class ArianeeHttpClient {
         }
 
         return axios(url, config)
-            .then(result => result.data)
+            .then(result => result.data);
     }
-
 
 }

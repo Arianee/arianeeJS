@@ -9,12 +9,12 @@ describe("ProtocolConfigurationBuilder", () => {
         expect(isReady).toBe(false);
     });
     test("it should  build if all properties are checked", () => {
-        const protocolBuilder = new ProtocolConfigurationBuilder()
+        const protocolBuilder = new ProtocolConfigurationBuilder();
         const contracts = ["store", "aria", "smartAsset", "identity", "staking", "whitelist", "creditHistory"];
 
         contracts.forEach(contract => {
-            protocolBuilder.setSmartContractConfiguration(contract, {}, '')
-        })
+            protocolBuilder.setSmartContractConfiguration(contract, {}, '');
+        });
 
         const isReady = protocolBuilder
             .setFaucetUrl('')
