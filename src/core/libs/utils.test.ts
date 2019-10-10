@@ -1,8 +1,5 @@
-import { ArianeeFactory } from '../arianeeFactory'
 import { Utils } from './utils'
 import { ServicesHub } from '../servicesHub'
-import { cat } from 'shelljs'
-import { util } from 'prettier'
 describe("UTILS", () => {
   describe('readLink', () => {
     test('it should return passphrase and tokenId from link', () => {
@@ -29,7 +26,7 @@ describe("UTILS", () => {
       const tokenId = 1314;
       const passphrase = 'mypassaezfkzn';
       const linkObject = utils.createLink(tokenId, passphrase);
-      
+
       expect(linkObject.tokenId).toBe(tokenId);
       expect(linkObject.passphrase).toBe(passphrase);
 

@@ -7,7 +7,7 @@ import {
   ArianeeWhitelist,
   ArianeeSmartAsset,
   ArianeeEvent
-} from "@arianee/ts-contracts";
+} from "@arianee/arianee-abi";
 
 import { Utils } from "../libs/utils";
 import { ServicesHub } from "../servicesHub/servicesHub";
