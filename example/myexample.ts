@@ -139,6 +139,17 @@ const asynEvent = async (tokenId) => {
       )
       .send();
   */
+
 };
 
-getCertificate(8186301, '9ilva4r6swwl');
+const getCertificateTransferEvents = async(tokenId)=>{
+    const wallet = await CreateWalletWithPOAAndAria(
+        "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
+    );
+    const events = await wallet.methods.getCertificateTransferEvents(tokenId);
+    console.log("transferEvents", events);
+
+};
+
+getCertificateTransferEvents(722377);
+//getCertificate(8186301, '9ilva4r6swwl');
