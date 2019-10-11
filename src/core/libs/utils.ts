@@ -18,6 +18,21 @@ export class Utils {
 
     return this.signProof(data, privateKeyPreviousOwner);
   }
+  public simplifiedParsedURL(url: string) {
+    var m = url.match(/^(([^:\/?#]+:)?(?:\/\/((?:([^\/?#:]*):([^\/?#:]*)@)?([^\/?#:]*)(?::([^\/?#:]*))?)))?([^?#]*)(\?[^#]*)?(#.*)?$/),
+      r = {
+        hash: m[10] || "",
+        hostname: m[6] || "",
+        pathname: m[8] || (m[1] ? "/" : ""),
+        port: m[7] || "",
+        protocol: m[2] || "",
+        search: m[9] || "",
+        username: m[4] || "",
+        password: m[5] || ""
+      };
+
+    return m && r;
+  }
 
   public createPassphrase() {
     return (
@@ -80,11 +95,11 @@ export class Utils {
   }
 
   public readLink(link) {
-    const url = new URL(link);
+    const url = this.simplifiedParsedURL(link);
 
     this.isRightChain(url.hostname);
 
-    const pathName=url.pathname.substr(1);
+    const pathName = url.pathname.substr(1);
     const tokenId = parseInt(pathName.split(",")[0]);
     const passphrase = pathName.split(",")[1];
 
