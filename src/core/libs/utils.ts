@@ -121,4 +121,11 @@ export class Utils {
 
       return 0;
   }
+
+  public timestampIsMoreRecentThan(timestamp, seconds){
+    const date =  new Date().valueOf();
+    const minTime = date-(seconds*1000);
+
+    return (timestamp > (minTime/1000));
+  }
 }

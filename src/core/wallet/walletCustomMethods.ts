@@ -4,6 +4,8 @@ import {
   CertificateSummaryBuilder
 } from "../certificateSummary";
 import { Utils } from "../libs/utils";
+
+import {blockchainEvent} from "../../models/blockchainEvents";
 import { ServicesHub } from "../servicesHub";
 import { ArianeeWallet } from "./wallet";
 
@@ -33,6 +35,7 @@ export class WalletCustomMethods {
       createCertificateProofLink: this.createCertificateProofLink,
       getCertificateFromLink: this.getCertificateFromLink,
       getCertificateTransferEvents: this.getCertificateTransferEvents,
+      readCertificateProof: this.readCertificateProof,
       ...this.overridedMethods
     };
   }
@@ -393,12 +396,85 @@ export class WalletCustomMethods {
 
   private getCertificateTransferEvents = async (tokenId: number): Promise<any> => {
     const sortedEvents = await this.servicesHub.contracts.smartAssetContract.getPastEvents('Transfer',
-      { filter: { _tokenId: tokenId }, fromBlock: 0, toBlock: 'latest' })
+      {filter: {_tokenId: tokenId}, fromBlock: 0, toBlock: 'latest'})
       .then(events => events.sort(this.utils.sortEvents));
 
     return Promise.all(sortedEvents
       .map(event => this.getIdentity(event.returnValues._to)
-        .then(identity => ({ ...event, identity: identity }))));
+        .then(identity => ({...event, identity: identity}))));
+  }
+
+  private readCertificateProof = async (tokenId: number, passphrase: string): Promise<any> => {
+    return this.isProofValidSince(tokenId, passphrase, 2, 300);
+  }
+
+  private tokenAccessExist = (tokenId: number, tokenType: number): Promise<any> => {
+    return new Promise(async (resolve, reject) => {
+      const tokenHashedAccess = await this.wallet.smartAssetContract.methods.tokenHashedAccess(tokenId, tokenType)
+        .call();
+
+      if (!/^0x0+$/.test(tokenHashedAccess)) {
+        resolve(tokenHashedAccess);
+      }
+      else {
+        reject('Token access is not set in blockchain.');
+      }
+    });
+  }
+
+  private isProofValidSince = (
+    tokenId: number,
+    passphrase: string,
+    tokenType: number,
+    validity: number
+  ): Promise<any> => {
+    return new Promise(async (resolve, reject) => {
+
+      const tokenHashedAccess: string = await this.tokenAccessExist(tokenId, tokenType);
+
+      if (tokenHashedAccess) {
+        const proof = this.servicesHub.walletFactory().fromPassPhrase(passphrase).publicKey;
+        if (proof === tokenHashedAccess) {
+          const events = await this.wallet.smartAssetContract
+            .getPastEvents(blockchainEvent.smartAsset.tokenAccessAdded,
+              {
+                fromBlock: 0,
+                toBlock: "latest",
+                filter: {
+                  _tokenId: tokenId,
+                  _encryptedTokenKey: tokenHashedAccess,
+                  _tokenType: tokenType
+                }
+              });
+
+          events.sort(this.utils.sortEvents).reverse();
+          const lastEvent = events[0];
+          const eventBlock = await this.servicesHub.web3.eth.getBlock(lastEvent.blockNumber);
+
+          if (this.utils.timestampIsMoreRecentThan(eventBlock.timestamp, validity)) {
+            const lastEventTransaction = await this.servicesHub.web3.eth
+              .getTransaction(lastEvent.transactionHash);
+
+            const actualOwner = await this.wallet.smartAssetContract.methods.ownerOf(tokenId).call();
+            if (lastEventTransaction.from === actualOwner) {
+              resolve(true);
+            }
+            else {
+              reject('Proof creator is not owner anymore');
+            }
+          }
+          else {
+            reject('Proof is too old');
+          }
+        }
+        else {
+          reject('Passphrase provided doesn\'t fit to token access');
+        }
+      }
+      else {
+        reject('Token access is not set in blockchain.');
+      }
+    });
   }
 
 }

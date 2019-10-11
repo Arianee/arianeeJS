@@ -11,7 +11,7 @@ Given("user{int} has positive credit certificate balance", async function (
     .balanceOf(wallet.publicKey, 0)
     .send();
 
-  expect(balance.toNumber() > 0).equals(true);
+  expect(balance.toNumber() > 5000000000000000).equals(true);
 });
 
 When(
@@ -63,6 +63,33 @@ When(
       console.error("ERROR");
       expect(true).equals(false);
     }
+  }
+);
+
+When(
+  "user{int} create a proof in certificate{int} with passphrase {word}",
+  {timeout: 45000},
+  async function (userIndex, tokenIndex, password){
+    const tokenId = this.store.getToken(tokenIndex);
+    const wallet = this.store.getUserWallet(userIndex);
+
+    const linkObject = await wallet.methods.createCertificateProofLink(tokenId, password);
+
+    expect(linkObject.passphrase).equals(password);
+    expect(linkObject.tokenId).equals(tokenId);
+    expect(linkObject.link).equals("https://test.arian.ee/"+tokenId+","+password);
+  }
+);
+
+Then(
+  "user{int} can check read the proof in certificate{int} with passphrase {word}",
+  async function(userIndex, certificateIndex, password){
+    const wallet = this.store.getUserWallet(userIndex);
+    const tokenId = this.store.getToken(certificateIndex);
+
+    const proofIsValid= await wallet.methods.readCertificateProof(tokenId, password);
+
+    expect(proofIsValid).equals(true);
   }
 );
 
