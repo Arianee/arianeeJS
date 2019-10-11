@@ -1,1 +1,1 @@
-export { Arianee } from "./arianee"
+export { Arianee } from "./arianee";

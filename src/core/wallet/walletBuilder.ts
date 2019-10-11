@@ -1,7 +1,7 @@
 import { ethers, Wallet as etherWallet } from "ethers";
 import { ArianeeConfig } from "../../models/arianeeConfiguration";
-import { ArianeeWallet } from "./wallet";
 import { ServicesHubBuilder } from "../servicesHub";
+import { ArianeeWallet } from "./wallet";
 
 export class ArianeeWalletBuilder {
     private web3: any;
@@ -15,7 +15,8 @@ export class ArianeeWalletBuilder {
 
     private buildAriaWallet(account): ArianeeWallet {
         if (this.web3.utils.isAddress(account.address)) {
-            const arianeeState = this.stateBuilder.build()
+            const arianeeState = this.stateBuilder.build();
+            
             return new ArianeeWallet(arianeeState, account);
         }
         throw new Error("invalid address");
@@ -23,6 +24,7 @@ export class ArianeeWalletBuilder {
 
     public fromPassPhrase(passphrase: string): ArianeeWallet {
         let privateKey = this.web3.utils.padLeft(this.web3.utils.toHex(passphrase), 64);
+
         return this.fromPrivateKey(privateKey);
     }
 
@@ -32,6 +34,7 @@ export class ArianeeWalletBuilder {
     public fromRandomKey(): ArianeeWallet {
         const randomWallet = etherWallet.createRandom();
         const account = this.web3.eth.accounts.privateKeyToAccount(randomWallet.privateKey);
+
         return this.buildAriaWallet(account);
     }
 
@@ -41,6 +44,7 @@ export class ArianeeWalletBuilder {
      */
     public fromRandomMnemonic(data): ArianeeWallet {
         const mnemonic = this.generateMnemonic(data);
+        
        return this.fromMnemonic(mnemonic);
     }
 
@@ -53,6 +57,7 @@ export class ArianeeWalletBuilder {
         if (isValidMnemonic) {
             const { privateKey } = etherWallet.fromMnemonic(mnemonic);
             const account = this.web3.eth.accounts.privateKeyToAccount(privateKey);
+
             return this.buildAriaWallet(account);
         } else {
             throw new Error("invalid mnemonic");
@@ -65,6 +70,7 @@ export class ArianeeWalletBuilder {
      */
     public fromPrivateKey(privateKey: string): ArianeeWallet {
         const account = this.web3.eth.accounts.privateKeyToAccount(privateKey);
+
         return this.buildAriaWallet(account);
     }
 
@@ -72,9 +78,11 @@ export class ArianeeWalletBuilder {
         if (data && data != "ko") {
             const encryptedKey = data;
             const mnemonic = JSON.parse(encryptedKey.toString()).signingKey.mnemonic;
+
             return mnemonic;
         } else {
             console.error("no data");
+
             return;
         }
     }
