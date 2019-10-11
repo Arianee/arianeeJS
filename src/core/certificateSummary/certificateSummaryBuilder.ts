@@ -1,5 +1,5 @@
-import { CertificateContent, CertificateSummary } from "./certificateSummary";
 import { ArianeeWallet } from "../wallet";
+import { CertificateContent, CertificateSummary } from "./certificateSummary";
 
 export class CertificateSummaryBuilder {
     private _content: CertificateContent;
@@ -11,16 +11,19 @@ export class CertificateSummaryBuilder {
   
     public setContent(content: CertificateContent): CertificateSummaryBuilder {
       this._content = content;
+
       return this;
     }
   
     public setIsCertificateValid(value: boolean): CertificateSummaryBuilder {
       this._isCertificateValid = value;
+
       return this;
     }
   
     public setOwner(owner: string): CertificateSummaryBuilder {
       this._owner = owner;
+
       return this;
     }
   
@@ -28,6 +31,7 @@ export class CertificateSummaryBuilder {
       identyDetails: any
     ): CertificateSummaryBuilder {
       this._issuerIdentityContent = identyDetails;
+
       return this;
     }
   

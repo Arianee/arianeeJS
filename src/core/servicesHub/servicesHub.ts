@@ -1,10 +1,11 @@
-import { ArianeeConfig } from "../../models/ariaanee-config";
+import { ArianeeConfig } from "../../models/arianeeConfiguration";
 import { ArianeeContractBuilder } from "../libs/arianee-contract-builder";
-import { ArianeeRPC } from "./services/ArianeeRPCClient";
+import { ArianeeWalletBuilder } from "../wallet/walletBuilder";
 import { ArianeeHttpClient } from "./services/arianeeHttpClient";
+import { ArianeeRPC } from "./services/ArianeeRPCClient";
 
 export class ServicesHub {
-  public RPC: ArianeeRPC = new ArianeeRPC()
+  public RPC: ArianeeRPC = new ArianeeRPC();
 
   constructor(
     private _contracts: ArianeeContractBuilder,
@@ -15,8 +16,11 @@ export class ServicesHub {
     return this._contracts.arianeeConfig;
   }
 
+  public walletFactory() {
+    return new ArianeeWalletBuilder(this.arianeeConfig);
+  }
   public get httpClient() {
-    return ArianeeHttpClient
+    return ArianeeHttpClient;
   }
 
   public get web3() {

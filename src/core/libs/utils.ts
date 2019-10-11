@@ -1,5 +1,4 @@
 import { Cert } from "@0xcert/cert";
-import { schema88, Object88 } from "@0xcert/conventions";
 import { ServicesHub } from "../servicesHub";
 
 export class Utils {
@@ -73,6 +72,7 @@ export class Utils {
         delete obj[propName];
       }
     }
+
     return obj;
   }
 
@@ -85,12 +85,13 @@ export class Utils {
   }
 
   public createLink(tokenId, passphrase): { tokenId: number, passphrase: string, link: string } {
-    const link = `https://${this.servicesHub.arianeeConfig.deepLink}/${tokenId},${passphrase}`
+    const link = `https://${this.servicesHub.arianeeConfig.deepLink}/${tokenId},${passphrase}`;
+
     return {
       tokenId: tokenId,
       passphrase: passphrase,
       link
-    }
+    };
   }
 
   public readLink(link) {
@@ -106,17 +107,18 @@ export class Utils {
       tokenId,
       passphrase
 
-    }
+    };
   }
 
-  public sortEvents(obj1, obj2) {
-    if (obj1.blockNumber > obj2.blockNumber) {
-      return 1;
-    }
+  public sortEvents(obj1, obj2){
+      if (obj1.blockNumber > obj2.blockNumber) {
+          return 1;
+      }
 
-    if (obj1.blockNumber < obj2.blockNumber) {
-      return -1;
-    }
-    return 0;
+      if (obj1.blockNumber < obj2.blockNumber) {
+          return -1;
+      }
+
+      return 0;
   }
 }

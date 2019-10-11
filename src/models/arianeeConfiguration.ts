@@ -5,14 +5,15 @@ export interface Contract {
 }
 
 export interface ArianeeConfig {
-  identity: Contract;
-  token: Contract;
-  creditHistory: Contract;
-  staking: Contract;
-  whitelist: Contract;
-  store: Contract;
   aria: Contract;
+  creditHistory: Contract;
   eventArianee: Contract,
+  identity: Contract;
+  smartAsset: Contract;
+  staking: Contract;
+  store: Contract;
+  whitelist: Contract;
+
   provider: string;
   chainId: number;
   faucetUrl: string;

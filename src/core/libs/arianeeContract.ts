@@ -1,8 +1,8 @@
-import { flatPromise } from "./flat-promise";
-import { Transaction, TransactionObject } from "web3/eth/types";
 import Contract from "web3/eth/contract";
+import { Transaction, TransactionObject } from "web3/eth/types";
 import { ServicesHub } from "../servicesHub";
 import ArianeeWallet from "../wallet";
+import { flatPromise } from "./flat-promise";
 
 export class ArianeeContract<ContractImplementation extends Contract> {
     public key: ContractImplementation;
@@ -46,6 +46,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
             }
 
         });
+
         return promise;
     }
 
@@ -80,7 +81,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
                             confirmationNumber,
                             receipt
                         });
-                    })
+                    });
             }).catch((err) => {
                 console.error(err);
                 reject(err);
