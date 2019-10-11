@@ -1,5 +1,5 @@
-import { ArianeeFactory } from "./core/arianeeFactory/arianeeFactory";
-import {enableDev} from "./core/enableDevMode/enableDevMode";
+import { Arianee } from "./core/arianee";
+import { NETWORK } from "./models/networkConfiguration";
 
-export { ArianeeFactory as Arianee, enableDev }
-export default ArianeeFactory;
+export { Arianee, NETWORK }
+export default Arianee;

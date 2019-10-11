@@ -1,5 +1,5 @@
 import { HttpClient } from "../../models/httpClient";
-import { ArianeeConfig } from "../../models/ariaanee-config";
+import { ArianeeConfig } from "../../models/arianeeConfiguration";
 import { ArianeeContractBuilder } from "../libs/arianee-contract-builder";
 import { ServicesHub } from "./servicesHub";
 

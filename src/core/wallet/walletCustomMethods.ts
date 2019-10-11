@@ -1,11 +1,9 @@
 import { ArianeeWallet } from "./wallet";
-import { ArianeeFactory } from "../arianeeFactory/arianeeFactory";
 import { isNullOrUndefined } from "util";
 import {
   CertificateSummary,
   CertificateSummaryBuilder
 } from "../certificateSummary";
-import BN from 'bn.js';
 import { ServicesHub } from "../servicesHub";
 import { Utils } from "../libs/utils";
 
@@ -49,7 +47,7 @@ export class WalletCustomMethods {
     passphrase: string,
     isTest = false
   ) => {
-    const temporaryWallet = ArianeeFactory().fromPassPhrase(passphrase);
+    const temporaryWallet = this.servicesHub.walletFactory().fromPassPhrase(passphrase);
 
     const proof = this.utils.signProofForRequestToken(
       tokenId,
@@ -198,7 +196,7 @@ export class WalletCustomMethods {
       let proof;
 
       if (passphrase) {
-        const temporaryWallet = ArianeeFactory().fromPassPhrase(passphrase);
+        const temporaryWallet = this.servicesHub.walletFactory().fromPassPhrase(passphrase);
         proof = this.utils.signProof(
           JSON.stringify({
             tokenId: tokenId,
@@ -306,7 +304,7 @@ export class WalletCustomMethods {
 
     passphrase = passphrase || this.utils.createPassphrase();
 
-    const temporaryWallet = ArianeeFactory().fromPassPhrase(passphrase);
+    const temporaryWallet = this.servicesHub.walletFactory().fromPassPhrase(passphrase);
 
     console.assert(
       !(hash && certificate),
@@ -364,7 +362,7 @@ export class WalletCustomMethods {
   }
 
   private async setPassphrase(tokenId: number, passphrase: string, type: number) {
-    const temporaryWallet = ArianeeFactory().fromPassPhrase(passphrase);
+    const temporaryWallet = this.servicesHub.walletFactory().fromPassPhrase(passphrase);
 
     return this.wallet
       .smartAssetContract

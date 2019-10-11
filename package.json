@@ -6,7 +6,7 @@
   "unpkg": "browser/bundle.js",
   "scripts": {
     "start": "./node_modules/.bin/tsc --watch",
-    "launch": "node ./dist/example/myexample.js",
+    "launch": "nodemon ./dist/example/myexample.js",
     "test:watch": "./node_modules/.bin/jest --watch",
     "test:e2e": "./node_modules/.bin/cucumber-js features/implemented/**/*.feature --require 'dist/features/steps/*.step.js' --format node_modules/cucumber-pretty",
     "test:e2e-dev": "./node_modules/.bin/cucumber-js features/dev/**/*.feature --require 'dist/features/steps/*.step.js' --format node_modules/cucumber-pretty",
@@ -56,7 +56,6 @@
     "typedoc": "^0.14.2",
     "typedoc-plugin-markdown": "^2.0.8",
     "typescript": "^3.6.3",
-    "uglifyjs-webpack-plugin": "^2.1.1",
     "web3-eth-contract": "^1.2.1",
     "webpack": "^4.41.0",
     "webpack-bundle-analyzer": "^3.5.2",
@@ -66,7 +65,7 @@
   "dependencies": {
     "@0xcert/cert": "1.5.2",
     "@0xcert/conventions": "^2.0.0-alpha3",
-    "@arianee/ts-contracts": "git+https://github.com/stefdelec/arianee-ts-contracts.git#master",
+    "@arianee/arianee-abi": "0.2.0",
     "axios": "^0.18.1",
     "bignumber.js": "^8.0.2",
     "cucumber-pretty": "^1.5.2",
