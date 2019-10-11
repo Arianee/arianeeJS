@@ -1,5 +1,4 @@
 import { Given, Then, When } from "cucumber";
-import { waitFor } from "./helpers/waitFor";
 import fs from "fs"
 const puppeteer = require('puppeteer');
 
@@ -21,8 +20,7 @@ Given("ArianeeLib is used on browser it works", async function () {
     await page.addScriptTag({ content: contentJSBundle });
     await page.addScriptTag({ content: contentTestJS });
 
-    await waitFor(35000);
-    await page
+    const i = await page
         .waitForSelector('#successFullID');
 
     return browser.close();

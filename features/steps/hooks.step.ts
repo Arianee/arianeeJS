@@ -1,5 +1,5 @@
+import { AfterAll, Before } from "cucumber";
 import { CCStore } from "./helpers/store";
-import { Before, AfterAll } from "cucumber"
 
 var { setDefaultTimeout } = require('cucumber');
 

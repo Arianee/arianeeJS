@@ -1,8 +1,7 @@
 import { Given, Then } from "cucumber";
 import { expect } from "chai";
-import { ArianeeWallet } from "../../src/core/wallet";
-import { waitFor } from "./helpers/waitFor";
 import { Arianee } from "../../src";
+import { ArianeeWallet } from "../../src/core/wallet";
 import { CreateWalletWithPOAAndAria } from "../../src/e2e/utils/create-wallet";
 
 Given("user{int} has a valid wallet", async function (userIndex) {
@@ -45,14 +44,14 @@ Given("user{int} with account from {word} {word}", async function (
 Given("user{int} has positive credits of POA and ARIA", async function (userIndex) {
   const wallet: ArianeeWallet = this.store.getUserWallet(userIndex);
   await wallet.getFaucet();
-  await waitFor();
+
   await wallet.getAria();
-  await waitFor();
+
   return;
 })
 
 
-Given("user{int} with account from {word}",async function (userIndex, type) {
+Given("user{int} with account from {word}", async function (userIndex, type) {
   let wallet;
   const arianee = await new Arianee().connectToProtocol();
 
