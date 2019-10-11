@@ -2,6 +2,10 @@ import axios from 'axios';
 
 export class ArianeeHttpClient {
 
+    constructor(){
+
+    }
+
     public static get defaultConfig() {
         return {
             method: 'GET',
