@@ -96,7 +96,5 @@ describe("UTILS", () => {
       expect(parsedURL.protocol).toBe(url.protocol);
     });
 
-
   });
 });
-

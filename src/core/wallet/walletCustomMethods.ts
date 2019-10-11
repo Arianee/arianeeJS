@@ -70,17 +70,7 @@ export class WalletCustomMethods {
     }
   }
 
-  private getIdentity = async (address: string): Promise<CertificateSummary> => {
-    /*
-              00. Un objet certificat
-              1. this.smartAssetContract.methods.tokenURI => j'ai l'url du certificat
-              2. this.smartAssetContract.methods.tokenImprint => signature du contract
-              3. Vérifier la signature du Certificate
-              4. this.smartAssetContract.methods.ownerOf 
-              4. { content: le Certificate, isValidHash:true/false, ownerOf:publicKey, isOwner:true/false}
-          
-              Getwallet=> tous les certificat qui appartiennent à un wallet
-              */
+  private getIdentity = async (address: string): Promise<any> => {
 
     const identityURI = await this.wallet.identityContract.methods
       .addressURI(address)
