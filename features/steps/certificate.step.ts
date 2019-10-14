@@ -66,6 +66,50 @@ When(
   }
 );
 
+When(
+  "user{int} create a proof in certificate{int} with passphrase {word}",
+  async function (userIndex, tokenIndex, password){
+    const tokenId = this.store.getToken(tokenIndex);
+    const wallet = this.store.getUserWallet(userIndex);
+
+    const linkObject = await wallet.methods.createCertificateProofLink(tokenId, password);
+
+    expect(linkObject.passphrase).equals(password);
+    expect(linkObject.tokenId).equals(tokenId);
+    expect(linkObject.link).contain(tokenId);
+    expect(linkObject.link).contain(password);
+  }
+);
+
+Then(
+  "user{int} can check the proof in certificate{int} with passphrase {word}",
+  async function(userIndex, certificateIndex, password){
+    const wallet = this.store.getUserWallet(userIndex);
+    const tokenId = this.store.getToken(certificateIndex);
+
+    const proofIsValid= await wallet.methods.isCertificateProofValid(tokenId, password);
+
+    expect(proofIsValid).equals(true);
+  }
+);
+
+Then(
+  "user{int} cannot check the proof in certificate{int} with passphrase {word}",
+  async function(userIndex, certificateIndex, password){
+    const wallet = this.store.getUserWallet(userIndex);
+    const tokenId = this.store.getToken(certificateIndex);
+
+    try{
+      const proofIsValid= await wallet.methods.isCertificateProofValid(tokenId, password);
+      expect(true).equals(false);
+    }
+    catch{
+      expect(true).equals(true);
+    }
+
+  }
+);
+
 Then("user{int} is the owner of the certificate{int}", async function (
   userIndex,
   certificateIndex

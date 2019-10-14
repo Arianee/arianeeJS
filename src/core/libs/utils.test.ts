@@ -96,7 +96,22 @@ describe("UTILS", () => {
       expect(parsedURL.protocol).toBe(url.protocol);
     });
 
+  });
 
+  describe('timestampIsMoreRecentThan', ()=>{
+    const utils = new Utils(undefined, undefined);
+    test('it should return true if timestamp is recent', ()=>{
+      const testTimestamp = Math.round((new Date().valueOf() - 3000)/1000); // now - 3 secondes (in seconds)
+      const isRecent = utils.timestampIsMoreRecentThan(testTimestamp, 300); // test if timestamp is > (now - 3 minutes)
+
+      expect(isRecent).toBe(true);
+    });
+
+    test('it should return false if timestamp is old',()=>{
+      const testTimestamp = Math.round((new Date().valueOf() - (24*60*60*1000))/1000); // now - 1 day (in seconds)
+      const isRecent = utils.timestampIsMoreRecentThan(testTimestamp, 300); // test if timestamp is > (now - 3 minutes)
+
+      expect(isRecent).toBe(false);
+    });
   });
 });
-

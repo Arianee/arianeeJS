@@ -151,11 +151,24 @@ const getCertificateTransferEvents = async(tokenId)=>{
 
 };
 
-const test=async()=>{
+/*const test=async()=>{
 const n=new Arianee().connectToProtocol();
+}*/
+
+const readProof = async(tokenId)=>{
+
+  const wallet = await CreateWalletWithPOAAndAria(
+        "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
+    );
+
+  const proofLink = await wallet.methods.createCertificateProofLink(tokenId);
+
+  const proofIsValid = await wallet.methods.isCertificateProofValid(tokenId, proofLink.passphrase);
+  console.log(proofIsValid)
 }
 
-test()
+readProof(8480667);
+//test()
 //createAndTransfertCertificates()
 //getCertificateTransferEvents(722377);
 //getCertificate(8186301, '9ilva4r6swwl');
