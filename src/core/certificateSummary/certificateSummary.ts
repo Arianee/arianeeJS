@@ -35,12 +35,64 @@ export interface CertificateContent {
   jsonSurcharger: string;
 }
 
-export interface CertificateSummary {
-  content: CertificateContent;
-  isCertificateValid: boolean;
-  isIssuerValid: boolean;
-  isIssuerExist: boolean;
-  isIssuerIdentity: boolean;
-  owner: string;
+interface ArianeeEvents {
+
+}
+export interface CertificiateContent {
+  isAuthentic: boolean;
+  data: CertificateContent;
+}
+
+export interface CertificateIssuer {
+  isIdentityAuthentic: boolean;
+  isIdentityVerified: boolean;
+  identity: any;
+}
+
+export interface CertificateOwner {
   isOwner: boolean;
+  publicKey: string;
+  identity?: any
+}
+
+export interface CertificateEvents {
+  transfert?: any[];
+  arianeeEvents?: any[];
+  all: any[];
+}
+
+export interface CertificateAdvanced {
+  tokenRecoveryDate: string;
+}
+
+export interface CertificateSummary {
+  content?: CertificiateContent;
+  isTransferable?: boolean;
+  issuer?: CertificateIssuer;
+  owner?: CertificateOwner;
+  events?: CertificateEvents;
+  advanced?: CertificateAdvanced;
+}
+
+export interface ConsolidatedQuery {
+  query: {
+    limit: number;
+    order: string
+  };
+}
+
+export interface ConsolidatedArianeeEventsRequest {
+  query: ConsolidatedQuery;
+  transfert: boolean | ConsolidatedQuery;
+  arianeeEvents: boolean | ConsolidatedQuery;
+}
+
+export interface ConsolidatedCertificateRequest {
+  isTransferable?: boolean;
+  content?: boolean;
+  issuer?: boolean;
+  owner?: boolean;
+  events?: boolean | ConsolidatedArianeeEventsRequest;
+  arianeeEvents?: boolean | ConsolidatedArianeeEventsRequest;
+  advanced?: boolean;
 }

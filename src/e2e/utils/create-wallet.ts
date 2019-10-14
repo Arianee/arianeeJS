@@ -44,7 +44,5 @@ export async function CreateWalletWithPOAAndAria(
     )
     .send();
 
-  await waitFor(7000);
-
   return wallet;
 }
