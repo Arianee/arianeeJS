@@ -163,7 +163,7 @@ const readProof = async(tokenId)=>{
 
   const proofLink = await wallet.methods.createCertificateProofLink(tokenId);
 
-  const proofIsValid = await wallet.methods.readCertificateProof(tokenId, proofLink.passphrase);
+  const proofIsValid = await wallet.methods.isCertificateProofValid(tokenId, proofLink.passphrase);
   console.log(proofIsValid)
 }
 
