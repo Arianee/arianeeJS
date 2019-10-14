@@ -120,18 +120,6 @@ export class Utils {
     };
   }
 
-  public sortEvents(obj1, obj2){
-      if (obj1.blockNumber > obj2.blockNumber) {
-          return 1;
-      }
-
-      if (obj1.blockNumber < obj2.blockNumber) {
-          return -1;
-      }
-
-      return 0;
-  }
-
   public timestampIsMoreRecentThan(timestamp, seconds){
     const date =  new Date().valueOf();
     const minTime = date-(seconds*1000);
