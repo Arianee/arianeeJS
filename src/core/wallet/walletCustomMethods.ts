@@ -36,6 +36,7 @@ export class WalletCustomMethods {
       getCertificateFromLink: this.getCertificateFromLink,
       getCertificateTransferEvents: this.getCertificateTransferEvents,
       isCertificateProofValid: this.isCertificateProofValid,
+      getCertificateArianeeEvents:this.getCertificateArianeeEvents,
       ...this.overridedMethods
     };
   }
@@ -73,7 +74,7 @@ export class WalletCustomMethods {
     }
   }
 
-  private getIdentity = async (address: string): Promise<CertificateSummary> => {
+  private getIdentity = async (address: string): Promise<any> => {
     /*
               00. Un objet certificat
               1. this.smartAssetContract.methods.tokenURI => j'ai l'url du certificat
@@ -465,6 +466,48 @@ export class WalletCustomMethods {
 
       return resolve(true);
     });
+  }
+
+  private getCertificateArianeeEvents = async (tokenId: number, passphrase?:string): Promise<any[]> =>{
+    const sortedEvents = await this.servicesHub.contracts.eventContract.getPastEvents(
+      blockchainEvent.arianeeEvent.eventCreated,
+      {filter:{_tokenId: tokenId}, fromBlock: 0, toBlock:'latest'}
+      )
+      .then(events => events.sort(this.utils.sortEvents));
+
+    if(sortedEvents.length > 0){
+
+      const issuerIdentity = await this.wallet.smartAssetContract.methods.issuerOf(tokenId).call()
+        .then(async (issuer)=>{return await this.getIdentity(issuer);});
+
+      return Promise.all(sortedEvents.map(async (event:any, index:number)=> {
+        let requestBody: any = {
+          eventId: parseInt(event.returnValues._eventId),
+          tokenId: parseInt(event.returnValues._tokenId)
+        };
+
+        let privateKey:string;
+        if (passphrase) {
+          privateKey = this.servicesHub.walletFactory().fromPassPhrase(passphrase).privateKey;
+          requestBody.authentification = this.utils.signProofForRpc(tokenId, privateKey);
+        }
+        else{
+          privateKey = this.wallet.privateKey;
+          requestBody.authentification = this.utils.signProofForRpc(tokenId, privateKey);
+        }
+
+        return new Promise((resolve, reject) => {
+          this.servicesHub.RPC.withURI(issuerIdentity.rpcEndpoint).request(
+            'event.read',
+            requestBody,
+            function (err, error, result) {
+              if (result) {event.data=result;}
+              resolve(event);
+            }
+          );
+        });
+      }));
+    }
   }
 
 }

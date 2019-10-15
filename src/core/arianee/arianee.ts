@@ -1,5 +1,5 @@
-import * as conf from "../../configuration";
-import { appConfig } from "../../configuration";
+import * as conf from "../../configurations";
+import { appConfig } from "../../configurations";
 import { NETWORK, networkURL } from "../../models/networkConfiguration";
 import { ProtocolConfigurationBuilder } from "../protocolConfigurationBuilder/protocolConfigurationBuilder";
 import { ArianeeHttpClient } from "../servicesHub/services/arianeeHttpClient";
@@ -24,12 +24,15 @@ export class Arianee {
                         contractAddress);
             });
 
-        protocolConfigurationBuilder.setDeepLink(appConfig.deepLink);
-        protocolConfigurationBuilder.setFaucetUrl(appConfig.faucetUrl);
+        const { deepLink, faucetUrl } = appConfig[networkName];
+
+        protocolConfigurationBuilder.setDeepLink(deepLink);
+        protocolConfigurationBuilder.setFaucetUrl(faucetUrl);
 
         protocolConfigurationBuilder.setWeb3HttpProvider(addressesResult.httpProvider, addressesResult.chainId);
 
         return protocolConfigurationBuilder
             .build();
     }
+    
 }
