@@ -9,6 +9,8 @@ export const blockchainEvent = {
         tokenAccessAdded: "TokenAccessAdded",
         tokenDestroyed: "TokenDestroyed",
         setNewUriBase: "SetNewUriBase"
+    },
+    arianeeEvent: {
+        eventCreated: "EventCreated"
     }
 };
-

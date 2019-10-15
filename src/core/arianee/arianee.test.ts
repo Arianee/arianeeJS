@@ -1,6 +1,7 @@
-import { NETWORK,networkURL } from '../../models/networkConfiguration';
+import { NETWORK, networkURL } from '../../models/networkConfiguration';
 import { Arianee } from './arianee';
 const myFetchMock = jest.fn();
+import appConfigurations from '../../configurations/appConfigurations';
 
 jest.mock('../servicesHub/services/arianeeHttpClient', () => (
     {
@@ -27,12 +28,32 @@ jest.mock('../servicesHub/services/arianeeHttpClient', () => (
     }));
 
 describe('Arianee', () => {
-    test('should be fetching testnet addresses', async () => {
-        await new Arianee().connectToProtocol(NETWORK.testnet);
-        expect(myFetchMock).toHaveBeenCalledWith(networkURL.testnet);
-    });
-    test('should be fetching testnet addresses', async () => {
-        await new Arianee().connectToProtocol(NETWORK.mainnet);
-        expect(myFetchMock).toHaveBeenCalledWith(networkURL.mainnet);
+    describe('CONFIGURATION', () => {
+
+        describe('testnet', () => {
+            test('should be fetching testnet addresses', async () => {
+                await new Arianee().connectToProtocol(NETWORK.testnet);
+                expect(myFetchMock).toHaveBeenCalledWith(networkURL.testnet);
+            });
+            test('should be fetching testnet config', async () => {
+                const arianee = await new Arianee().connectToProtocol(NETWORK.testnet);
+                const { deepLink, faucetUrl } = arianee.fromRandomKey().servicesHub.arianeeConfig;
+                expect(deepLink).toBe(appConfigurations.testnet.deepLink);
+                expect(faucetUrl).toBe(appConfigurations.testnet.faucetUrl);
+            });
+        });
+        describe('mainet', () => {
+            test('should be fetching testnet addresses', async () => {
+                await new Arianee().connectToProtocol(NETWORK.mainnet);
+                expect(myFetchMock).toHaveBeenCalledWith(networkURL.mainnet);
+            });
+
+            test('should be fetching testnet config', async () => {
+                const arianee = await new Arianee().connectToProtocol(NETWORK.mainnet);
+                const { deepLink, faucetUrl } = arianee.fromRandomKey().servicesHub.arianeeConfig;
+                expect(deepLink).toBe(appConfigurations.mainnet.deepLink);
+                expect(faucetUrl).toBe(appConfigurations.mainnet.faucetUrl);
+            });
+        });
     });
 });

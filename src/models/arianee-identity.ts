@@ -1,5 +1,5 @@
 export interface IdentitySummary {
-    data: IdentitContent;
+    data: IdentityContent;
     isAuthentic: boolean;
     isApproved: boolean;
 }
@@ -418,7 +418,7 @@ export interface RpcEndpoint {
     description: string;
 }
 
-export interface Properties {
+export interface IdentityContent {
     $schema: Schema;
     name: Name;
     companyName: CompanyName;
@@ -433,15 +433,3 @@ export interface Properties {
     socialmedia: Socialmedia;
     rpcEndpoint: RpcEndpoint;
 }
-
-export interface IdentitContent {
-    $id: string;
-    $schema: string;
-    title: string;
-    description: string;
-    type: string;
-    properties: Properties;
-    required: string[];
-}
-
-

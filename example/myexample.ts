@@ -1,5 +1,5 @@
 import { CreateWalletWithPOAAndAria } from "../src/e2e/utils/create-wallet";
-import {Arianee} from '../src'
+import { Arianee } from '../src'
 var fetch = require("node-fetch-polyfill");
 
 const createASimpleCertificate = async () => {
@@ -142,24 +142,25 @@ const asynEvent = async (tokenId) => {
 
 };
 
+
 const getCertificateTransferEvents = async(tokenId)=>{
     const wallet = await CreateWalletWithPOAAndAria(
         "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
     );
     const events = await wallet.methods.getCertificateTransferEvents(tokenId);
-    console.log("transferEvents", events);
+    //console.log("transferEvents", events);
 
 };
 
-/*const test=async()=>{
+const test=async()=>{
 const n=new Arianee().connectToProtocol();
-}*/
+}
 
-const readProof = async(tokenId)=>{
+const readProof = async (tokenId) => {
 
   const wallet = await CreateWalletWithPOAAndAria(
-        "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
-    );
+    "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
+  );
 
   const proofLink = await wallet.methods.createCertificateProofLink(tokenId);
 
@@ -167,8 +168,21 @@ const readProof = async(tokenId)=>{
   console.log(proofIsValid)
 }
 
-readProof(8480667);
+
+const getArianeeEvents = async(tokenId, passphrase)=>{
+  const wallet = await CreateWalletWithPOAAndAria(
+    "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
+  );
+
+  const arianeeEvents = await wallet.methods.getCertificateArianeeEvents(tokenId);
+  console.log(arianeeEvents);
+
+}
+
+getArianeeEvents(9330,"o30rie34p07q");
+
 //test()
 //createAndTransfertCertificates()
 //getCertificateTransferEvents(722377);
 //getCertificate(8186301, '9ilva4r6swwl');
+

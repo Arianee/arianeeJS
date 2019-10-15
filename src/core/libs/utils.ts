@@ -18,6 +18,16 @@ export class Utils {
 
     return this.signProof(data, privateKeyPreviousOwner);
   }
+
+  public signProofForRpc(
+    tokenId:number,
+    privateKey:string
+  ) {
+    const message = {tokenId:tokenId,timestamp: Math.round(new Date().valueOf()/1000)};
+
+    return this.signProof( JSON.stringify(message), privateKey);
+  }
+
   public simplifiedParsedURL(url: string) {
     var m = url.match(/^(([^:\/?#]+:)?(?:\/\/((?:([^\/?#:]*):([^\/?#:]*)@)?([^\/?#:]*)(?::([^\/?#:]*))?)))?([^?#]*)(\?[^#]*)?(#.*)?$/),
       r = {

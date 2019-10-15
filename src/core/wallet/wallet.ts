@@ -25,14 +25,14 @@ export class ArianeeWallet {
   public eventContract: ArianeeEvent;
   public utils = new Utils(this.servicesHub.web3, this.servicesHub);
 
-  private customMethods=new WalletCustomMethods(this);
+  private customMethods = new WalletCustomMethods(this);
 
   public brandDataHubRewardAddress =
     "0xA79B29AD7e0196C95B87f4663ded82Fbf2E3ADD8";
 
-    public walletRewardAddress = "0x39da7e30d2D5F2168AE3B8599066ab122680e1ef";
+  public walletRewardAddress = "0x39da7e30d2D5F2168AE3B8599066ab122680e1ef";
 
-  constructor(public servicesHub: ServicesHub, private _account) {
+  constructor(public servicesHub: ServicesHub, private _account, private _mnemonic?) {
     this.smartAssetContract = new ArianeeContract<ArianeeSmartAsset>(
       this.servicesHub.contracts.smartAssetContract,
       this,
@@ -90,6 +90,10 @@ export class ArianeeWallet {
     return this.account.privateKey;
   }
 
+  public get mnemnonic(): string {
+    return this._mnemonic;
+  }
+
   public get web3() {
     return this.servicesHub.web3;
   }
@@ -98,15 +102,15 @@ export class ArianeeWallet {
     return this._account;
   }
 
-  public get methods(){
+  public get methods() {
     return this.customMethods.getMethods();
   }
 
-  public get getFaucet(){
+  public get getFaucet() {
     return this.customMethods.getFaucet;
   }
 
-  public get getAria(){
+  public get getAria() {
     return this.customMethods.getAria;
   }
 }
