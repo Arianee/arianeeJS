@@ -394,7 +394,7 @@ export class WalletCustomMethods {
   }
 
   public getAriaBalance = async (): Promise<number> => {
-    const balance = await this.servicesHub.contracts.ariaContract.methods
+    const balance = await this.servicesHub.rawContracts.ariaContract.methods
       .balanceOf(this.wallet.publicKey)
       .call();
 
@@ -402,8 +402,8 @@ export class WalletCustomMethods {
   }
 
   private getCertificateTransferEvents = async (tokenId: number): Promise<any> => {
-    const sortedEvents = await this.servicesHub.contracts.smartAssetContract.getPastEvents('Transfer',
-      { filter: { _tokenId: tokenId }, fromBlock: 0, toBlock: 'latest' })
+    const sortedEvents = await this.servicesHub.rawContracts.smartAssetContract.getPastEvents('Transfer',
+      {filter: {_tokenId: tokenId}, fromBlock: 0, toBlock: 'latest'})
       .then(events => events.sort(this.utils.sortEvents));
 
     return Promise.all(sortedEvents
@@ -475,7 +475,7 @@ export class WalletCustomMethods {
   }
 
   private getCertificateArianeeEvents = async (tokenId: number, passphrase?:string): Promise<any[]> =>{
-    const sortedEvents = await this.servicesHub.contracts.eventContract.getPastEvents(
+    const sortedEvents = await this.servicesHub.rawContracts.eventContract.getPastEvents(
       blockchainEvent.arianeeEvent.eventCreated,
       {filter:{_tokenId: tokenId}, fromBlock: 0, toBlock:'latest'}
       )

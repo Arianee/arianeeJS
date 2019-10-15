@@ -27,7 +27,7 @@ export class ServicesHub {
     return this._contracts.web3;
   }
 
-  public get contracts() {
+  public get rawContracts() {
     return this._contracts;
   }
 }
