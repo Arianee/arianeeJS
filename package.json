@@ -65,7 +65,7 @@
   "dependencies": {
     "@0xcert/cert": "1.5.2",
     "@0xcert/conventions": "^2.0.0-alpha3",
-    "@arianee/arianee-abi": "0.2.0",
+    "@arianee/arianee-abi": "0.3.0",
     "axios": "^0.18.1",
     "bignumber.js": "^8.0.2",
     "cucumber-pretty": "^1.5.2",
