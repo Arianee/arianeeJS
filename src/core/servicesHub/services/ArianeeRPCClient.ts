@@ -6,12 +6,11 @@ export class ArianeeRPC {
     const callServer = async (request, callback) => {
       const result = await ArianeeHttpClient.fetch(url,{
         method: "POST",
-        body: request,
-        headers: {
-          "Content-Type": "application/json"
-        }
+        body: request
       })
-    .then(function(text) { callback(null, text); })
+    .then(function(text) {
+      callback(null, text);
+    })
     .catch(function(err) { callback(err); });
     };
 
