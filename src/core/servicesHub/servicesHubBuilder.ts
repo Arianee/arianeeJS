@@ -18,6 +18,6 @@ export class ServicesHubBuilder {
   }
 
   public build(): ServicesHub {
-    return new ServicesHub(this.contracts, this.httpClient);
+    return new ServicesHub(this.contracts);
   }
 }
