@@ -68,7 +68,7 @@ When(
 
 When(
   "user{int} create a proof in certificate{int} with passphrase {word}",
-  async function (userIndex, tokenIndex, password){
+  async function (userIndex, tokenIndex, password) {
     const tokenId = this.store.getToken(tokenIndex);
     const wallet = this.store.getUserWallet(userIndex);
 
@@ -83,11 +83,11 @@ When(
 
 Then(
   "user{int} can check the proof in certificate{int} with passphrase {word}",
-  async function(userIndex, certificateIndex, password){
+  async function (userIndex, certificateIndex, password) {
     const wallet = this.store.getUserWallet(userIndex);
     const tokenId = this.store.getToken(certificateIndex);
 
-    const proofIsValid= await wallet.methods.isCertificateProofValid(tokenId, password);
+    const proofIsValid = await wallet.methods.isCertificateProofValid(tokenId, password);
 
     expect(proofIsValid).equals(true);
   }
@@ -95,12 +95,12 @@ Then(
 
 Then(
   "user{int} cannot check the proof in certificate{int} with passphrase {word}",
-  async function(userIndex, certificateIndex, password){
+  async function (userIndex, certificateIndex, password) {
     const wallet = this.store.getUserWallet(userIndex);
     const tokenId = this.store.getToken(certificateIndex);
 
-    try{
-      const proofIsValid= await wallet.methods.isCertificateProofValid(tokenId, password);
+    try {
+      const proofIsValid = await wallet.methods.isCertificateProofValid(tokenId, password);
       expect(true).equals(false);
     }
     catch{
@@ -166,15 +166,36 @@ Given("user{int} makes certificate{int} {word} without passphrase",
     return;
   })
 
-  Given("user{int} requests certificate{int} with the link",
+Given("user{int} requests certificate{int} with the link",
   async function (userIndex, tokenIndex) {
     const wallet = this.store.getUserWallet(userIndex);
     const tokenId = this.store.getToken(tokenIndex);
 
-   const linkObject =this.store.getCustom('linkObject');
+    const linkObject = this.store.getCustom('linkObject');
 
-   await wallet.methods.requestToken(linkObject.tokenId, linkObject.passphrase);
+    await wallet.methods.requestToken(linkObject.tokenId, linkObject.passphrase);
 
     return;
   })
 
+Given("user{int} checks if certificate{int} can be requested with passphrase {word}",
+  async function (userIndex, tokenIndex, passphrase) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const tokenId = this.store.getToken(tokenIndex);
+
+    const isRequestable = await wallet.methods.isCertificateRequestable(tokenId, passphrase);
+    expect(isRequestable).equal(true);
+
+    return;
+  });
+
+Given("user{int} checks if certificate{int} can not be requested with passphrase {word}",
+  async function (userIndex, tokenIndex, passphrase) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const tokenId = this.store.getToken(tokenIndex);
+
+    const isRequestable = await wallet.methods.isCertificateRequestable(tokenId, passphrase);
+    expect(isRequestable).equal(false);
+
+    return;
+  });

@@ -9,7 +9,7 @@ export async function CreateWalletWithPOAAndAria(
 ): Promise<ArianeeWallet> {
   let wallet;
   const arianee = new Arianee()
-  const walletMaker=await arianee.connectToProtocol()
+  const walletMaker = await arianee.connectToProtocol()
   if (fromPrivateKey) {
     wallet = walletMaker.fromPrivateKey(fromPrivateKey);
   } else {
@@ -21,24 +21,20 @@ export async function CreateWalletWithPOAAndAria(
     wallet.web3.eth.getBalance(wallet.publicKey)
   ]);
 
-  if (poaBalance == 0 || force) {
-    await wallet.getFaucet();
+  await wallet.getFaucet();
 
-    await waitFor(7000);
-    ariaBalance = await wallet.web3.eth.getBalance(wallet.publicKey);
-    assert.ok(ariaBalance > 0, `POA faucet not working.`);
-  }
+  poaBalance = await wallet.web3.eth.getBalance(wallet.publicKey);
+  assert.ok(poaBalance > 0, `POA faucet not working.`);
 
-  if (poaBalance == 0 || force) {
+  if (ariaBalance == 0 || force) {
     await wallet
-      .getAria()
+      .getAria();
 
-    await waitFor(7000);
-    poaBalance = await wallet.ariaContract.methods
+    ariaBalance = await wallet.ariaContract.methods
       .balanceOf(wallet.publicKey)
       .call();
 
-    assert.ok(poaBalance > 0, "aria faucet not working");
+    assert.ok(ariaBalance > 0, "aria faucet not working");
   }
 
   await wallet.ariaContract.methods
