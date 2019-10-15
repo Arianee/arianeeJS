@@ -8,6 +8,7 @@ import { Utils } from "../libs/utils";
 import { blockchainEvent } from "../../models/blockchainEvents";
 import { ServicesHub } from "../servicesHub";
 import { ArianeeWallet } from "./wallet";
+import { IdentitySummary } from "../../models/arianee-identity";
 
 export class WalletCustomMethods {
   private servicesHub: ServicesHub;
@@ -89,8 +90,8 @@ export class WalletCustomMethods {
 
     return this.customRequestTokenFactory(tokenId, passphrase).send();
   }
-
-  private getIdentity = async (address: string): Promise<any> => {
+  
+  private getIdentity = async (address: string): Promise<IdentitySummary> => {
 
     const identityURI = await this.wallet.identityContract.methods
       .addressURI(address)
@@ -112,16 +113,17 @@ export class WalletCustomMethods {
 
       //address
 
-      const addressImprint = await this.wallet.identityContract.methods
+      const imprint = await this.wallet.identityContract.methods
         .addressImprint(address)
         .call();
 
-      // const isTokenValid=await this.smartAssetContract.methods.isTokenValid(tokenId)
+      const isAuthentic = imprint === hash;
+      const isApproved = await this.wallet.identityContract.methods.addressIsApproved(address).call();
 
       return {
-        ...identityContentData,
-        addressImprint,
-        identityExist: true
+        data: identityContentData,
+        isAuthentic: isAuthentic,
+        isApproved
       };
     }
     else {
@@ -501,9 +503,10 @@ export class WalletCustomMethods {
           privateKey = this.wallet.privateKey;
           requestBody.authentification = this.utils.signProofForRpc(tokenId, privateKey);
         }
+        console.log(issuerIdentity);
 
         return new Promise((resolve, reject) => {
-          this.servicesHub.RPC.withURI(issuerIdentity.rpcEndpoint).request(
+          this.servicesHub.RPC.withURI(issuerIdentity.data.rpcEndpoint).request(
             'event.read',
             requestBody,
             function (err, error, result) {
