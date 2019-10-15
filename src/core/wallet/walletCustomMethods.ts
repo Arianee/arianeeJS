@@ -5,9 +5,10 @@ import {
 } from "../certificateSummary";
 import { Utils } from "../libs/utils";
 
-import {blockchainEvent} from "../../models/blockchainEvents";
+import { blockchainEvent } from "../../models/blockchainEvents";
 import { ServicesHub } from "../servicesHub";
 import { ArianeeWallet } from "./wallet";
+import { IdentitySummary } from "../../models/arianee-identity";
 
 export class WalletCustomMethods {
   private servicesHub: ServicesHub;
@@ -73,17 +74,7 @@ export class WalletCustomMethods {
     }
   }
 
-  private getIdentity = async (address: string): Promise<CertificateSummary> => {
-    /*
-              00. Un objet certificat
-              1. this.smartAssetContract.methods.tokenURI => j'ai l'url du certificat
-              2. this.smartAssetContract.methods.tokenImprint => signature du contract
-              3. Vérifier la signature du Certificate
-              4. this.smartAssetContract.methods.ownerOf 
-              4. { content: le Certificate, isValidHash:true/false, ownerOf:publicKey, isOwner:true/false}
-          
-              Getwallet=> tous les certificat qui appartiennent à un wallet
-              */
+  private getIdentity = async (address: string): Promise<IdentitySummary> => {
 
     const identityURI = await this.wallet.identityContract.methods
       .addressURI(address)
@@ -105,16 +96,17 @@ export class WalletCustomMethods {
 
       //address
 
-      const addressImprint = await this.wallet.identityContract.methods
+      const imprint = await this.wallet.identityContract.methods
         .addressImprint(address)
         .call();
 
-      // const isTokenValid=await this.smartAssetContract.methods.isTokenValid(tokenId)
+      const isAuthentic = imprint === hash;
+      const isApproved = await this.wallet.identityContract.methods.addressIsApproved(address).call();
 
       return {
-        ...identityContentData,
-        addressImprint,
-        identityExist: true
+        data: identityContentData,
+        isAuthentic: isAuthentic,
+        isApproved
       };
     }
     else {
@@ -396,28 +388,28 @@ export class WalletCustomMethods {
 
   private getCertificateTransferEvents = async (tokenId: number): Promise<any> => {
     const sortedEvents = await this.servicesHub.contracts.smartAssetContract.getPastEvents('Transfer',
-      {filter: {_tokenId: tokenId}, fromBlock: 0, toBlock: 'latest'})
+      { filter: { _tokenId: tokenId }, fromBlock: 0, toBlock: 'latest' })
       .then(events => events.sort(this.utils.sortEvents));
 
     return Promise.all(sortedEvents
       .map(event => this.getIdentity(event.returnValues._to)
-        .then(identity => ({...event, identity: identity}))));
+        .then(identity => ({ ...event, identity: identity }))));
   }
 
   private isCertificateProofValid = async (tokenId: number, passphrase: string): Promise<boolean> => {
     return this.isProofValidSince(tokenId, passphrase, 2, 300);
   }
 
-  private isProofValid = async (tokenId, passphrase, tokenType): Promise<boolean>=>{
-      const tokenHashedAccess = await this.wallet.smartAssetContract.methods.tokenHashedAccess(tokenId, tokenType)
-        .call();
-      const proof = this.servicesHub.walletFactory().fromPassPhrase(passphrase).publicKey;
-      if (/^0x0+$/.test(tokenHashedAccess)) {
-        return false;
-      }
-      else{
-        return (proof === tokenHashedAccess);
-      }
+  private isProofValid = async (tokenId, passphrase, tokenType): Promise<boolean> => {
+    const tokenHashedAccess = await this.wallet.smartAssetContract.methods.tokenHashedAccess(tokenId, tokenType)
+      .call();
+    const proof = this.servicesHub.walletFactory().fromPassPhrase(passphrase).publicKey;
+    if (/^0x0+$/.test(tokenHashedAccess)) {
+      return false;
+    }
+    else {
+      return (proof === tokenHashedAccess);
+    }
   }
 
   private isProofValidSince = (
@@ -432,7 +424,7 @@ export class WalletCustomMethods {
 
       const proofValid = await this.isProofValid(tokenId, passphrase, tokenType);
 
-      if(!proofValid){
+      if (!proofValid) {
         return reject('Proof is not valid');
       }
 
