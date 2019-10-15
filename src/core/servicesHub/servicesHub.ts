@@ -6,10 +6,10 @@ import { ArianeeRPC } from "./services/ArianeeRPCClient";
 
 export class ServicesHub {
   public RPC: ArianeeRPC = new ArianeeRPC();
+  private arianeeHttpClient = new ArianeeHttpClient();
 
   constructor(
     private _contracts: ArianeeContractBuilder,
-    private _httpClient: any
   ) { }
 
   public get arianeeConfig(): ArianeeConfig {
@@ -20,7 +20,7 @@ export class ServicesHub {
     return new ArianeeWalletBuilder(this.arianeeConfig);
   }
   public get httpClient() {
-    return ArianeeHttpClient;
+    return this.arianeeHttpClient;
   }
 
   public get web3() {

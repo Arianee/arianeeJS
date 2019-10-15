@@ -38,20 +38,28 @@ export class WalletCustomMethods {
       getCertificateTransferEvents: this.getCertificateTransferEvents,
       isCertificateProofValid: this.isCertificateProofValid,
       getCertificateArianeeEvents:this.getCertificateArianeeEvents,
+      isCertificateRequestable: this.isCertificateRequestable,
       ...this.overridedMethods
     };
   }
 
   /**
-   * Simplified request token
+   * Check if this certificate is requestable with tokenId and passphrase
    * @param tokenId
    * @param passphrase
    */
-  private customRequestToken = async (
-    tokenId: number,
-    passphrase: string,
-    isTest = false
-  ) => {
+  private isCertificateRequestable = async (tokenId, passphrase): Promise<boolean> => {
+    try {
+      await this.customRequestTokenFactory(tokenId, passphrase).call();
+
+      return true;
+    } catch (err) {
+
+      return false;
+    }
+  }
+
+  private customRequestTokenFactory = (tokenId, passphrase) => {
     const temporaryWallet = this.servicesHub.walletFactory().fromPassPhrase(passphrase);
 
     const proof = this.utils.signProofForRequestToken(
@@ -68,14 +76,21 @@ export class WalletCustomMethods {
       proof.signature
     );
 
-    if (isTest) {
-      return requestMethod.call();
-    } else {
-      return requestMethod.send();
-    }
+    return requestMethod;
+
   }
+  /**
+   * Simplified request token
+   * @param tokenId
+   * @param passphrase
+   */
+  private customRequestToken = async (
+    tokenId: number,
+    passphrase: string) => {
 
-
+    return this.customRequestTokenFactory(tokenId, passphrase).send();
+  }
+  
   private getIdentity = async (address: string): Promise<IdentitySummary> => {
 
     const identityURI = await this.wallet.identityContract.methods

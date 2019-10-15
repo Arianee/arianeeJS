@@ -5,8 +5,10 @@ import appConfigurations from '../../configurations/appConfigurations';
 
 jest.mock('../servicesHub/services/arianeeHttpClient', () => (
     {
-        ArianeeHttpClient: {
-            fetch: (url) => {
+        ArianeeHttpClient: class ArianeeHttpClientStub {
+            public fetch = ArianeeHttpClientStub.fetch;
+
+            public static fetch = (url) => {
                 myFetchMock(url);
 
                 return {

@@ -1,5 +1,5 @@
 import Contract from "web3/eth/contract";
-import { Transaction, TransactionObject } from "web3/eth/types";
+import { Transaction, TransactionObject, Tx } from "web3/eth/types";
 import { ServicesHub } from "../servicesHub";
 import ArianeeWallet from "../wallet";
 import { flatPromise } from "./flat-promise";
@@ -19,6 +19,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
                     return {
                         ...b.bind(b)(...args),
                         send: (transaction: Transaction) => this.overideSend(transaction, b.bind(b)(...args)),
+                        call: (transaction: Transaction) => this.overideCall(transaction, b.bind(b)(...args)),
                     };
 
                 };
@@ -50,18 +51,27 @@ export class ArianeeContract<ContractImplementation extends Contract> {
         return promise;
     }
 
+    private overideCall = async (transaction: Transaction, data: TransactionObject<any>) => {
+        const defaultTransaction = {
+            from: this.wallet.publicKey,
+        };
+
+        const mergedTransaction = { ...defaultTransaction, ...transaction };
+
+        return data.call(mergedTransaction);
+    }
     private overideSend = async (transaction: Transaction, data: TransactionObject<any>): Promise<any> => {
         const nonce = await this.arianeeState.web3.eth
             .getTransactionCount(this.wallet.publicKey, "pending");
 
         const encodeABI = data.encodeABI();
-        const defaultTransaction = {
+        const defaultTransaction: Tx = {
             nonce,
             chainId: this.arianeeState.contracts.arianeeConfig.chainId,
             from: this.wallet.publicKey,
             data: encodeABI,
             to: this.contract.options.address,
-            gasLimit: 2000000,
+            gas: 2000000,
             gasPrice: this.arianeeState.web3.utils.toWei("1", "gwei"),
         };
         const mergedTransaction = { ...defaultTransaction, ...transaction };
