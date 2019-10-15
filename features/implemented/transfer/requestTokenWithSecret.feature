@@ -22,3 +22,11 @@ Feature: Request token with Secret
     Given user1 makes certificate0 transferable without passphrase
     Given user2 requests certificate0 with the link
     Then user2 is the owner of the certificate0
+
+  Scenario: A brand creates a certificate, user1 can check if it can be requestable with passphrase
+    Given user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase
+    Then user1 checks if certificate0 can be requested with passphrase MyPassPhrase
+
+  Scenario: A brand creates a certificate, user1 can check if it can be requestable with wrong passphrase
+    Given user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase
+    Then user1 checks if certificate0 can not be requested with passphrase WRONGPASSPHRASE

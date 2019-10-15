@@ -5,7 +5,7 @@ import {
 } from "../certificateSummary";
 import { Utils } from "../libs/utils";
 
-import {blockchainEvent} from "../../models/blockchainEvents";
+import { blockchainEvent } from "../../models/blockchainEvents";
 import { ServicesHub } from "../servicesHub";
 import { ArianeeWallet } from "./wallet";
 
@@ -37,20 +37,28 @@ export class WalletCustomMethods {
       getCertificateTransferEvents: this.getCertificateTransferEvents,
       isCertificateProofValid: this.isCertificateProofValid,
       getCertificateArianeeEvents:this.getCertificateArianeeEvents,
+      isCertificateRequestable: this.isCertificateRequestable,
       ...this.overridedMethods
     };
   }
 
   /**
-   * Simplified request token
+   * Check if this certificate is requestable with tokenId and passphrase
    * @param tokenId
    * @param passphrase
    */
-  private customRequestToken = async (
-    tokenId: number,
-    passphrase: string,
-    isTest = false
-  ) => {
+  private isCertificateRequestable = async (tokenId, passphrase): Promise<boolean> => {
+    try {
+      await this.customRequestTokenFactory(tokenId, passphrase).call();
+
+      return true;
+    } catch (err) {
+
+      return false;
+    }
+  }
+
+  private customRequestTokenFactory = (tokenId, passphrase) => {
     const temporaryWallet = this.servicesHub.walletFactory().fromPassPhrase(passphrase);
 
     const proof = this.utils.signProofForRequestToken(
@@ -67,11 +75,19 @@ export class WalletCustomMethods {
       proof.signature
     );
 
-    if (isTest) {
-      return requestMethod.call();
-    } else {
-      return requestMethod.send();
-    }
+    return requestMethod;
+
+  }
+  /**
+   * Simplified request token
+   * @param tokenId
+   * @param passphrase
+   */
+  private customRequestToken = async (
+    tokenId: number,
+    passphrase: string) => {
+
+    return this.customRequestTokenFactory(tokenId, passphrase).send();
   }
 
   private getIdentity = async (address: string): Promise<any> => {
@@ -397,28 +413,28 @@ export class WalletCustomMethods {
 
   private getCertificateTransferEvents = async (tokenId: number): Promise<any> => {
     const sortedEvents = await this.servicesHub.contracts.smartAssetContract.getPastEvents('Transfer',
-      {filter: {_tokenId: tokenId}, fromBlock: 0, toBlock: 'latest'})
+      { filter: { _tokenId: tokenId }, fromBlock: 0, toBlock: 'latest' })
       .then(events => events.sort(this.utils.sortEvents));
 
     return Promise.all(sortedEvents
       .map(event => this.getIdentity(event.returnValues._to)
-        .then(identity => ({...event, identity: identity}))));
+        .then(identity => ({ ...event, identity: identity }))));
   }
 
   private isCertificateProofValid = async (tokenId: number, passphrase: string): Promise<boolean> => {
     return this.isProofValidSince(tokenId, passphrase, 2, 300);
   }
 
-  private isProofValid = async (tokenId, passphrase, tokenType): Promise<boolean>=>{
-      const tokenHashedAccess = await this.wallet.smartAssetContract.methods.tokenHashedAccess(tokenId, tokenType)
-        .call();
-      const proof = this.servicesHub.walletFactory().fromPassPhrase(passphrase).publicKey;
-      if (/^0x0+$/.test(tokenHashedAccess)) {
-        return false;
-      }
-      else{
-        return (proof === tokenHashedAccess);
-      }
+  private isProofValid = async (tokenId, passphrase, tokenType): Promise<boolean> => {
+    const tokenHashedAccess = await this.wallet.smartAssetContract.methods.tokenHashedAccess(tokenId, tokenType)
+      .call();
+    const proof = this.servicesHub.walletFactory().fromPassPhrase(passphrase).publicKey;
+    if (/^0x0+$/.test(tokenHashedAccess)) {
+      return false;
+    }
+    else {
+      return (proof === tokenHashedAccess);
+    }
   }
 
   private isProofValidSince = (
@@ -433,7 +449,7 @@ export class WalletCustomMethods {
 
       const proofValid = await this.isProofValid(tokenId, passphrase, tokenType);
 
-      if(!proofValid){
+      if (!proofValid) {
         return reject('Proof is not valid');
       }
 

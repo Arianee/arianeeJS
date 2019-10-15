@@ -107,6 +107,6 @@ Given("user{int} can approve storeContract", async function (userIndex) {
 Given('user{int} is a brand', async function (userIndex) {
   const wallet = await CreateWalletWithPOAAndAria();
   this.store.storeWallet(userIndex, wallet);
-
+ 
   return;
 });
