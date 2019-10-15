@@ -34,52 +34,54 @@ export class ArianeeWallet {
 
   constructor(public servicesHub: ServicesHub, private _account, private _mnemonic?) {
     this.smartAssetContract = new ArianeeContract<ArianeeSmartAsset>(
-      this.servicesHub.contracts.smartAssetContract,
+      this.servicesHub.rawContracts.smartAssetContract,
       this,
       this.servicesHub
     ).makeArianee();
 
     this.identityContract = new ArianeeContract<ArianeeIdentity>(
-      this.servicesHub.contracts.identityContract,
+      this.servicesHub.rawContracts.identityContract,
       this,
       this.servicesHub
     ).makeArianee();
 
     this.ariaContract = new ArianeeContract<Aria>(
-      this.servicesHub.contracts.ariaContract,
+      this.servicesHub.rawContracts.ariaContract,
       this,
       this.servicesHub
     ).makeArianee();
 
     this.storeContract = new ArianeeContract<ArianeeStore>(
-      this.servicesHub.contracts.storeContract,
+      this.servicesHub.rawContracts.storeContract,
       this,
       this.servicesHub
     ).makeArianee();
 
     this.creditHistoryContract = new ArianeeContract<ArianeeCreditHistory>(
-      this.servicesHub.contracts.creditHistoryContract,
+      this.servicesHub.rawContracts.creditHistoryContract,
       this,
       this.servicesHub
     ).makeArianee();
 
     this.whitelistContract = new ArianeeContract<ArianeeWhitelist>(
-      this.servicesHub.contracts.whitelistContract,
+      this.servicesHub.rawContracts.whitelistContract,
       this,
       this.servicesHub
     ).makeArianee();
 
     this.stakingContract = new ArianeeContract<ArianeeStaking>(
-      this.servicesHub.contracts.stakingContract,
+      this.servicesHub.rawContracts.stakingContract,
       this,
       this.servicesHub
     ).makeArianee();
 
-    this.eventContract = new ArianeeContract<ArianeeEvent>(
-      this.servicesHub.contracts.eventContract,
-      this,
-      this.servicesHub
-    ).makeArianee();
+    if (this.servicesHub.rawContracts.eventContract) {
+      this.eventContract = new ArianeeContract<ArianeeEvent>(
+        this.servicesHub.rawContracts.eventContract,
+        this,
+        this.servicesHub
+      ).makeArianee();
+    }
   }
 
   public get publicKey(): string {

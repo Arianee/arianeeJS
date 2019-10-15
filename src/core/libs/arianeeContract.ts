@@ -67,7 +67,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
         const encodeABI = data.encodeABI();
         const defaultTransaction: Tx = {
             nonce,
-            chainId: this.arianeeState.contracts.arianeeConfig.chainId,
+            chainId: this.arianeeState.arianeeConfig.chainId,
             from: this.wallet.publicKey,
             data: encodeABI,
             to: this.contract.options.address,

@@ -46,8 +46,11 @@ export class ArianeeContractBuilder {
             this.arianeeConfig.staking.abi,
             this.arianeeConfig.staking.address);
 
-        this.eventContract = new this.web3.eth.Contract(
-            this.arianeeConfig.eventArianee.abi,
-            this.arianeeConfig.eventArianee.address);
+        if (this.arianeeConfig.eventArianee.abi && this.arianeeConfig.eventArianee.address) {
+            this.eventContract = new this.web3.eth.Contract(
+                this.arianeeConfig.eventArianee.abi,
+                this.arianeeConfig.eventArianee.address);
+        }
     }
+
 }
