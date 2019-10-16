@@ -412,12 +412,6 @@ export interface Socialmedia {
     items: Items6;
 }
 
-export interface RpcEndpoint {
-    type: string;
-    title: string;
-    description: string;
-}
-
 export interface IdentityContent {
     $schema: Schema;
     name: Name;
@@ -431,5 +425,5 @@ export interface IdentityContent {
     contacts: Contacts;
     pictures: Pictures;
     socialmedia: Socialmedia;
-    rpcEndpoint: RpcEndpoint;
+    rpcEndpoint: string;
 }

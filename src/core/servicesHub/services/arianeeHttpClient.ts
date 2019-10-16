@@ -33,6 +33,27 @@ export class ArianeeHttpClient {
       return hash(JSON.stringify(url) + JSON.stringify(config));
     }
 
+    public RPCCall = async (endpoint:string, method:string, params:any)=>{
+
+      const config =
+        {
+          method: "POST",
+          data: {
+            jsonrpc: "2.0",
+            method: method,
+            params: params,
+            id: ArianeeHttpClient.createKeyFromURL(endpoint, params)
+          },
+          headers: {
+            "Content-Type": "application/json"
+          }
+        };
+
+      const RPCRes = await this.fetchWithCache(endpoint, config);
+
+      return JSON.parse(RPCRes.result);
+    }
+
     /**
      *   
      * If HTTP call with same url & headers has been made, it will return previous result

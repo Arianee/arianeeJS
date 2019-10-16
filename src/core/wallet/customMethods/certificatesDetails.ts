@@ -1,9 +1,10 @@
 import { TokenId } from '../../../models/TokenId';
 import { CertificateSummaryBuilder } from '../../certificateSummary';
 import { ArianeeWallet } from '../wallet';
+import {IdentityService} from "./identityService";
 
 export class CertificateDetails {
-    constructor(private wallet: ArianeeWallet) {
+    constructor(private wallet: ArianeeWallet, private identityService:IdentityService) {
 
     }
 
@@ -28,26 +29,21 @@ export class CertificateDetails {
     }
 
     private getCertificateContentFromRPC = async (tokenURI, tokenId, proof) => {
-        return new Promise(
-            (resolve, reject) => {
-                this.wallet.servicesHub.RPC.withURI(tokenURI).request(
-                    "certificate.read",
-                    {
-                        tokenId: tokenId,
-                        authentification: {
-                            hash: proof.messageHash,
-                            signature: proof.signature,
-                            message: proof.message
-                        }
-                    },
-                    function (err, error, result) {
-                        if (err) reject(err);
-                        if (error) reject(error);
-                        if (result) resolve(result);
-                    }
-                );
+
+        const issuer = await this.wallet.smartAssetContract.methods.issuerOf(tokenId).call();
+        const identity = await this.identityService.getIdentity(issuer);
+
+        return this.wallet.servicesHub.httpClient.RPCCall(
+          identity.data.rpcEndpoint,
+          "certificate.read",
+          {
+            tokenId: tokenId,
+            authentification: {
+              hash: proof.messageHash,
+              signature: proof.signature,
+              message: proof.message
             }
-        );
+          });
     }
 
     private getCertificateContent = (tokenURI, tokenId, proof) => {
