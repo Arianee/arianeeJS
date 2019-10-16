@@ -1,6 +1,7 @@
 import { CreateWalletWithPOAAndAria } from "../src/e2e/utils/create-wallet";
 import { Arianee } from '../src'
-var fetch = require("node-fetch-polyfill");
+
+const fetch = require("node-fetch-polyfill");
 
 const createASimpleCertificate = async () => {
   const wallet = await CreateWalletWithPOAAndAria(
@@ -72,7 +73,7 @@ const createAndTransfertCertificates = async () => {
 
   await wallet1.smartAssetContract.methods
     .ownerOf(tokenId)
-    .call()
+    .call();
 
   console.log("startint request token");
   await nextOwnerWallet.methods
@@ -154,7 +155,7 @@ const getCertificateTransferEvents = async(tokenId)=>{
 
 const test=async()=>{
 const n=new Arianee().connectToProtocol();
-}
+};
 
 const readProof = async (tokenId) => {
 
@@ -166,7 +167,7 @@ const readProof = async (tokenId) => {
 
   const proofIsValid = await wallet.methods.isCertificateProofValid(tokenId, proofLink.passphrase);
   console.log(proofIsValid)
-}
+};
 
 
 const getArianeeEvents = async(tokenId, passphrase)=>{

@@ -7,7 +7,7 @@ export interface Contract {
 export interface ArianeeConfig {
   aria: Contract;
   creditHistory: Contract;
-  eventArianee: Contract,
+  eventArianee: Contract;
   identity: Contract;
   smartAsset: Contract;
   staking: Contract;
@@ -21,5 +21,3 @@ export interface ArianeeConfig {
   brandDataHubReward: { address: string };
   deepLink: string;
 }
-
-

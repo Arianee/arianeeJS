@@ -5,4 +5,4 @@ export const executeTest=(stepTitle,test)=>{
     }catch(err){
         console.error('FAIL',stepTitle)
     }
-}
+};

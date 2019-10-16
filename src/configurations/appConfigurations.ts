@@ -9,4 +9,4 @@ export default {
     "faucetUrl": `https://faucet.arianee.org/faucet?network=${NETWORK.mainnet}`,
     "deepLink": "arian.ee/"
   },
-}
+};

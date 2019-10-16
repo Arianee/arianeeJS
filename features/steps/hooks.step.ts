@@ -1,7 +1,5 @@
-import { AfterAll, Before } from "cucumber";
+import { AfterAll, Before, setDefaultTimeout } from "cucumber";
 import { CCStore } from "./helpers/store";
-
-var { setDefaultTimeout } = require('cucumber');
 
 setDefaultTimeout(60 * 2 * 1000);
 
@@ -10,4 +8,4 @@ Before(function () {
 });
 
 AfterAll(() => {
-})
+});
