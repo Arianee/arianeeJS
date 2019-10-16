@@ -27,7 +27,7 @@ const browserConfig = {
   plugins: [
     // new BundleAnalyzerPlugin(),
   ]
-}
+};
 
 module.exports = (env, argv) => {
   if (argv.mode === 'development') {
@@ -35,4 +35,4 @@ module.exports = (env, argv) => {
   }
 
   return browserConfig;
-}
+};

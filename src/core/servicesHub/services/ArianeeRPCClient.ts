@@ -14,10 +14,8 @@ export class ArianeeRPC {
     .catch(function(err) { callback(err); });
     };
 
-    const client = (<any>ClientBrowser)(callServer, {
+      return (<any>ClientBrowser)(callServer, {
       // other options go here
     });
-
-    return client;
   }
 }

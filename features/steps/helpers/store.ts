@@ -8,7 +8,7 @@ export class CCStore {
     private cache = {};
 
     public getUserWallet(userIndex: number): ArianeeWallet {
-        return this.users[userIndex]
+        return this.users[userIndex];
     }
 
     public storeWallet(userIndex: number, wallet: ArianeeWallet) {

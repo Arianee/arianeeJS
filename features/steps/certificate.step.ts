@@ -1,5 +1,5 @@
-import { Given, Then, When } from "cucumber";
 import { expect } from "chai";
+import { Given, Then, When } from "cucumber";
 import { waitFor } from "./helpers/waitFor";
 
 Given("user{int} has positive credit certificate balance", async function (
@@ -154,7 +154,7 @@ Given("user{int} makes certificate{int} {word} with passphrase {word}",
     const tokenId = this.store.getToken(tokenIndex);
 
     return wallet.methods.createCertificateTransferLink(tokenId, passphrase);
-  })
+  });
 
 Given("user{int} makes certificate{int} {word} without passphrase",
   async function (userIndex, tokenIndex, actionType, ) {
@@ -163,8 +163,9 @@ Given("user{int} makes certificate{int} {word} without passphrase",
 
     const linkObject = await wallet.methods.createCertificateTransferLink(tokenId);
     this.store.storeCustom('linkObject', linkObject);
+
     return;
-  })
+  });
 
 Given("user{int} requests certificate{int} with the link",
   async function (userIndex, tokenIndex) {
@@ -176,7 +177,7 @@ Given("user{int} requests certificate{int} with the link",
     await wallet.methods.requestToken(linkObject.tokenId, linkObject.passphrase);
 
     return;
-  })
+  });
 
 Given("user{int} checks if certificate{int} can be requested with passphrase {word}",
   async function (userIndex, tokenIndex, passphrase) {

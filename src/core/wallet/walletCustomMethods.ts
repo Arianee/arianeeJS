@@ -74,16 +74,13 @@ export class WalletCustomMethods {
       temporaryWallet.privateKey
     );
 
-    const requestMethod = this.wallet.storeContract.methods.requestToken(
+    return this.wallet.storeContract.methods.requestToken(
       tokenId,
       proof.messageHash,
       true,
       this.wallet.brandDataHubRewardAddress,
       proof.signature
     );
-
-    return requestMethod;
-
   }
   /**
    * Simplified request token
@@ -104,10 +101,8 @@ export class WalletCustomMethods {
       .call();
 
     if (identityURI) {
-      const identityContent = await this.servicesHub.httpClient
+      const identityContentData = await this.servicesHub.httpClient
         .fetch(identityURI);
-
-      const identityContentData = identityContent;
 
       const identityContentSchema = await this.servicesHub.httpClient
         .fetch(identityContentData.$schema);
@@ -160,11 +155,10 @@ export class WalletCustomMethods {
     );
 
     // Fetch details of each certificate
-    const certificates = await Promise.all(
+    return await Promise.all(
       tokenIds.map(tokenId => this.getCertificate(tokenId))
     );
 
-    return certificates;
   }
 
   // Ajouter une passphrase à un token

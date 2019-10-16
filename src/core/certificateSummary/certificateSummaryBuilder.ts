@@ -1,3 +1,4 @@
+
 import { thisExpression } from "@babel/types";
 import { isNullOrUndefined } from "util";
 import { sortEvents } from "../libs/sortEvents";
@@ -12,6 +13,7 @@ import {
   CertificiateContent,
   CertificateEventsSummary
 } from "./certificateSummary";
+
 
 export class CertificateSummaryBuilder {
   private _content: CertificiateContent;

@@ -1,13 +1,12 @@
 import { Given, Then, When } from "cucumber";
-import fs from "fs"
+import fs from "fs";
 const puppeteer = require('puppeteer');
-
 
 Given("ArianeeLib is used on browser it works", async function () {
 
-    var contentHtml = `<!doctype html><html><body id='div1'></body></html>`;
-    var contentJSBundle = fs.readFileSync('./browser/bundle.js', 'utf8');
-    const contentTestJS = fs.readFileSync('./dist/example/myexecfile.js', 'utf8');
+  const contentHtml = `<!doctype html><html><body id='div1'></body></html>`;
+  const contentJSBundle = fs.readFileSync('./browser/bundle.js', 'utf8');
+  const contentTestJS = fs.readFileSync('./dist/example/myexecfile.js', 'utf8');
 
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
@@ -25,4 +24,3 @@ Given("ArianeeLib is used on browser it works", async function () {
 
     return browser.close();
 });
-

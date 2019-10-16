@@ -1,5 +1,5 @@
-import { expect } from "chai"
-import { Given, Then, When } from 'cucumber'
+import { expect } from "chai";
+import { Given, Then, When } from 'cucumber';
 import { Arianee } from "../../src";
 import { NETWORK, networkURL } from '../../src/models/networkConfiguration';
 
