@@ -51,7 +51,6 @@ Given("user{int} with account from {word} {word}", async function (
   return Promise.resolve();
 });
 
-
 Given("user{int} with account from {word} {string}", async function (
   userIndex,
   type,

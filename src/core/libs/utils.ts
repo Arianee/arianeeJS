@@ -29,7 +29,7 @@ export class Utils {
   }
 
   public simplifiedParsedURL(url: string) {
-    var m = url.match(/^(([^:\/?#]+:)?(?:\/\/((?:([^\/?#:]*):([^\/?#:]*)@)?([^\/?#:]*)(?::([^\/?#:]*))?)))?([^?#]*)(\?[^#]*)?(#.*)?$/),
+    const m = url.match(/^(([^:\/?#]+:)?(?:\/\/((?:([^\/?#:]*):([^\/?#:]*)@)?([^\/?#:]*)(?::([^\/?#:]*))?)))?([^?#]*)(\?[^#]*)?(#.*)?$/),
       r = {
         hash: m[10] || "",
         hostname: m[6] || "",
@@ -73,7 +73,7 @@ export class Utils {
   }
 
   private cleanObject(obj: any) {
-    for (var propName in obj) {
+    for (let propName in obj) {
       if (
         obj[propName] &&
         obj[propName].constructor === Array &&

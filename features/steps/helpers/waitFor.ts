@@ -4,4 +4,4 @@ export const waitFor= (n=8000)=>{
             resolve('foo');
         }, n);
     });
-}
+};

@@ -1,5 +1,5 @@
-import { ArianeeWallet } from "../wallet";
-import { CertificateContent, CertificateSummary } from "./certificateSummary";
+import {ArianeeWallet} from "../wallet";
+import {CertificateContent, CertificateSummary} from "./certificateSummary";
 
 export class CertificateSummaryBuilder {
     private _content: CertificateContent;
@@ -36,7 +36,7 @@ export class CertificateSummaryBuilder {
     }
   
     build(): CertificateSummary {
-      const arianeCertificate: CertificateSummary = {
+      return {
         content: this._content,
         isCertificateValid: this._isCertificateValid,
         isOwner: this._owner === this.wallet.publicKey,
@@ -45,7 +45,5 @@ export class CertificateSummaryBuilder {
         isIssuerIdentity: false,
         isIssuerValid: false
       };
-  
-      return arianeCertificate;
     }
   }

@@ -5,7 +5,7 @@ declare var ArianeeLib;
     .Arianee()
     .connectToProtocol();
 
-  var wallet = arianee.fromRandomKey();
+  const wallet = arianee.fromRandomKey();
 
   await wallet.getFaucet();
 

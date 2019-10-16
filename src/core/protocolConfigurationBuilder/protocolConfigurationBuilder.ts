@@ -1,6 +1,6 @@
-import { isNullOrUndefined } from "util";
-import { ArianeeConfig, Contract } from "../../models/arianeeConfiguration";
-import { ArianeeWalletBuilder } from "../wallet/walletBuilder";
+import {isNullOrUndefined} from "util";
+import {ArianeeConfig} from "../../models/arianeeConfiguration";
+import {ArianeeWalletBuilder} from "../wallet/walletBuilder";
 
 export class ProtocolConfigurationBuilder {
 
@@ -50,9 +50,7 @@ export class ProtocolConfigurationBuilder {
 
     public build(): ArianeeWalletBuilder {
         if (this.isReadyForBuild().isValid) {
-            const arianeeProtocol = new ArianeeWalletBuilder(this.config);
-
-            return arianeeProtocol;
+          return new ArianeeWalletBuilder(this.config);
         } else {
             throw new Error(`It is missing some settings: ${this.isReadyForBuild().missingProperties.join(" ")}`);
         }
