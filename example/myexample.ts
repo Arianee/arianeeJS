@@ -1,7 +1,6 @@
-import { CreateWalletWithPOAAndAria } from "../src/e2e/utils/create-wallet";
 import { Arianee } from '../src'
-
-const fetch = require("node-fetch-polyfill");
+import { CreateWalletWithPOAAndAria } from "../src/e2e/utils/create-wallet";
+var fetch = require("node-fetch-polyfill");
 
 const createASimpleCertificate = async () => {
   const wallet = await CreateWalletWithPOAAndAria(
@@ -67,7 +66,7 @@ const createAndTransfertCertificates = async () => {
   });
 
   const { tokenId, passphrase } = result;
-  console.log(tokenId);
+  console.log(tokenId,passphrase);
   console.log("hydrate ending");
   console.log(`https://arian.ee/${tokenId},${passphrase}`);
 
@@ -86,7 +85,7 @@ const createAndTransfertCertificates = async () => {
 
   await nextOwnerWallet.
     methods.getCertificate(tokenId)
-    .then(i => console.log(i.isOwner));
+    .then(i => console.log(i.owner.isOwner));
 
   console.log("FINISH!!");
 };
@@ -153,9 +152,26 @@ const getCertificateTransferEvents = async(tokenId)=>{
 
 };
 
-const test=async()=>{
-const n=new Arianee().connectToProtocol();
-};
+
+const test = async () => {
+  const n = await new Arianee().connectToProtocol();
+  const wallet = n.fromRandomKey();
+  try {
+
+    const certificate = await wallet.methods.getCertificate(6301169, 'n0nuu1x4610h', {
+      isTransferable: true,
+      content: true,
+      issuer: true,
+      owner: true,
+      events: true,
+      advanced: true,
+    });
+    console.log('certificate', certificate);
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 
 const readProof = async (tokenId) => {
 
@@ -182,4 +198,3 @@ const getArianeeEvents = async(tokenId, passphrase)=>{
 
 //getCertificateTransferEvents(722377);
 //getCertificate(8186301, '9ilva4r6swwl');
-

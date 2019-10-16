@@ -200,3 +200,19 @@ Given("user{int} checks if certificate{int} can not be requested with passphrase
 
     return;
   });
+
+Given("user{int} want to see certificate{int} details with passphrase {word}",
+  async function (userIndex, tokenIndex, passphrase) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const tokenId = this.store.getToken(tokenIndex);
+
+    const certficiateDetails = await wallet.methods.getCertificate(tokenId, passphrase);
+    expect(certficiateDetails).to.be.not.undefined;
+
+    expect(certficiateDetails.content).to.be.not.undefined;
+    expect(certficiateDetails.events).to.be.not.undefined;
+    expect(certficiateDetails.issuer).to.be.not.undefined;
+    expect(certficiateDetails.owner).to.be.not.undefined;
+
+    return;
+  });

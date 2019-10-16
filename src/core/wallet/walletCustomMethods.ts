@@ -7,16 +7,22 @@ import { Utils } from "../libs/utils";
 
 import { IdentitySummary } from "../../models/arianee-identity";
 import { blockchainEvent } from "../../models/blockchainEvents";
+import { TokenId } from "../../models/TokenId";
+import { ConsolidatedCertificateRequest } from "../certificateSummary/certificateSummary";
+import { sortEvents } from '../libs/sortEvents';
 import { ServicesHub } from "../servicesHub";
+import { CertificateDetails } from './customMethods/certificatesDetails';
 import { ArianeeWallet } from "./wallet";
 
 export class WalletCustomMethods {
   private servicesHub: ServicesHub;
   private utils: Utils;
+  private certificateDetails: CertificateDetails;
 
   constructor(private wallet: ArianeeWallet) {
     this.servicesHub = this.wallet.servicesHub;
     this.utils = this.wallet.utils;
+    this.certificateDetails = new CertificateDetails(this.wallet);
   }
 
   private get overridedMethods() {
@@ -37,7 +43,7 @@ export class WalletCustomMethods {
       getCertificateFromLink: this.getCertificateFromLink,
       getCertificateTransferEvents: this.getCertificateTransferEvents,
       isCertificateProofValid: this.isCertificateProofValid,
-      getCertificateArianeeEvents:this.getCertificateArianeeEvents,
+      getCertificateArianeeEvents: this.getCertificateArianeeEvents,
       isCertificateRequestable: this.isCertificateRequestable,
       ...this.overridedMethods
     };
@@ -87,7 +93,7 @@ export class WalletCustomMethods {
 
     return this.customRequestTokenFactory(tokenId, passphrase).send();
   }
-  
+
   private getIdentity = async (address: string): Promise<IdentitySummary> => {
 
     const identityURI = await this.wallet.identityContract.methods
@@ -106,8 +112,6 @@ export class WalletCustomMethods {
         identityContentData
       );
 
-      //address
-
       const imprint = await this.wallet.identityContract.methods
         .addressImprint(address)
         .call();
@@ -122,9 +126,12 @@ export class WalletCustomMethods {
       };
     }
     else {
-      return undefined;
+      return {
+        data: undefined,
+        isAuthentic: false,
+        isApproved: false
+      };
     }
-
   }
 
   private async getMyCertificates(): Promise<CertificateSummary[]> {
@@ -164,110 +171,52 @@ export class WalletCustomMethods {
   }
 
   private getCertificate = async (
-    tokenId: string | number | any,
-    passphrase?: string
+    tokenId: TokenId,
+    passphrase?: string,
+    query?: ConsolidatedCertificateRequest,
   ): Promise<CertificateSummary> => {
+
     const response = new CertificateSummaryBuilder(this.wallet);
+    const requestQueue = [];
 
-    try {
-      const tokenURI = await this.wallet.smartAssetContract.methods
-        .tokenURI(tokenId.toString())
-        .call();
+    if (isNullOrUndefined(query) || query.content) {
+      requestQueue.push(this.certificateDetails.getContentFactory(tokenId, passphrase, response));
+    }
 
-      // REGULAR HTTP
-      /*  const certificateContent = await this.arianeeState.httpClient.get(
-        tokenURI,
-        {
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      );
-      const certificateContentData = certificateContent.data;
+    if (isNullOrUndefined(query) || query.owner) {
+      requestQueue.push(this.certificateDetails.getOwnerFactory(tokenId, response));
+    }
 
-*/
-      // RPC:
-      /*
-      const certificateContent = await this.arianeeState.httpClient.get(
-        tokenURI,
-        {
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      );
-      const certificateContentData = certificateContent.data;
-
-*/
-      let proof;
-
-      if (passphrase) {
-        const temporaryWallet = this.servicesHub.walletFactory().fromPassPhrase(passphrase);
-        proof = this.utils.signProof(
-          JSON.stringify({
-            tokenId: tokenId,
-            timestamp: new Date()
-          }),
-          temporaryWallet.privateKey
-        );
-      } else {
-        proof = this.utils.signProof(
-          JSON.stringify({
-            tokenId: tokenId,
-            timestamp: new Date()
-          }),
-          this.wallet.privateKey
-        );
-      }
-
-      const certificateContentData: any = await new Promise(
-        (resolve, reject) => {
-          this.servicesHub.RPC.withURI(tokenURI).request(
-            "certificate.read",
-            {
-              tokenId: tokenId,
-              authentification: {
-                hash: proof.messageHash,
-                signature: proof.signature,
-                message: proof.message
-              }
-            },
-            function (err, error, result) {
-              if (err) reject(err);
-              if (error) reject(error);
-              if (result) resolve(result);
-            }
-          );
-        }
-      );
-
-      response.setContent(certificateContentData);
-
-      const certificateSchema = await this.servicesHub.httpClient
-        .fetch(certificateContentData.$schema);
-
-      const hash = await this.utils.cert(
-        certificateSchema,
-        certificateContentData
-      );
-
-      const tokenImprint = await this.wallet.smartAssetContract.methods
-        .tokenImprint(tokenId.toString())
-        .call();
-
-      response.setIsCertificateValid(hash === tokenImprint);
-
-      const owner = await this.wallet.smartAssetContract.methods
-        .ownerOf(tokenId.toString())
-        .call();
-      response.setOwner(owner);
-
+    if (isNullOrUndefined(query) || query.issuer) {
       const issuer = await this.wallet.smartAssetContract.methods
         .issuerOf(tokenId.toString())
         .call();
 
       const identityDetails = await this.getIdentity(issuer);
-      response.setIssuerIdentityDetails(identityDetails);
+
+      response.setIssuer(identityDetails.isAuthentic, identityDetails.isApproved, identityDetails);
+    }
+
+    if (isNullOrUndefined(query) || query.isTransferable) {
+      const requestableFactory = () => this.isCertificateRequestable(tokenId, passphrase)
+        .then(isRequestable => response.setIsTransferable(isRequestable));
+
+      requestQueue.push(requestableFactory);
+
+    }
+
+    if (isNullOrUndefined(query) || query.events) {
+      const myEvents = () => this.getCertificateTransferEvents(tokenId)
+        .then(events => {
+          response.setEvents(events);
+        });
+
+      requestQueue.push(myEvents);
+    }
+
+    try {
+      await Promise.all(requestQueue.map(request => request()));
+
     } catch (err) {
       console.error(err);
     }
@@ -397,10 +346,10 @@ export class WalletCustomMethods {
     return balance / 100000000;
   }
 
-  private getCertificateTransferEvents = async (tokenId: number): Promise<any> => {
+  private getCertificateTransferEvents = async (tokenId: TokenId): Promise<any> => {
     const sortedEvents = await this.servicesHub.rawContracts.smartAssetContract.getPastEvents('Transfer',
-      {filter: {_tokenId: tokenId}, fromBlock: 0, toBlock: 'latest'})
-      .then(events => events.sort(this.utils.sortEvents));
+      { filter: { _tokenId: tokenId }, fromBlock: 0, toBlock: 'latest' })
+      .then(events => events.sort(sortEvents));
 
     return Promise.all(sortedEvents
       .map(event => this.getIdentity(event.returnValues._to)
@@ -451,7 +400,7 @@ export class WalletCustomMethods {
             }
           });
 
-      events.sort(this.utils.sortEvents).reverse();
+      events.sort(sortEvents).reverse();
       const lastEvent = events[0];
       const eventBlock = await this.servicesHub.web3.eth.getBlock(lastEvent.blockNumber);
 
@@ -470,30 +419,30 @@ export class WalletCustomMethods {
     });
   }
 
-  private getCertificateArianeeEvents = async (tokenId: number, passphrase?:string): Promise<any[]> =>{
+  private getCertificateArianeeEvents = async (tokenId: number, passphrase?: string): Promise<any[]> => {
     const sortedEvents = await this.servicesHub.rawContracts.eventContract.getPastEvents(
       blockchainEvent.arianeeEvent.eventCreated,
-      {filter:{_tokenId: tokenId}, fromBlock: 0, toBlock:'latest'}
-      )
-      .then(events => events.sort(this.utils.sortEvents));
+      { filter: { _tokenId: tokenId }, fromBlock: 0, toBlock: 'latest' }
+    )
+      .then(events => events.sort(sortEvents));
 
-    if(sortedEvents.length > 0){
+    if (sortedEvents.length > 0) {
 
       const issuerIdentity = await this.wallet.smartAssetContract.methods.issuerOf(tokenId).call()
-        .then(async (issuer)=>{return await this.getIdentity(issuer);});
+        .then(async (issuer) => { return await this.getIdentity(issuer); });
 
-      return Promise.all(sortedEvents.map(async (event:any, index:number)=> {
+      return Promise.all(sortedEvents.map(async (event: any, index: number) => {
         let requestBody: any = {
           eventId: parseInt(event.returnValues._eventId),
           tokenId: parseInt(event.returnValues._tokenId)
         };
 
-        let privateKey:string;
+        let privateKey: string;
         if (passphrase) {
           privateKey = this.servicesHub.walletFactory().fromPassPhrase(passphrase).privateKey;
           requestBody.authentification = this.utils.signProofForRpc(tokenId, privateKey);
         }
-        else{
+        else {
           privateKey = this.wallet.privateKey;
           requestBody.authentification = this.utils.signProofForRpc(tokenId, privateKey);
         }
@@ -504,7 +453,7 @@ export class WalletCustomMethods {
             'event.read',
             requestBody,
             function (err, error, result) {
-              if (result) {event.data=result;}
+              if (result) { event.data = result; }
               resolve(event);
             }
           );
