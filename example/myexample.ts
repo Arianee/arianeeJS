@@ -154,24 +154,25 @@ const getCertificateTransferEvents = async(tokenId)=>{
 
 
 const test = async () => {
-  const n = await new Arianee().connectToProtocol();
-  const wallet = n.fromRandomKey();
+  const wallet = await CreateWalletWithPOAAndAria(
+    "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
+  );
   try {
 
-    const certificate = await wallet.methods.getCertificate(6301169, 'n0nuu1x4610h', {
-      isTransferable: true,
+    const certificate = await wallet.methods.getCertificate(72520, undefined, {
+      isTransferable: false,
       content: true,
-      issuer: true,
-      owner: true,
-      events: true,
-      advanced: true,
+      issuer: false,
+      owner: false,
+      events: false,
+      advanced: false,
     });
     console.log('certificate', certificate);
   } catch (err) {
-    console.log(err)
+    //console.log(err)
   }
 }
-
+test();
 
 const readProof = async (tokenId) => {
 

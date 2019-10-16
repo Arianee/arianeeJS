@@ -12,17 +12,20 @@ import { ConsolidatedCertificateRequest } from "../certificateSummary/certificat
 import { sortEvents } from '../libs/sortEvents';
 import { ServicesHub } from "../servicesHub";
 import { CertificateDetails } from './customMethods/certificatesDetails';
+import {IdentityService} from "./customMethods/identityService";
 import { ArianeeWallet } from "./wallet";
 
 export class WalletCustomMethods {
   private servicesHub: ServicesHub;
   private utils: Utils;
   private certificateDetails: CertificateDetails;
+  private identityService: IdentityService;
 
   constructor(private wallet: ArianeeWallet) {
     this.servicesHub = this.wallet.servicesHub;
     this.utils = this.wallet.utils;
-    this.certificateDetails = new CertificateDetails(this.wallet);
+    this.identityService = new IdentityService(this.wallet);
+    this.certificateDetails = new CertificateDetails(this.wallet, this.identityService);
   }
 
   private get overridedMethods() {
@@ -94,45 +97,7 @@ export class WalletCustomMethods {
     return this.customRequestTokenFactory(tokenId, passphrase).send();
   }
 
-  private getIdentity = async (address: string): Promise<IdentitySummary> => {
 
-    const identityURI = await this.wallet.identityContract.methods
-      .addressURI(address)
-      .call();
-
-    if (identityURI) {
-      const identityContentData = await this.servicesHub.httpClient
-        .fetch(identityURI);
-
-      const identityContentSchema = await this.servicesHub.httpClient
-        .fetch(identityContentData.$schema);
-
-      const hash = await this.utils.cert(
-        identityContentSchema,
-        identityContentData
-      );
-
-      const imprint = await this.wallet.identityContract.methods
-        .addressImprint(address)
-        .call();
-
-      const isAuthentic = imprint === hash;
-      const isApproved = await this.wallet.identityContract.methods.addressIsApproved(address).call();
-
-      return {
-        data: identityContentData,
-        isAuthentic: isAuthentic,
-        isApproved
-      };
-    }
-    else {
-      return {
-        data: undefined,
-        isAuthentic: false,
-        isApproved: false
-      };
-    }
-  }
 
   private async getMyCertificates(): Promise<CertificateSummary[]> {
     // Fetch number of certificates this user owns
@@ -192,7 +157,7 @@ export class WalletCustomMethods {
         .issuerOf(tokenId.toString())
         .call();
 
-      const identityDetails = await this.getIdentity(issuer);
+      const identityDetails = await this.identityService.getIdentity(issuer);
 
       response.setIssuer(identityDetails.isAuthentic, identityDetails.isApproved, identityDetails);
     }
@@ -352,7 +317,7 @@ export class WalletCustomMethods {
       .then(events => events.sort(sortEvents));
 
     return Promise.all(sortedEvents
-      .map(event => this.getIdentity(event.returnValues._to)
+      .map(event => this.identityService.getIdentity(event.returnValues._to)
         .then(identity => ({ ...event, identity: identity }))));
   }
 
@@ -429,7 +394,7 @@ export class WalletCustomMethods {
     if (sortedEvents.length > 0) {
 
       const issuerIdentity = await this.wallet.smartAssetContract.methods.issuerOf(tokenId).call()
-        .then(async (issuer) => { return await this.getIdentity(issuer); });
+        .then(async (issuer) => { return await this.identityService.getIdentity(issuer); });
 
       return Promise.all(sortedEvents.map(async (event: any, index: number) => {
         let requestBody: any = {
