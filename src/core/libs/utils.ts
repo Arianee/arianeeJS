@@ -94,7 +94,7 @@ export class Utils {
     }
   }
 
-  public createLink(certificateId: number, passphrase: string, suffix: string = ''):
+  public createLink(certificateId: number, passphrase: string, suffix?: string = ''):
    { certificateId: number, passphrase: string, link: string } {
     let link = `https://${this.servicesHub.arianeeConfig.deepLink}`;
     
