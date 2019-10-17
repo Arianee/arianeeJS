@@ -153,7 +153,7 @@ Given("user{int} makes certificate{int} {word} with passphrase {word}",
     const wallet = this.store.getUserWallet(userIndex);
     const certificateId = this.store.getToken(tokenIndex);
 
-    return wallet.methods.createCertificateTransferOwnershipLink(certificateId, passphrase);
+    return wallet.methods.createCertificateRequestOwnershipLink(certificateId, passphrase);
   });
 
 Given("user{int} makes certificate{int} {word} without passphrase",
@@ -161,7 +161,7 @@ Given("user{int} makes certificate{int} {word} without passphrase",
     const wallet = this.store.getUserWallet(userIndex);
     const certificateId = this.store.getToken(tokenIndex);
 
-    const linkObject = await wallet.methods.createCertificateTransferOwnershipLink(certificateId);
+    const linkObject = await wallet.methods.createCertificateRequestOwnershipLink(certificateId);
     this.store.storeCustom('linkObject', linkObject);
 
     return;

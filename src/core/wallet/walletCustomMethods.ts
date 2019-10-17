@@ -34,7 +34,7 @@ export class WalletCustomMethods {
       getMyCertificates: this.getMyCertificates,
       balanceOfAria: <any>this.wallet.ariaContract.methods.balanceOf,
       balanceOfGas: this.servicesHub.web3.eth.getBalance,
-      createCertificateTransferOwnershipLink: this.createCertificateTransferOwnershipLink,
+      createCertificateRequestOwnershipLink: this.createCertificateRequestOwnershipLink,
       createCertificateProofLink: this.createCertificateProofLink,
       getCertificateFromLink: this.getCertificateFromLink,
       getCertificateTransferEvents: this.getCertificateTransferEvents,
@@ -252,7 +252,7 @@ export class WalletCustomMethods {
       }));
   }
 
-  private createCertificateTransferOwnershipLink = async (certificateId: number, passphrase?: string) => {
+  private createCertificateRequestOwnershipLink = async (certificateId: number, passphrase?: string) => {
     if (!passphrase) {
       passphrase = this.utils.createPassphrase();
     }
