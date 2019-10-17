@@ -121,7 +121,7 @@ export class Utils {
 
     const methodUrl = url.pathname.split("/");
 
-    const pathName = methodUrl[methodUrl.length-1].substr(1);
+    const pathName = methodUrl[methodUrl.length-1];
 
     const certificateId = parseInt(pathName.split(",")[0]);
     const passphrase = pathName.split(",")[1];
