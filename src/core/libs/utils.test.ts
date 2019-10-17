@@ -14,9 +14,23 @@ describe("UTILS", () => {
       const passphrase = 'mypassaezfkzn';
       const linkObject = utils.readLink(`https://test.arian.ee/${certificateId},${passphrase}`);
       expect(linkObject).toEqual({
-        certificateId: certificateId, passphrase
+        certificateId: certificateId, passphrase, method: 'requestOwnership'
       });
     });
+    test('it should return passphrase and certificateId from link and proof method', () => {
+      const servicesHubStub: ServicesHub = <ServicesHub>{
+        arianeeConfig: {
+          "deepLink": "test.arian.ee"
+        }
+      };
+      const utils = new Utils(undefined, servicesHubStub);
+      const certificateId = 1314;
+      const passphrase = 'mypassaezfkzn';
+      const linkObject = utils.readLink(`https://test.arian.ee/proof/${certificateId},${passphrase}`);
+      expect(linkObject).toEqual({
+        certificateId: certificateId, passphrase, method: 'proof'
+      });
+    });    
     test('readlink should be linked with createLink', () => {
       const servicesHubStub: ServicesHub = <ServicesHub>{
         arianeeConfig: {

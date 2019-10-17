@@ -267,7 +267,7 @@ export class WalletCustomMethods {
     }
     await this.setPassphrase(certificateId, passphrase, 2);
 
-    return this.utils.createLink(certificateId, passphrase);
+    return this.utils.createLink(certificateId, passphrase,'proof');
   }
 
   private async setPassphrase(certificateId: number, passphrase: string, type: number) {
