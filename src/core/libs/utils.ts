@@ -94,8 +94,16 @@ export class Utils {
     }
   }
 
-  public createLink(certificateId, passphrase): { certificateId: number, passphrase: string, link: string } {
-    const link = `https://${this.servicesHub.arianeeConfig.deepLink}/${certificateId},${passphrase}`;
+  public createLink(certificateId: number, passphrase: string, suffix: string = ''): { certificateId: number, passphrase: string, link: string } {
+    let link = `https://${this.servicesHub.arianeeConfig.deepLink}`;
+    
+    
+    if (suffix) {
+      link = link + '/' + suffix;
+    }
+
+    link = link + `/${certificateId},${passphrase}`;
+
 
     return {
       certificateId: certificateId,
@@ -107,13 +115,23 @@ export class Utils {
   public readLink(link) {
     const url = this.simplifiedParsedURL(link);
 
+
     this.isRightChain(url.hostname);
 
-    const pathName = url.pathname.substr(1);
+    const methodUrl = url.pathname.split("/");
+
+    const pathName = methodUrl[methodUrl.length-1].substr(1);
+
     const certificateId = parseInt(pathName.split(",")[0]);
     const passphrase = pathName.split(",")[1];
 
+    let method = 'requestOwnership';
+
+    if (methodUrl.length>2)
+      method = methodUrl[1];
+
     return {
+      method: method,
       certificateId: certificateId,
       passphrase
 
