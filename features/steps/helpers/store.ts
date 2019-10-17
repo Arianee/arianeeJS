@@ -19,8 +19,8 @@ export class CCStore {
         return this.tokens[tokenIndex];
     }
 
-    public storeToken(tokenIndex, tokenId: number) {
-        this.tokens[tokenIndex] = tokenId;
+    public storeToken(tokenIndex, certificateId: number) {
+        this.tokens[tokenIndex] = certificateId;
     }
 
     public storeCustom(key, value) {

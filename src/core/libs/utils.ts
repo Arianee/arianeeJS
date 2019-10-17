@@ -5,14 +5,14 @@ export class Utils {
   constructor(private web3, private servicesHub: ServicesHub) { }
 
   public signProofForRequestToken(
-    tokenId: number,
+    certificateId: number,
     publicKeyNextOwner: string,
     privateKeyPreviousOwner: string
   ) {
     const data = this.web3.utils.keccak256(
       this.web3.eth.abi.encodeParameters(
         ["uint", "address"],
-        [tokenId, publicKeyNextOwner]
+        [certificateId, publicKeyNextOwner]
       )
     );
 
@@ -20,10 +20,10 @@ export class Utils {
   }
 
   public signProofForRpc(
-    tokenId:number,
+    certificateId:number,
     privateKey:string
   ) {
-    const message = {tokenId:tokenId,timestamp: Math.round(new Date().valueOf()/1000)};
+    const message = {certificateId:certificateId,timestamp: Math.round(new Date().valueOf()/1000)};
 
     return this.signProof( JSON.stringify(message), privateKey);
   }
@@ -94,11 +94,11 @@ export class Utils {
     }
   }
 
-  public createLink(tokenId, passphrase): { tokenId: number, passphrase: string, link: string } {
-    const link = `https://${this.servicesHub.arianeeConfig.deepLink}/${tokenId},${passphrase}`;
+  public createLink(certificateId, passphrase): { certificateId: number, passphrase: string, link: string } {
+    const link = `https://${this.servicesHub.arianeeConfig.deepLink}/${certificateId},${passphrase}`;
 
     return {
-      tokenId: tokenId,
+      certificateId: certificateId,
       passphrase: passphrase,
       link
     };
@@ -110,11 +110,11 @@ export class Utils {
     this.isRightChain(url.hostname);
 
     const pathName = url.pathname.substr(1);
-    const tokenId = parseInt(pathName.split(",")[0]);
+    const certificateId = parseInt(pathName.split(",")[0]);
     const passphrase = pathName.split(",")[1];
 
     return {
-      tokenId,
+      certificateId: certificateId,
       passphrase
 
     };

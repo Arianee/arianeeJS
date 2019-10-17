@@ -22,14 +22,14 @@ When(
     const hash = wallet.web3.utils.keccak256("ezofnzefon");
 
     try {
-      const { tokenId } = await wallet.methods.hydrateToken({
+      const { certificateId } = await wallet.methods.createCertificate({
         uri: uri,
         hash
       });
 
       await waitFor();
 
-      this.store.storeToken(tokenIndex, tokenId);
+      this.store.storeToken(tokenIndex, certificateId);
 
       expect(true).equals(true);
     } catch (err) {
@@ -48,7 +48,7 @@ When(
 
     const hash = wallet.web3.utils.keccak256("ezofnzefon");
     try {
-      const { tokenId } = await wallet.methods.hydrateToken({
+      const { certificateId } = await wallet.methods.createCertificate({
         uri: uri,
         hash,
         passphrase: password
@@ -56,7 +56,7 @@ When(
 
       await waitFor();
 
-      this.store.storeToken(tokenIndex, tokenId);
+      this.store.storeToken(tokenIndex, certificateId);
 
       expect(true).equals(true);
     } catch (err) {
@@ -69,14 +69,14 @@ When(
 When(
   "user{int} create a proof in certificate{int} with passphrase {word}",
   async function (userIndex, tokenIndex, password) {
-    const tokenId = this.store.getToken(tokenIndex);
+    const certificateId = this.store.getToken(tokenIndex);
     const wallet = this.store.getUserWallet(userIndex);
 
-    const linkObject = await wallet.methods.createCertificateProofLink(tokenId, password);
+    const linkObject = await wallet.methods.createCertificateProofLink(certificateId, password);
 
     expect(linkObject.passphrase).equals(password);
-    expect(linkObject.tokenId).equals(tokenId);
-    expect(linkObject.link).contain(tokenId);
+    expect(linkObject.certificateId).equals(certificateId);
+    expect(linkObject.link).contain(certificateId);
     expect(linkObject.link).contain(password);
   }
 );
@@ -85,9 +85,9 @@ Then(
   "user{int} can check the proof in certificate{int} with passphrase {word}",
   async function (userIndex, certificateIndex, password) {
     const wallet = this.store.getUserWallet(userIndex);
-    const tokenId = this.store.getToken(certificateIndex);
+    const certificateId = this.store.getToken(certificateIndex);
 
-    const proofIsValid = await wallet.methods.isCertificateProofValid(tokenId, password);
+    const proofIsValid = await wallet.methods.isCertificateProofValid(certificateId, password);
 
     expect(proofIsValid).equals(true);
   }
@@ -97,10 +97,10 @@ Then(
   "user{int} cannot check the proof in certificate{int} with passphrase {word}",
   async function (userIndex, certificateIndex, password) {
     const wallet = this.store.getUserWallet(userIndex);
-    const tokenId = this.store.getToken(certificateIndex);
+    const certificateId = this.store.getToken(certificateIndex);
 
     try {
-      const proofIsValid = await wallet.methods.isCertificateProofValid(tokenId, password);
+      const proofIsValid = await wallet.methods.isCertificateProofValid(certificateId, password);
       expect(true).equals(false);
     }
     catch{
@@ -142,8 +142,8 @@ Then(
 Given("user{int} requests certificate{int} with passprase {word}",
   async function (userIndex, tokenIndex, passphrase) {
     const wallet = this.store.getUserWallet(userIndex);
-    const tokenId = this.store.getToken(tokenIndex);
-    await wallet.methods.requestToken(tokenId, passphrase);
+    const certificateId = this.store.getToken(tokenIndex);
+    await wallet.methods.requestCertificateOwnership(certificateId, passphrase);
     await waitFor();
   }
 );
@@ -151,17 +151,17 @@ Given("user{int} requests certificate{int} with passprase {word}",
 Given("user{int} makes certificate{int} {word} with passphrase {word}",
   async function (userIndex, tokenIndex, actionType, passphrase) {
     const wallet = this.store.getUserWallet(userIndex);
-    const tokenId = this.store.getToken(tokenIndex);
+    const certificateId = this.store.getToken(tokenIndex);
 
-    return wallet.methods.createCertificateTransferLink(tokenId, passphrase);
+    return wallet.methods.createCertificateTransferOwnershipLink(certificateId, passphrase);
   });
 
 Given("user{int} makes certificate{int} {word} without passphrase",
   async function (userIndex, tokenIndex, actionType, ) {
     const wallet = this.store.getUserWallet(userIndex);
-    const tokenId = this.store.getToken(tokenIndex);
+    const certificateId = this.store.getToken(tokenIndex);
 
-    const linkObject = await wallet.methods.createCertificateTransferLink(tokenId);
+    const linkObject = await wallet.methods.createCertificateTransferOwnershipLink(certificateId);
     this.store.storeCustom('linkObject', linkObject);
 
     return;
@@ -170,11 +170,11 @@ Given("user{int} makes certificate{int} {word} without passphrase",
 Given("user{int} requests certificate{int} with the link",
   async function (userIndex, tokenIndex) {
     const wallet = this.store.getUserWallet(userIndex);
-    const tokenId = this.store.getToken(tokenIndex);
+    const certificateId = this.store.getToken(tokenIndex);
 
     const linkObject = this.store.getCustom('linkObject');
 
-    await wallet.methods.requestToken(linkObject.tokenId, linkObject.passphrase);
+    await wallet.methods.requestCertificateOwnership(linkObject.certificateId, linkObject.passphrase);
 
     return;
   });
@@ -182,9 +182,9 @@ Given("user{int} requests certificate{int} with the link",
 Given("user{int} checks if certificate{int} can be requested with passphrase {word}",
   async function (userIndex, tokenIndex, passphrase) {
     const wallet = this.store.getUserWallet(userIndex);
-    const tokenId = this.store.getToken(tokenIndex);
+    const certificateId = this.store.getToken(tokenIndex);
 
-    const isRequestable = await wallet.methods.isCertificateRequestable(tokenId, passphrase);
+    const isRequestable = await wallet.methods.isCertificateOwnershipRequestable(certificateId, passphrase);
     expect(isRequestable).equal(true);
 
     return;
@@ -193,9 +193,9 @@ Given("user{int} checks if certificate{int} can be requested with passphrase {wo
 Given("user{int} checks if certificate{int} can not be requested with passphrase {word}",
   async function (userIndex, tokenIndex, passphrase) {
     const wallet = this.store.getUserWallet(userIndex);
-    const tokenId = this.store.getToken(tokenIndex);
+    const certificateId = this.store.getToken(tokenIndex);
 
-    const isRequestable = await wallet.methods.isCertificateRequestable(tokenId, passphrase);
+    const isRequestable = await wallet.methods.isCertificateOwnershipRequestable(certificateId, passphrase);
     expect(isRequestable).equal(false);
 
     return;
@@ -204,9 +204,9 @@ Given("user{int} checks if certificate{int} can not be requested with passphrase
 Given("user{int} want to see certificate{int} details with passphrase {word}",
   async function (userIndex, tokenIndex, passphrase) {
     const wallet = this.store.getUserWallet(userIndex);
-    const tokenId = this.store.getToken(tokenIndex);
+    const certificateId = this.store.getToken(tokenIndex);
 
-    const certficiateDetails = await wallet.methods.getCertificate(tokenId, passphrase);
+    const certficiateDetails = await wallet.methods.getCertificate(certificateId, passphrase);
     expect(certficiateDetails).to.be.not.undefined;
 
     expect(certficiateDetails.content).to.be.not.undefined;
