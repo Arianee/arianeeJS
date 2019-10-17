@@ -20,15 +20,15 @@ import { CreateWalletWithPOAAndAria } from "./utils/create-wallet";
 
         console.log("hydrate starting");
         const hash = wallet1.web3.utils.keccak256(`ezofnzefon${Date.now()}`);
-        const result = await wallet1.methods.hydrateToken({
+        const result = await wallet1.methods.createCertificate({
             uri: "https://api.myjson.com/bins/cf4ph",
             hash
         });
 
-        const { tokenId, passphrase } = result;
-        console.log(tokenId)
+        const { certificateId, passphrase } = result;
+        console.log(certificateId)
         console.log("hydrate ending");
-        console.log(`https://arian.ee/${tokenId},${passphrase}`);
+        console.log(`https://arian.ee/${certificateId},${passphrase}`);
 
         const nextOwnerWallet = wallet2;
 
@@ -38,7 +38,7 @@ import { CreateWalletWithPOAAndAria } from "./utils/create-wallet";
             .catch(i => console.log("nextOwnerWallet error getting faucet"));
 
         await wallet1.smartAssetContract.methods
-            .ownerOf(tokenId)
+            .ownerOf(certificateId)
             .call()
             .then(currentOwner => {
                 expect(currentOwner).toBe(wallet1.publicKey)
@@ -46,16 +46,16 @@ import { CreateWalletWithPOAAndAria } from "./utils/create-wallet";
 
         console.log("startint request token");
         await nextOwnerWallet.methods
-            .requestToken(tokenId, passphrase)
+            .requestCertificateOwnership(certificateId, passphrase)
             .then(i => console.log("successss requesting token"));
 
         const owner = await wallet1.smartAssetContract.methods
-            .ownerOf(tokenId)
+            .ownerOf(certificateId)
             .call();
 
         expect(owner).toBe(nextOwnerWallet.publicKey)
 
-        await wallet2.getCertificate(tokenId)
+        await wallet2.getCertificate(certificateId)
             .then(i => console.log(i.isOwner))
 
         console.log("FINISH!!");

@@ -8,7 +8,7 @@ const createASimpleCertificate = async () => {
   );
 
   const hash = wallet.web3.utils.keccak256(`ezofnzefon${Date.now()}`);
-  const result = await wallet.methods.hydrateToken({
+  const result = await wallet.methods.createCertificate({
     uri: "http://localhost:3000/mycertificate.json",
     certificate: {
       $schema: "https://cert.arianee.org/version1/ArianeeAsset.json",
@@ -41,8 +41,8 @@ const createASimpleCertificate = async () => {
     }
   });
 
-  const { tokenId, passphrase, ...rest } = result;
-  console.log(tokenId, passphrase);
+  const { certificateId, passphrase, ...rest } = result;
+  console.log(certificateId, passphrase);
   console.log("success")
 };
 
@@ -60,31 +60,31 @@ const createAndTransfertCertificates = async () => {
 
   console.log("hydrate starting");
   const hash = wallet1.web3.utils.keccak256(`ezofnzefon${Date.now()}`);
-  const result = await wallet1.methods.hydrateToken({
+  const result = await wallet1.methods.createCertificate({
     uri: "https://api.myjson.com/bins/cf4ph",
     hash
   });
 
-  const { tokenId, passphrase } = result;
-  console.log(tokenId,passphrase);
+  const { certificateId, passphrase } = result;
+  console.log(certificateId,passphrase);
   console.log("hydrate ending");
-  console.log(`https://arian.ee/${tokenId},${passphrase}`);
+  console.log(`https://arian.ee/${certificateId},${passphrase}`);
 
   await wallet1.smartAssetContract.methods
-    .ownerOf(tokenId)
+    .ownerOf(certificateId)
     .call();
 
   console.log("startint request token");
   await nextOwnerWallet.methods
-    .requestToken(tokenId, passphrase)
+    .requestCertificateOwnership(certificateId, passphrase)
     .then(i => console.log("successss requesting token"));
 
   const owner = await wallet1.smartAssetContract.methods
-    .ownerOf(tokenId)
+    .ownerOf(certificateId)
     .call();
 
   await nextOwnerWallet.
-    methods.getCertificate(tokenId)
+    methods.getCertificate(certificateId)
     .then(i => console.log(i.owner.isOwner));
 
   console.log("FINISH!!");
@@ -98,23 +98,23 @@ const getAllCertificates = async () => {
   console.log("result", result);
 };
 
-const getCertificate = async (tokenId, passphrase) => {
+const getCertificate = async (certificateId, passphrase) => {
   const wallet = await CreateWalletWithPOAAndAria(
     "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
   );
-  const result = await wallet.methods.getCertificate(tokenId, passphrase);
+  const result = await wallet.methods.getCertificate(certificateId, passphrase);
   console.log("certificate", result);
   return;
 };
 
-const asynEvent = async (tokenId) => {
+const asynEvent = async (certificateId) => {
   const wallet = await CreateWalletWithPOAAndAria(
     "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
   );
 
   /*
   
-    const uri = await wallet.eventContract.methods.getEvent(tokenId).call()
+    const uri = await wallet.eventContract.methods.getEvent(certificateId).call()
   
     await wallet.storeContract.methods.buyCredit(2, 5, wallet.publicKey).send();
   
@@ -143,11 +143,11 @@ const asynEvent = async (tokenId) => {
 };
 
 
-const getCertificateTransferEvents = async(tokenId)=>{
+const getCertificateTransferEvents = async(certificateId)=>{
     const wallet = await CreateWalletWithPOAAndAria(
         "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
     );
-    const events = await wallet.methods.getCertificateTransferEvents(tokenId);
+    const events = await wallet.methods.getCertificateTransferEvents(certificateId);
     //console.log("transferEvents", events);
 
 };
@@ -174,24 +174,24 @@ const test = async () => {
 }
 test();
 
-const readProof = async (tokenId) => {
+const readProof = async (certificateId) => {
 
   const wallet = await CreateWalletWithPOAAndAria(
     "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
   );
 
-  const proofLink = await wallet.methods.createCertificateProofLink(tokenId);
+  const proofLink = await wallet.methods.createCertificateProofLink(certificateId);
 
-  const proofIsValid = await wallet.methods.isCertificateProofValid(tokenId, proofLink.passphrase);
+  const proofIsValid = await wallet.methods.isCertificateProofValid(certificateId, proofLink.passphrase);
   console.log(proofIsValid)
 };
 
 
-const getArianeeEvents = async(tokenId, passphrase)=>{
+const getArianeeEvents = async(certificateId, passphrase)=>{
   const wallet = await CreateWalletWithPOAAndAria(
     "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
   );
-  const events = await wallet.methods.getCertificateTransferEvents(tokenId);
+  const events = await wallet.methods.getCertificateTransferEvents(certificateId);
   console.log("transferEvents", events);
 
 };

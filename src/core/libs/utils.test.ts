@@ -3,18 +3,18 @@ import { Utils } from './utils';
 
 describe("UTILS", () => {
   describe('readLink', () => {
-    test('it should return passphrase and tokenId from link', () => {
+    test('it should return passphrase and certificateId from link', () => {
       const servicesHubStub: ServicesHub = <ServicesHub>{
         arianeeConfig: {
           "deepLink": "test.arian.ee"
         }
       };
       const utils = new Utils(undefined, servicesHubStub);
-      const tokenId = 1314;
+      const certificateId = 1314;
       const passphrase = 'mypassaezfkzn';
-      const linkObject = utils.readLink(`https://test.arian.ee/${tokenId},${passphrase}`);
+      const linkObject = utils.readLink(`https://test.arian.ee/${certificateId},${passphrase}`);
       expect(linkObject).toEqual({
-        tokenId, passphrase
+        certificateId: certificateId, passphrase
       });
     });
     test('readlink should be linked with createLink', () => {
@@ -24,16 +24,16 @@ describe("UTILS", () => {
         }
       };
       const utils = new Utils(undefined, servicesHubStub);
-      const tokenId = 1314;
+      const certificateId = 1314;
       const passphrase = 'mypassaezfkzn';
-      const linkObject = utils.createLink(tokenId, passphrase);
+      const linkObject = utils.createLink(certificateId, passphrase);
 
-      expect(linkObject.tokenId).toBe(tokenId);
+      expect(linkObject.certificateId).toBe(certificateId);
       expect(linkObject.passphrase).toBe(passphrase);
 
       const transform2 = utils.readLink(linkObject.link);
 
-      expect(transform2.tokenId).toBe(tokenId);
+      expect(transform2.certificateId).toBe(certificateId);
       expect(transform2.passphrase).toBe(passphrase);
 
     });
