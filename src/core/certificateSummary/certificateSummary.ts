@@ -79,7 +79,7 @@ export interface CertificateAdvanced {
 
 export interface CertificateSummary {
   content?: CertificiateContent;
-  isTransferable?: boolean;
+  isRequestable?: boolean;
   issuer?: CertificateIssuer;
   owner?: CertificateOwner;
   events?: CertificateEvents;
@@ -100,7 +100,7 @@ export interface ConsolidatedArianeeEventsRequest {
 }
 
 export interface ConsolidatedCertificateRequest {
-  isTransferable?: boolean;
+  isRequestable?: boolean;
   content?: boolean;
   issuer?: boolean;
   owner?: boolean;

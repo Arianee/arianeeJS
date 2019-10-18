@@ -19,7 +19,7 @@ export class CertificateSummaryBuilder {
   private _content: CertificiateContent;
   private _events: CertificateEvents;
   private _issuer: CertificateIssuer;
-  private _isTransferable: boolean;
+  private _isRequestable: boolean;
   private _owner: CertificateOwner;
   private _advanced: CertificateAdvanced;
 
@@ -52,8 +52,8 @@ export class CertificateSummaryBuilder {
     return this;
   }
 
-  public setIsTransferable(isTransferable): CertificateSummaryBuilder {
-    this._isTransferable = isTransferable;
+  public setIsRequestable(isRequestable): CertificateSummaryBuilder {
+    this._isRequestable = isRequestable;
 
     return this;
   }
@@ -88,7 +88,7 @@ export class CertificateSummaryBuilder {
     const arianeCertificate: CertificateSummary = {
       content: this._content,
       issuer: this._issuer,
-      isTransferable: this._isTransferable,
+      isRequestable: this._isRequestable,
       owner: this._owner,
       events: this._events,
       advanced: this._advanced
