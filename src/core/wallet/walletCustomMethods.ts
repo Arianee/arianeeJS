@@ -342,7 +342,8 @@ export class WalletCustomMethods {
       const proofValid = await this.isProofValid(certificateId, passphrase, tokenType);
 
       if (!proofValid) {
-        return reject('Proof is not valid');
+        console.log('Proof is not valid')
+        return resolve(false);
       }
 
       const events = await this.wallet.smartAssetContract
@@ -362,14 +363,16 @@ export class WalletCustomMethods {
       const eventBlock = await this.servicesHub.web3.eth.getBlock(lastEvent.blockNumber);
 
       if (!this.utils.timestampIsMoreRecentThan(eventBlock.timestamp, validity)) {
-        return reject('Proof is too old');
+        console.log('Proof is too old')
+        return resolve(false);        
       }
       const lastEventTransaction = await this.servicesHub.web3.eth
         .getTransaction(lastEvent.transactionHash);
 
       const actualOwner = await this.wallet.smartAssetContract.methods.ownerOf(certificateId).call();
       if (lastEventTransaction.from != actualOwner) {
-        return reject('Proof creator is not owner anymore');
+        console.log('Proof creator is not owner anymore')
+        return resolve(false);            
       }
 
       return resolve(true);
