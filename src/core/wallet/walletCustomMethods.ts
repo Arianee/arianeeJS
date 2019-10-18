@@ -14,6 +14,7 @@ import { ServicesHub } from "../servicesHub";
 import { CertificateDetails } from './customMethods/certificatesDetails';
 import {IdentityService} from "./customMethods/identityService";
 import { ArianeeWallet } from "./wallet";
+import { ExtendedBoolean } from "models/extendedBoolean";
 
 export class WalletCustomMethods {
   private servicesHub: ServicesHub;
@@ -51,14 +52,13 @@ export class WalletCustomMethods {
    * @param certificateId
    * @param passphrase
    */
-  private isCertificateOwnershipRequestable = async (certificateId, passphrase): Promise<boolean> => {
+  private isCertificateOwnershipRequestable = async (certificateId, passphrase): Promise<ExtendedBoolean> => {
     try {
       await this.customRequestTokenFactory(certificateId, passphrase).call();
 
-      return true;
+      return {isTrue: true, code: 'certicate.notrequestable', message: 'certificate is not requestable'};
     } catch (err) {
-
-      return false;
+      return {isTrue: false, code: 'certicate.requestable', message: 'certificate is requestable'};
     }
   }
 
@@ -154,9 +154,9 @@ export class WalletCustomMethods {
       response.setIssuer(identityDetails.isAuthentic, identityDetails.isApproved, identityDetails);
     }
 
-    if (isNullOrUndefined(query) || query.isTransferable) {
+    if (isNullOrUndefined(query) || query.isRequestable) {
       const requestableFactory = () => this.isCertificateOwnershipRequestable(certificateId, passphrase)
-        .then(isRequestable => response.setIsTransferable(isRequestable));
+        .then(isRequestable => response.setIsRequestable(isRequestable.isTrue));
 
       requestQueue.push(requestableFactory);
 
@@ -313,7 +313,7 @@ export class WalletCustomMethods {
         .then(identity => ({ ...event, identity: identity }))));
   }
 
-  private isCertificateProofValid = async (certificateId: number, passphrase: string): Promise<boolean> => {
+  private isCertificateProofValid = async (certificateId: number, passphrase: string): Promise<ExtendedBoolean> => {
     return this.isProofValidSince(certificateId, passphrase, 2, 300);
   }
 
@@ -334,7 +334,7 @@ export class WalletCustomMethods {
     passphrase: string,
     tokenType: number,
     validity: number
-  ): Promise<boolean> => {
+  ): Promise<ExtendedBoolean> => {
     return new Promise(async (resolve, reject) => {
       const tokenHashedAccess = await this.wallet.smartAssetContract.methods.tokenHashedAccess(certificateId, tokenType)
         .call();
@@ -342,7 +342,7 @@ export class WalletCustomMethods {
       const proofValid = await this.isProofValid(certificateId, passphrase, tokenType);
 
       if (!proofValid) {
-        return reject('Proof is not valid');
+        return resolve({isTrue:false, code:'proof.token.dontmatch', message: 'token proof does not match'});
       }
 
       const events = await this.wallet.smartAssetContract
@@ -362,17 +362,16 @@ export class WalletCustomMethods {
       const eventBlock = await this.servicesHub.web3.eth.getBlock(lastEvent.blockNumber);
 
       if (!this.utils.timestampIsMoreRecentThan(eventBlock.timestamp, validity)) {
-        return reject('Proof is too old');
+        return resolve({isTrue:false, code:'proof.token.tooold', message: 'token proof does not match'});
       }
       const lastEventTransaction = await this.servicesHub.web3.eth
         .getTransaction(lastEvent.transactionHash);
 
       const actualOwner = await this.wallet.smartAssetContract.methods.ownerOf(certificateId).call();
       if (lastEventTransaction.from != actualOwner) {
-        return reject('Proof creator is not owner anymore');
+        return resolve({isTrue:false, code:'proof.token.notowner', message: 'token proof does not match'});
       }
-
-      return resolve(true);
+      return resolve({isTrue:true, code:'proof.token.valid', message: 'proof is valid'});
     });
   }
 

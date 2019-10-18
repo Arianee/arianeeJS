@@ -89,7 +89,7 @@ Then(
 
     const proofIsValid = await wallet.methods.isCertificateProofValid(certificateId, password);
 
-    expect(proofIsValid).equals(true);
+    expect(proofIsValid.isTrue).equal(true);
   }
 );
 
@@ -99,13 +99,8 @@ Then(
     const wallet = this.store.getUserWallet(userIndex);
     const certificateId = this.store.getToken(certificateIndex);
 
-    try {
-      const proofIsValid = await wallet.methods.isCertificateProofValid(certificateId, password);
-      expect(true).equals(false);
-    }
-    catch{
-      expect(true).equals(true);
-    }
+    const proofIsValid = await wallet.methods.isCertificateProofValid(certificateId, password);
+    expect(proofIsValid.isTrue).equal(false);
 
   }
 );
@@ -185,7 +180,7 @@ Given("user{int} checks if certificate{int} can be requested with passphrase {wo
     const certificateId = this.store.getToken(tokenIndex);
 
     const isRequestable = await wallet.methods.isCertificateOwnershipRequestable(certificateId, passphrase);
-    expect(isRequestable).equal(true);
+    expect(isRequestable.isTrue).equal(true);
 
     return;
   });
@@ -196,7 +191,7 @@ Given("user{int} checks if certificate{int} can not be requested with passphrase
     const certificateId = this.store.getToken(tokenIndex);
 
     const isRequestable = await wallet.methods.isCertificateOwnershipRequestable(certificateId, passphrase);
-    expect(isRequestable).equal(false);
+    expect(isRequestable.isTrue).equal(false);
 
     return;
   });

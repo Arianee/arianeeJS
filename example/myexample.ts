@@ -160,7 +160,7 @@ const test = async () => {
   try {
 
     const certificate = await wallet.methods.getCertificate(72520, undefined, {
-      isTransferable: false,
+      isRequestable: false,
       content: true,
       issuer: false,
       owner: false,
