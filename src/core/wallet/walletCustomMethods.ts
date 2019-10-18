@@ -188,7 +188,7 @@ export class WalletCustomMethods {
     passphrase?: string;
     tokenRecoveryTimestamp?: number | number;
     sameRequestOwnershipPassphrase?: boolean;
-    certificate?: { $schema: string;[key: string]: any };
+    content?: { $schema: string;[key: string]: any };
   }): Promise<any> => {
     let {
       uri,
@@ -197,7 +197,7 @@ export class WalletCustomMethods {
       passphrase,
       tokenRecoveryTimestamp,
       sameRequestOwnershipPassphrase,
-      certificate
+      content
     } = data;
 
     // hash=
@@ -219,19 +219,19 @@ export class WalletCustomMethods {
     const temporaryWallet = this.servicesHub.walletFactory().fromPassPhrase(passphrase);
 
     console.assert(
-      !(hash && certificate),
+      !(hash && content),
       "you should choose between hash and certificate"
     );
     console.assert(
-      !(isNullOrUndefined(hash) && isNullOrUndefined(certificate)),
+      !(isNullOrUndefined(hash) && isNullOrUndefined(content)),
       "you should pass at least on parameter"
     );
 
-    if (certificate) {
+    if (content) {
       const certificateSchema = await this.servicesHub.httpClient
-        .fetch(certificate.$schema);
+        .fetch(content.$schema);
 
-      hash = await this.utils.cert(certificateSchema, certificate);
+      hash = await this.utils.cert(certificateSchema, content);
     }
 
     return this.wallet.storeContract.methods
