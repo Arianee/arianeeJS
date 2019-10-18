@@ -10,7 +10,7 @@ const createASimpleCertificate = async () => {
   const hash = wallet.web3.utils.keccak256(`ezofnzefon${Date.now()}`);
   const result = await wallet.methods.createCertificate({
     uri: "http://localhost:3000/mycertificate.json",
-    certificate: {
+    content: {
       $schema: "https://cert.arianee.org/version1/ArianeeAsset.json",
       name: "Arianee",
       v: "0.1",
