@@ -360,7 +360,7 @@ export class WalletCustomMethods {
   ): Promise<any> => {
     const sortedEvents = await this.servicesHub.rawContracts.smartAssetContract
       .getPastEvents("Transfer", {
-        filter: { _certificateId: certificateId },
+        filter: { _tokenId: certificateId },
         fromBlock: 0,
         toBlock: "latest"
       })
@@ -432,7 +432,7 @@ export class WalletCustomMethods {
           fromBlock: 0,
           toBlock: "latest",
           filter: {
-            _certificateId: certificateId,
+            _tokenId: certificateId,
             _encryptedTokenKey: tokenHashedAccess,
             _tokenType: tokenType
           }
@@ -483,7 +483,7 @@ export class WalletCustomMethods {
   ): Promise<any[]> => {
     const sortedEvents = await this.servicesHub.rawContracts.eventContract
       .getPastEvents(blockchainEvent.arianeeEvent.eventCreated, {
-        filter: { _certificateId: certificateId },
+        filter: { _tokenId: certificateId },
         fromBlock: 0,
         toBlock: "latest"
       })
@@ -501,7 +501,7 @@ export class WalletCustomMethods {
         sortedEvents.map(async (event: any, index: number) => {
           let requestBody: any = {
             eventId: parseInt(event.returnValues._eventId),
-            certificateId: parseInt(event.returnValues._certificateId)
+            certificateId: parseInt(event.returnValues._tokenId)
           };
 
           let privateKey: string;
