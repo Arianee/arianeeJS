@@ -1,10 +1,10 @@
-import { CertificateId } from '../../../models/CertificateId';
-import { CertificateSummaryBuilder } from '../../certificateSummary';
-import { ArianeeWallet } from '../wallet';
+import {CertificateId} from '../../../models/CertificateId';
+import {CertificateSummaryBuilder} from '../../certificateSummary';
+import {ArianeeWallet} from '../wallet';
 import {IdentityService} from "./identityService";
 
 export class CertificateDetails {
-    constructor(private wallet: ArianeeWallet, private identityService:IdentityService) {
+    constructor(private wallet: ArianeeWallet, private identityService: IdentityService) {
 
     }
 
@@ -34,16 +34,16 @@ export class CertificateDetails {
         const identity = await this.identityService.getIdentity(issuer);
 
         return this.wallet.servicesHub.httpClient.RPCCall(
-          identity.data.rpcEndpoint,
-          "certificate.read",
-          {
-            certificateId: certificateId,
-            authentification: {
-              hash: proof.messageHash,
-              signature: proof.signature,
-              message: proof.message
-            }
-          });
+            identity.data.rpcEndpoint,
+            "certificate.read",
+            {
+                certificateId: certificateId,
+                authentification: {
+                    hash: proof.messageHash,
+                    signature: proof.signature,
+                    message: proof.message
+                }
+            });
     }
 
     private getCertificateContent = (certificateURI, certificateId, proof) => {
