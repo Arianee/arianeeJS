@@ -56,9 +56,9 @@ export class WalletCustomMethods {
     try {
       await this.customRequestTokenFactory(certificateId, passphrase).call();
 
-      return {isTrue: true, code: 'certicate.notrequestable', message: 'certificate is not requestable'};
+      return {isTrue: true, code: 'certicate.requestable', message: 'certificate is requestable'};
     } catch (err) {
-      return {isTrue: false, code: 'certicate.requestable', message: 'certificate is requestable'};
+      return {isTrue: false, code: 'certicate.notrequestable', message: 'certificate is not requestable'};
     }
   }
 
