@@ -1,4 +1,3 @@
-export interface ArianeeProtocolI{
-     connect:Function;
-
+export interface ArianeeProtocolI {
+  connect: Function;
 }

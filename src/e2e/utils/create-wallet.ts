@@ -3,7 +3,7 @@ import { waitFor } from "../../../features/steps/helpers/waitFor";
 import { Arianee } from "../../core/arianee";
 import { ArianeeWallet } from "../../core/wallet";
 
-export async function CreateWalletWithPOAAndAria(
+export async function CreateWalletWithPOAAndAria (
   fromPrivateKey?: string,
   force = false
 ): Promise<ArianeeWallet> {
@@ -27,8 +27,7 @@ export async function CreateWalletWithPOAAndAria(
   assert.ok(poaBalance > 0, `POA faucet not working.`);
 
   if (ariaBalance == 0 || force) {
-    await wallet
-      .getAria();
+    await wallet.getAria();
 
     ariaBalance = await wallet.ariaContract.methods
       .balanceOf(wallet.publicKey)

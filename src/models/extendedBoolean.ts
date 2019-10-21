@@ -1,1 +1,5 @@
-export interface ExtendedBoolean {isTrue:boolean, code: string, message: string}
+export interface ExtendedBoolean {
+  isTrue: boolean;
+  code: string;
+  message: string;
+}

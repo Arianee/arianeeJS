@@ -1,4 +1,3 @@
-
 import { thisExpression } from "@babel/types";
 import { isNullOrUndefined } from "util";
 import { sortEvents } from "../libs/sortEvents";
@@ -22,9 +21,12 @@ export class CertificateSummaryBuilder {
   private _owner: CertificateOwner;
   private _advanced: CertificateAdvanced;
 
-  constructor(private wallet: ArianeeWallet) { }
+  constructor (private wallet: ArianeeWallet) {}
 
-  public setContent(data: CertificateContent, isAuthentic: boolean): CertificateSummaryBuilder {
+  public setContent (
+    data: CertificateContent,
+    isAuthentic: boolean
+  ): CertificateSummaryBuilder {
     this._content = {
       data,
       isAuthentic
@@ -33,7 +35,7 @@ export class CertificateSummaryBuilder {
     return this;
   }
 
-  public setArianeeEvents(events: any[]): CertificateSummaryBuilder {
+  public setArianeeEvents (events: any[]): CertificateSummaryBuilder {
     if (isNullOrUndefined(this._events)) {
       this._events = new CertificateEventsSummary();
     }
@@ -42,7 +44,7 @@ export class CertificateSummaryBuilder {
     return this;
   }
 
-  public setEvents(events: any[]): CertificateSummaryBuilder {
+  public setEvents (events: any[]): CertificateSummaryBuilder {
     if (isNullOrUndefined(this._events)) {
       this._events = new CertificateEventsSummary();
     }
@@ -51,13 +53,17 @@ export class CertificateSummaryBuilder {
     return this;
   }
 
-  public setIsRequestable(isRequestable): CertificateSummaryBuilder {
+  public setIsRequestable (isRequestable): CertificateSummaryBuilder {
     this._isRequestable = isRequestable;
 
     return this;
   }
 
-  public setIssuer(isIdentityAuthentic, isIdentityVerified, identity?): CertificateSummaryBuilder {
+  public setIssuer (
+    isIdentityAuthentic,
+    isIdentityVerified,
+    identity?
+  ): CertificateSummaryBuilder {
     this._issuer = {
       identity,
       isIdentityAuthentic,
@@ -67,23 +73,24 @@ export class CertificateSummaryBuilder {
     return this;
   }
 
-  public setAdvandced(advanded: CertificateAdvanced): CertificateSummaryBuilder {
-
+  public setAdvandced (
+    advanded: CertificateAdvanced
+  ): CertificateSummaryBuilder {
     this._advanced = advanded;
 
     return this;
   }
 
-  public setOwner(ownerPublicKey: string) {
+  public setOwner (ownerPublicKey: string) {
     this._owner = {
       publicKey: ownerPublicKey,
-      isOwner: ownerPublicKey === this.wallet.publicKey,
+      isOwner: ownerPublicKey === this.wallet.publicKey
     };
 
     return this;
   }
 
-  build(): CertificateSummary {
+  build (): CertificateSummary {
     const arianeCertificate: CertificateSummary = {
       content: this._content,
       issuer: this._issuer,

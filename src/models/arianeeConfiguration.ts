@@ -1,4 +1,3 @@
-
 export interface Contract {
   abi: string;
   address: string;

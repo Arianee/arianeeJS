@@ -178,10 +178,10 @@ const getAllMyCertificates = async () => {
     try {
         console.log('fetching certificate');
         const certificate = await wallet.methods.getMyCertificates({
-            isRequestable: true,
-            content: true,
+            isRequestable: false,
+            content: false,
             issuer: true,
-            owner: true,
+            owner: false,
             events: false,
             advanced: false,
         });

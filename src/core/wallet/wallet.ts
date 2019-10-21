@@ -32,7 +32,11 @@ export class ArianeeWallet {
 
   public walletRewardAddress = "0x39da7e30d2D5F2168AE3B8599066ab122680e1ef";
 
-  constructor(public servicesHub: ServicesHub, private _account, private _mnemonic?) {
+  constructor (
+    public servicesHub: ServicesHub,
+    private _account,
+    private _mnemonic?
+  ) {
     this.smartAssetContract = new ArianeeContract<ArianeeSmartAsset>(
       this.servicesHub.rawContracts.smartAssetContract,
       this,
@@ -84,35 +88,35 @@ export class ArianeeWallet {
     }
   }
 
-  public get publicKey(): string {
+  public get publicKey (): string {
     return this.account.address;
   }
 
-  public get privateKey(): string {
+  public get privateKey (): string {
     return this.account.privateKey;
   }
 
-  public get mnemnonic(): string {
+  public get mnemnonic (): string {
     return this._mnemonic;
   }
 
-  public get web3() {
+  public get web3 () {
     return this.servicesHub.web3;
   }
 
-  public get account() {
+  public get account () {
     return this._account;
   }
 
-  public get methods() {
+  public get methods () {
     return this.customMethods.getMethods();
   }
 
-  public get getFaucet() {
+  public get getFaucet () {
     return this.customMethods.getFaucet;
   }
 
-  public get getAria() {
+  public get getAria () {
     return this.customMethods.getAria;
   }
 }

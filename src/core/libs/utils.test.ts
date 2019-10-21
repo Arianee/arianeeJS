@@ -1,45 +1,53 @@
-import { ServicesHub } from '../servicesHub';
-import { Utils } from './utils';
+import { ServicesHub } from "../servicesHub";
+import { Utils } from "./utils";
 
 describe("UTILS", () => {
-  describe('readLink', () => {
-    test('it should return passphrase and certificateId from link', () => {
+  describe("readLink", () => {
+    test("it should return passphrase and certificateId from link", () => {
       const servicesHubStub: ServicesHub = <ServicesHub>{
         arianeeConfig: {
-          "deepLink": "test.arian.ee"
+          deepLink: "test.arian.ee"
         }
       };
       const utils = new Utils(undefined, servicesHubStub);
       const certificateId = 1314;
-      const passphrase = 'mypassaezfkzn';
-      const linkObject = utils.readLink(`https://test.arian.ee/${certificateId},${passphrase}`);
+      const passphrase = "mypassaezfkzn";
+      const linkObject = utils.readLink(
+        `https://test.arian.ee/${certificateId},${passphrase}`
+      );
       expect(linkObject).toEqual({
-        certificateId: certificateId, passphrase, method: 'requestOwnership'
+        certificateId: certificateId,
+        passphrase,
+        method: "requestOwnership"
       });
     });
-    test('it should return passphrase and certificateId from link and proof method', () => {
+    test("it should return passphrase and certificateId from link and proof method", () => {
       const servicesHubStub: ServicesHub = <ServicesHub>{
         arianeeConfig: {
-          "deepLink": "test.arian.ee"
+          deepLink: "test.arian.ee"
         }
       };
       const utils = new Utils(undefined, servicesHubStub);
       const certificateId = 1314;
-      const passphrase = 'mypassaezfkzn';
-      const linkObject = utils.readLink(`https://test.arian.ee/proof/${certificateId},${passphrase}`);
+      const passphrase = "mypassaezfkzn";
+      const linkObject = utils.readLink(
+        `https://test.arian.ee/proof/${certificateId},${passphrase}`
+      );
       expect(linkObject).toEqual({
-        certificateId: certificateId, passphrase, method: 'proof'
+        certificateId: certificateId,
+        passphrase,
+        method: "proof"
       });
-    });    
-    test('readlink should be linked with createLink', () => {
+    });
+    test("readlink should be linked with createLink", () => {
       const servicesHubStub: ServicesHub = <ServicesHub>{
         arianeeConfig: {
-          "deepLink": "test.arian.ee"
+          deepLink: "test.arian.ee"
         }
       };
       const utils = new Utils(undefined, servicesHubStub);
       const certificateId = 1314;
-      const passphrase = 'mypassaezfkzn';
+      const passphrase = "mypassaezfkzn";
       const linkObject = utils.createLink(certificateId, passphrase);
 
       expect(linkObject.certificateId).toBe(certificateId);
@@ -49,34 +57,33 @@ describe("UTILS", () => {
 
       expect(transform2.certificateId).toBe(certificateId);
       expect(transform2.passphrase).toBe(passphrase);
-
     });
   });
 
-  describe('isRightEnvironement', () => {
-    test('it should return true if same chain as current wallet', () => {
+  describe("isRightEnvironement", () => {
+    test("it should return true if same chain as current wallet", () => {
       const servicesHubStub: ServicesHub = <ServicesHub>{
         arianeeConfig: {
-          "deepLink": "test.arian.ee"
+          deepLink: "test.arian.ee"
         }
       };
       const utils = new Utils(undefined, servicesHubStub);
 
-      expect(utils.isRightChain('test.arian.ee')).toBe(true);
+      expect(utils.isRightChain("test.arian.ee")).toBe(true);
     });
 
-    test('it should throw an error if wrong chain as current wallet', () => {
+    test("it should throw an error if wrong chain as current wallet", () => {
       const servicesHubStub: ServicesHub = <ServicesHub>{
         arianeeConfig: {
-          "deepLink": "test.arian.ee"
+          deepLink: "test.arian.ee"
         }
       };
       const utils = new Utils(undefined, servicesHubStub);
 
       try {
-        utils.isRightChain('arian.ee');
+        utils.isRightChain("arian.ee");
         expect(true).toBe(false);
-      } catch{
+      } catch {
         expect(true).toBe(true);
       }
     });
@@ -84,10 +91,11 @@ describe("UTILS", () => {
 
   describe("urlParse", () => {
     const utils = new Utils(undefined, undefined);
-    test('it should parse complicated url', () => {
-      const myURL="http://username:password@localhost:257/deploy/?asd=asd#asd";
+    test("it should parse complicated url", () => {
+      const myURL =
+        "http://username:password@localhost:257/deploy/?asd=asd#asd";
 
-      const url=new URL(myURL);
+      const url = new URL(myURL);
       const parsedURL = utils.simplifiedParsedURL(myURL);
 
       expect(parsedURL.hostname).toBe(url.hostname);
@@ -98,31 +106,31 @@ describe("UTILS", () => {
       expect(parsedURL.search).toBe(url.search);
     });
 
-    test('it should parse classic arianee url', () => {
-      
-      const myURL="https://test.arian.ee/722377,ivrsesj4c4nd";
+    test("it should parse classic arianee url", () => {
+      const myURL = "https://test.arian.ee/722377,ivrsesj4c4nd";
 
       const parsedURL = utils.simplifiedParsedURL(myURL);
-      const url=new URL(myURL);
+      const url = new URL(myURL);
 
       expect(parsedURL.hostname).toBe(url.hostname);
       expect(parsedURL.pathname).toBe(url.pathname);
       expect(parsedURL.protocol).toBe(url.protocol);
     });
-
   });
 
-  describe('timestampIsMoreRecentThan', ()=>{
+  describe("timestampIsMoreRecentThan", () => {
     const utils = new Utils(undefined, undefined);
-    test('it should return true if timestamp is recent', ()=>{
-      const testTimestamp = Math.round((new Date().valueOf() - 3000)/1000); // now - 3 secondes (in seconds)
+    test("it should return true if timestamp is recent", () => {
+      const testTimestamp = Math.round((new Date().valueOf() - 3000) / 1000); // now - 3 secondes (in seconds)
       const isRecent = utils.timestampIsMoreRecentThan(testTimestamp, 300); // test if timestamp is > (now - 3 minutes)
 
       expect(isRecent).toBe(true);
     });
 
-    test('it should return false if timestamp is old',()=>{
-      const testTimestamp = Math.round((new Date().valueOf() - (24*60*60*1000))/1000); // now - 1 day (in seconds)
+    test("it should return false if timestamp is old", () => {
+      const testTimestamp = Math.round(
+        (new Date().valueOf() - 24 * 60 * 60 * 1000) / 1000
+      ); // now - 1 day (in seconds)
       const isRecent = utils.timestampIsMoreRecentThan(testTimestamp, 300); // test if timestamp is > (now - 3 minutes)
 
       expect(isRecent).toBe(false);

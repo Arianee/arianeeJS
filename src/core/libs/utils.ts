@@ -2,9 +2,9 @@ import { Cert } from "@0xcert/cert";
 import { ServicesHub } from "../servicesHub";
 
 export class Utils {
-  constructor(private web3, private servicesHub: ServicesHub) { }
+  constructor (private web3, private servicesHub: ServicesHub) {}
 
-  public signProofForRequestToken(
+  public signProofForRequestToken (
     certificateId: number,
     publicKeyNextOwner: string,
     privateKeyPreviousOwner: string
@@ -19,17 +19,19 @@ export class Utils {
     return this.signProof(data, privateKeyPreviousOwner);
   }
 
-  public signProofForRpc(
-    certificateId:number,
-    privateKey:string
-  ) {
-    const message = {certificateId:certificateId,timestamp: Math.round(new Date().valueOf()/1000)};
+  public signProofForRpc (certificateId: number, privateKey: string) {
+    const message = {
+      certificateId: certificateId,
+      timestamp: Math.round(new Date().valueOf() / 1000)
+    };
 
-    return this.signProof( JSON.stringify(message), privateKey);
+    return this.signProof(JSON.stringify(message), privateKey);
   }
 
-  public simplifiedParsedURL(url: string) {
-    const m = url.match(/^(([^:\/?#]+:)?(?:\/\/((?:([^\/?#:]*):([^\/?#:]*)@)?([^\/?#:]*)(?::([^\/?#:]*))?)))?([^?#]*)(\?[^#]*)?(#.*)?$/),
+  public simplifiedParsedURL (url: string) {
+    const m = url.match(
+        /^(([^:\/?#]+:)?(?:\/\/((?:([^\/?#:]*):([^\/?#:]*)@)?([^\/?#:]*)(?::([^\/?#:]*))?)))?([^?#]*)(\?[^#]*)?(#.*)?$/
+      ),
       r = {
         hash: m[10] || "",
         hostname: m[6] || "",
@@ -44,7 +46,7 @@ export class Utils {
     return m && r;
   }
 
-  public createPassphrase() {
+  public createPassphrase () {
     return (
       Math.random()
         .toString(36)
@@ -55,12 +57,11 @@ export class Utils {
     );
   }
 
-  public signProof(data: string | Array<any>, privateKey: string) {
+  public signProof (data: string | Array<any>, privateKey: string) {
     return this.web3.eth.accounts.sign(data, privateKey);
   }
 
-  public async cert(schema, data): Promise<string> {
-
+  public async cert (schema, data): Promise<string> {
     const cert = new Cert({
       schema: schema
     });
@@ -72,7 +73,7 @@ export class Utils {
     return "0x" + certif;
   }
 
-  private cleanObject(obj: any) {
+  private cleanObject (obj: any) {
     for (let propName in obj) {
       if (
         obj[propName] &&
@@ -86,20 +87,23 @@ export class Utils {
     return obj;
   }
 
-  public isRightChain(hostname: string) {
+  public isRightChain (hostname: string) {
     if (hostname === this.servicesHub.arianeeConfig.deepLink) {
       return true;
     } else {
-      throw new Error('You are not in the right chain');
+      throw new Error("You are not in the right chain");
     }
   }
 
-  public createLink(certificateId: number, passphrase: string, suffix?: string):
-   { certificateId: number, passphrase: string, link: string } {
+  public createLink (
+    certificateId: number,
+    passphrase: string,
+    suffix?: string
+  ): { certificateId: number; passphrase: string; link: string } {
     let link = `https://${this.servicesHub.arianeeConfig.deepLink}`;
-    
+
     if (suffix) {
-      link = link + '/' + suffix;
+      link = link + "/" + suffix;
     }
 
     link = link + `/${certificateId},${passphrase}`;
@@ -111,35 +115,33 @@ export class Utils {
     };
   }
 
-  public readLink(link) {
+  public readLink (link) {
     const url = this.simplifiedParsedURL(link);
 
     this.isRightChain(url.hostname);
 
     const methodUrl = url.pathname.split("/");
 
-    const pathName = methodUrl[methodUrl.length-1];
+    const pathName = methodUrl[methodUrl.length - 1];
 
     const certificateId = parseInt(pathName.split(",")[0]);
     const passphrase = pathName.split(",")[1];
 
-    let method = 'requestOwnership';
+    let method = "requestOwnership";
 
-    if (methodUrl.length>2)
-      method = methodUrl[1];
+    if (methodUrl.length > 2) method = methodUrl[1];
 
     return {
       method: method,
       certificateId: certificateId,
       passphrase
-
     };
   }
 
-  public timestampIsMoreRecentThan(timestamp, seconds){
-    const date =  new Date().valueOf();
-    const minTime = date-(seconds*1000);
+  public timestampIsMoreRecentThan (timestamp, seconds) {
+    const date = new Date().valueOf();
+    const minTime = date - seconds * 1000;
 
-    return (timestamp > (minTime/1000));
+    return timestamp > minTime / 1000;
   }
 }
