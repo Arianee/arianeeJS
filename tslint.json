@@ -6,7 +6,8 @@
         "no-consecutive-blank-lines": [true, 1],
         "semicolon": [true, "always"],
         "ordered-imports": true,
-        "no-async-without-await": true
+        "no-async-without-await": true,
+        "indent": [true, "spaces", 4]
 
     }
 }

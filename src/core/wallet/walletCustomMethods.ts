@@ -5,6 +5,7 @@ import {
 } from "../certificateSummary";
 import { Utils } from "../libs/utils";
 
+import { ExtendedBoolean } from "models/extendedBoolean";
 import { IdentitySummary } from "../../models/arianee-identity";
 import { blockchainEvent } from "../../models/blockchainEvents";
 import { CertificateId } from "../../models/CertificateId";
@@ -14,7 +15,6 @@ import { ServicesHub } from "../servicesHub";
 import { CertificateDetails } from './customMethods/certificatesDetails';
 import {IdentityService} from "./customMethods/identityService";
 import { ArianeeWallet } from "./wallet";
-import { ExtendedBoolean } from "models/extendedBoolean";
 
 export class WalletCustomMethods {
   private servicesHub: ServicesHub;
@@ -371,6 +371,7 @@ export class WalletCustomMethods {
       if (lastEventTransaction.from != actualOwner) {
         return resolve({isTrue:false, code:'proof.token.notowner', message: 'token proof does not match'});
       }
+
       return resolve({isTrue:true, code:'proof.token.valid', message: 'proof is valid'});
     });
   }

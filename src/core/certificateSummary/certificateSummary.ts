@@ -1,5 +1,5 @@
-import { sortEvents } from "../libs/sortEvents";
 import { IdentitySummary } from "../../models/arianee-identity";
+import { sortEvents } from "../libs/sortEvents";
 
 export interface Serialnumber {
   type: string;

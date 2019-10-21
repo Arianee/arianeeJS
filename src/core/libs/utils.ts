@@ -98,13 +98,11 @@ export class Utils {
    { certificateId: number, passphrase: string, link: string } {
     let link = `https://${this.servicesHub.arianeeConfig.deepLink}`;
     
-    
     if (suffix) {
       link = link + '/' + suffix;
     }
 
     link = link + `/${certificateId},${passphrase}`;
-
 
     return {
       certificateId: certificateId,
@@ -115,7 +113,6 @@ export class Utils {
 
   public readLink(link) {
     const url = this.simplifiedParsedURL(link);
-
 
     this.isRightChain(url.hostname);
 
