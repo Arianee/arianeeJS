@@ -7,13 +7,12 @@ import {
   CertificateAdvanced,
   CertificateContent,
   CertificateEvents,
+  CertificateEventsSummary,
   CertificateIssuer,
   CertificateOwner,
   CertificateSummary,
-  CertificiateContent,
-  CertificateEventsSummary
+  CertificiateContent
 } from "./certificateSummary";
-
 
 export class CertificateSummaryBuilder {
   private _content: CertificiateContent;
