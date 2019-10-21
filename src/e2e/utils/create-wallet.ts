@@ -9,7 +9,7 @@ export async function CreateWalletWithPOAAndAria(
 ): Promise<ArianeeWallet> {
   let wallet;
   const arianee = new Arianee();
-  const walletMaker = await arianee.connectToProtocol();
+  const walletMaker = await arianee.init();
   if (fromPrivateKey) {
     wallet = walletMaker.fromPrivateKey(fromPrivateKey);
   } else {

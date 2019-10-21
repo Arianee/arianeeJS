@@ -34,11 +34,11 @@ describe('Arianee', () => {
 
         describe('testnet', () => {
             test('should be fetching testnet addresses', async () => {
-                await new Arianee().connectToProtocol(NETWORK.testnet);
+                await new Arianee().init(NETWORK.testnet);
                 expect(myFetchMock).toHaveBeenCalledWith(networkURL.testnet);
             });
             test('should be fetching testnet config', async () => {
-                const arianee = await new Arianee().connectToProtocol(NETWORK.testnet);
+                const arianee = await new Arianee().init(NETWORK.testnet);
                 const { deepLink, faucetUrl } = arianee.fromRandomKey().servicesHub.arianeeConfig;
                 expect(deepLink).toBe(appConfigurations.testnet.deepLink);
                 expect(faucetUrl).toBe(appConfigurations.testnet.faucetUrl);
@@ -46,12 +46,12 @@ describe('Arianee', () => {
         });
         describe('mainet', () => {
             test('should be fetching testnet addresses', async () => {
-                await new Arianee().connectToProtocol(NETWORK.mainnet);
+                await new Arianee().init(NETWORK.mainnet);
                 expect(myFetchMock).toHaveBeenCalledWith(networkURL.mainnet);
             });
 
             test('should be fetching testnet config', async () => {
-                const arianee = await new Arianee().connectToProtocol(NETWORK.mainnet);
+                const arianee = await new Arianee().init(NETWORK.mainnet);
                 const { deepLink, faucetUrl } = arianee.fromRandomKey().servicesHub.arianeeConfig;
                 expect(deepLink).toBe(appConfigurations.mainnet.deepLink);
                 expect(faucetUrl).toBe(appConfigurations.mainnet.faucetUrl);
