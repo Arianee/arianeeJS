@@ -3,7 +3,7 @@ declare var ArianeeLib;
 (async function () {
   const arianee = await new ArianeeLib
     .Arianee()
-    .connectToProtocol();
+    .init();
 
   const wallet = arianee.fromRandomKey();
 

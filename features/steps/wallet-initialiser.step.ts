@@ -42,7 +42,7 @@ Given("user{int} with account from {word} {word}", async function (
   type,
   key
 ) {
-  const arianee = await new Arianee().connectToProtocol();
+  const arianee = await new Arianee().init();
 
   let wallet = walletFactory(arianee, type, key);
 
@@ -56,7 +56,7 @@ Given("user{int} with account from {word} {string}", async function (
   type,
   key
 ) {
-  const arianee = await new Arianee().connectToProtocol();
+  const arianee = await new Arianee().init();
 
   let wallet = walletFactory(arianee, type, key);
 
@@ -82,7 +82,7 @@ Given("user{int} has positive credits of POA and ARIA", async function (userInde
 });
 
 Given("user{int} with account from {word}", async function (userIndex, type) {
-  const arianee = await new Arianee().connectToProtocol();
+  const arianee = await new Arianee().init();
 
   let wallet = walletFactory(arianee, type);
 
