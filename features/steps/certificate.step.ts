@@ -224,3 +224,20 @@ Given("user{int} can see its {int} certificates from getMyCertificates",
 
     return;
   });
+
+Given("user{int} can see its {int} certificates and {int} brands from groupByIssuerCertificates",
+  async function (userIndex, numberOfCertificates, numberOfBrands) {
+    const wallet = this.store.getUserWallet(userIndex);
+
+    const certificatesGroupBy = await wallet.methods.getMyCertificatesGroupByIssuer(
+      {owner: true}
+    );
+
+    expect(Object.keys(certificatesGroupBy).length === numberOfBrands).to.be.true;
+    Object.keys(certificatesGroupBy).reduce((acc, currKey) => {
+      acc += certificatesGroupBy[currKey].length;
+
+      return acc;
+    }, 0);
+    certificatesGroupBy.return;
+  });

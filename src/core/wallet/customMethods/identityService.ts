@@ -1,8 +1,9 @@
-import { IdentitySummary } from "../../../models/arianee-identity";
-import { ArianeeWallet } from "../wallet";
+import {IdentitySummary} from "../../../models/arianee-identity";
+import {ArianeeWallet} from "../wallet";
 
 export class IdentityService {
-  constructor (private wallet: ArianeeWallet) {}
+  constructor(private wallet: ArianeeWallet) {
+  }
 
   public getIdentity = async (address: string): Promise<IdentitySummary> => {
     const identityURI = await this.wallet.identityContract.methods
@@ -35,14 +36,16 @@ export class IdentityService {
       return {
         data: identityContentData,
         isAuthentic: isAuthentic,
-        isApproved
+        isApproved,
+        address
       };
     } else {
       return {
         data: undefined,
         isAuthentic: false,
-        isApproved: false
+        isApproved: false,
+        address: undefined
       };
     }
-  }
+  };
 }
