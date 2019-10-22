@@ -7,7 +7,8 @@
         "semicolon": [true, "always"],
         "ordered-imports": true,
         "no-async-without-await": true,
-        "indent": [true, "spaces", 4]
-
+        "indent": [true, "spaces", 2],
+        "space-before-function-paren": true,
+        "space-within-parens": true
     }
 }

@@ -1,11 +1,10 @@
-export function flatPromise() {
+export function flatPromise () {
+  let resolve, reject;
 
-    let resolve, reject;
+  const promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
 
-    const promise = new Promise((res, rej) => {
-        resolve = res;
-        reject = rej;
-    });
-
-    return { promise, resolve, reject };
+  return { promise, resolve, reject };
 }

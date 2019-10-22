@@ -38,9 +38,7 @@ export interface CertificateContent {
   jsonSurcharger: string;
 }
 
-interface ArianeeEvents {
-
-}
+interface ArianeeEvents {}
 export interface CertificiateContent {
   isAuthentic: boolean;
   data: CertificateContent;
@@ -68,7 +66,7 @@ export class CertificateEventsSummary implements CertificateEvents {
   public transfert = [];
   public arianeeEvents = [];
 
-  get all() {
+  get all () {
     return [...this.transfert, ...this.arianeeEvents].sort(sortEvents);
   }
 }
@@ -89,7 +87,7 @@ export interface CertificateSummary {
 export interface ConsolidatedQuery {
   query: {
     limit: number;
-    order: string
+    order: string;
   };
 }
 

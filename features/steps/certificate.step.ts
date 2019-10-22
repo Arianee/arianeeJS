@@ -1,6 +1,6 @@
-import { expect } from "chai";
-import { Given, Then, When } from "cucumber";
-import { waitFor } from "./helpers/waitFor";
+import {expect} from "chai";
+import {Given, Then, When} from "cucumber";
+import {waitFor} from "./helpers/waitFor";
 
 Given("user{int} has positive credit certificate balance", async function (
   userIndex
@@ -16,13 +16,13 @@ Given("user{int} has positive credit certificate balance", async function (
 
 When(
   "user{int} creates a new certificate{int} with uri {string}",
-  { timeout: 45000 },
+  {timeout: 45000},
   async function (userIndex, tokenIndex, uri) {
     const wallet = this.store.getUserWallet(userIndex);
     const hash = wallet.web3.utils.keccak256("ezofnzefon");
 
     try {
-      const { certificateId } = await wallet.methods.createCertificate({
+      const {certificateId} = await wallet.methods.createCertificate({
         uri: uri,
         hash
       });
@@ -41,14 +41,14 @@ When(
 
 When(
   "user{int} creates a new certificate{int} with uri {string} and passphrase {word}",
-  { timeout: 45000 },
+  {timeout: 45000},
 
   async function (userIndex, tokenIndex, uri, password) {
     const wallet = this.store.getUserWallet(userIndex);
 
     const hash = wallet.web3.utils.keccak256("ezofnzefon");
     try {
-      const { certificateId } = await wallet.methods.createCertificate({
+      const {certificateId} = await wallet.methods.createCertificate({
         uri: uri,
         hash,
         passphrase: password
@@ -152,7 +152,7 @@ Given("user{int} makes certificate{int} {word} with passphrase {word}",
   });
 
 Given("user{int} makes certificate{int} {word} without passphrase",
-  async function (userIndex, tokenIndex, actionType, ) {
+  async function (userIndex, tokenIndex, actionType,) {
     const wallet = this.store.getUserWallet(userIndex);
     const certificateId = this.store.getToken(tokenIndex);
 
@@ -201,13 +201,26 @@ Given("user{int} want to see certificate{int} details with passphrase {word}",
     const wallet = this.store.getUserWallet(userIndex);
     const certificateId = this.store.getToken(tokenIndex);
 
-    const certficiateDetails = await wallet.methods.getCertificate(certificateId, passphrase);
+    const certficiateDetails = await wallet.methods.getCertificate(certificateId, passphrase, {owner: true});
     expect(certficiateDetails).to.be.not.undefined;
 
-    expect(certficiateDetails.content).to.be.not.undefined;
-    expect(certficiateDetails.events).to.be.not.undefined;
-    expect(certficiateDetails.issuer).to.be.not.undefined;
     expect(certficiateDetails.owner).to.be.not.undefined;
+
+    return;
+  });
+
+Given("user{int} can see its {int} certificates from getMyCertificates",
+  async function (userIndex, numberOfCertificates) {
+    const wallet = this.store.getUserWallet(userIndex);
+
+    const certificates = await wallet.methods.getMyCertificates(
+      {owner: true}
+    );
+
+    expect(certificates.length === numberOfCertificates).to.be.true;
+    certificates.forEach(certficiateDetails => {
+      expect(certficiateDetails.owner).to.be.not.undefined;
+    });
 
     return;
   });
