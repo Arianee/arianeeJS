@@ -44,7 +44,8 @@ When('user{int} buys {int} credit of type {word}', async function (userIndex, qu
 
 Then('user{int} has postive Aria balance', async function (userIndex) {
     const wallet = this.store.getUserWallet(userIndex);
-    const balance = await wallet.ariaContract.methods.balanceOf(wallet.publicKey).call();
+
+    const balance = await wallet.methods.balanceOfAria();
 
     expect(+balance > 0).equals(true, `actual aria balance ${balance} and should be positive`);
 
@@ -60,7 +61,7 @@ Given('user{int} with POA positive balance', async function (userIndex) {
 
 Then('user{int} has postive poa balance', async function (userIndex) {
     const wallet = this.store.getUserWallet(userIndex);
-    const balance = await wallet.web3.eth.getBalance(wallet.publicKey);
+    const balance = await wallet.methods.balanceOfPoa();
 
     expect(balance > 0).equals(true, `actual value of POA balance ${balance}`);
 

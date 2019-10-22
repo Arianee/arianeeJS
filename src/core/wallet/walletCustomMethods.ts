@@ -34,8 +34,8 @@ export class WalletCustomMethods {
     return {
       getCertificate: this.getCertificate,
       getMyCertificates: this.getMyCertificates,
-      balanceOfAria: <any>this.wallet.ariaContract.methods.balanceOf,
-      balanceOfGas: this.servicesHub.web3.eth.getBalance,
+      balanceOfAria: this.balanceOfAria,
+      balanceOfPoa: this.balanceOfPoa,
       createCertificateRequestOwnershipLink: this
         .createCertificateRequestOwnershipLink,
       createCertificateProofLink: this.createCertificateProofLink,
@@ -347,13 +347,22 @@ export class WalletCustomMethods {
     );
   }
 
-  public getAriaBalance = async (): Promise<number> => {
+  public balanceOfAria = async (address = this.wallet.account.address): Promise<number> => {
+
     const balance = await this.servicesHub.rawContracts.ariaContract.methods
-      .balanceOf(this.wallet.publicKey)
+      .balanceOf(address)
       .call();
 
-    return balance / 100000000;
+    return balance;
   }
+
+  public balanceOfPoa = async (address = this.wallet.account.address): Promise<number> => {
+
+    const balance = await this.servicesHub.web3.eth
+      .getBalance(address);
+
+    return balance;
+  }  
 
   private getCertificateTransferEvents = async (
     certificateId: CertificateId
