@@ -33,7 +33,7 @@ import { CreateWalletWithPOAAndAria } from "./utils/create-wallet";
         const nextOwnerWallet = wallet2;
 
         await nextOwnerWallet
-            .getFaucet()
+            .requestPoa()
             .then(i => console.log("nextOwnerWallet sucess getting faucet"))
             .catch(i => console.log("nextOwnerWallet error getting faucet"));
 

@@ -330,7 +330,7 @@ export class WalletCustomMethods {
       .send();
   }
 
-  public getFaucet = (): Promise<any> => {
+  public requestPoa = (): Promise<any> => {
     return this.servicesHub.httpClient.fetch(
       this.servicesHub.arianeeConfig.faucetUrl +
         "&address=" +
@@ -338,7 +338,7 @@ export class WalletCustomMethods {
     );
   }
 
-  public getAria = (): Promise<any> => {
+  public requestAria = (): Promise<any> => {
     return this.servicesHub.httpClient.fetch(
       this.servicesHub.arianeeConfig.faucetUrl +
         "&address=" +

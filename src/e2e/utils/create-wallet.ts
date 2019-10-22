@@ -21,13 +21,13 @@ export async function CreateWalletWithPOAAndAria (
     wallet.web3.eth.getBalance(wallet.publicKey)
   ]);
 
-  await wallet.getFaucet();
+  await wallet.requestPoa();
 
   poaBalance = await wallet.web3.eth.getBalance(wallet.publicKey);
   assert.ok(poaBalance > 0, `POA faucet not working.`);
 
   if (ariaBalance == 0 || force) {
-    await wallet.getAria();
+    await wallet.requestAria();
 
     ariaBalance = await wallet.ariaContract.methods
       .balanceOf(wallet.publicKey)
