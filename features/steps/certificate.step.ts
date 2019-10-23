@@ -225,7 +225,7 @@ Given("user{int} can see its {int} certificates from getMyCertificates",
     return;
   });
 
-Given("user{int} can see its {int} certificates and {int} brands from groupByIssuerCertificates",
+Given("user{int} can see its {int} certificates and {int} issuers from groupByIssuerCertificates",
   async function (userIndex, numberOfCertificates, numberOfBrands) {
     const wallet = this.store.getUserWallet(userIndex);
 
@@ -234,10 +234,13 @@ Given("user{int} can see its {int} certificates and {int} brands from groupByIss
     );
 
     expect(Object.keys(certificatesGroupBy).length === numberOfBrands).to.be.true;
-    Object.keys(certificatesGroupBy).reduce((acc, currKey) => {
+    const numberOfCertificatesFetched = Object.keys(certificatesGroupBy).reduce((acc, currKey) => {
       acc += certificatesGroupBy[currKey].length;
 
       return acc;
     }, 0);
+
+    expect(numberOfCertificatesFetched === numberOfCertificates).to.be.true;
+
     certificatesGroupBy.return;
   });
