@@ -8,6 +8,9 @@ const createASimpleCertificate = async () => {
         "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
     );
 
+
+    let ariaBalance = await wallet.methods.balanceOfAria();
+
     const hash = wallet.web3.utils.keccak256(`ezofnzefon${Date.now()}`);
     const result = await wallet.methods.createCertificate({
         uri: "http://localhost:3000/mycertificate.json",
