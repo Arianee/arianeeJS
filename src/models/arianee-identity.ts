@@ -2,6 +2,7 @@ export interface IdentitySummary {
   data: IdentityContent;
   isAuthentic: boolean;
   isApproved: boolean;
+  address: string;
 }
 
 export interface Schema {

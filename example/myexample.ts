@@ -194,7 +194,27 @@ const getAllMyCertificates = async () => {
         //console.log(err)
     }
 };
-getAllMyCertificates();
+const getAllMyCertificatesGroupBy = async () => {
+    const wallet = await CreateWalletWithPOAAndAria(
+      "0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855"
+    );
+
+    try {
+        const certificate = await wallet.methods.getMyCertificatesGroupByIssuer({
+            isRequestable: false,
+            content: false,
+            issuer: true,
+            owner: false,
+            events: false,
+            advanced: false,
+        });
+        console.log('certificate', certificate);
+    } catch (err) {
+        console.log('errror', err);
+        //console.log(err)
+    }
+};
+getAllMyCertificatesGroupBy();
 
 const readProof = async (certificateId) => {
 

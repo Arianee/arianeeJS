@@ -15,5 +15,4 @@ Feature: Certificate creation
     Given user1 creates a new certificate2 with uri "https://api.myjson.com/bins/cf4ph"
     Given user1 creates a new certificate3 with uri "https://api.myjson.com/bins/cf4ph"
     Then user1 can see its 4 certificates from getMyCertificates
-
-
+    

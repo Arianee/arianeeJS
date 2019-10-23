@@ -1,18 +1,19 @@
-import { ExtendedBoolean } from "models/extendedBoolean";
-import { isNullOrUndefined } from "util";
-import { blockchainEvent } from "../../models/blockchainEvents";
-import { CertificateId } from "../../models/CertificateId";
+import {Cert} from "@0xcert/cert";
+import {ExtendedBoolean} from "models/extendedBoolean";
+import {isNullOrUndefined} from "util";
+import {blockchainEvent} from "../../models/blockchainEvents";
+import {CertificateId} from "../../models/CertificateId";
 import {
   CertificateSummary,
   CertificateSummaryBuilder
 } from "../certificateSummary";
-import { ConsolidatedCertificateRequest } from "../certificateSummary/certificateSummary";
-import { sortEvents } from "../libs/sortEvents";
-import { Utils } from "../libs/utils";
-import { ServicesHub } from "../servicesHub";
-import { CertificateDetails } from "./customMethods/certificatesDetails";
-import { IdentityService } from "./customMethods/identityService";
-import { ArianeeWallet } from "./wallet";
+import {ConsolidatedCertificateRequest} from "../certificateSummary/certificateSummary";
+import {sortEvents} from "../libs/sortEvents";
+import {Utils} from "../libs/utils";
+import {ServicesHub} from "../servicesHub";
+import {CertificateDetails} from "./customMethods/certificatesDetails";
+import {IdentityService} from "./customMethods/identityService";
+import {ArianeeWallet} from "./wallet";
 
 export class WalletCustomMethods {
   private servicesHub: ServicesHub;
@@ -34,6 +35,7 @@ export class WalletCustomMethods {
     return {
       getCertificate: this.getCertificate,
       getMyCertificates: this.getMyCertificates,
+      getMyCertificatesGroupByIssuer: this.getMyCertificatesGroupByIssuer,
       balanceOfAria: this.balanceOfAria,
       balanceOfPoa: this.balanceOfPoa,
       createCertificateRequestOwnershipLink: this
@@ -104,6 +106,25 @@ export class WalletCustomMethods {
     passphrase: string
   ) => {
     return this.customRequestTokenFactory(certificateId, passphrase).send();
+  }
+
+  private getMyCertificatesGroupByIssuer = async (query?: ConsolidatedCertificateRequest)
+    : Promise<{ [key: string]: CertificateSummary[] }> => {
+
+    const certificates = await this.getMyCertificates(query);
+
+    const groupByIssuerCertificates = certificates
+      .reduce<{ [key: string]: CertificateSummary[] }>((accumulator, currentValue) => {
+        const issuerAddress = currentValue.issuer.identity.address;
+        if (!accumulator.hasOwnProperty(issuerAddress)) {
+          accumulator[issuerAddress] = [];
+        }
+        accumulator[issuerAddress].push(currentValue);
+
+        return accumulator;
+      }, {});
+
+    return groupByIssuerCertificates;
   }
 
   private getMyCertificates = async (
@@ -362,7 +383,7 @@ export class WalletCustomMethods {
       .getBalance(address);
 
     return balance;
-  }  
+  }
 
   private getCertificateTransferEvents = async (
     certificateId: CertificateId

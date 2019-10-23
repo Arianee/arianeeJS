@@ -47,7 +47,7 @@ export interface CertificiateContent {
 export interface CertificateIssuer {
   isIdentityAuthentic: boolean;
   isIdentityVerified: boolean;
-  identity: any;
+  identity: IdentitySummary;
 }
 
 export interface CertificateOwner {
