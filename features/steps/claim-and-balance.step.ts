@@ -5,9 +5,7 @@ import { waitFor } from "./helpers/waitFor";
 
 When('user{int} claims faucet', async function (userIndex) {
     const wallet = this.store.getUserWallet(userIndex);
-    await wallet.getFaucet();
-
-    return waitFor();
+    await wallet.requestPoa();
 });
 
 When('user{int} with valid wallet and aria and faucet', async function (userIndex) {
@@ -18,9 +16,7 @@ When('user{int} with valid wallet and aria and faucet', async function (userInde
 });
 When('user{int} claims Aria', async function (userIndex) {
     const wallet = this.store.getUserWallet(userIndex);
-    await wallet.getAria();
-
-    return waitFor();
+    await wallet.requestAria();
 });
 
 When('user{int} buys {int} credit of type {word}', async function (userIndex, quantity, creditType) {
@@ -38,8 +34,6 @@ When('user{int} buys {int} credit of type {word}', async function (userIndex, qu
     await wallet.storeContract.methods
         .buyCredit(creditTypesEnum[creditType], quantity, wallet.publicKey)
         .send();
-
-    return waitFor();
 });
 
 Then('user{int} has postive Aria balance', async function (userIndex) {
@@ -54,9 +48,7 @@ Then('user{int} has postive Aria balance', async function (userIndex) {
 
 Given('user{int} with POA positive balance', async function (userIndex) {
     const wallet = this.store.getUserWallet(userIndex);
-    wallet.getFaucet();
-
-    return waitFor();
+    wallet.requestPoa();
 });
 
 Then('user{int} has postive poa balance', async function (userIndex) {

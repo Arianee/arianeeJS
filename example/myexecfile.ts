@@ -7,10 +7,10 @@ declare var ArianeeLib;
 
   const wallet = arianee.fromRandomKey();
 
-  await wallet.getFaucet();
+  await wallet.requestPoa();
 
   await wallet
-    .getAria()
+    .requestAria()
     .then(i => console.log("success getting ARIA"))
     .catch(i => console.log("error getting ARIA"));
 

@@ -112,11 +112,25 @@ export class ArianeeWallet {
     return this.customMethods.getMethods();
   }
 
+  /**
+   * @deprecated this method has been renamed requestPoa.
+   */  
   public get getFaucet () {
-    return this.customMethods.getFaucet;
+    return this.customMethods.requestPoa;
   }
 
+  public get requestPoa () {
+    return this.customMethods.requestPoa;
+  }  
+
+  /**
+   * @deprecated this method has been renamed requestAria.
+   */
   public get getAria () {
-    return this.customMethods.getAria;
+    return this.customMethods.requestAria;
   }
+
+  public get requestAria () {
+    return this.customMethods.requestAria;
+  }  
 }
