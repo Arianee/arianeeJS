@@ -1,8 +1,8 @@
 import { World } from "cucumber";
 import { ArianeeWallet } from "../../../src/core/wallet";
+import {ArianeeWalletBuilder} from "../../../src/core/wallet/walletBuilder";
 
 export class CCStore {
-
     private users: ArianeeWallet[] = [];
     private tokens: number[] = [];
     private cache = {};

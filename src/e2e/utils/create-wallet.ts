@@ -1,15 +1,15 @@
 import * as assert from "assert";
-import { waitFor } from "../../../features/steps/helpers/waitFor";
-import { Arianee } from "../../core/arianee";
-import { ArianeeWallet } from "../../core/wallet";
+import {NETWORK} from "../..";
+import {Arianee} from "../../core/arianee";
+import {ArianeeWallet} from "../../core/wallet";
 
-export async function CreateWalletWithPOAAndAria (
+export async function CreateWalletWithPOAAndAria(
   fromPrivateKey?: string,
   force = false
 ): Promise<ArianeeWallet> {
   let wallet;
   const arianee = new Arianee();
-  const walletMaker = await arianee.init();
+  const walletMaker = await arianee.init(NETWORK.arianeeTestnet);
   if (fromPrivateKey) {
     wallet = walletMaker.fromPrivateKey(fromPrivateKey);
   } else {

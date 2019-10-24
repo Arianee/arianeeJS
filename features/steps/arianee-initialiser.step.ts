@@ -1,7 +1,6 @@
-import { expect } from "chai";
-import { Given, Then, When } from 'cucumber';
-import { Arianee } from "../../src";
-import { NETWORK, networkURL } from '../../src/models/networkConfiguration';
+import {Given} from 'cucumber';
+import {Arianee} from "../../src";
+import {NETWORK} from '../../src/models/networkConfiguration';
 
 Given('arianee is on {word}', async function (environment) {
     if (!NETWORK.hasOwnProperty(environment)) {
