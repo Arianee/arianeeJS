@@ -14,7 +14,7 @@ export class ServicesHub {
     return this._contracts.arianeeConfig;
   }
 
-  public walletFactory () {
+  public walletFactory =()=> {
     return new ArianeeWalletBuilder(this.arianeeConfig);
   }
   public get httpClient () {

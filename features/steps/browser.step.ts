@@ -1,5 +1,6 @@
-import { Given, Then, When } from "cucumber";
+import {Given} from "cucumber";
 import fs from "fs";
+
 const puppeteer = require('puppeteer');
 
 Given("ArianeeLib is used on browser it works", async function () {

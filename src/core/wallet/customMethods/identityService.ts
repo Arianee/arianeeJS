@@ -2,7 +2,7 @@ import {IdentitySummary} from "../../../models/arianee-identity";
 import {ArianeeWallet} from "../wallet";
 
 export class IdentityService {
-  constructor(private wallet: ArianeeWallet) {
+  constructor (private wallet: ArianeeWallet) {
   }
 
   public getIdentity = async (address: string): Promise<IdentitySummary> => {
@@ -47,5 +47,5 @@ export class IdentityService {
         address: undefined
       };
     }
-  };
+  }
 }

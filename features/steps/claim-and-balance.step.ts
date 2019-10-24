@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import { Given, Then, When } from "cucumber";
-import { CreateWalletWithPOAAndAria } from "../../src/e2e/utils/create-wallet";
-import { waitFor } from "./helpers/waitFor";
+import {makeWalletReady} from "./helpers/walletCreator";
 
 When('user{int} claims faucet', async function (userIndex) {
     const wallet = this.store.getUserWallet(userIndex);
@@ -9,7 +8,8 @@ When('user{int} claims faucet', async function (userIndex) {
 });
 
 When('user{int} with valid wallet and aria and faucet', async function (userIndex) {
-    const wallet = await CreateWalletWithPOAAndAria();
+    const wallet = this.walletFactory().fromRandomKey()
+    await makeWalletReady(wallet);
     this.store.storeWallet(userIndex, wallet);
 
     return Promise.resolve();

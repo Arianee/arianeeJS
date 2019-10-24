@@ -1,14 +1,14 @@
-import { ethers, Wallet as etherWallet } from "ethers";
-import { ArianeeConfig } from "../../models/arianeeConfiguration";
-import { ServicesHubBuilder } from "../servicesHub";
-import { ArianeeWallet } from "./wallet";
+import {ethers, Wallet as etherWallet} from "ethers";
+import {ArianeeConfig} from "../../models/arianeeConfiguration";
+import {ServicesHubBuilder} from "../servicesHub";
+import {ArianeeWallet} from "./wallet";
 
 export class ArianeeWalletBuilder {
   private web3: any;
 
   readonly stateBuilder: ServicesHubBuilder = new ServicesHubBuilder();
 
-  constructor (arianeeConfig: ArianeeConfig) {
+  constructor (private arianeeConfig: ArianeeConfig) {
     this.stateBuilder.setConfig(arianeeConfig);
     this.web3 = this.stateBuilder.contracts.web3;
   }
@@ -59,7 +59,7 @@ export class ArianeeWalletBuilder {
   public fromMnemonic (mnemonic: string): ArianeeWallet {
     const isValidMnemonic = ethers.utils.HDNode.isValidMnemonic(mnemonic);
     if (isValidMnemonic) {
-      const { privateKey } = etherWallet.fromMnemonic(mnemonic);
+      const {privateKey} = etherWallet.fromMnemonic(mnemonic);
       const account = this.web3.eth.accounts.privateKeyToAccount(privateKey);
 
       return this.buildAriaWallet(account, mnemonic);

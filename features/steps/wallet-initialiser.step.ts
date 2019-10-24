@@ -1,9 +1,8 @@
-import { expect } from "chai";
-import { Given, Then } from "cucumber";
-import { Arianee } from "../../src";
-import { ArianeeWallet } from "../../src/core/wallet";
-import { ArianeeWalletBuilder } from "../../src/core/wallet/walletBuilder";
-import { CreateWalletWithPOAAndAria } from "../../src/e2e/utils/create-wallet";
+import {expect} from "chai";
+import {Given, Then} from "cucumber";
+import {ArianeeWallet} from "../../src/core/wallet";
+import {ArianeeWalletBuilder} from "../../src/core/wallet/walletBuilder";
+import {makeWalletReady} from "./helpers/walletCreator";
 
 Given("user{int} has a valid wallet", async function (userIndex) {
   const wallet = this.store.getUserWallet(userIndex);
@@ -42,9 +41,8 @@ Given("user{int} with account from {word} {word}", async function (
   type,
   key
 ) {
-  const arianee = await new Arianee().init();
 
-  let wallet = walletFactory(arianee, type, key);
+  let wallet = walletFactory(this.walletFactory(), type, key);
 
   this.store.storeWallet(userIndex, wallet);
 
@@ -56,9 +54,8 @@ Given("user{int} with account from {word} {string}", async function (
   type,
   key
 ) {
-  const arianee = await new Arianee().init();
 
-  let wallet = walletFactory(arianee, type, key);
+  let wallet = walletFactory(this.walletFactory(), type, key);
 
   this.store.storeWallet(userIndex, wallet);
 
@@ -82,9 +79,8 @@ Given("user{int} has positive credits of POA and ARIA", async function (userInde
 });
 
 Given("user{int} with account from {word}", async function (userIndex, type) {
-  const arianee = await new Arianee().init();
 
-  let wallet = walletFactory(arianee, type);
+  let wallet = walletFactory(this.walletFactory(), type);
 
   this.store.storeWallet(userIndex, wallet);
 
@@ -104,8 +100,9 @@ Given("user{int} can approve storeContract", async function (userIndex) {
 });
 
 Given('user{int} is a brand', async function (userIndex) {
-  const wallet = await CreateWalletWithPOAAndAria();
+  const wallet = this.walletFactory().fromRandomKey();
+  await makeWalletReady(wallet);
   this.store.storeWallet(userIndex, wallet);
- 
+
   return;
 });
