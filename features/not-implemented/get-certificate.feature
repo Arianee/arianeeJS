@@ -10,7 +10,7 @@ Feature: To add to get-certificate
     And user4 claims faucet
     And user4 claims Aria
 
-    Given user1 buys 2 credit of type creation
+    Given user1 buys 2 credit of type certificate
     And user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase
     And user4 requests certificate0 with passprase MyPassPhrase
 
@@ -23,14 +23,14 @@ Feature: To add to get-certificate
     And user4 claims faucet
     And user4 claims Aria
 
-    Given user2 buys 1 credit of type creation
+    Given user2 buys 1 credit of type certificate
     And user2 creates a new certificate2 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase
     And user4 requests certificate2 with passprase MyPassPhrase
 
     And user4 claims faucet
     And user4 claims Aria
 
-    Given user3 buys 1 credit of type creation
+    Given user3 buys 1 credit of type certificate
     And user3 creates a new certificate2 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase
     And user4 requests certificate2 with passprase MyPassPhrase
 

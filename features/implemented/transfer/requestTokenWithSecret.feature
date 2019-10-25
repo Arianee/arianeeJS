@@ -1,7 +1,7 @@
 Feature: Request token with Secret
   Background: 2 users with valid wallet
     Given user1 is a brand
-    Given user1 buys 1 credit of type creation
+    Given user1 buys 1 credit of type certificate
 
     Given user2 with account from randomKey
     Given user2 has positive credits of POA and ARIA

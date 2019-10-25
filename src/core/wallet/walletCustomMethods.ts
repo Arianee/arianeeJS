@@ -3,6 +3,7 @@ import {ExtendedBoolean} from "models/extendedBoolean";
 import {isNullOrUndefined} from "util";
 import {blockchainEvent} from "../../models/blockchainEvents";
 import {CertificateId} from "../../models/CertificateId";
+import {creditTypeEnum} from "../../models/creditTypesEnum";
 import {
   CertificateSummary,
   CertificateSummaryBuilder
@@ -48,7 +49,8 @@ export class WalletCustomMethods {
       isCertificateOwnershipRequestable: this.isCertificateOwnershipRequestable,
       requestCertificateOwnership: this.customRequestToken,
       createCertificate: this.customHydrateToken,
-      approveStore: this.approveStore
+      approveStore: this.approveStore,
+      buyCredits: this.buyCredits
     };
   }
 
@@ -575,5 +577,19 @@ export class WalletCustomMethods {
         "10000000000000000000000000000"
       )
       .send();
+  }
+
+  private buyCredits = (creditType:string, quantity:number, receiver?:string)=>{
+
+    if (!creditTypeEnum.hasOwnProperty(creditType)) {
+      throw new Error('this credit type does not exist !!! ' + creditType);
+    }
+
+    receiver = receiver || this.wallet.publicKey;
+
+    return this.wallet.storeContract.methods
+      .buyCredit(creditTypeEnum[creditType], quantity, receiver)
+      .send();
+
   }
 }
