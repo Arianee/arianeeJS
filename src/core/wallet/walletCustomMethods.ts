@@ -160,7 +160,7 @@ export class WalletCustomMethods {
       )
     );
 
-    return results;
+    return results.reverse();
   }
 
   // Ajouter une passphrase à un token
