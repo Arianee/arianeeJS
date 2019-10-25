@@ -70,6 +70,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
 
     return data.call(mergedTransaction);
   }
+
   private overideSend = async (
     transaction: Transaction,
     data: TransactionObject<any>
