@@ -89,14 +89,17 @@ Given("user{int} with account from {word}", async function (userIndex, type) {
 
 Given("user{int} can approve storeContract", async function (userIndex) {
   const wallet = this.store.getUserWallet(userIndex);
-  await wallet.ariaContract.methods
-    .approve(
-      wallet.storeContract.options.address,
-      "10000000000000000000000000000"
-    )
-    .send();
+  await wallet.methods.approveStore();
 
   return Promise.resolve();
+});
+
+Then('storeContract is approved for user{int}', async function (userIndex){
+  const wallet = this.store.getUserWallet(userIndex);
+  const allowance = await wallet.ariaContract.methods.allowance(wallet.publicKey,wallet.storeContract.options.address)
+    .call();
+
+  expect(allowance).equal('10000000000000000000000000000');
 });
 
 Given('user{int} is a brand', async function (userIndex) {

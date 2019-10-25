@@ -6,3 +6,4 @@ Feature: I create a random key to create a wallet
         Given user1 claims faucet
         Given user1 has postive poa balance
         Then user1 can approve storeContract
+        Then storeContract is approved for user1
