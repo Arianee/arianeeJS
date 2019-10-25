@@ -1,12 +1,7 @@
 import Contract from "web3/eth/contract";
-import { ArianeeConfig } from "../../models/arianeeConfiguration";
-
-const Web3 = require("web3");
+import {ArianeeConfig} from "../../models/arianeeConfiguration";
 
 export class ArianeeContractBuilder {
-  public web3;
-  public web3Provider: string;
-
   public smartAssetContract: Contract;
   public identityContract: Contract;
   public ariaContract: Contract;
@@ -16,8 +11,8 @@ export class ArianeeContractBuilder {
   public whitelistContract: Contract;
   public eventContract: Contract;
 
-  constructor (public arianeeConfig: ArianeeConfig) {
-    this.web3 = new Web3(this.arianeeConfig.provider);
+  constructor(public web3, public arianeeConfig: ArianeeConfig) {
+
     this.smartAssetContract = new this.web3.eth.Contract(
       this.arianeeConfig.smartAsset.abi,
       this.arianeeConfig.smartAsset.address

@@ -15,5 +15,5 @@ BeforeAll(async () => {
 
 Before(function () {
   this.store = new CCStore();
-  this.walletFactory = singletonArianee.fromRandomKey().servicesHub.walletFactory;
+  this.walletFactory = () => singletonArianee;
 });
