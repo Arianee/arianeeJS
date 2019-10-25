@@ -6,6 +6,7 @@
 
 ## Getting Started
 
+The full doc is avalaible here: https://docs.arianee.org/docs/ArianeeJS
  
 ### Get ready : installation
   
@@ -18,10 +19,27 @@ npm i @arianee/arianeejs -D
 ### Simple example
 
 ```
-import {Arianee} from "arianeeJS";
+import { Arianee } from '@arianee/arianeejs'
 
-Arianee()
-    .fromRandomKey();
+(async function () {
+
+  // By default Arianee will be initialized on testnet network
+  const arianee = await new Arianee().init();
+
+// Create a wallet
+  const wallet = arianee.fromRandomKey();
+
+// Request POA and Aria and approves store to make transaction on blockchain
+
+  await wallet.requestPoa();
+  await wallet.requestAria();
+
+  await wallet.methods.approveStore();
+
+  const balanceOfPoa = await wallet.methods.balanceOfPoa();
+  console.log('balanceOfPoa: ', balanceOfPoa);
+
+});
 ```  
 
 ## Contributing
