@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { Given, Then, When } from "cucumber";
+import {creditTypeEnum} from "../../src/models/creditTypesEnum";
 import {makeWalletReady} from "./helpers/walletCreator";
 
 When('user{int} claims faucet', async function (userIndex) {
@@ -20,20 +21,9 @@ When('user{int} claims Aria', async function (userIndex) {
 });
 
 When('user{int} buys {int} credit of type {word}', async function (userIndex, quantity, creditType) {
-    const creditTypesEnum = {
-        creation: 0,
-        message: 1,
-        event: 2
-    };
+  const wallet = this.store.getUserWallet(userIndex);
 
-    if (!creditTypesEnum.hasOwnProperty(creditType)) {
-        throw new Error('this credit type does not exist !!! ' + creditType);
-    }
-    const wallet = this.store.getUserWallet(userIndex);
-
-    await wallet.storeContract.methods
-        .buyCredit(creditTypesEnum[creditType], quantity, wallet.publicKey)
-        .send();
+    await wallet.methods.buyCredits(creditType, quantity, wallet.publicKey);
 });
 
 Then('user{int} has postive Aria balance', async function (userIndex) {
