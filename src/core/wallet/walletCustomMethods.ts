@@ -47,7 +47,8 @@ export class WalletCustomMethods {
       getCertificateArianeeEvents: this.getCertificateArianeeEvents,
       isCertificateOwnershipRequestable: this.isCertificateOwnershipRequestable,
       requestCertificateOwnership: this.customRequestToken,
-      createCertificate: this.customHydrateToken
+      createCertificate: this.customHydrateToken,
+      approveStore: this.approveStore
     };
   }
 
@@ -565,5 +566,14 @@ export class WalletCustomMethods {
         })
       );
     }
+  }
+
+  private approveStore = ()=>{
+    return this.wallet.ariaContract.methods
+      .approve(
+        this.wallet.storeContract.options.address,
+        "10000000000000000000000000000"
+      )
+      .send();
   }
 }
