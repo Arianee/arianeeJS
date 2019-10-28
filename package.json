@@ -12,7 +12,7 @@
     "test:e2e-pretty": "./node_modules/.bin/cucumber-js features/implemented/**/*.feature --require 'dist/features/steps/*.step.js' --format node_modules/cucumber-pretty",
     "test:e2e-dev": "./node_modules/.bin/cucumber-js features/dev/**/*.feature --require 'dist/features/steps/*.step.js' --format node_modules/cucumber-pretty",
     "test:unit": "./node_modules/.bin/jest",
-    "test": "npm run lint && npm run test:e2e && npm run test:unit",
+    "test": "npm run lint && npm run test:unit &&npm run test:e2et",
     "lint": "./node_modules/.bin/tslint -c tslint.json  -t verbose --fix 'src/core/**/*.ts'",
     "doc": "./node_modules/.bin/typedoc  --out doc/ src/ --mode file --ignoreCompilerErrors --includeDeclarations --excludeExternals",
     "prepare": "npm run build",
@@ -74,6 +74,8 @@
     "ethers": "^4.0.23",
     "jayson": "^3.0.2",
     "node-fetch-polyfill": "^2.0.6",
+    "reflect-metadata": "^0.1.13",
+    "tsyringe": "^3.4.0",
     "web3": "1.2.1"
   }
 }

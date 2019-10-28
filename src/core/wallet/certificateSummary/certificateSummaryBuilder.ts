@@ -1,7 +1,7 @@
 import { thisExpression } from "@babel/types";
 import { isNullOrUndefined } from "util";
-import { sortEvents } from "../libs/sortEvents";
-import { ArianeeWallet } from "../wallet";
+import { sortEvents } from "../../libs/sortEvents";
+import {WalletService} from "../services/walletService/walletService";
 import {
   CertificateAdvanced,
   CertificateContent,
@@ -21,7 +21,7 @@ export class CertificateSummaryBuilder {
   private _owner: CertificateOwner;
   private _advanced: CertificateAdvanced;
 
-  constructor (private wallet: ArianeeWallet) {}
+  constructor (private wallet: WalletService) {}
 
   public setContent (
     data: CertificateContent,

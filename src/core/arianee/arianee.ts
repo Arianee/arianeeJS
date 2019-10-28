@@ -1,30 +1,35 @@
 import * as conf from "../../configurations";
-import { appConfig } from "../../configurations";
-import { NETWORK, networkURL } from "../../models/networkConfiguration";
-import { ProtocolConfigurationBuilder } from "../protocolConfigurationBuilder/protocolConfigurationBuilder";
-import { ArianeeHttpClient } from "../servicesHub/services/arianeeHttpClient";
-import { ArianeeWalletBuilder } from "../wallet/walletBuilder";
+import {appConfig} from "../../configurations";
+import {NETWORK, networkURL} from "../../models/networkConfiguration";
+import {ProtocolConfigurationBuilder} from "./protocolConfigurationBuilder/protocolConfigurationBuilder";
+import {ArianeeHttpClient} from "../libs/arianeeHttpClient/arianeeHttpClient";
+import {ArianeeWalletBuilder} from "../wallet/walletBuilder";
 
 export class Arianee {
-  public async init (
+  public async init(
     networkName: NETWORK = NETWORK.testnet
   ): Promise<ArianeeWalletBuilder> {
     const url = networkURL[networkName];
 
-    const addressesResult = await ArianeeHttpClient.fetch(url);
+    const addressesResult = await ArianeeHttpClient.fetch(url).catch(err => console.error(`${url} not working`));
 
     const protocolConfigurationBuilder = new ProtocolConfigurationBuilder();
 
     Object.keys(addressesResult.contractAdresses).forEach(contractName => {
       const contractAddress = addressesResult.contractAdresses[contractName];
-      protocolConfigurationBuilder.setSmartContractConfiguration(
-        contractName,
-        conf[contractName],
-        contractAddress
-      );
+      try {
+        protocolConfigurationBuilder.setSmartContractConfiguration(
+          contractName,
+          conf[contractName],
+          contractAddress
+        );
+      } catch (e) {
+        console.error(`this contract is not working ${contractName}`);
+      }
+
     });
 
-    const { deepLink, faucetUrl } = appConfig[networkName];
+    const {deepLink, faucetUrl} = appConfig[networkName];
 
     protocolConfigurationBuilder.setDeepLink(deepLink);
     protocolConfigurationBuilder.setFaucetUrl(faucetUrl);

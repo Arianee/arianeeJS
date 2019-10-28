@@ -1,16 +1,18 @@
+import {aria} from "../../configurations";
 import { NETWORK, networkURL } from "../../models/networkConfiguration";
+import {ArianeeHttpClient} from "../libs/arianeeHttpClient/arianeeHttpClient";
 import { Arianee } from "./arianee";
 const myFetchMock = jest.fn();
 import appConfigurations from "../../configurations/appConfigurations";
 
-jest.mock("../servicesHub/services/arianeeHttpClient", () => ({
+jest.mock("../libs/arianeeHttpClient/arianeeHttpClient", () => ({
   ArianeeHttpClient: class ArianeeHttpClientStub {
     public fetch = ArianeeHttpClientStub.fetch;
 
     public static fetch = url => {
       myFetchMock(url);
 
-      return {
+      return Promise.resolve({
         contractAdresses: {
           aria: "0xB81AFe27c103bcd42f4026CF719AF6D802928765",
           creditHistory: "0x9C868D9bf85CA649f219204D16d99A240cB1F011",
@@ -23,7 +25,7 @@ jest.mock("../servicesHub/services/arianeeHttpClient", () => ({
         },
         httpProvider: "https://sokol.poa.network",
         chainId: 77
-      };
+      });
     }
   }
 }));
@@ -32,31 +34,32 @@ describe("Arianee", () => {
   describe("CONFIGURATION", () => {
     describe("testnet", () => {
       test("should be fetching testnet addresses", async () => {
-        await new Arianee().connectToProtocol(NETWORK.testnet);
+        await new Arianee().init(NETWORK.testnet);
         expect(myFetchMock).toHaveBeenCalledWith(networkURL.testnet);
       });
       test("should be fetching testnet config", async () => {
-        const arianee = await new Arianee().connectToProtocol(NETWORK.testnet);
+        const arianee = await new Arianee().init(NETWORK.testnet);
         const {
           deepLink,
           faucetUrl
-        } = arianee.fromRandomKey().servicesHub.arianeeConfig;
+        } = arianee.fromRandomKey().configuration;
+
         expect(deepLink).toBe(appConfigurations.testnet.deepLink);
         expect(faucetUrl).toBe(appConfigurations.testnet.faucetUrl);
       });
     });
     describe("mainet", () => {
       test("should be fetching testnet addresses", async () => {
-        await new Arianee().connectToProtocol(NETWORK.mainnet);
+        await new Arianee().init(NETWORK.mainnet);
         expect(myFetchMock).toHaveBeenCalledWith(networkURL.mainnet);
       });
 
       test("should be fetching testnet config", async () => {
-        const arianee = await new Arianee().connectToProtocol(NETWORK.mainnet);
+        const arianee = await new Arianee().init(NETWORK.mainnet);
         const {
           deepLink,
           faucetUrl
-        } = arianee.fromRandomKey().servicesHub.arianeeConfig;
+        } = arianee.fromRandomKey().configuration;
         expect(deepLink).toBe(appConfigurations.mainnet.deepLink);
         expect(faucetUrl).toBe(appConfigurations.mainnet.faucetUrl);
       });
