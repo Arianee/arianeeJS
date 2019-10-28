@@ -94,9 +94,10 @@ Given("user{int} can approve storeContract", async function (userIndex) {
   return Promise.resolve();
 });
 
-Then('storeContract is approved for user{int}', async function (userIndex){
+Then('storeContract is approved for user{int}', async function (userIndex) {
   const wallet = this.store.getUserWallet(userIndex);
-  const allowance = await wallet.ariaContract.methods.allowance(wallet.publicKey,wallet.storeContract.options.address)
+
+  const allowance = await wallet.contracts.ariaContract.methods.allowance(wallet.publicKey, wallet.contracts.storeContract.options.address)
     .call();
 
   expect(allowance).equal('10000000000000000000000000000');

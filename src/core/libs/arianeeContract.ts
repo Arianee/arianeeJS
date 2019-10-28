@@ -1,16 +1,18 @@
 import Contract from "web3/eth/contract";
-import { Transaction, TransactionObject, Tx } from "web3/eth/types";
-import { ServicesHub } from "../servicesHub";
-import ArianeeWallet from "../wallet";
-import { flatPromise } from "./flat-promise";
+import {Transaction, TransactionObject, Tx} from "web3/eth/types";
+import {ConfigurationService} from "../wallet/services/configurationService/configurationService";
+import {WalletService} from "../wallet/services/walletService/walletService";
+import {Web3Service} from "../wallet/services/web3Service/web3Service";
+import {flatPromise} from "./flat-promise";
 
 export class ArianeeContract<ContractImplementation extends Contract> {
   public key: ContractImplementation;
 
-  public constructor (
+  public constructor(
     private contract: Contract,
-    private wallet: ArianeeWallet,
-    private arianeeState: ServicesHub
+    private walletService: WalletService,
+    private arianeeConfig: ConfigurationService,
+    private web3Service: Web3Service
   ) {
     if (contract === undefined) {
       throw new Error("contract is undefined");
@@ -31,7 +33,8 @@ export class ArianeeContract<ContractImplementation extends Contract> {
       }
     });
   }
-  public makeArianee (): ContractImplementation {
+
+  public makeArianee(): ContractImplementation {
     return this.key;
   }
 
@@ -41,10 +44,10 @@ export class ArianeeContract<ContractImplementation extends Contract> {
    * @param contractAddress
    * @param data
    */
-  public arianeeSignMetamask (transaction): Promise<any> {
-    const { resolve, promise, reject } = flatPromise();
+  public arianeeSignMetamask(transaction): Promise<any> {
+    const {resolve, promise, reject} = flatPromise();
 
-    this.arianeeState.web3.eth.sendTransaction(transaction, function (
+    this.web3Service.web3.eth.sendTransaction(transaction, function (
       err,
       result
     ) {
@@ -63,44 +66,40 @@ export class ArianeeContract<ContractImplementation extends Contract> {
     data: TransactionObject<any>
   ) => {
     const defaultTransaction = {
-      from: this.wallet.publicKey
+      from: this.walletService.publicKey
     };
 
-    const mergedTransaction = { ...defaultTransaction, ...transaction };
+    const mergedTransaction = {...defaultTransaction, ...transaction};
 
     return data.call(mergedTransaction);
-  }
+  };
 
   private overideSend = async (
     transaction: Transaction,
     data: TransactionObject<any>
   ): Promise<any> => {
-    const nonce = await this.arianeeState.web3.eth.getTransactionCount(
-      this.wallet.publicKey,
+    const nonce = await this.web3Service.web3.eth.getTransactionCount(
+      this.walletService.publicKey,
       "pending"
     );
 
     const encodeABI = data.encodeABI();
     const defaultTransaction: Tx = {
       nonce,
-      chainId: this.arianeeState.arianeeConfig.chainId,
-      from: this.wallet.publicKey,
+      chainId: this.arianeeConfig.arianeeConfiguration.chainId,
+      from: this.walletService.publicKey,
       data: encodeABI,
       to: this.contract.options.address,
       gas: 2000000,
-      gasPrice: this.arianeeState.web3.utils.toWei("1", "gwei")
+      gasPrice: this.web3Service.web3.utils.toWei("1", "gwei")
     };
-    const mergedTransaction = { ...defaultTransaction, ...transaction };
-    const { resolve, reject, promise } = flatPromise();
+    const mergedTransaction = {...defaultTransaction, ...transaction};
+    const {resolve, reject, promise} = flatPromise();
 
-    // if (this.arianeeProtocolInstance.isMetamaskProvider) {
-    //     return this.arianeeSignMetamask(mergedTransaction);
-    //} else {
-
-    this.wallet.account
+    this.walletService.account
       .signTransaction(mergedTransaction)
       .then(result => {
-        return this.arianeeState.web3.eth
+        return this.web3Service.web3.eth
           .sendSignedTransaction(result.rawTransaction)
           .on("confirmation", (confirmationNumber, receipt) => {
             resolve({
@@ -117,5 +116,5 @@ export class ArianeeContract<ContractImplementation extends Contract> {
 
     return promise;
     // }
-  }
+  };
 }

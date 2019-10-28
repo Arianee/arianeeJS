@@ -1,15 +1,16 @@
-import { ServicesHub } from "../servicesHub";
-import { Utils } from "./utils";
+import {ConfigurationService} from "../configurationService/configurationService";
+import {UtilsService} from "./utilsService";
 
 describe("UTILS", () => {
   describe("readLink", () => {
     test("it should return passphrase and certificateId from link", () => {
-      const servicesHubStub: ServicesHub = <ServicesHub>{
-        arianeeConfig: {
+      const configurationServiceStub: ConfigurationService = <ConfigurationService>{
+        arianeeConfiguration: {
           deepLink: "test.arian.ee"
         }
       };
-      const utils = new Utils(undefined, servicesHubStub);
+      const utils = new UtilsService(undefined, configurationServiceStub);
+
       const certificateId = 1314;
       const passphrase = "mypassaezfkzn";
       const linkObject = utils.readLink(
@@ -21,13 +22,15 @@ describe("UTILS", () => {
         method: "requestOwnership"
       });
     });
+
     test("it should return passphrase and certificateId from link and proof method", () => {
-      const servicesHubStub: ServicesHub = <ServicesHub>{
-        arianeeConfig: {
+      const configurationServiceStub: ConfigurationService = <ConfigurationService>{
+        arianeeConfiguration: {
           deepLink: "test.arian.ee"
         }
       };
-      const utils = new Utils(undefined, servicesHubStub);
+      const utils = new UtilsService(undefined, configurationServiceStub);
+
       const certificateId = 1314;
       const passphrase = "mypassaezfkzn";
       const linkObject = utils.readLink(
@@ -39,13 +42,15 @@ describe("UTILS", () => {
         method: "proof"
       });
     });
+
     test("readlink should be linked with createLink", () => {
-      const servicesHubStub: ServicesHub = <ServicesHub>{
-        arianeeConfig: {
+      const configurationServiceStub: ConfigurationService = <ConfigurationService>{
+        arianeeConfiguration: {
           deepLink: "test.arian.ee"
         }
       };
-      const utils = new Utils(undefined, servicesHubStub);
+      const utils = new UtilsService(undefined, configurationServiceStub);
+
       const certificateId = 1314;
       const passphrase = "mypassaezfkzn";
       const linkObject = utils.createLink(certificateId, passphrase);
@@ -62,23 +67,23 @@ describe("UTILS", () => {
 
   describe("isRightEnvironement", () => {
     test("it should return true if same chain as current wallet", () => {
-      const servicesHubStub: ServicesHub = <ServicesHub>{
-        arianeeConfig: {
+      const configurationServiceStub: ConfigurationService = <ConfigurationService>{
+        arianeeConfiguration: {
           deepLink: "test.arian.ee"
         }
       };
-      const utils = new Utils(undefined, servicesHubStub);
+      const utils = new UtilsService(undefined, configurationServiceStub);
 
       expect(utils.isRightChain("test.arian.ee")).toBe(true);
     });
 
     test("it should throw an error if wrong chain as current wallet", () => {
-      const servicesHubStub: ServicesHub = <ServicesHub>{
-        arianeeConfig: {
+      const configurationServiceStub: ConfigurationService = <ConfigurationService>{
+        arianeeConfiguration: {
           deepLink: "test.arian.ee"
         }
       };
-      const utils = new Utils(undefined, servicesHubStub);
+      const utils = new UtilsService(undefined, configurationServiceStub);
 
       try {
         utils.isRightChain("arian.ee");
@@ -90,7 +95,8 @@ describe("UTILS", () => {
   });
 
   describe("urlParse", () => {
-    const utils = new Utils(undefined, undefined);
+    const utils = new UtilsService(undefined, undefined);
+
     test("it should parse complicated url", () => {
       const myURL =
         "http://username:password@localhost:257/deploy/?asd=asd#asd";
@@ -119,7 +125,7 @@ describe("UTILS", () => {
   });
 
   describe("timestampIsMoreRecentThan", () => {
-    const utils = new Utils(undefined, undefined);
+    const utils = new UtilsService(undefined, undefined);
     test("it should return true if timestamp is recent", () => {
       const testTimestamp = Math.round((new Date().valueOf() - 3000) / 1000); // now - 3 secondes (in seconds)
       const isRecent = utils.timestampIsMoreRecentThan(testTimestamp, 300); // test if timestamp is > (now - 3 minutes)

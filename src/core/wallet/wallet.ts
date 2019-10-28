@@ -1,136 +1,92 @@
 import {
-  Aria,
-  ArianeeCreditHistory,
-  ArianeeEvent,
-  ArianeeIdentity,
-  ArianeeSmartAsset,
-  ArianeeStaking,
-  ArianeeStore,
-  ArianeeWhitelist
+    Aria,
+    ArianeeCreditHistory,
+    ArianeeEvent,
+    ArianeeIdentity,
+    ArianeeSmartAsset,
+    ArianeeStaking,
+    ArianeeStore,
+    ArianeeWhitelist
 } from "@arianee/arianee-abi";
-
-import { ArianeeContract } from "../libs/arianeeContract";
-import { Utils } from "../libs/utils";
-import { ServicesHub } from "../servicesHub/servicesHub";
-import { WalletCustomMethods } from "./walletCustomMethods";
+import {container} from "tsyringe";
+import {ArianeeConfig} from "../../models/arianeeConfiguration";
+import {ConfigurationService} from "./services/configurationService/configurationService";
+import {ContractService} from "./services/contractService/contractsService";
+import {WalletCustomMethodService} from "./services/walletCustomMethodService/walletCustomMethodService";
+import {WalletService} from "./services/walletService/walletService";
+import {Web3Service} from "./services/web3Service/web3Service";
 
 export class ArianeeWallet {
-  public storeContract: ArianeeStore;
-  public smartAssetContract: ArianeeSmartAsset;
-  public identityContract: ArianeeIdentity;
-  public ariaContract: Aria;
-  public creditHistoryContract: ArianeeCreditHistory;
-  public whitelistContract: ArianeeWhitelist;
-  public stakingContract: ArianeeStaking;
-  public eventContract: ArianeeEvent;
-  public utils = new Utils(this.servicesHub.web3, this.servicesHub);
+    public storeContract: ArianeeStore;
+    public smartAssetContract: ArianeeSmartAsset;
+    public identityContract: ArianeeIdentity;
+    public ariaContract: Aria;
+    public creditHistoryContract: ArianeeCreditHistory;
+    public whitelistContract: ArianeeWhitelist;
+    public stakingContract: ArianeeStaking;
+    public eventContract: ArianeeEvent;
 
-  private customMethods = new WalletCustomMethods(this);
+    public brandDataHubRewardAddress =
+        "0xA79B29AD7e0196C95B87f4663ded82Fbf2E3ADD8";
 
-  public brandDataHubRewardAddress =
-    "0xA79B29AD7e0196C95B87f4663ded82Fbf2E3ADD8";
+    public walletRewardAddress = "0x39da7e30d2D5F2168AE3B8599066ab122680e1ef";
 
-  public walletRewardAddress = "0x39da7e30d2D5F2168AE3B8599066ab122680e1ef";
+    private container;
 
-  constructor (
-    public servicesHub: ServicesHub,
-    private _account,
-    private _mnemonic?
-  ) {
-    this.smartAssetContract = new ArianeeContract<ArianeeSmartAsset>(
-      this.servicesHub.rawContracts.smartAssetContract,
-      this,
-      this.servicesHub
-    ).makeArianee();
+    constructor(
+        private _account,
+        private _mnemonic?
+    ) {
+        this.container = container.createChildContainer();
+        this.container.registerSingleton(WalletService);
+        this.container.registerSingleton(Web3Service);
 
-    this.identityContract = new ArianeeContract<ArianeeIdentity>(
-      this.servicesHub.rawContracts.identityContract,
-      this,
-      this.servicesHub
-    ).makeArianee();
-
-    this.ariaContract = new ArianeeContract<Aria>(
-      this.servicesHub.rawContracts.ariaContract,
-      this,
-      this.servicesHub
-    ).makeArianee();
-
-    this.storeContract = new ArianeeContract<ArianeeStore>(
-      this.servicesHub.rawContracts.storeContract,
-      this,
-      this.servicesHub
-    ).makeArianee();
-
-    this.creditHistoryContract = new ArianeeContract<ArianeeCreditHistory>(
-      this.servicesHub.rawContracts.creditHistoryContract,
-      this,
-      this.servicesHub
-    ).makeArianee();
-
-    this.whitelistContract = new ArianeeContract<ArianeeWhitelist>(
-      this.servicesHub.rawContracts.whitelistContract,
-      this,
-      this.servicesHub
-    ).makeArianee();
-
-    this.stakingContract = new ArianeeContract<ArianeeStaking>(
-      this.servicesHub.rawContracts.stakingContract,
-      this,
-      this.servicesHub
-    ).makeArianee();
-
-    if (this.servicesHub.rawContracts.eventContract) {
-      this.eventContract = new ArianeeContract<ArianeeEvent>(
-        this.servicesHub.rawContracts.eventContract,
-        this,
-        this.servicesHub
-      ).makeArianee();
+        const walletService = this.container.resolve(WalletService);
+        walletService.account = this.account;
     }
-  }
 
-  public get publicKey (): string {
-    return this.account.address;
-  }
+    public get publicKey(): string {
+        return this.account.address;
+    }
 
-  public get privateKey (): string {
-    return this.account.privateKey;
-  }
+    public get privateKey(): string {
+        return this.account.privateKey;
+    }
 
-  public get mnemnonic (): string {
-    return this._mnemonic;
-  }
+    public get mnemnonic(): string {
+        return this._mnemonic;
+    }
 
-  public get web3 () {
-    return this.servicesHub.web3;
-  }
+    public get web3() {
+        return this.container.resolve(Web3Service).web3;
+    }
 
-  public get account () {
-    return this._account;
-  }
+    public get configuration(): ArianeeConfig {
+        const configurationService: ConfigurationService = this.container.resolve(ConfigurationService);
 
-  public get methods () {
-    return this.customMethods.getMethods();
-  }
+        return configurationService.arianeeConfiguration;
+    }
 
-  /**
-   * @deprecated this method has been renamed requestPoa.
-   */  
-  public get getFaucet () {
-    return this.customMethods.requestPoa;
-  }
+    public get methods() {
+        const walletCustomMethods: WalletCustomMethodService = this.container.resolve(WalletCustomMethodService);
 
-  public get requestPoa () {
-    return this.customMethods.requestPoa;
-  }  
+        return walletCustomMethods.getMethods();
+    }
 
-  /**
-   * @deprecated this method has been renamed requestAria.
-   */
-  public get getAria () {
-    return this.customMethods.requestAria;
-  }
+    public get requestPoa() {
+        return this.container.resolve(WalletCustomMethodService).requestPoa;
+    }
 
-  public get requestAria () {
-    return this.customMethods.requestAria;
-  }  
+    public get requestAria() {
+        return this.container.resolve(WalletCustomMethodService).requestAria;
+    }
+
+    public get account() {
+        return this._account;
+    }
+
+    public get contracts(): ContractService {
+        return this.container.resolve(ContractService);
+    }
+
 }

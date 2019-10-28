@@ -6,6 +6,8 @@
     "declaration": true,
     "target": "es5",
     "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "lib": [
       "es5",
       "es2017",

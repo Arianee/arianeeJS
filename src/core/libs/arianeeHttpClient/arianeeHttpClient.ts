@@ -1,8 +1,10 @@
 import axios from "axios";
-import { SimpleSessionCache } from "./simpleCache/simpleSessionCache";
+import {singleton} from "tsyringe";
+import { SimpleSessionCache } from "../simpleCache/simpleSessionCache";
 
+@singleton()
 export class ArianeeHttpClient {
-  constructor (private httpCacheManage = new SimpleSessionCache()) {}
+  private httpCacheManage = new SimpleSessionCache()
 
   private fetchingCache = {};
 
