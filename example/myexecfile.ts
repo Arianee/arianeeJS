@@ -14,15 +14,13 @@ declare var ArianeeLib;
     .then(i => console.log("success getting ARIA"))
     .catch(i => console.log("error getting ARIA"));
 
-  await wallet.ariaContract.methods
-    .approve(
-      wallet.storeContract.options.address,
-      "10000000000000000000000000000"
-    ).send()
+  await wallet
+    .methods
+    .approveStore()
     .then(i => console.log("success approve store"))
     .catch(i => console.log("error approve store"));
 
-  await wallet.storeContract.methods.buyCredit(0, 5, wallet.publicKey).send()
+  await wallet.methods.buyCredits("certificate", 5)
     .then(i => console.log("success buying credits"))
     .catch(i => console.log("error buying credits"));
 

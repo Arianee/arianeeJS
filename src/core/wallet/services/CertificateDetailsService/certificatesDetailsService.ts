@@ -1,20 +1,32 @@
-import { CertificateId } from "../../../models/CertificateId";
-import { CertificateSummaryBuilder } from "../../certificateSummary";
-import { ArianeeWallet } from "../wallet";
-import { IdentityService } from "./identityService";
+import {inject, injectable, singleton} from "tsyringe";
+import {CertificateId} from "../../../../models/CertificateId";
+import {CertificateSummaryBuilder} from "../../certificateSummary";
+import {UtilsService} from "../utilService/utilsService";
+import {ArianeeHttpClient} from "../../../libs/arianeeHttpClient/arianeeHttpClient";
+import {ArianeeWallet} from "../../wallet";
+import {ConfigurationService} from "../configurationService/configurationService";
+import {ContractService} from "../contractService/contractsService";
+import {IdentityService} from "../identityService/identityService";
+import {WalletService} from "../walletService/walletService";
 
+@injectable()
 export class CertificateDetails {
   constructor (
-    private wallet: ArianeeWallet,
-    private identityService: IdentityService
-  ) {}
+    private identityService: IdentityService,
+    private httpClient: ArianeeHttpClient,
+    private contractService: ContractService,
+    private configurationService: ConfigurationService,
+    private walletService: WalletService,
+    private utils: UtilsService
+  ) {
+  }
 
   public getOwnerFactory = (
     certificateId: CertificateId,
     certificateBuilder?: CertificateSummaryBuilder
   ) => {
     return async () => {
-      const owner = await this.wallet.smartAssetContract.methods
+      const owner = await this.contractService.smartAssetContract.methods
         .ownerOf(certificateId.toString())
         .call();
 
@@ -25,7 +37,7 @@ export class CertificateDetails {
   }
 
   private getCertificateContentFromHttp = async certificateURI => {
-    return await this.wallet.servicesHub.httpClient.fetchWithCache(
+    return await this.httpClient.fetchWithCache(
       certificateURI
     );
   }
@@ -35,12 +47,12 @@ export class CertificateDetails {
     certificateId,
     proof
   ) => {
-    const issuer = await this.wallet.smartAssetContract.methods
+    const issuer = await this.contractService.smartAssetContract.methods
       .issuerOf(certificateId)
       .call();
     const identity = await this.identityService.getIdentity(issuer);
 
-    return this.wallet.servicesHub.httpClient.RPCCall(
+    return this.httpClient.RPCCall(
       identity.data.rpcEndpoint,
       "certificate.read",
       {
@@ -68,17 +80,16 @@ export class CertificateDetails {
     certificateBuilder?: CertificateSummaryBuilder
   ) => {
     return async () => {
-      const tokenURI = await this.wallet.smartAssetContract.methods
+      const tokenURI = await this.contractService.smartAssetContract.methods
         .tokenURI(certificateId.toString())
         .call();
 
       let proof;
 
       if (passphrase) {
-        const temporaryWallet = this.wallet.servicesHub
-          .walletFactory()
+        const temporaryWallet = this.configurationService.walletFactory()
           .fromPassPhrase(passphrase);
-        proof = this.wallet.utils.signProof(
+        proof = this.utils.signProof(
           JSON.stringify({
             certificateId: certificateId,
             timestamp: new Date()
@@ -86,12 +97,12 @@ export class CertificateDetails {
           temporaryWallet.privateKey
         );
       } else {
-        proof = this.wallet.utils.signProof(
+        proof = this.utils.signProof(
           JSON.stringify({
             certificateId: certificateId,
             timestamp: new Date()
           }),
-          this.wallet.privateKey
+          this.walletService.privateKey
         );
       }
 
@@ -101,16 +112,16 @@ export class CertificateDetails {
         proof
       );
 
-      const certificateSchema = await this.wallet.servicesHub.httpClient.fetch(
+      const certificateSchema = await this.httpClient.fetch(
         certificateContentData.$schema
       );
 
-      const hash = await this.wallet.utils.cert(
+      const hash = await this.utils.cert(
         certificateSchema,
         certificateContentData
       );
 
-      const tokenImprint = await this.wallet.smartAssetContract.methods
+      const tokenImprint = await this.contractService.smartAssetContract.methods
         .tokenImprint(certificateId.toString())
         .call();
 

@@ -1,6 +1,6 @@
 import { isNullOrUndefined } from "util";
-import { ArianeeConfig } from "../../models/arianeeConfiguration";
-import { ArianeeWalletBuilder } from "../wallet/walletBuilder";
+import { ArianeeConfig } from "../../../models/arianeeConfiguration";
+import { ArianeeWalletBuilder } from "../../wallet/walletBuilder";
 
 export class ProtocolConfigurationBuilder {
   private config: ArianeeConfig = {
@@ -16,9 +16,9 @@ export class ProtocolConfigurationBuilder {
     chainId: undefined,
     faucetUrl: undefined,
     deepLink: undefined,
-    walletReward: { address: undefined },
+    walletReward: { address: '0x39da7e30d2D5F2168AE3B8599066ab122680e1ef' },
     // TODO
-    brandDataHubReward: { address: undefined }
+    brandDataHubReward: { address: '0xA79B29AD7e0196C95B87f4663ded82Fbf2E3ADD8' }
   };
 
   public setSmartContractConfiguration (

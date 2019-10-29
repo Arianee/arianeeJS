@@ -112,7 +112,7 @@ Then("user{int} is the owner of the certificate{int}", async function (
   const token = this.store.getToken(certificateIndex);
   const wallet = this.store.getUserWallet(userIndex);
 
-  const owner = await wallet.smartAssetContract.methods.ownerOf(token).call();
+  const owner = await wallet.contracts.smartAssetContract.methods.ownerOf(token).call();
   expect(wallet.publicKey).equals(owner);
 });
 
@@ -122,11 +122,11 @@ Then(
     const token = this.store.getToken(tokenIndex);
     const wallet = this.store.getUserWallet(userIndex);
 
-    const owner = await wallet.smartAssetContract.methods.ownerOf(token).call();
+    const owner = await wallet.contracts.smartAssetContract.methods.ownerOf(token).call();
 
     expect(wallet.publicKey).equals(owner);
 
-    const uriKey = await wallet.smartAssetContract.methods
+    const uriKey = await wallet.contracts.smartAssetContract.methods
       .tokenURI(token)
       .call();
 

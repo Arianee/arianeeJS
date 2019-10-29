@@ -1,6 +1,8 @@
 import {ethers, Wallet as etherWallet} from "ethers";
+import {container} from "tsyringe";
 import {ArianeeConfig} from "../../models/arianeeConfiguration";
-import {ServicesHubBuilder} from "../servicesHub";
+import {ConfigurationService} from "./services/configurationService/configurationService";
+import {Web3Service} from "./services/web3Service/web3Service";
 import {ArianeeWallet} from "./wallet";
 
 const Web3 = require("web3");
@@ -8,19 +10,14 @@ const Web3 = require("web3");
 export class ArianeeWalletBuilder {
   private web3 = Web3;
 
-  readonly stateBuilder: ServicesHubBuilder = new ServicesHubBuilder();
-
   constructor(private arianeeConfig: ArianeeConfig) {
-    this.stateBuilder.setConfig(arianeeConfig);
-    this.web3 = this.stateBuilder.web3;
+    container.resolve(ConfigurationService).arianeeConfiguration = arianeeConfig;
+    this.web3 = container.resolve(Web3Service).web3;
   }
 
   private buildAriaWallet(account, mnemonic?): ArianeeWallet {
     if (this.web3.utils.isAddress(account.address)) {
-
-      const arianeeState = this.stateBuilder.build();
-
-      return new ArianeeWallet(arianeeState, account, mnemonic);
+      return new ArianeeWallet(account, mnemonic);
     }
     throw new Error("invalid address");
   }
