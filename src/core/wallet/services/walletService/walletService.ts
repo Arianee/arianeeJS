@@ -13,7 +13,4 @@ export class WalletService {
     return this.account.privateKey;
   }
 
-  public setAccount(account) {
-    this.account = account;
-  }
 }
