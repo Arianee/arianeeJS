@@ -11,14 +11,14 @@ import {WalletService} from "../walletService/walletService";
 
 @injectable()
 export class EventService {
-  private utils: UtilsService;
 
-  constructor (
+  constructor(
     private identityService: IdentityService,
     private contractService: ContractService,
     private walletService: WalletService,
     private configurationService: ConfigurationService,
     private httpClient: ArianeeHttpClient,
+    private utils: UtilsService
   ) {
   }
 
@@ -40,62 +40,129 @@ export class EventService {
           .then(identity => ({...event, identity: identity}))
       )
     );
-  }
+  };
 
   public getCertificateArianeeEvents = async (
     certificateId: number,
     passphrase?: string
   ): Promise<any[]> => {
-    const sortedEvents = await this.contractService.eventContract
-      .getPastEvents(blockchainEvent.arianeeEvent.eventCreated, {
-        filter: {_tokenId: certificateId},
-        fromBlock: 0,
-        toBlock: "latest"
-      })
-      .then(events => events.sort(sortEvents));
 
-    if (sortedEvents.length > 0) {
-      const issuerIdentity = await this.contractService.smartAssetContract.methods
-        .issuerOf(certificateId)
-        .call()
-        .then(async issuer => {
-          return await this.identityService.getIdentity(issuer);
-        });
+    const issuerIdentity = await this.contractService.smartAssetContract.methods
+      .issuerOf(certificateId)
+      .call()
+      .then(async issuer => {
+        return await this.identityService.getIdentity(issuer);
+      });
 
-      return Promise.all(
-        sortedEvents.map(async (event: any, index: number) => {
-          let requestBody: any = {
-            eventId: parseInt(event.returnValues._eventId),
-            certificateId: parseInt(event.returnValues._tokenId)
-          };
+    const validateEvents = await this.getValidateEvents(certificateId, issuerIdentity.data.rpcEndpoint, passphrase);
+    const pendingEvents = await this.getPendingEvents(certificateId, issuerIdentity.data.rpcEndpoint, passphrase);
 
-          let privateKey: string;
-          if (passphrase) {
-            privateKey = this.configurationService
-              .walletFactory()
-              .fromPassPhrase(passphrase).privateKey;
-            requestBody.authentification = this.utils.signProofForRpc(
-              certificateId,
-              privateKey
-            );
-          } else {
-            privateKey = this.walletService.privateKey;
-            requestBody.authentification = this.utils.signProofForRpc(
-              certificateId,
-              privateKey
-            );
-          }
+    return this.orderArianeeEvents(validateEvents.concat(pendingEvents),certificateId);
 
-          return new Promise((resolve, reject) => {
-            this.httpClient.RPCCallWithCache(
-              issuerIdentity.data.rpcEndpoint,
-              "event.read",
-              requestBody
-            );
-          });
-        })
-      );
+  }
+
+  private orderArianeeEvents= async (events:any[], certificateId)=>{
+
+    const aEvents = await this.contractService.eventContract.getPastEvents(blockchainEvent.arianeeEvent.eventCreated,
+      {fromBlock:0, toBlock:'latest', filter:{_tokenId:certificateId}});
+
+    events.map((event)=>{
+      event.blockNumber = aEvents.find((aEvent)=>{return aEvent.returnValues._eventId === event.id;}).blockNumber;
+    });
+
+    return events.sort(sortEvents);
+
+  }
+
+  private getValidateEvents = async (certificateId, rpcEndpoint, passphrase?)=>{
+    const eventLenth = await this.contractService.eventContract.methods.eventsLength(certificateId).call();
+
+    const eventRangeOfIndex = [];
+    for (let i = 0; i < <any>eventLenth; i++) {
+      eventRangeOfIndex.push(i);
     }
+
+    const eventIds = await Promise.all(
+      eventRangeOfIndex.map(index =>
+        this.contractService.eventContract.methods
+          .tokenEventsList(certificateId, index).call()
+          .then((eventIdBn) => eventIdBn)
+      )
+    );
+
+    return Promise.all(
+      eventIds.map(async (eventId)=>{
+        return this.getArianeeEvent(eventId, certificateId, rpcEndpoint, passphrase)
+          .then(event=>{return {...event,pending:false};});
+      }),
+    );
+  }
+
+  private getPendingEvents = async (certificateId, rpcEndpoint, passphrase?)=>{
+    const pendingEventLenth = await this.contractService.eventContract.methods.pendingEventsLength(certificateId)
+      .call();
+
+    const eventRangeOfIndex = [];
+
+    for (let i = 0; i < <any>pendingEventLenth; i++) {
+      eventRangeOfIndex.push(i);
+    }
+
+    const pendingEventIds = await Promise.all(
+      eventRangeOfIndex.map(index =>
+        this.contractService.eventContract.methods
+          .pendingEvents(certificateId, index).call()
+          .then((eventIdBn) => eventIdBn)
+      )
+    );
+
+    return Promise.all(
+      pendingEventIds.map(async (eventId)=>{
+        return this.getArianeeEvent(eventId, certificateId, rpcEndpoint, passphrase)
+          .then(event=>{return {...event,pending:true};});
+      })
+    );
+
+  }
+
+  private getArianeeEvent= async (eventId, certificateId, rpcEndpoint, passphrase?)=>{
+
+      return new Promise(async (resolve, reject)=>{
+        let event:any = {};
+        let eventBc:any = await this.contractService.eventContract.methods.getEvent(eventId).call();
+
+        event.identity = await this.identityService.getIdentity(eventBc["2"]);
+
+        let requestBody: any = {
+          eventId: eventId,
+          certificateId: certificateId
+        };
+
+        let privateKey: string;
+        if (passphrase) {
+          privateKey = this.configurationService
+            .walletFactory()
+            .fromPassPhrase(passphrase).privateKey;
+          requestBody.authentification = this.utils.signProofForRpc(
+            certificateId,
+            privateKey
+          );
+        } else {
+          privateKey = this.walletService.privateKey;
+          requestBody.authentification = this.utils.signProofForRpc(
+            certificateId,
+            privateKey
+          );
+        }
+        event.data = await this.httpClient.RPCCallWithCache(
+          rpcEndpoint,
+          "event.read",
+          requestBody
+        );
+        event.id = eventId;
+
+        resolve(event);
+      });
   }
 
 }
