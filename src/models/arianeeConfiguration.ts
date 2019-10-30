@@ -1,17 +1,18 @@
-export interface Contract {
+interface ContractConfiguration {
   abi: string;
   address: string;
+
 }
 
 export interface ArianeeConfig {
-  aria: Contract;
-  creditHistory: Contract;
-  eventArianee: Contract;
-  identity: Contract;
-  smartAsset: Contract;
-  staking: Contract;
-  store: Contract;
-  whitelist: Contract;
+  aria: ContractConfiguration;
+  creditHistory: ContractConfiguration;
+  eventArianee: ContractConfiguration;
+  identity: ContractConfiguration;
+  smartAsset: ContractConfiguration;
+  staking: ContractConfiguration;
+  store: ContractConfiguration;
+  whitelist: ContractConfiguration;
 
   provider: string;
   chainId: number;

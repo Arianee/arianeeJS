@@ -4,4 +4,6 @@ cache:
   npm: true
 node_js: 
   - 10.16.0
+install:
+  - npm ci
 

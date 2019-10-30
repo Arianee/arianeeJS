@@ -40,10 +40,8 @@
     "@types/chai": "^4.1.7",
     "@types/cucumber": "^4.0.5",
     "@types/jest": "^24.0.17",
-    "@types/web3": "^1.0.19",
     "babel-loader": "^8.0.6",
     "chai": "^4.2.0",
-    "copy-webpack-plugin": "^4.6.0",
     "cucumber": "^5.1.0",
     "jest": "^24.1.0",
     "nodemon": "^1.19.1",
@@ -55,27 +53,22 @@
     "tslint": "^5.20.0",
     "typechain": "^0.3.14",
     "typedoc": "^0.14.2",
-    "typedoc-plugin-markdown": "^2.0.8",
     "typescript": "^3.6.3",
-    "web3-eth-contract": "^1.2.1",
     "webpack": "^4.41.0",
     "webpack-bundle-analyzer": "^3.5.2",
     "webpack-cli": "^3.3.9",
-    "webpack-node-externals": "^1.7.2"
+    "webpack-node-externals": "^1.7.2",
+    "cucumber-pretty": "^1.5.2",
+    "node-fetch-polyfill": "^2.0.6"
   },
   "dependencies": {
     "@0xcert/cert": "1.5.2",
     "@0xcert/conventions": "^2.0.0-alpha3",
-    "@arianee/arianee-abi": "0.3.0",
+    "@arianee/arianee-abi": "0.4.0",
     "axios": "^0.18.1",
-    "bignumber.js": "^8.0.2",
-    "cucumber-pretty": "^1.5.2",
-    "declaration-bundler-webpack-plugin": "^1.0.3",
-    "ethers": "^4.0.23",
-    "jayson": "^3.0.2",
-    "node-fetch-polyfill": "^2.0.6",
+    "ethers": "^4.0.38",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^3.4.0",
-    "web3": "1.2.1"
+    "web3": "1.2.2"
   }
 }

@@ -9,7 +9,7 @@ import {
   ArianeeWhitelist
 } from "@arianee/arianee-abi";
 import {injectable, singleton} from "tsyringe";
-import Contract from "web3/eth/contract";
+import { Contract } from "web3-eth-contract";
 import {ArianeeContract} from "../../../libs/arianeeContract";
 import {ConfigurationService} from "../configurationService/configurationService";
 import {WalletService} from "../walletService/walletService";
@@ -26,7 +26,7 @@ export class ContractService {
   public stakingContract: ArianeeStaking;
   public eventContract: ArianeeEvent;
 
-  constructor(private walletService: WalletService,
+  constructor (private walletService: WalletService,
               private web3Service: Web3Service,
               private configurationService: ConfigurationService) {
 
@@ -48,7 +48,7 @@ export class ContractService {
 
   }
 
-  create<T extends Contract>(name: string): T {
+  create<T extends Contract> (name: string): T {
     try {
 
       const contract = new this.web3Service.web3.eth.Contract(
