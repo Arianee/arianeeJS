@@ -1,5 +1,6 @@
 import {Cert} from "@0xcert/cert";
 import {singleton} from "tsyringe";
+import { Sign } from "web3-core";
 import {ConfigurationService} from "../configurationService/configurationService";
 import {Web3Service} from "../web3Service/web3Service";
 
@@ -65,8 +66,8 @@ export class UtilsService {
     );
   }
 
-  public signProof(data: string | Array<any>, privateKey: string) {
-    return this.web3.eth.accounts.sign(data, privateKey);
+  public signProof(data: string | Array<any>, privateKey: string):Sign {
+    return this.web3.eth.accounts.sign(<string>data, privateKey);
   }
 
   public async cert(schema, data): Promise<string> {

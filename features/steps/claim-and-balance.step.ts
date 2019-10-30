@@ -45,7 +45,7 @@ Then('user{int} has postive poa balance', async function (userIndex) {
     const wallet = this.store.getUserWallet(userIndex);
     const balance = await wallet.methods.balanceOfPoa();
 
-    expect(balance > 0).equals(true, `actual value of POA balance ${balance}`);
+    expect(parseInt(balance) > 0).equals(true, `actual value of POA balance ${balance}`);
 
     return Promise.resolve();
 });

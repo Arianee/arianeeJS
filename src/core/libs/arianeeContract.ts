@@ -1,5 +1,6 @@
-import Contract from "web3/eth/contract";
-import {Transaction, TransactionObject, Tx} from "web3/eth/types";
+import {TransactionObject} from "@arianee/arianee-abi/types/types";
+import {Transaction} from "web3-core";
+import {Contract} from "web3-eth-contract";
 import {ConfigurationService} from "../wallet/services/configurationService/configurationService";
 import {WalletService} from "../wallet/services/walletService/walletService";
 import {Web3Service} from "../wallet/services/web3Service/web3Service";
@@ -8,7 +9,7 @@ import {flatPromise} from "./flat-promise";
 export class ArianeeContract<ContractImplementation extends Contract> {
   public key: ContractImplementation;
 
-  public constructor(
+  public constructor (
     private contract: Contract,
     private walletService: WalletService,
     private arianeeConfig: ConfigurationService,
@@ -84,7 +85,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
     );
 
     const encodeABI = data.encodeABI();
-    const defaultTransaction: Tx = {
+    const defaultTransaction = {
       nonce,
       chainId: this.arianeeConfig.arianeeConfiguration.chainId,
       from: this.walletService.publicKey,

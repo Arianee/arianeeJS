@@ -9,5 +9,5 @@ export class Web3Service {
     this.web3 = new Web3(configurationService.arianeeConfiguration.provider);
   }
 
-  public web3: any;
+    public web3: any;
 }
