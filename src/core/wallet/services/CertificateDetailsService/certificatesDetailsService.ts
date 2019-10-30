@@ -30,7 +30,7 @@ export class CertificateDetails {
         .ownerOf(certificateId.toString())
         .call();
 
-      if (certificateBuilder) certificateBuilder.setOwner(owner);
+      if (certificateBuilder) certificateBuilder.setOwner(owner,this.walletService.publicKey);
 
       return owner;
     };
