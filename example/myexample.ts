@@ -9,8 +9,10 @@ var fetch = require("node-fetch-polyfill");
 (async function () {
     const arianee = await new Arianee().init(NETWORK.testnet);
 
-    const wallet1 = arianee.fromMnemonic('piano sort cash token advice label utility orchard stone arctic two rose');
-    const certificates = await wallet1.methods.getCertificate(74908, undefined, {arianeeEvents:true});
-console.log(certificates.events.arianeeEvents[3]);
+    const wallet1 = arianee.fromPrivateKey('0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855');
+//    const certificates = await wallet1.methods.getMyCertificates({content: true});
 
+   //console.log(certificates);
+
+    wallet1.methods.refuseArianeeEvent(4498);
 })();
