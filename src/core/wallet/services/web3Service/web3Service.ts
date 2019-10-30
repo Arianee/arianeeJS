@@ -1,5 +1,5 @@
-import {injectable, singleton} from "tsyringe";
-import Web3 from "web3";
+import {injectable} from "tsyringe";
+import Web3 from 'web3';
 import {ConfigurationService} from "../configurationService/configurationService";
 
 @injectable()
