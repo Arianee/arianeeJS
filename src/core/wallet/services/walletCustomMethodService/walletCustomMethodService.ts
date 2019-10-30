@@ -50,16 +50,16 @@ export class WalletCustomMethodService {
     };
   }
 
-  public balanceOfAria = async (address = this.walletService.account.address): Promise<number> => {
+  public balanceOfAria = async (address = this.walletService.account.address): Promise<string> => {
 
     const balance = await this.contractService.ariaContract.methods
       .balanceOf(address)
       .call();
 
-    return <any>balance;
+    return balance.toString();
   }
 
-  public balanceOfPoa = async (address = this.walletService.account.address): Promise<number> => {
+  public balanceOfPoa = async (address = this.walletService.account.address): Promise<string> => {
 
     const balance = await this.web3Service.web3.eth
       .getBalance(address);
@@ -86,7 +86,7 @@ export class WalletCustomMethodService {
   private approveStore = () => {
     return this.contractService.ariaContract.methods
       .approve(
-        this.contractService.storeContract.options.address,
+        this.configurationService.arianeeConfiguration.store.address,
         "10000000000000000000000000000"
       )
       .send();

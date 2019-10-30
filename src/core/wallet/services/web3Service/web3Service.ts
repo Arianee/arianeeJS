@@ -1,7 +1,6 @@
 import {injectable, singleton} from "tsyringe";
-import {ArianeeConfig} from "../../../../models/arianeeConfiguration";
+import Web3 from "web3";
 import {ConfigurationService} from "../configurationService/configurationService";
-import Web3 = require("web3");
 
 @injectable()
 export class Web3Service {
@@ -10,5 +9,5 @@ export class Web3Service {
     this.web3 = new Web3(configurationService.arianeeConfiguration.provider);
   }
 
-  public web3: any;
+    public web3: any;
 }
