@@ -6,14 +6,14 @@ import {Web3Service} from "../web3Service/web3Service";
 
 @singleton()
 export class UtilsService {
-  constructor(private web3Service: Web3Service, private configurationService: ConfigurationService) {
+  constructor (private web3Service: Web3Service, private configurationService: ConfigurationService) {
   }
 
-  private get web3() {
+  private get web3 () {
     return this.web3Service.web3;
   }
 
-  public signProofForRequestToken(
+  public signProofForRequestToken (
     certificateId: number,
     publicKeyNextOwner: string,
     privateKeyPreviousOwner: string
@@ -28,7 +28,7 @@ export class UtilsService {
     return this.signProof(data, privateKeyPreviousOwner);
   }
 
-  public signProofForRpc(certificateId: number, privateKey: string) {
+  public signProofForRpc (certificateId: number, privateKey: string) {
     const message = {
       certificateId: certificateId,
       timestamp: Math.round(new Date().valueOf() / 1000)
@@ -37,7 +37,7 @@ export class UtilsService {
     return this.signProof(JSON.stringify(message), privateKey);
   }
 
-  public simplifiedParsedURL(url: string) {
+  public simplifiedParsedURL (url: string) {
     const m = url.match(
       /^(([^:\/?#]+:)?(?:\/\/((?:([^\/?#:]*):([^\/?#:]*)@)?([^\/?#:]*)(?::([^\/?#:]*))?)))?([^?#]*)(\?[^#]*)?(#.*)?$/
       ),
@@ -55,7 +55,7 @@ export class UtilsService {
     return m && r;
   }
 
-  public createPassphrase() {
+  public createPassphrase () {
     return (
       Math.random()
         .toString(36)
@@ -66,11 +66,11 @@ export class UtilsService {
     );
   }
 
-  public signProof(data: string | Array<any>, privateKey: string):Sign {
+  public signProof (data: string | Array<any>, privateKey: string):Sign {
     return this.web3.eth.accounts.sign(<string>data, privateKey);
   }
 
-  public async cert(schema, data): Promise<string> {
+  public async cert (schema, data): Promise<string> {
     const cert = new Cert({
       schema: schema
     });
@@ -82,7 +82,7 @@ export class UtilsService {
     return "0x" + certif;
   }
 
-  private cleanObject(obj: any) {
+  private cleanObject (obj: any) {
     for (let propName in obj) {
       if (
         obj[propName] &&
@@ -96,7 +96,7 @@ export class UtilsService {
     return obj;
   }
 
-  public isRightChain(hostname: string) {
+  public isRightChain (hostname: string) {
     if (hostname === this.configurationService.arianeeConfiguration.deepLink) {
       return true;
     } else {
@@ -104,7 +104,7 @@ export class UtilsService {
     }
   }
 
-  public createLink(
+  public createLink (
     certificateId: number,
     passphrase: string,
     suffix?: string
@@ -124,7 +124,7 @@ export class UtilsService {
     };
   }
 
-  public readLink(link) {
+  public readLink (link) {
     const url = this.simplifiedParsedURL(link);
 
     this.isRightChain(url.hostname);
@@ -147,7 +147,7 @@ export class UtilsService {
     };
   }
 
-  public timestampIsMoreRecentThan(timestamp, seconds) {
+  public timestampIsMoreRecentThan (timestamp, seconds) {
     const date = new Date().valueOf();
     const minTime = date - seconds * 1000;
 

@@ -13,7 +13,7 @@ import {WalletService} from "../walletService/walletService";
 export class EventService {
   private utils: UtilsService;
 
-  constructor(
+  constructor (
     private identityService: IdentityService,
     private contractService: ContractService,
     private walletService: WalletService,
@@ -40,7 +40,7 @@ export class EventService {
           .then(identity => ({...event, identity: identity}))
       )
     );
-  };
+  }
 
   public getCertificateArianeeEvents = async (
     certificateId: number,
@@ -87,7 +87,7 @@ export class EventService {
           }
 
           return new Promise((resolve, reject) => {
-            this.httpClient.RPCCall(
+            this.httpClient.RPCCallWithCache(
               issuerIdentity.data.rpcEndpoint,
               "event.read",
               requestBody
@@ -96,6 +96,6 @@ export class EventService {
         })
       );
     }
-  };
+  }
 
 }

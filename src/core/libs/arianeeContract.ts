@@ -35,7 +35,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
     });
   }
 
-  public makeArianee(): ContractImplementation {
+  public makeArianee (): ContractImplementation {
     return this.key;
   }
 
@@ -45,7 +45,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
    * @param contractAddress
    * @param data
    */
-  public arianeeSignMetamask(transaction): Promise<any> {
+  public arianeeSignMetamask (transaction): Promise<any> {
     const {resolve, promise, reject} = flatPromise();
 
     this.web3Service.web3.eth.sendTransaction(transaction, function (
@@ -73,7 +73,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
     const mergedTransaction = {...defaultTransaction, ...transaction};
 
     return data.call(mergedTransaction);
-  };
+  }
 
   private overideSend = async (
     transaction: Transaction,
@@ -117,5 +117,5 @@ export class ArianeeContract<ContractImplementation extends Contract> {
 
     return promise;
     // }
-  };
+  }
 }

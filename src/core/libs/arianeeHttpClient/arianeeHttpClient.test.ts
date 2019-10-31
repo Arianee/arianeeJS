@@ -1,3 +1,4 @@
+import {SimpleSessionCache} from "../simpleCache/simpleSessionCache";
 import { ArianeeHttpClient } from "./arianeeHttpClient";
 
 const mockResponse = "mockResponse";
@@ -23,7 +24,8 @@ describe("ArianeeHttpClient", () => {
 
   describe("fetch", () => {
     it("should", async () => {
-      const httpClient = new ArianeeHttpClient();
+      const simpleCache=new SimpleSessionCache();
+      const httpClient = new ArianeeHttpClient(simpleCache);
       const result = await httpClient.fetch(url);
       expect(countMock).toHaveBeenCalledTimes(1);
       expect(countMock).toHaveBeenCalledWith(url);
@@ -32,7 +34,8 @@ describe("ArianeeHttpClient", () => {
     });
 
     it("should fetch twice with 2 calls", async () => {
-      const httpClient = new ArianeeHttpClient();
+      const simpleCache=new SimpleSessionCache();
+      const httpClient = new ArianeeHttpClient(simpleCache);
       const result = await httpClient.fetch(url);
       await httpClient.fetch(url);
       expect(countMock).toHaveBeenCalledWith(url);
@@ -42,14 +45,16 @@ describe("ArianeeHttpClient", () => {
   });
   describe("fetchWithCache", () => {
     it("should fetch onne", async () => {
-      const httpClient = new ArianeeHttpClient();
+      const simpleCache=new SimpleSessionCache();
+      const httpClient = new ArianeeHttpClient(simpleCache);
       const result = await httpClient.fetchWithCache(url);
       expect(countMock).toHaveBeenCalledWith(url);
       expect(countMock).toHaveBeenCalledTimes(1);
       expect(result).toBe(mockResponse);
     });
     it("should fetch once with 2 calls at same time", async () => {
-      const httpClient = new ArianeeHttpClient();
+      const simpleCache=new SimpleSessionCache();
+      const httpClient = new ArianeeHttpClient(simpleCache);
       httpClient.fetchWithCache(url);
       httpClient.fetchWithCache(url);
 
@@ -60,7 +65,8 @@ describe("ArianeeHttpClient", () => {
     });
 
     it("should fetch once with 2 calls one after the other", async () => {
-      const httpClient = new ArianeeHttpClient();
+      const simpleCache=new SimpleSessionCache();
+      const httpClient = new ArianeeHttpClient(simpleCache);
       await httpClient.fetchWithCache(url);
       expect(countMock).toHaveBeenCalledTimes(1);
 
