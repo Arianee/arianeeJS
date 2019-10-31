@@ -12,6 +12,7 @@ import {container} from "tsyringe";
 import {ArianeeConfig} from "../../models/arianeeConfiguration";
 import {ConfigurationService} from "./services/configurationService/configurationService";
 import {ContractService} from "./services/contractService/contractsService";
+import {UtilsService} from "./services/utilService/utilsService";
 import {WalletCustomMethodService} from "./services/walletCustomMethodService/walletCustomMethodService";
 import {WalletService} from "./services/walletService/walletService";
 import {Web3Service} from "./services/web3Service/web3Service";
@@ -66,6 +67,12 @@ export class ArianeeWallet {
         const walletCustomMethods: WalletCustomMethodService = this.container.resolve(WalletCustomMethodService);
 
         return walletCustomMethods.getMethods();
+    }
+
+    public get utils(){
+        const utilsService: UtilsService = this.container.resolve(UtilsService);
+
+        return utilsService;
     }
 
     public get requestPoa() {
