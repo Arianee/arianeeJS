@@ -12,13 +12,13 @@ The full doc is avalaible here: https://docs.arianee.org/docs/ArianeeJS
   
   Get the last version from NPM or your favorite registry:
 
-````
+````sh
 npm i @arianee/arianeejs -D
 ````
 
 ### Simple example
 
-```
+```javascript
 import { Arianee } from '@arianee/arianeejs'
 
 (async function () {
