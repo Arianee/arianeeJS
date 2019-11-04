@@ -1,8 +1,8 @@
-import {Cert} from "@0xcert/cert";
-import {singleton} from "tsyringe";
-import { Sign } from "web3-core";
-import {ConfigurationService} from "../configurationService/configurationService";
-import {Web3Service} from "../web3Service/web3Service";
+import { Cert } from '@0xcert/cert';
+import { singleton } from 'tsyringe';
+import { Sign } from 'web3-core';
+import { ConfigurationService } from '../configurationService/configurationService';
+import { Web3Service } from '../web3Service/web3Service';
 
 @singleton()
 export class UtilsService {
@@ -20,7 +20,7 @@ export class UtilsService {
   ) {
     const data = this.web3.utils.keccak256(
       this.web3.eth.abi.encodeParameters(
-        ["uint", "address"],
+        ['uint', 'address'],
         [certificateId, publicKeyNextOwner]
       )
     );
@@ -39,18 +39,18 @@ export class UtilsService {
 
   public simplifiedParsedURL (url: string) {
     const m = url.match(
-      /^(([^:\/?#]+:)?(?:\/\/((?:([^\/?#:]*):([^\/?#:]*)@)?([^\/?#:]*)(?::([^\/?#:]*))?)))?([^?#]*)(\?[^#]*)?(#.*)?$/
-      ),
-      r = {
-        hash: m[10] || "",
-        hostname: m[6] || "",
-        pathname: m[8] || (m[1] ? "/" : ""),
-        port: m[7] || "",
-        protocol: m[2] || "",
-        search: m[9] || "",
-        username: m[4] || "",
-        password: m[5] || ""
-      };
+      /^(([^:/?#]+:)?(?:\/\/((?:([^/?#:]*):([^/?#:]*)@)?([^/?#:]*)(?::([^/?#:]*))?)))?([^?#]*)(\?[^#]*)?(#.*)?$/
+    );
+    const r = {
+      hash: m[10] || '',
+      hostname: m[6] || '',
+      pathname: m[8] || (m[1] ? '/' : ''),
+      port: m[7] || '',
+      protocol: m[2] || '',
+      search: m[9] || '',
+      username: m[4] || '',
+      password: m[5] || ''
+    };
 
     return m && r;
   }
@@ -79,11 +79,11 @@ export class UtilsService {
 
     const certif = await cert.imprint(cleanData);
 
-    return "0x" + certif;
+    return '0x' + certif;
   }
 
   private cleanObject (obj: any) {
-    for (let propName in obj) {
+    for (const propName in obj) {
       if (
         obj[propName] &&
         obj[propName].constructor === Array &&
@@ -100,7 +100,7 @@ export class UtilsService {
     if (hostname === this.configurationService.arianeeConfiguration.deepLink) {
       return true;
     } else {
-      throw new Error("You are not in the right chain");
+      throw new Error('You are not in the right chain');
     }
   }
 
@@ -112,7 +112,7 @@ export class UtilsService {
     let link = `https://${this.configurationService.arianeeConfiguration.deepLink}`;
 
     if (suffix) {
-      link = link + "/" + suffix;
+      link = link + '/' + suffix;
     }
 
     link = link + `/${certificateId},${passphrase}`;
@@ -129,14 +129,14 @@ export class UtilsService {
 
     this.isRightChain(url.hostname);
 
-    const methodUrl = url.pathname.split("/");
+    const methodUrl = url.pathname.split('/');
 
     const pathName = methodUrl[methodUrl.length - 1];
 
-    const certificateId = parseInt(pathName.split(",")[0]);
-    const passphrase = pathName.split(",")[1];
+    const certificateId = parseInt(pathName.split(',')[0]);
+    const passphrase = pathName.split(',')[1];
 
-    let method = "requestOwnership";
+    let method = 'requestOwnership';
 
     if (methodUrl.length > 2) method = methodUrl[1];
 

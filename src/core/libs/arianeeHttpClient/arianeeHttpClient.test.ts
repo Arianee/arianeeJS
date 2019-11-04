@@ -1,12 +1,12 @@
-import {SimpleSessionCache} from "../simpleCache/simpleSessionCache";
-import { ArianeeHttpClient } from "./arianeeHttpClient";
+import { SimpleSessionCache } from '../simpleCache/simpleSessionCache';
+import { ArianeeHttpClient } from './arianeeHttpClient';
 
-const mockResponse = "mockResponse";
+const mockResponse = 'mockResponse';
 
 const countMock = jest.fn();
-const url = "https://myurl.com/zef";
+const url = 'https://myurl.com/zef';
 
-jest.mock("axios", () => url => {
+jest.mock('axios', () => url => {
   countMock(url);
 
   return new Promise((resolve, reject) => {
@@ -17,14 +17,14 @@ jest.mock("axios", () => url => {
   });
 });
 
-describe("ArianeeHttpClient", () => {
+describe('ArianeeHttpClient', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("fetch", () => {
-    it("should", async () => {
-      const simpleCache=new SimpleSessionCache();
+  describe('fetch', () => {
+    it('should', async () => {
+      const simpleCache = new SimpleSessionCache();
       const httpClient = new ArianeeHttpClient(simpleCache);
       const result = await httpClient.fetch(url);
       expect(countMock).toHaveBeenCalledTimes(1);
@@ -33,8 +33,8 @@ describe("ArianeeHttpClient", () => {
       expect(result).toBe(mockResponse);
     });
 
-    it("should fetch twice with 2 calls", async () => {
-      const simpleCache=new SimpleSessionCache();
+    it('should fetch twice with 2 calls', async () => {
+      const simpleCache = new SimpleSessionCache();
       const httpClient = new ArianeeHttpClient(simpleCache);
       const result = await httpClient.fetch(url);
       await httpClient.fetch(url);
@@ -43,17 +43,17 @@ describe("ArianeeHttpClient", () => {
       expect(result).toBe(mockResponse);
     });
   });
-  describe("fetchWithCache", () => {
-    it("should fetch onne", async () => {
-      const simpleCache=new SimpleSessionCache();
+  describe('fetchWithCache', () => {
+    it('should fetch onne', async () => {
+      const simpleCache = new SimpleSessionCache();
       const httpClient = new ArianeeHttpClient(simpleCache);
       const result = await httpClient.fetchWithCache(url);
       expect(countMock).toHaveBeenCalledWith(url);
       expect(countMock).toHaveBeenCalledTimes(1);
       expect(result).toBe(mockResponse);
     });
-    it("should fetch once with 2 calls at same time", async () => {
-      const simpleCache=new SimpleSessionCache();
+    it('should fetch once with 2 calls at same time', async () => {
+      const simpleCache = new SimpleSessionCache();
       const httpClient = new ArianeeHttpClient(simpleCache);
       httpClient.fetchWithCache(url);
       httpClient.fetchWithCache(url);
@@ -64,8 +64,8 @@ describe("ArianeeHttpClient", () => {
       expect(result).toBe(mockResponse);
     });
 
-    it("should fetch once with 2 calls one after the other", async () => {
-      const simpleCache=new SimpleSessionCache();
+    it('should fetch once with 2 calls one after the other', async () => {
+      const simpleCache = new SimpleSessionCache();
       const httpClient = new ArianeeHttpClient(simpleCache);
       await httpClient.fetchWithCache(url);
       expect(countMock).toHaveBeenCalledTimes(1);

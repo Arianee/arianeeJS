@@ -1,18 +1,17 @@
-import {injectable} from "tsyringe";
-import {blockchainEvent} from "../../../../models/blockchainEvents";
-import {CertificateId} from "../../../../models/CertificateId";
-import {ArianeeHttpClient} from "../../../libs/arianeeHttpClient/arianeeHttpClient";
-import {sortEvents} from "../../../libs/sortEvents";
-import {ConfigurationService} from "../configurationService/configurationService";
-import {ContractService} from "../contractService/contractsService";
-import {IdentityService} from "../identityService/identityService";
-import {UtilsService} from "../utilService/utilsService";
-import {WalletService} from "../walletService/walletService";
+import { injectable } from 'tsyringe';
+import { blockchainEvent } from '../../../../models/blockchainEvents';
+import { CertificateId } from '../../../../models/CertificateId';
+import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
+import { sortEvents } from '../../../libs/sortEvents';
+import { ConfigurationService } from '../configurationService/configurationService';
+import { ContractService } from '../contractService/contractsService';
+import { IdentityService } from '../identityService/identityService';
+import { UtilsService } from '../utilService/utilsService';
+import { WalletService } from '../walletService/walletService';
 
 @injectable()
 export class EventService {
-
-  constructor(
+  constructor (
     private identityService: IdentityService,
     private contractService: ContractService,
     private walletService: WalletService,
@@ -23,58 +22,52 @@ export class EventService {
   }
 
     public getCertificateTransferEvents = async (
-        certificateId: CertificateId
+      certificateId: CertificateId
     ): Promise<any> => {
-        const sortedEvents = await this.contractService.smartAssetContract
-            .getPastEvents("Transfer", {
-                filter: {_tokenId: certificateId},
-                fromBlock: 0,
-                toBlock: "latest"
-            })
-            .then(events => events.sort(sortEvents));
+      const sortedEvents = await this.contractService.smartAssetContract
+        .getPastEvents('Transfer', {
+          filter: { _tokenId: certificateId },
+          fromBlock: 0,
+          toBlock: 'latest'
+        })
+        .then(events => events.sort(sortEvents));
 
-        return Promise.all(
-            sortedEvents.map(event =>
-                this.identityService
-                    .getIdentity(event.returnValues._to)
-                    .then(identity => ({...event, identity: identity}))
-            )
-        );
+      return Promise.all(
+        sortedEvents.map(event =>
+          this.identityService
+            .getIdentity(event.returnValues._to)
+            .then(identity => ({ ...event, identity: identity }))
+        )
+      );
     }
 
   public getCertificateArianeeEvents = async (
     certificateId: number,
     passphrase?: string
   ): Promise<any[]> => {
-
-    const issuerIdentity = await this.contractService.smartAssetContract.methods
+    const issuer = await this.contractService.smartAssetContract.methods
       .issuerOf(certificateId)
-      .call()
-      .then(async issuer => {
-        return await this.identityService.getIdentity(issuer);
-      });
+      .call();
 
+    const issuerIdentity = await this.identityService.getIdentity(issuer);
     const validateEvents = await this.getValidateEvents(certificateId, issuerIdentity.data.rpcEndpoint, passphrase);
     const pendingEvents = await this.getPendingEvents(certificateId, issuerIdentity.data.rpcEndpoint, passphrase);
 
-    return this.orderArianeeEvents(validateEvents.concat(pendingEvents),certificateId);
-
+    return this.orderArianeeEvents(validateEvents.concat(pendingEvents), certificateId);
   }
 
-  private orderArianeeEvents= async (events:any[], certificateId)=>{
-
+  private orderArianeeEvents= async (events:any[], certificateId) => {
     const aEvents = await this.contractService.eventContract.getPastEvents(blockchainEvent.arianeeEvent.eventCreated,
-      {fromBlock:0, toBlock:'latest', filter:{_tokenId:certificateId}});
+      { fromBlock: 0, toBlock: 'latest', filter: { _tokenId: certificateId } });
 
-    events.map((event)=>{
-      event.blockNumber = aEvents.find((aEvent)=>{return aEvent.returnValues._eventId === event.id;}).blockNumber;
+    events.map((event) => {
+      event.blockNumber = aEvents.find((aEvent) => { return aEvent.returnValues._eventId === event.id; }).blockNumber;
     });
 
     return events.sort(sortEvents);
-
   }
 
-  private getValidateEvents = async (certificateId, rpcEndpoint, passphrase?)=>{
+  private getValidateEvents = async (certificateId, rpcEndpoint, passphrase?) => {
     const eventLenth = await this.contractService.eventContract.methods.eventsLength(certificateId).call();
 
     const eventRangeOfIndex = [];
@@ -91,14 +84,14 @@ export class EventService {
     );
 
     return Promise.all(
-      eventIds.map(async (eventId)=>{
+      eventIds.map(async (eventId) => {
         return this.getArianeeEvent(eventId, certificateId, rpcEndpoint, passphrase)
-          .then(event=>{return {...event,pending:false};});
-      }),
+          .then(event => { return { ...event, pending: false }; });
+      })
     );
   }
 
-  private getPendingEvents = async (certificateId, rpcEndpoint, passphrase?)=>{
+  private getPendingEvents = async (certificateId, rpcEndpoint, passphrase?) => {
     const pendingEventLenth = await this.contractService.eventContract.methods.pendingEventsLength(certificateId)
       .call();
 
@@ -117,60 +110,57 @@ export class EventService {
     );
 
     return Promise.all(
-      pendingEventIds.map(async (eventId)=>{
+      pendingEventIds.map(async (eventId) => {
         return this.getArianeeEvent(eventId, certificateId, rpcEndpoint, passphrase)
-          .then(event=>{return {...event,pending:true};});
+          .then(event => { return { ...event, pending: true }; });
       })
     );
-
   }
 
-  private getArianeeEvent= async (eventId, certificateId, rpcEndpoint, passphrase?)=>{
+  private getArianeeEvent= async (eventId, certificateId, rpcEndpoint, passphrase?) => {
+    const event:any = {};
+    const eventBc:any = await this.contractService.eventContract.methods.getEvent(eventId).call();
 
-        let event:any = {};
-        let eventBc:any = await this.contractService.eventContract.methods.getEvent(eventId).call();
+    event.identity = await this.identityService.getIdentity(eventBc['2']);
 
-        event.identity = await this.identityService.getIdentity(eventBc["2"]);
+    const requestBody: any = {
+      eventId: eventId,
+      certificateId: certificateId
+    };
 
-        let requestBody: any = {
-          eventId: eventId,
-          certificateId: certificateId
-        };
+    let privateKey: string;
+    if (passphrase) {
+      privateKey = this.configurationService
+        .walletFactory()
+        .fromPassPhrase(passphrase).privateKey;
+      requestBody.authentification = this.utils.signProofForRpc(
+        certificateId,
+        privateKey
+      );
+    } else {
+      privateKey = this.walletService.privateKey;
+      requestBody.authentification = this.utils.signProofForRpc(
+        certificateId,
+        privateKey
+      );
+    }
+    event.data = await this.httpClient.RPCCallWithCache(
+      rpcEndpoint,
+      'event.read',
+      requestBody
+    );
+    event.id = eventId;
 
-        let privateKey: string;
-        if (passphrase) {
-          privateKey = this.configurationService
-            .walletFactory()
-            .fromPassPhrase(passphrase).privateKey;
-          requestBody.authentification = this.utils.signProofForRpc(
-            certificateId,
-            privateKey
-          );
-        } else {
-          privateKey = this.walletService.privateKey;
-          requestBody.authentification = this.utils.signProofForRpc(
-            certificateId,
-            privateKey
-          );
-        }
-        event.data = await this.httpClient.RPCCallWithCache(
-          rpcEndpoint,
-          "event.read",
-          requestBody
-        );
-        event.id = eventId;
-
-        return event;
+    return event;
   }
 
     public acceptArianeeEvent = (eventId) => {
-        return this.contractService.storeContract.methods
-            .acceptEvent(eventId, this.configurationService.arianeeConfiguration.walletReward.address).send();
+      return this.contractService.storeContract.methods
+        .acceptEvent(eventId, this.configurationService.arianeeConfiguration.walletReward.address).send();
     }
 
     public refuseArianeeEvent = (eventId) => {
-        return this.contractService.storeContract.methods
-            .refuseEvent(eventId, this.configurationService.arianeeConfiguration.walletReward.address).send();
+      return this.contractService.storeContract.methods
+        .refuseEvent(eventId, this.configurationService.arianeeConfiguration.walletReward.address).send();
     }
-
 }

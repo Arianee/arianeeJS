@@ -1,2 +1,2 @@
-export { CertificateSummary } from "./certificateSummary";
-export { CertificateSummaryBuilder } from "./certificateSummaryBuilder";
+export { CertificateSummary } from './certificateSummary';
+export { CertificateSummaryBuilder } from './certificateSummaryBuilder';

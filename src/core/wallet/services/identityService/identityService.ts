@@ -1,14 +1,13 @@
-import {inject, injectable} from "tsyringe";
-import {IdentitySummary} from "../../../../models/arianee-identity";
-import {ArianeeHttpClient} from "../../../libs/arianeeHttpClient/arianeeHttpClient";
-import {ArianeeWallet} from "../../wallet";
-import {ContractService} from "../contractService/contractsService";
-import {UtilsService} from "../utilService/utilsService";
-import {WalletService} from "../walletService/walletService";
+import { inject, injectable } from 'tsyringe';
+import { IdentitySummary } from '../../../../models/arianee-identity';
+import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
+import { ArianeeWallet } from '../../wallet';
+import { ContractService } from '../contractService/contractsService';
+import { UtilsService } from '../utilService/utilsService';
+import { WalletService } from '../walletService/walletService';
 
 @injectable()
 export class IdentityService {
-
   constructor (private walletService: WalletService,
               private httpClient: ArianeeHttpClient,
               private utils: UtilsService,

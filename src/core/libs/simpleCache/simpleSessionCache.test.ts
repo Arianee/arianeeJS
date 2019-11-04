@@ -1,18 +1,18 @@
-import { SimpleSessionCache } from "./simpleSessionCache";
+import { SimpleSessionCache } from './simpleSessionCache';
 
-describe("httpCache", () => {
-  const values = ["efezfze", 22, { john: "zefezf", fez: { zef: 22 } }];
+describe('httpCache', () => {
+  const values = ['efezfze', 22, { john: 'zefezf', fez: { zef: 22 } }];
 
-  test("should set and get for string", async () => {
-    const key = "myKey";
-    const value = "myValue";
+  test('should set and get for string', async () => {
+    const key = 'myKey';
+    const value = 'myValue';
     const cache = new SimpleSessionCache();
     await cache.set(key, value);
     const myCacheValue = await cache.get(key);
     expect(myCacheValue).toBe(value);
   });
 
-  test("should set and get multiple values", async () => {
+  test('should set and get multiple values', async () => {
     const cache = new SimpleSessionCache();
 
     await Promise.all(
@@ -25,10 +25,10 @@ describe("httpCache", () => {
     expect(arrayOfValues.sort()).toEqual(values.sort());
   });
 
-  test("should override when already set", async () => {
-    const key = "myKey";
-    const value = "myValue";
-    const value2 = "myValue2";
+  test('should override when already set', async () => {
+    const key = 'myKey';
+    const value = 'myValue';
+    const value2 = 'myValue2';
     const cache = new SimpleSessionCache();
 
     await cache.set(key, value);

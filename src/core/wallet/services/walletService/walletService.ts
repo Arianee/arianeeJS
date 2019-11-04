@@ -1,8 +1,7 @@
-import {injectable, singleton} from "tsyringe";
+import { injectable, singleton } from 'tsyringe';
 
 @injectable()
 export class WalletService {
-
   public account;
 
   public get publicKey (): string {
@@ -12,5 +11,4 @@ export class WalletService {
   public get privateKey (): string {
     return this.account.privateKey;
   }
-
 }
