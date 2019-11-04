@@ -43,8 +43,8 @@ describe("certificateSummaryBuilder", () => {
           .build();
 
       expect(arianeeCertificate.certificateId).toBe(certificateId);
-    })
-  })
+    });
+  });
 
   describe("events", () => {
     it("should work with only arianeeEvents", () => {

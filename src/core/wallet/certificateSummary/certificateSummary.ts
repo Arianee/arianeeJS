@@ -68,7 +68,7 @@ export class CertificateEventsSummary implements CertificateEvents {
     public transfert = [];
     public arianeeEvents = [];
 
-    get all() {
+    get all () {
         return [...this.transfert, ...this.arianeeEvents].sort(sortEvents);
     }
 }

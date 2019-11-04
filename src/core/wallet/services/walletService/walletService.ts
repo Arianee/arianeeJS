@@ -5,11 +5,11 @@ export class WalletService {
 
   public account;
 
-  public get publicKey(): string {
+  public get publicKey (): string {
     return this.account.address;
   }
 
-  public get privateKey(): string {
+  public get privateKey (): string {
     return this.account.privateKey;
   }
 

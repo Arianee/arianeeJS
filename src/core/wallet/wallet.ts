@@ -29,7 +29,7 @@ export class ArianeeWallet {
 
     private container;
 
-    constructor(
+    constructor (
         private _account,
         private _mnemonic?
     ) {
@@ -41,53 +41,53 @@ export class ArianeeWallet {
         walletService.account = this.account;
     }
 
-    public get publicKey(): string {
+    public get publicKey (): string {
         return this.account.address;
     }
 
-    public get privateKey(): string {
+    public get privateKey (): string {
         return this.account.privateKey;
     }
 
-    public get mnemnonic(): string {
+    public get mnemnonic (): string {
         return this._mnemonic;
     }
 
-    public get web3() {
+    public get web3 () {
         return this.container.resolve(Web3Service).web3;
     }
 
-    public get configuration(): ArianeeConfig {
+    public get configuration (): ArianeeConfig {
         const configurationService: ConfigurationService = this.container.resolve(ConfigurationService);
 
         return configurationService.arianeeConfiguration;
     }
 
-    public get methods() {
+    public get methods () {
         const walletCustomMethods: WalletCustomMethodService = this.container.resolve(WalletCustomMethodService);
 
         return walletCustomMethods.getMethods();
     }
 
-    public get utils(){
+    public get utils (){
         const utilsService: UtilsService = this.container.resolve(UtilsService);
 
         return utilsService;
     }
 
-    public get requestPoa() {
+    public get requestPoa () {
         return this.container.resolve(WalletCustomMethodService).requestPoa;
     }
 
-    public get requestAria() {
+    public get requestAria () {
         return this.container.resolve(WalletCustomMethodService).requestAria;
     }
 
-    public get account() {
+    public get account () {
         return this._account;
     }
 
-    public get contracts(): ContractService {
+    public get contracts (): ContractService {
         return this.container.resolve(ContractService);
     }
 

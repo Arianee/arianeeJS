@@ -7,7 +7,7 @@ export class ConfigurationService {
 
   public arianeeConfiguration: ArianeeConfig;
 
-  public walletFactory(): ArianeeWalletBuilder {
+  public walletFactory (): ArianeeWalletBuilder {
     return new ArianeeWalletBuilder(this.arianeeConfiguration);
   }
 }
