@@ -2,8 +2,8 @@ export class SimpleSessionCache {
   private cache = {};
 
   get = (key: string) => {
-    if (!this.cache.hasOwnProperty(key)) {
-      return Promise.reject("key");
+    if (!Object.prototype.hasOwnProperty.call(this.cache, key)) {
+      return Promise.reject(new Error('key'));
     } else {
       return Promise.resolve(JSON.parse(this.cache[key]));
     }

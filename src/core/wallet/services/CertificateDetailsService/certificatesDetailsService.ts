@@ -1,13 +1,13 @@
-import {inject, injectable, singleton} from "tsyringe";
-import {CertificateId} from "../../../../models/CertificateId";
-import {CertificateSummaryBuilder} from "../../certificateSummary";
-import {UtilsService} from "../utilService/utilsService";
-import {ArianeeHttpClient} from "../../../libs/arianeeHttpClient/arianeeHttpClient";
-import {ArianeeWallet} from "../../wallet";
-import {ConfigurationService} from "../configurationService/configurationService";
-import {ContractService} from "../contractService/contractsService";
-import {IdentityService} from "../identityService/identityService";
-import {WalletService} from "../walletService/walletService";
+import { inject, injectable, singleton } from 'tsyringe';
+import { CertificateId } from '../../../../models/CertificateId';
+import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
+import { CertificateSummaryBuilder } from '../../certificateSummary';
+import { ArianeeWallet } from '../../wallet';
+import { ConfigurationService } from '../configurationService/configurationService';
+import { ContractService } from '../contractService/contractsService';
+import { IdentityService } from '../identityService/identityService';
+import { UtilsService } from '../utilService/utilsService';
+import { WalletService } from '../walletService/walletService';
 
 @injectable()
 export class CertificateDetails {
@@ -30,14 +30,14 @@ export class CertificateDetails {
         .ownerOf(certificateId.toString())
         .call();
 
-      if (certificateBuilder) certificateBuilder.setOwner(owner,this.walletService.publicKey);
+      if (certificateBuilder) certificateBuilder.setOwner(owner, this.walletService.publicKey);
 
       return owner;
     };
   }
 
   private getCertificateContentFromHttp = async certificateURI => {
-    return await this.httpClient.fetchWithCache(
+    return this.httpClient.fetchWithCache(
       certificateURI
     );
   }
@@ -54,7 +54,7 @@ export class CertificateDetails {
 
     return this.httpClient.RPCCall(
       identity.data.rpcEndpoint,
-      "certificate.read",
+      'certificate.read',
       {
         certificateId: certificateId,
         authentification: {
@@ -127,11 +127,12 @@ export class CertificateDetails {
 
       const isCertificateContentValid = hash === tokenImprint;
 
-      if (certificateBuilder)
+      if (certificateBuilder) {
         certificateBuilder.setContent(
           certificateContentData,
           isCertificateContentValid
         );
+      }
 
       return certificateContentData;
     };

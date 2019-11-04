@@ -1,10 +1,10 @@
-import axios from "axios";
-import {singleton} from "tsyringe";
-import { SimpleSessionCache } from "../simpleCache/simpleSessionCache";
+import axios from 'axios';
+import { singleton } from 'tsyringe';
+import { SimpleSessionCache } from '../simpleCache/simpleSessionCache';
 
 @singleton()
 export class ArianeeHttpClient {
-  private httpCacheManage = new SimpleSessionCache()
+  private httpCacheManage = new SimpleSessionCache();
 
   private fetchingCache = {};
 
@@ -16,10 +16,10 @@ export class ArianeeHttpClient {
    */
   private static createKeyFromURL = (url, config) => {
     const hash = function (s) {
-      let a = 1,
-        c = 0,
-        h,
-        o;
+      let a = 1;
+      let c = 0;
+      let h;
+      let o;
       if (s) {
         a = 0;
         for (h = s.length - 1; h >= 0; h--) {
@@ -38,15 +38,15 @@ export class ArianeeHttpClient {
 
   public RPCCall = async (endpoint: string, method: string, params: any) => {
     const config = {
-      method: "POST",
+      method: 'POST',
       data: {
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         method: method,
         params: params,
         id: ArianeeHttpClient.createKeyFromURL(endpoint, params)
       },
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json'
       }
     };
 
@@ -71,7 +71,7 @@ export class ArianeeHttpClient {
 
     return this.httpCacheManage.get(key).catch(() => {
       // it does not exist in storage cache, but it is already fetching
-      if (!this.fetchingCache.hasOwnProperty(key)) {
+      if (!Object.prototype.hasOwnProperty.call(this.fetchingCache, key)) {
         this.fetchingCache[key] = this.fetch(url, config).then(result => {
           this.httpCacheManage.set(key, result);
 
@@ -88,9 +88,9 @@ export class ArianeeHttpClient {
    */
   public static get defaultConfig () {
     return {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json'
       }
     };
   }

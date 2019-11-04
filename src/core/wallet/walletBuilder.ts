@@ -1,29 +1,29 @@
-import {ethers, Wallet as etherWallet} from "ethers";
-import {container} from "tsyringe";
-import {ArianeeConfig} from "../../models/arianeeConfiguration";
-import {ConfigurationService} from "./services/configurationService/configurationService";
-import {Web3Service} from "./services/web3Service/web3Service";
-import {ArianeeWallet} from "./wallet";
+import { ethers, Wallet as etherWallet } from 'ethers';
+import { container } from 'tsyringe';
+import { ArianeeConfig } from '../../models/arianeeConfiguration';
+import { ConfigurationService } from './services/configurationService/configurationService';
+import { Web3Service } from './services/web3Service/web3Service';
+import { ArianeeWallet } from './wallet';
 
-const Web3 = require("web3");
+const Web3 = require('web3');
 
 export class ArianeeWalletBuilder {
   private web3 = Web3;
 
-  constructor(private arianeeConfig: ArianeeConfig) {
+  constructor (private arianeeConfig: ArianeeConfig) {
     container.resolve(ConfigurationService).arianeeConfiguration = arianeeConfig;
     this.web3 = container.resolve(Web3Service).web3;
   }
 
-  private buildAriaWallet(account, mnemonic?): ArianeeWallet {
+  private buildAriaWallet (account, mnemonic?): ArianeeWallet {
     if (this.web3.utils.isAddress(account.address)) {
       return new ArianeeWallet(account, mnemonic);
     }
-    throw new Error("invalid address");
+    throw new Error('invalid address');
   }
 
-  public fromPassPhrase(passphrase: string): ArianeeWallet {
-    let privateKey = this.web3.utils.padLeft(
+  public fromPassPhrase (passphrase: string): ArianeeWallet {
+    const privateKey = this.web3.utils.padLeft(
       this.web3.utils.toHex(passphrase),
       64
     );
@@ -34,7 +34,7 @@ export class ArianeeWalletBuilder {
   /**
    * From a randomKey and return ArianeeProtocol
    */
-  public fromRandomKey(): ArianeeWallet {
+  public fromRandomKey (): ArianeeWallet {
     const randomWallet = etherWallet.createRandom();
     const mnemonic = randomWallet.mnemonic;
     const account = this.web3.eth.accounts.privateKeyToAccount(
@@ -48,7 +48,7 @@ export class ArianeeWalletBuilder {
    * Generate a mnemonic and return ArianeeProtocol
    * @param data
    */
-  public fromRandomMnemonic(): ArianeeWallet {
+  public fromRandomMnemonic (): ArianeeWallet {
     return this.fromRandomKey();
   }
 
@@ -56,15 +56,15 @@ export class ArianeeWalletBuilder {
    *  From a mnemonic and return ArianeeProtocol
    * @param mnemonic
    */
-  public fromMnemonic(mnemonic: string): ArianeeWallet {
+  public fromMnemonic (mnemonic: string): ArianeeWallet {
     const isValidMnemonic = ethers.utils.HDNode.isValidMnemonic(mnemonic);
     if (isValidMnemonic) {
-      const {privateKey} = etherWallet.fromMnemonic(mnemonic);
+      const { privateKey } = etherWallet.fromMnemonic(mnemonic);
       const account = this.web3.eth.accounts.privateKeyToAccount(privateKey);
 
       return this.buildAriaWallet(account, mnemonic);
     } else {
-      throw new Error("invalid mnemonic");
+      throw new Error('invalid mnemonic');
     }
   }
 
@@ -72,7 +72,7 @@ export class ArianeeWalletBuilder {
    *  From privatekey and return ArianeeProtocol
    * @param privateKey
    */
-  public fromPrivateKey(privateKey: string): ArianeeWallet {
+  public fromPrivateKey (privateKey: string): ArianeeWallet {
     const account = this.web3.eth.accounts.privateKeyToAccount(privateKey);
 
     return this.buildAriaWallet(account);

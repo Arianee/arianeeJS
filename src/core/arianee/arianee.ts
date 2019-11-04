@@ -1,12 +1,12 @@
-import * as conf from "../../configurations";
-import {appConfig} from "../../configurations";
-import {NETWORK, networkURL} from "../../models/networkConfiguration";
-import {ProtocolConfigurationBuilder} from "./protocolConfigurationBuilder/protocolConfigurationBuilder";
-import {ArianeeHttpClient} from "../libs/arianeeHttpClient/arianeeHttpClient";
-import {ArianeeWalletBuilder} from "../wallet/walletBuilder";
+import * as conf from '../../configurations'; // eslint-disable-line import/no-duplicates
+import { appConfig } from '../../configurations'; // eslint-disable-line import/no-duplicates
+import { NETWORK, networkURL } from '../../models/networkConfiguration';
+import { ArianeeHttpClient } from '../libs/arianeeHttpClient/arianeeHttpClient';
+import { ArianeeWalletBuilder } from '../wallet/walletBuilder';
+import { ProtocolConfigurationBuilder } from './protocolConfigurationBuilder/protocolConfigurationBuilder';
 
 export class Arianee {
-  public async init(
+  public async init (
     networkName: NETWORK = NETWORK.testnet
   ): Promise<ArianeeWalletBuilder> {
     const url = networkURL[networkName];
@@ -26,10 +26,9 @@ export class Arianee {
       } catch (e) {
         console.error(`this contract is not working ${contractName}`);
       }
-
     });
 
-    const {deepLink, faucetUrl} = appConfig[networkName];
+    const { deepLink, faucetUrl } = appConfig[networkName];
 
     protocolConfigurationBuilder.setDeepLink(deepLink);
     protocolConfigurationBuilder.setFaucetUrl(faucetUrl);

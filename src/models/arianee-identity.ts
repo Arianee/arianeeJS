@@ -19,6 +19,3 @@ export interface IdentityContent {
   pictures: Picture[];
   rpcEndpoint: string;
 }
-
-
-

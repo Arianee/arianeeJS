@@ -1,3 +1,3 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 
-export { Arianee } from "./arianee";
+export { Arianee } from './arianee';
