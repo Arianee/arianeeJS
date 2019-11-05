@@ -22,25 +22,25 @@ export class EventService {
   ) {
   }
 
-  public getCertificateTransferEvents = async (
-    certificateId: CertificateId
-  ): Promise<any> => {
-    const sortedEvents = await this.contractService.smartAssetContract
-      .getPastEvents("Transfer", {
-        filter: {_tokenId: certificateId},
-        fromBlock: 0,
-        toBlock: "latest"
-      })
-      .then(events => events.sort(sortEvents));
+    public getCertificateTransferEvents = async (
+        certificateId: CertificateId
+    ): Promise<any> => {
+        const sortedEvents = await this.contractService.smartAssetContract
+            .getPastEvents("Transfer", {
+                filter: {_tokenId: certificateId},
+                fromBlock: 0,
+                toBlock: "latest"
+            })
+            .then(events => events.sort(sortEvents));
 
-    return Promise.all(
-      sortedEvents.map(event =>
-        this.identityService
-          .getIdentity(event.returnValues._to)
-          .then(identity => ({...event, identity: identity}))
-      )
-    );
-  };
+        return Promise.all(
+            sortedEvents.map(event =>
+                this.identityService
+                    .getIdentity(event.returnValues._to)
+                    .then(identity => ({...event, identity: identity}))
+            )
+        );
+    }
 
   public getCertificateArianeeEvents = async (
     certificateId: number,
@@ -127,7 +127,6 @@ export class EventService {
 
   private getArianeeEvent= async (eventId, certificateId, rpcEndpoint, passphrase?)=>{
 
-      return new Promise(async (resolve, reject)=>{
         let event:any = {};
         let eventBc:any = await this.contractService.eventContract.methods.getEvent(eventId).call();
 
@@ -161,8 +160,17 @@ export class EventService {
         );
         event.id = eventId;
 
-        resolve(event);
-      });
+        return event;
   }
+
+    public acceptArianeeEvent = (eventId) => {
+        return this.contractService.storeContract.methods
+            .acceptEvent(eventId, this.configurationService.arianeeConfiguration.walletReward.address).send();
+    }
+
+    public refuseArianeeEvent = (eventId) => {
+        return this.contractService.storeContract.methods
+            .refuseEvent(eventId, this.configurationService.arianeeConfiguration.walletReward.address).send();
+    }
 
 }

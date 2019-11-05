@@ -46,7 +46,8 @@ export class WalletCustomMethodService {
 
       getCertificateTransferEvents: this.eventService.getCertificateTransferEvents,
       getCertificateArianeeEvents: this.eventService.getCertificateArianeeEvents,
-
+      acceptArianeeEvent: this.eventService.acceptArianeeEvent,
+      refuseArianeeEvent: this.eventService.refuseArianeeEvent
     };
   }
 
