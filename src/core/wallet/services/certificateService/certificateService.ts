@@ -1,5 +1,5 @@
 import {injectable} from "tsyringe";
-import {isNullOrUndefined} from "util";
+import {isNull, isNullOrUndefined} from "util";
 import {blockchainEvent} from "../../../../models/blockchainEvents";
 import {CertificateId} from "../../../../models/CertificateId";
 import {ExtendedBoolean} from "../../../../models/extendedBoolean";
@@ -204,11 +204,21 @@ export class CertificateService {
             requestQueue.push(eventsDetails);
         }
 
+        if(isNullOrUndefined(query) || query.arianeeEvents){
+            const arianeeEvents = ()=>
+              this.eventService.getCertificateArianeeEvents(certificateId, passphrase).then(arianeeEvents=>{
+                  response.setArianeeEvents(arianeeEvents);
+              });
+          requestQueue.push(arianeeEvents);
+        }
+
         try {
             await Promise.all(requestQueue);
         } catch (err) {
             console.error(err);
         }
+
+
 
         return response.build();
     }
