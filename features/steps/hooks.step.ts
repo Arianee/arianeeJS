@@ -3,7 +3,7 @@ import { NETWORK } from '../../src';
 import { Arianee } from '../../src/core/arianee';
 import { CCStore } from './helpers/store';
 
-setDefaultTimeout(60 * 2 * 1000);
+setDefaultTimeout(30 * 1000);
 
 let singletonArianee;
 BeforeAll(async () => {

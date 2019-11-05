@@ -2,8 +2,15 @@ language: node_js
 cache:
   bundler: true
   npm: true
-node_js: 
+node_js:
   - 10.16.0
 install:
   - npm ci
-
+script:
+  - npm run $SCRIPT
+env:
+  - SCRIPT=test:e2e -- --tags @block1
+  - SCRIPT=test:e2e -- --tags @block2
+  - SCRIPT=test:e2e -- --tags @block3
+  - SCRIPT=test:e2e -- --tags @block4
+  - SCRIPT=test:unit

@@ -1,3 +1,4 @@
+@block4
 Feature: Request token with Secret
   Background: 2 users with valid wallet
     Given user1 is a brand

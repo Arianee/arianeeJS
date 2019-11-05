@@ -1,3 +1,4 @@
+@block1
 Feature: Arianee Lib works on browser too
 
     Scenario: User can do several actions

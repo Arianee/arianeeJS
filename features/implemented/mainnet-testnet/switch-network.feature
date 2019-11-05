@@ -1,3 +1,4 @@
+@block1
 Feature: User can switch from testnet to mainnet
 
     Scenario: I can launch arianee in testnet

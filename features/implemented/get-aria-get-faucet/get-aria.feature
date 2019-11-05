@@ -1,3 +1,4 @@
+@block1
 Feature: On testnet user can have free aria or free faucet
 
 Background: User has a wallet

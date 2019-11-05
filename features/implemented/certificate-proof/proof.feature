@@ -1,3 +1,4 @@
+@block2
 Feature: Create and read certificate proof
   Background: 2 users with valid wallet
     Given user1 is a brand

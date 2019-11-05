@@ -1,3 +1,4 @@
+@block1
 Feature: I create a random key to create a wallet
 
     Scenario: from random key
