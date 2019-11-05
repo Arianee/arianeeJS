@@ -1,5 +1,5 @@
-import {IdentitySummary} from "../../../models/arianee-identity";
-import {sortEvents} from "../../libs/sortEvents";
+import { IdentitySummary } from '../../../models/arianee-identity';
+import { sortEvents } from '../../libs/sortEvents';
 
 export interface Serialnumber {
     type: string;
@@ -69,7 +69,7 @@ export class CertificateEventsSummary implements CertificateEvents {
     public arianeeEvents = [];
 
     get all () {
-        return [...this.transfert, ...this.arianeeEvents].sort(sortEvents);
+      return [...this.transfert, ...this.arianeeEvents].sort(sortEvents);
     }
 }
 

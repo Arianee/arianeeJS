@@ -1,15 +1,15 @@
-import {isNullOrUndefined} from "util";
-import {WalletService} from "../services/walletService/walletService";
+import { isNullOrUndefined } from 'util';
+import { WalletService } from '../services/walletService/walletService';
 import {
-    CertificateAdvanced,
-    CertificateContent,
-    CertificateEvents,
-    CertificateEventsSummary,
-    CertificateIssuer,
-    CertificateOwner,
-    CertificateSummary,
-    CertificiateContent
-} from "./certificateSummary";
+  CertificateAdvanced,
+  CertificateContent,
+  CertificateEvents,
+  CertificateEventsSummary,
+  CertificateIssuer,
+  CertificateOwner,
+  CertificateSummary,
+  CertificiateContent
+} from './certificateSummary';
 
 export class CertificateSummaryBuilder {
     private _content: CertificiateContent;
@@ -21,95 +21,95 @@ export class CertificateSummaryBuilder {
     private _certificateId: string;
 
     public setContent (
-        data: CertificateContent,
-        isAuthentic: boolean
+      data: CertificateContent,
+      isAuthentic: boolean
     ): CertificateSummaryBuilder {
-        this._content = {
-            data,
-            isAuthentic
-        };
+      this._content = {
+        data,
+        isAuthentic
+      };
 
-        return this;
+      return this;
     }
 
     public setCertificateId (certificateId: string): CertificateSummaryBuilder {
-        this._certificateId = certificateId;
+      this._certificateId = certificateId;
 
-        return this;
+      return this;
     }
 
     public setArianeeEvents (events: any[]): CertificateSummaryBuilder {
-        if (isNullOrUndefined(this._events)) {
-            this._events = new CertificateEventsSummary();
-        }
-        this._events.arianeeEvents = events;
+      if (isNullOrUndefined(this._events)) {
+        this._events = new CertificateEventsSummary();
+      }
+      this._events.arianeeEvents = events;
 
-        return this;
+      return this;
     }
 
     public setEvents (events: any[]): CertificateSummaryBuilder {
-        if (isNullOrUndefined(this._events)) {
-            this._events = new CertificateEventsSummary();
-        }
-        this._events.transfert = events;
+      if (isNullOrUndefined(this._events)) {
+        this._events = new CertificateEventsSummary();
+      }
+      this._events.transfert = events;
 
-        return this;
+      return this;
     }
 
     public setIsRequestable (isRequestable): CertificateSummaryBuilder {
-        this._isRequestable = isRequestable;
+      this._isRequestable = isRequestable;
 
-        return this;
+      return this;
     }
 
     public setIssuer (
-        isIdentityAuthentic,
-        isIdentityVerified,
-        identity?
+      isIdentityAuthentic,
+      isIdentityVerified,
+      identity?
     ): CertificateSummaryBuilder {
-        this._issuer = {
-            identity,
-            isIdentityAuthentic,
-            isIdentityVerified
-        };
+      this._issuer = {
+        identity,
+        isIdentityAuthentic,
+        isIdentityVerified
+      };
 
-        return this;
+      return this;
     }
 
     public setAdvandced (
-        advanded: CertificateAdvanced
+      advanded: CertificateAdvanced
     ): CertificateSummaryBuilder {
-        this._advanced = advanded;
+      this._advanced = advanded;
 
-        return this;
+      return this;
     }
 
     public setOwner (ownerPublicKey: string, currentWallet:string) {
-        this._owner = {
-            publicKey: ownerPublicKey,
-            isOwner: ownerPublicKey === currentWallet
-        };
+      this._owner = {
+        publicKey: ownerPublicKey,
+        isOwner: ownerPublicKey === currentWallet
+      };
 
-        return this;
+      return this;
     }
 
     build (): CertificateSummary {
-        const arianeCertificate: CertificateSummary = {
-            certificateId: this._certificateId,
-            content: this._content,
-            issuer: this._issuer,
-            isRequestable: this._isRequestable,
-            owner: this._owner,
-            events: this._events,
-            advanced: this._advanced
-        };
+      const arianeCertificate: CertificateSummary = {
+        certificateId: this._certificateId,
+        content: this._content,
+        issuer: this._issuer,
+        isRequestable: this._isRequestable,
+        owner: this._owner,
+        events: this._events,
+        advanced: this._advanced
+      };
 
-        Object.keys(arianeCertificate).forEach(key => {
-            if (isNullOrUndefined(arianeCertificate[key])) {
-                delete arianeCertificate[key];
-            }
-        });
+      Object.keys(arianeCertificate).forEach(key => {
+        if (isNullOrUndefined(arianeCertificate[key])) {
+          delete arianeCertificate[key];
+        }
+      });
 
-        return arianeCertificate;
+      return arianeCertificate;
     }
 }

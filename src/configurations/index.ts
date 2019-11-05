@@ -1,13 +1,13 @@
-import appConfig from "./appConfigurations";
+import appConfig from './appConfigurations';
 
-import aria from "@arianee/arianee-abi/abi/js/Aria";
-import creditHistory from "@arianee/arianee-abi/abi/js/ArianeeCreditHistory";
-import eventArianee from "@arianee/arianee-abi/abi/js/ArianeeEvent";
-import identity from "@arianee/arianee-abi/abi/js/ArianeeIdentity";
-import smartAsset from "@arianee/arianee-abi/abi/js/ArianeeSmartAsset";
-import staking from "@arianee/arianee-abi/abi/js/ArianeeStaking";
-import store from "@arianee/arianee-abi/abi/js/ArianeeStore";
-import whitelist from "@arianee/arianee-abi/abi/js/ArianeeWhitelist";
+import aria from '@arianee/arianee-abi/abi/js/Aria';
+import creditHistory from '@arianee/arianee-abi/abi/js/ArianeeCreditHistory';
+import eventArianee from '@arianee/arianee-abi/abi/js/ArianeeEvent';
+import identity from '@arianee/arianee-abi/abi/js/ArianeeIdentity';
+import smartAsset from '@arianee/arianee-abi/abi/js/ArianeeSmartAsset';
+import staking from '@arianee/arianee-abi/abi/js/ArianeeStaking';
+import store from '@arianee/arianee-abi/abi/js/ArianeeStore';
+import whitelist from '@arianee/arianee-abi/abi/js/ArianeeWhitelist';
 
 export {
   appConfig,

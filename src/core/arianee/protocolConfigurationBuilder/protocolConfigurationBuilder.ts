@@ -1,6 +1,6 @@
-import { isNullOrUndefined } from "util";
-import { ArianeeConfig } from "../../../models/arianeeConfiguration";
-import { ArianeeWalletBuilder } from "../../wallet/walletBuilder";
+import { isNullOrUndefined } from 'util';
+import { ArianeeConfig } from '../../../models/arianeeConfiguration';
+import { ArianeeWalletBuilder } from '../../wallet/walletBuilder';
 
 export class ProtocolConfigurationBuilder {
   private config: ArianeeConfig = {
@@ -38,6 +38,7 @@ export class ProtocolConfigurationBuilder {
 
     return this;
   }
+
   public setDeepLink (deepLink: string) {
     this.config.deepLink = deepLink;
 
@@ -56,25 +57,25 @@ export class ProtocolConfigurationBuilder {
     } else {
       throw new Error(
         `It is missing some settings: ${this.isReadyForBuild().missingProperties.join(
-          " "
+          ' '
         )}`
       );
     }
   }
 
   public isReadyForBuild (): { missingProperties: string[]; isValid: boolean } {
-    const properties = ["provider", "chainId"];
+    const properties = ['provider', 'chainId'];
     const missingProperties = properties.filter(property =>
       isNullOrUndefined(this.config[property])
     );
     const contracts = [
-      "store",
-      "aria",
-      "smartAsset",
-      "identity",
-      "staking",
-      "whitelist",
-      "creditHistory"
+      'store',
+      'aria',
+      'smartAsset',
+      'identity',
+      'staking',
+      'whitelist',
+      'creditHistory'
     ];
     const missingAbi = contracts.filter(
       property =>

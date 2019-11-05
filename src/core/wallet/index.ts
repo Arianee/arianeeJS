@@ -1,3 +1,3 @@
-import { ArianeeWallet } from "./wallet";
+import { ArianeeWallet } from './wallet';
 export { ArianeeWallet };
 export default ArianeeWallet;
