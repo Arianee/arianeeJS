@@ -1,6 +1,6 @@
 import { injectable } from 'tsyringe';
 import { isNullOrUndefined } from 'util';
-import { blockchainEvent } from '../../../../models/blockchainEvents';
+import { blockchainEventsName } from '../../../../models/blockchainEventsName';
 import { CertificateId } from '../../../../models/CertificateId';
 import { ExtendedBoolean } from '../../../../models/extendedBoolean';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
@@ -15,6 +15,7 @@ import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
+import { BlockchainEvent } from '../../../../models/blockchainEvent';
 
 @injectable()
 export class CertificateService {
@@ -369,8 +370,8 @@ export class CertificateService {
         };
       }
 
-      const events = await this.contractService.smartAssetContract.getPastEvents(
-        blockchainEvent.smartAsset.tokenAccessAdded,
+      const events:BlockchainEvent[] = await this.contractService.smartAssetContract.getPastEvents(
+        blockchainEventsName.smartAsset.tokenAccessAdded,
         {
           fromBlock: 0,
           toBlock: 'latest',

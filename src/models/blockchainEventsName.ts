@@ -1,4 +1,4 @@
-export const blockchainEvent = {
+export const blockchainEventsName = {
   smartAsset: {
     transfer: 'Transfer',
     hydrated: 'Hydrated',
