@@ -11,7 +11,7 @@ export const createAndTransfertCertificates = async () => {
 
   await makeWalletReady(nextOwnerWallet);
 
-  await wallet1.storeContract.methods.buyCredit(0, 5, wallet1.publicKey).send();
+  await wallet1.contracts.storeContract.methods.buyCredit(0, 5, wallet1.publicKey).send();
 
   console.log('hydrate starting');
   const hash = wallet1.web3.utils.keccak256(`ezofnzefon${Date.now()}`);
@@ -25,7 +25,7 @@ export const createAndTransfertCertificates = async () => {
   console.log('hydrate ending');
   console.log(`https://arian.ee/${certificateId},${passphrase}`);
 
-  await wallet1.smartAssetContract.methods
+  await wallet1.contracts.smartAssetContract.methods
     .ownerOf(certificateId)
     .call();
 
@@ -34,7 +34,7 @@ export const createAndTransfertCertificates = async () => {
     .requestCertificateOwnership(certificateId, passphrase)
     .then(i => console.log('successss requesting token'));
 
-  const owner = await wallet1.smartAssetContract.methods
+  const owner = await wallet1.contracts.smartAssetContract.methods
     .ownerOf(certificateId)
     .call();
 

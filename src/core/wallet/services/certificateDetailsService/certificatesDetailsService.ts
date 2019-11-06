@@ -1,8 +1,7 @@
-import { inject, injectable, singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 import { CertificateId } from '../../../../models/CertificateId';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { CertificateSummaryBuilder } from '../../certificateSummary';
-import { ArianeeWallet } from '../../wallet';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
 import { IdentityService } from '../identityService/identityService';

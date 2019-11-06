@@ -1,32 +1,14 @@
-import {
-  Aria,
-  ArianeeCreditHistory,
-  ArianeeEvent,
-  ArianeeIdentity,
-  ArianeeSmartAsset,
-  ArianeeStaking,
-  ArianeeStore,
-  ArianeeWhitelist
-} from '@arianee/arianee-abi';
 import { container } from 'tsyringe';
 import { ArianeeConfig } from '../../models/arianeeConfiguration';
 import { ConfigurationService } from './services/configurationService/configurationService';
 import { ContractService } from './services/contractService/contractsService';
+import { POAAndAriaService } from './services/POAAndAriaFaucet/POAAndAriaService';
 import { UtilsService } from './services/utilService/utilsService';
 import { WalletCustomMethodService } from './services/walletCustomMethodService/walletCustomMethodService';
 import { WalletService } from './services/walletService/walletService';
 import { Web3Service } from './services/web3Service/web3Service';
 
 export class ArianeeWallet {
-    public storeContract: ArianeeStore;
-    public smartAssetContract: ArianeeSmartAsset;
-    public identityContract: ArianeeIdentity;
-    public ariaContract: Aria;
-    public creditHistoryContract: ArianeeCreditHistory;
-    public whitelistContract: ArianeeWhitelist;
-    public stakingContract: ArianeeStaking;
-    public eventContract: ArianeeEvent;
-
     private container;
 
     constructor (
@@ -34,11 +16,16 @@ export class ArianeeWallet {
         private _mnemonic?
     ) {
       this.container = container.createChildContainer();
-      this.container.registerSingleton(WalletService);
-      this.container.registerSingleton(Web3Service);
+      this.registerSingletons(WalletService, Web3Service, POAAndAriaService);
 
       const walletService = this.container.resolve(WalletService);
       walletService.account = this.account;
+    }
+
+    private registerSingletons (...classNames) {
+      classNames.forEach(className => {
+        this.container.registerSingleton(className);
+      });
     }
 
     public get publicKey (): string {
