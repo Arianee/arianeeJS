@@ -12,18 +12,19 @@ export interface BlockchainEvent{
   transactionIndex: number;
   transactionLogIndex?: number;
   type?: string;
-  content?: ArianeeEventContent;
+  content?: EventContent;
   timestamp?: number;
   returnValues:any;
 }
 
-export interface ArianeeEvent{
-  content?: ArianeeEventContent;
+export interface ArianeeEventContent{
+  content?: EventContent;
   identity?: IdentitySummary;
+  timestamp?: number;
   id: number;
 }
 
-export interface ArianeeEventContent {
+export interface EventContent {
   $schema: string;
   eventType: string;
   language?: string;

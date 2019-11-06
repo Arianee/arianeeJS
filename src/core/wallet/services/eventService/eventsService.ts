@@ -8,7 +8,7 @@ import { ContractService } from '../contractService/contractsService';
 import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
-import { ArianeeEvent, BlockchainEvent } from '../../../../models/blockchainEvent';
+import { ArianeeEventContent, BlockchainEvent } from '../../../../models/blockchainEvent';
 
 @injectable()
 export class EventService {
@@ -22,25 +22,35 @@ export class EventService {
   ) {
   }
 
-    public getCertificateTransferEvents = async (
-      certificateId: CertificateId
-    ): Promise<any> => {
-      const sortedEvents:BlockchainEvent[] = await this.contractService.smartAssetContract
-        .getPastEvents('Transfer', {
-          filter: { _tokenId: certificateId },
-          fromBlock: 0,
-          toBlock: 'latest'
-        })
-        .then(events => events.sort(sortEvents));
+  public getCertificateTransferEvents = async (
+    certificateId: CertificateId
+  ): Promise<any> => {
+    const sortedEvents:BlockchainEvent[] = await this.contractService.smartAssetContract
+      .getPastEvents('Transfer', {
+        filter: { _tokenId: certificateId },
+        fromBlock: 0,
+        toBlock: 'latest'
+      })
+      .then(events => events.sort(sortEvents));
 
-      return Promise.all(
-        sortedEvents.map(event =>
-          this.identityService
-            .getIdentity(event.returnValues._to)
-            .then(identity => ({ ...event, identity: identity }))
-        )
-      );
-    }
+    const consolidatedEvent = async (event) => {
+      const [timestamp, identity] = await Promise.all([
+        this.utils.getTimestampFromBlock(event.blockNumber),
+        this.identityService
+          .getIdentity(event.returnValues._to)
+      ]);
+
+      return {
+        timestamp,
+        identity,
+        ...event
+      };
+    };
+
+    return Promise.all(
+      sortedEvents.map(consolidatedEvent)
+    );
+  }
 
   public getCertificateArianeeEvents = async (
     certificateId: number,
@@ -119,10 +129,15 @@ export class EventService {
   }
 
   private getArianeeEvent= async (eventId, certificateId, rpcEndpoint, passphrase?) => {
-    const event:ArianeeEvent = { id: eventId };
+    const event:ArianeeEventContent = { id: eventId };
     const eventBc:any = await this.contractService.eventContract.methods.getEvent(eventId).call();
+    const creationEvent:BlockchainEvent[] = await this.contractService.eventContract.getPastEvents(
+      blockchainEventsName.arianeeEvent.eventCreated,
+      { fromBlock: 0, toBlock: 'latest', filter: { _eventId: eventId } }
+    );
 
     event.identity = await this.identityService.getIdentity(eventBc['2']);
+    event.timestamp = await this.utils.getTimestampFromBlock(creationEvent[0].blockNumber);
 
     const requestBody: any = {
       eventId: eventId,
@@ -154,13 +169,13 @@ export class EventService {
     return event;
   }
 
-    public acceptArianeeEvent = (eventId) => {
-      return this.contractService.storeContract.methods
-        .acceptEvent(eventId, this.configurationService.arianeeConfiguration.walletReward.address).send();
-    }
+  public acceptArianeeEvent = (eventId) => {
+    return this.contractService.storeContract.methods
+      .acceptEvent(eventId, this.configurationService.arianeeConfiguration.walletReward.address).send();
+  }
 
-    public refuseArianeeEvent = (eventId) => {
-      return this.contractService.storeContract.methods
-        .refuseEvent(eventId, this.configurationService.arianeeConfiguration.walletReward.address).send();
-    }
+  public refuseArianeeEvent = (eventId) => {
+    return this.contractService.storeContract.methods
+      .refuseEvent(eventId, this.configurationService.arianeeConfiguration.walletReward.address).send();
+  }
 }
