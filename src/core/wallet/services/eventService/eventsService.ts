@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe';
-import { blockchainEvent } from '../../../../models/blockchainEvents';
+import { blockchainEventsName } from '../../../../models/blockchainEventsName';
 import { CertificateId } from '../../../../models/CertificateId';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { sortEvents } from '../../../libs/sortEvents';
@@ -8,6 +8,7 @@ import { ContractService } from '../contractService/contractsService';
 import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
+import { ArianeeEvent, BlockchainEvent } from '../../../../models/blockchainEvent';
 
 @injectable()
 export class EventService {
@@ -24,7 +25,7 @@ export class EventService {
     public getCertificateTransferEvents = async (
       certificateId: CertificateId
     ): Promise<any> => {
-      const sortedEvents = await this.contractService.smartAssetContract
+      const sortedEvents:BlockchainEvent[] = await this.contractService.smartAssetContract
         .getPastEvents('Transfer', {
           filter: { _tokenId: certificateId },
           fromBlock: 0,
@@ -57,7 +58,7 @@ export class EventService {
   }
 
   private orderArianeeEvents= async (events:any[], certificateId) => {
-    const aEvents = await this.contractService.eventContract.getPastEvents(blockchainEvent.arianeeEvent.eventCreated,
+    const aEvents:BlockchainEvent[] = await this.contractService.eventContract.getPastEvents(blockchainEventsName.arianeeEvent.eventCreated,
       { fromBlock: 0, toBlock: 'latest', filter: { _tokenId: certificateId } });
 
     events.map((event) => {
@@ -118,7 +119,7 @@ export class EventService {
   }
 
   private getArianeeEvent= async (eventId, certificateId, rpcEndpoint, passphrase?) => {
-    const event:any = {};
+    const event:ArianeeEvent = { id: eventId };
     const eventBc:any = await this.contractService.eventContract.methods.getEvent(eventId).call();
 
     event.identity = await this.identityService.getIdentity(eventBc['2']);
@@ -144,12 +145,11 @@ export class EventService {
         privateKey
       );
     }
-    event.data = await this.httpClient.RPCCallWithCache(
+    event.content = await this.httpClient.RPCCallWithCache(
       rpcEndpoint,
       'event.read',
       requestBody
     );
-    event.id = eventId;
 
     return event;
   }
