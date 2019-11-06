@@ -202,6 +202,13 @@ export class CertificateService {
         requestQueue.push(eventsDetails);
       }
 
+      if (isNullOrUndefined(query) || query.arianeeEvents) {
+        const arianeeEvents = this.eventService.getCertificateArianeeEvents(certificateId, passphrase).then(events => {
+          response.setArianeeEvents(events);
+        });
+        requestQueue.push(arianeeEvents);
+      }
+
       try {
         await Promise.all(requestQueue);
       } catch (err) {
@@ -331,7 +338,6 @@ export class CertificateService {
 
       const proof = this.configurationService.walletFactory().fromPassPhrase(passphrase)
         .publicKey;
-
       if (/^0x0+$/.test(tokenHashedAccess)) {
         return false;
       } else {
@@ -378,12 +384,10 @@ export class CertificateService {
 
       events.sort(sortEvents).reverse();
       const lastEvent = events[0];
-      const eventBlock = await this.web3Service.web3.eth.getBlock(
-        lastEvent.blockNumber
-      );
+      const blockTimestamp = await this.utils.getTimestampFromBlock(lastEvent.blockNumber);
 
       if (
-        !this.utils.timestampIsMoreRecentThan(eventBlock.timestamp, validity)
+        !this.utils.timestampIsMoreRecentThan(blockTimestamp, validity)
       ) {
         return {
           isTrue: false,

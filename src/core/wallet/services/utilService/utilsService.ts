@@ -31,7 +31,7 @@ export class UtilsService {
   public signProofForRpc (certificateId: number, privateKey: string) {
     const message = {
       certificateId: certificateId,
-      timestamp: Math.round(new Date().valueOf() / 1000)
+      timestamp: new Date()
     };
 
     return this.signProof(JSON.stringify(message), privateKey);
@@ -152,5 +152,12 @@ export class UtilsService {
     const minTime = date - seconds * 1000;
 
     return timestamp > minTime / 1000;
+  }
+
+  public async getTimestampFromBlock (blockNumber) {
+    const block = await this.web3Service.web3.eth.getBlock(
+      blockNumber
+    );
+    return block.timestamp;
   }
 }
