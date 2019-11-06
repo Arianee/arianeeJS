@@ -8,10 +8,11 @@ import {
   ArianeeStore,
   ArianeeWhitelist
 } from '@arianee/arianee-abi';
-import { injectable, singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 import { Contract } from 'web3-eth-contract';
 import { ArianeeContract } from '../../../libs/arianeeContract';
 import { ConfigurationService } from '../configurationService/configurationService';
+import { POAAndAriaService } from '../POAAndAriaFaucet/POAAndAriaService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
 
@@ -28,6 +29,7 @@ export class ContractService {
 
   constructor (private walletService: WalletService,
               private web3Service: Web3Service,
+              private poaAndAriaService:POAAndAriaService,
               private configurationService: ConfigurationService) {
     this.smartAssetContract = this.create<ArianeeSmartAsset>('smartAsset');
     this.identityContract = this.create<ArianeeIdentity>('identity');
@@ -55,7 +57,8 @@ export class ContractService {
         contract,
         this.walletService,
         this.configurationService,
-        this.web3Service
+        this.web3Service,
+        this.poaAndAriaService
       ).makeArianee();
     } catch (e) {
       console.error(`this contract does not have configuration ${name}`);

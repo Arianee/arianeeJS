@@ -7,7 +7,7 @@ export const createASimpleCertificate = async () => {
   const wallet = arianee.fromRandomKey();
   await makeWalletReady(wallet);
 
-  await wallet.storeContract.methods.buyCredit(0, 5, wallet.publicKey).send();
+  await wallet.contracts.storeContract.methods.buyCredit(0, 5, wallet.publicKey).send();
 
   const result = await wallet.methods.createCertificate({
     uri: 'http://localhost:3000/mycertificate.json',

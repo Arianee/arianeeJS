@@ -5,6 +5,7 @@ import { CertificateService } from '../certificateService/certificateService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
 import { EventService } from '../eventService/eventsService';
+import { POAAndAriaService } from '../POAAndAriaFaucet/POAAndAriaService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
 
@@ -16,7 +17,8 @@ export class WalletCustomMethodService {
               private contractService: ContractService,
               private eventService: EventService,
               private walletService: WalletService,
-              private certificateService: CertificateService
+              private certificateService: CertificateService,
+               private poaAndAriaService:POAAndAriaService
   ) {
 
   }
@@ -65,22 +67,9 @@ export class WalletCustomMethodService {
     return balance;
   }
 
-  public requestPoa = (): Promise<any> => {
-    return this.httpClient.fetch(
-      this.configurationService.arianeeConfiguration.faucetUrl +
-      '&address=' +
-      this.walletService.account.address
-    );
-  }
+  public requestPoa = this.poaAndAriaService.requestPoa;
 
-  public requestAria = (): Promise<any> => {
-    return this.httpClient.fetch(
-      this.configurationService.arianeeConfiguration.faucetUrl +
-      '&address=' +
-      this.walletService.account.address +
-      '&aria=true'
-    );
-  }
+  public requestAria = this.poaAndAriaService.requestAria;
 
   private approveStore = () => {
     return this.contractService.ariaContract.methods

@@ -7,7 +7,7 @@ Given('user{int} has positive credit certificate balance', async function (
 ) {
   const wallet = this.store.getUserWallet(userIndex);
   const address = wallet.account.address;
-  const balance = await wallet.creditHistoryContract.methods
+  const balance = await wallet.contracts.creditHistoryContract.methods
     .balanceOf(wallet.publicKey, 0)
     .send();
 

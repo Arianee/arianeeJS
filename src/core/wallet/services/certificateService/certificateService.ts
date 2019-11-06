@@ -7,7 +7,7 @@ import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpCl
 import { sortEvents } from '../../../libs/sortEvents';
 import { CertificateSummaryBuilder } from '../../certificateSummary';
 import { CertificateSummary, ConsolidatedCertificateRequest } from '../../certificateSummary/certificateSummary';
-import { CertificateDetails } from '../CertificateDetailsService/certificatesDetailsService';
+import { CertificateDetails } from '../certificateDetailsService/certificatesDetailsService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
 import { EventService } from '../eventService/eventsService';
