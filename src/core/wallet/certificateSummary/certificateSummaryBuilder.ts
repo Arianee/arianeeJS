@@ -51,7 +51,7 @@ export class CertificateSummaryBuilder {
       if (isNullOrUndefined(this._events)) {
         this._events = new CertificateEventsSummary();
       }
-      this._events.transfert = events;
+      this._events.transfer = events;
 
       return this;
     }

@@ -59,17 +59,17 @@ export interface CertificateOwner {
 }
 
 export interface CertificateEvents {
-    transfert?: any[];
+    transfer?: any[];
     arianeeEvents?: any[];
     all?: any[];
 }
 
 export class CertificateEventsSummary implements CertificateEvents {
-    public transfert = [];
+    public transfer = [];
     public arianeeEvents = [];
 
     get all () {
-      return [...this.transfert, ...this.arianeeEvents].sort(sortEvents);
+      return [...this.transfer, ...this.arianeeEvents].sort(sortEvents);
     }
 }
 
