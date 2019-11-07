@@ -53,7 +53,7 @@ export class IdentityService {
         data: undefined,
         isAuthentic: false,
         isApproved: false,
-        address: undefined
+        address
       };
     }
   }

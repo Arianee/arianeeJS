@@ -22,6 +22,7 @@ export interface ArianeeEventContent{
   identity?: IdentitySummary;
   timestamp?: number;
   id: number;
+  pending?:boolean;
 }
 
 export interface EventContent {
