@@ -55,9 +55,10 @@ export class ArianeeHttpClient {
     public RPCCallWithCache = async (endpoint: string, method: string, params: any) => {
       const config = this.RPConfigFactory(endpoint, method, params);
 
-      const storageKey = ArianeeHttpClient.createKeyFromURL(endpoint, {
-        method: method
-      });
+      const customKey = { ...params };
+      delete customKey.authentification;
+
+      const storageKey = ArianeeHttpClient.createKeyFromURL(endpoint, customKey);
 
       const RPCRes = await this.fetchWithCache(endpoint, config, storageKey);
 
