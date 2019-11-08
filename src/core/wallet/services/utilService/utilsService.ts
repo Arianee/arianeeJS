@@ -3,7 +3,6 @@ import { singleton } from 'tsyringe';
 import { Sign } from 'web3-core';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { Web3Service } from '../web3Service/web3Service';
-
 @singleton()
 export class UtilsService {
   constructor (private web3Service: Web3Service, private configurationService: ConfigurationService) {
@@ -96,11 +95,23 @@ export class UtilsService {
     return obj;
   }
 
+  public findChainFromHostname(hostname){
+    const networkConfigurations=this.configurationService.supportedConfigurations;
+
+   const networks=Object.keys(this.configurationService.supportedConfigurations);
+   return networks.find(key=>networkConfigurations[key].deepLink===hostname)
+  }
+
   public isRightChain (hostname: string) {
     if (hostname === this.configurationService.arianeeConfiguration.deepLink) {
       return true;
     } else {
-      throw new Error('You are not in the right chain');
+      const mostLikelychain=this.findChainFromHostname(hostname);
+
+      const error= new Error('You are not in the right chain')
+      error.message='You are not in the right chain';
+      (error as any).chain=mostLikelychain;
+      throw error;
     }
   }
 

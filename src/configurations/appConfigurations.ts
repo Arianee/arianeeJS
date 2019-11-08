@@ -11,6 +11,6 @@ export default {
   },
   [NETWORK.arianeeTestnet]: {
     faucetUrl: `https://faucet.arianee.org/faucet?network=${NETWORK.arianeeTestnet}`,
-    deepLink: 'test.arian.ee'
+    deepLink: 'test.testnet.arian.ee'
   }
 };

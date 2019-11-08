@@ -1,5 +1,6 @@
-import { ConfigurationService } from '../configurationService/configurationService';
-import { UtilsService } from './utilsService';
+import {NETWORK} from "../../../..";
+import {ConfigurationService} from '../configurationService/configurationService';
+import {UtilsService} from './utilsService';
 
 describe('UTILS', () => {
   describe('readLink', () => {
@@ -67,31 +68,60 @@ describe('UTILS', () => {
 
   describe('isRightEnvironement', () => {
     test('it should return true if same chain as current wallet', () => {
-      const configurationServiceStub: ConfigurationService = <ConfigurationService>{
-        arianeeConfiguration: {
-          deepLink: 'test.arian.ee'
-        }
-      };
-      const utils = new UtilsService(undefined, configurationServiceStub);
+      const configurationService = new ConfigurationService();
 
-      expect(utils.isRightChain('test.arian.ee')).toBe(true);
+      configurationService.arianeeConfiguration=
+          configurationService.supportedConfigurations[NETWORK.arianeeTestnet] as any;
+
+      const supportedDeepLink=configurationService.supportedConfigurations[NETWORK.arianeeTestnet].deepLink
+
+      const utils = new UtilsService(undefined, configurationService);
+
+      expect(utils.isRightChain(supportedDeepLink)).toBe(true);
     });
 
-    test('it should throw an error if wrong chain as current wallet', () => {
-      const configurationServiceStub: ConfigurationService = <ConfigurationService>{
-        arianeeConfiguration: {
-          deepLink: 'test.arian.ee'
-        }
-      };
-      const utils = new UtilsService(undefined, configurationServiceStub);
+    describe('it should throw an error if wrong chain as current wallet',()=>{
+      test('>with a supported chain', () => {
+        const configurationService = new ConfigurationService();
 
-      try {
-        utils.isRightChain('arian.ee');
-        expect(true).toBe(false);
-      } catch {
-        expect(true).toBe(true);
-      }
-    });
+        configurationService.arianeeConfiguration=
+            configurationService.supportedConfigurations[NETWORK.arianeeTestnet] as any;
+
+        const supportedDeepLink=configurationService.supportedConfigurations[NETWORK.mainnet].deepLink
+
+        const utils = new UtilsService(undefined, configurationService);
+
+        try {
+          utils.isRightChain(supportedDeepLink);
+          expect(true).toBe(false);
+        } catch(err) {
+          expect(err.chain).toBe(NETWORK.mainnet);
+          expect(err.message).toBeDefined();
+          expect(true).toBe(true);
+        }
+      });
+
+      test('>with a NOT supported chain', () => {
+        const configurationService = new ConfigurationService();
+
+        configurationService.arianeeConfiguration=
+            configurationService.supportedConfigurations[NETWORK.arianeeTestnet] as any;
+
+        const supportedDeepLink=configurationService.supportedConfigurations[NETWORK.mainnet].deepLink
+
+        const utils = new UtilsService(undefined, configurationService);
+
+        try {
+          utils.isRightChain('unsupportedHost');
+          expect(true).toBe(false);
+        } catch(err) {
+          expect(err.chain).toBeUndefined();
+          expect(err.message).toBeDefined();
+          expect(true).toBe(true);
+        }
+      });
+    })
+
   });
 
   describe('urlParse', () => {
@@ -122,6 +152,26 @@ describe('UTILS', () => {
       expect(parsedURL.pathname).toBe(url.pathname);
       expect(parsedURL.protocol).toBe(url.protocol);
     });
+  });
+
+  describe('find chain from hostname', () => {
+    const configurationService = new ConfigurationService();
+    const utils = new UtilsService(undefined, configurationService);
+
+    test('it find for existing network', () => {
+      Object.keys(configurationService.supportedConfigurations)
+          .forEach(network=>{
+            const deepLinkValue=configurationService.supportedConfigurations[network].deepLink;
+            const chain = utils.findChainFromHostname(deepLinkValue);
+            expect(chain).toBe(network);
+          })
+    });
+
+    test('it should return undefined for non existing network in configuration', () => {
+      const chain = utils.findChainFromHostname('noKnowndeepLinkValue');
+      expect(chain).toBeUndefined();
+    });
+
   });
 
   describe('timestampIsMoreRecentThan', () => {
