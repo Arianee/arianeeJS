@@ -7,7 +7,7 @@ export default {
   },
   [NETWORK.mainnet]: {
     faucetUrl: `https://faucet.arianee.org/faucet?network=${NETWORK.mainnet}`,
-    deepLink: 'arian.ee/'
+    deepLink: 'arian.ee'
   },
   [NETWORK.arianeeTestnet]: {
     faucetUrl: `https://faucet.arianee.org/faucet?network=${NETWORK.arianeeTestnet}`,
