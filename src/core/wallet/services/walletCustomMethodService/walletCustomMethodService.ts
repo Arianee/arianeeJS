@@ -5,7 +5,7 @@ import { CertificateService } from '../certificateService/certificateService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
 import { EventService } from '../eventService/eventsService';
-import {IdentityService} from "../identityService/identityService";
+import { IdentityService } from '../identityService/identityService';
 import { POAAndAriaService } from '../POAAndAriaFaucet/POAAndAriaService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
@@ -31,7 +31,7 @@ export class WalletCustomMethodService {
       getCertificate: this.certificateService.getCertificate,
       getMyCertificates: this.certificateService.getMyCertificates,
       getMyCertificatesGroupByIssuer: this.certificateService.getMyCertificatesGroupByIssuer,
-      getIdentity:this.identityService.getIdentity,
+      getIdentity: this.identityService.getIdentity,
       createCertificateRequestOwnershipLink: this.certificateService
         .createCertificateRequestOwnershipLink,
       createCertificateProofLink: this.certificateService.createCertificateProofLink,

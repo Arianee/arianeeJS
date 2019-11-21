@@ -95,22 +95,22 @@ export class UtilsService {
     return obj;
   }
 
-  public findChainFromHostname(hostname){
-    const networkConfigurations=this.configurationService.supportedConfigurations;
+  public findChainFromHostname (hostname) {
+    const networkConfigurations = this.configurationService.supportedConfigurations;
 
-   const networks=Object.keys(this.configurationService.supportedConfigurations);
-   return networks.find(key=>networkConfigurations[key].deepLink===hostname)
+    const networks = Object.keys(this.configurationService.supportedConfigurations);
+    return networks.find(key => networkConfigurations[key].deepLink === hostname);
   }
 
   public isRightChain (hostname: string) {
     if (hostname === this.configurationService.arianeeConfiguration.deepLink) {
       return true;
     } else {
-      const mostLikelychain=this.findChainFromHostname(hostname);
+      const mostLikelychain = this.findChainFromHostname(hostname);
 
-      const error= new Error('You are not in the right chain')
-      error.message='You are not in the right chain';
-      (error as any).chain=mostLikelychain;
+      const error = new Error('You are not in the right chain');
+      error.message = 'You are not in the right chain';
+      (error as any).chain = mostLikelychain;
       throw error;
     }
   }

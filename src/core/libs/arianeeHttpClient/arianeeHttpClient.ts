@@ -52,19 +52,19 @@ export class ArianeeHttpClient {
       };
     }
 
-    private RPCCallHandler=async(endpoint: string, method: string, params: any,withCache:boolean)=>{
+    private RPCCallHandler=async (endpoint: string, method: string, params: any, withCache:boolean) => {
       const config = this.RPConfigFactory(endpoint, method, params);
       let RPCRes;
-      if(withCache){
+      if (withCache) {
         const customKey = { ...params };
         delete customKey.authentification;
         const storageKey = ArianeeHttpClient.createKeyFromURL(endpoint, customKey);
         RPCRes = await this.fetchWithCache(endpoint, config, storageKey);
-      }else{
-        RPCRes=  await this.fetch(endpoint, config);
+      } else {
+        RPCRes = await this.fetch(endpoint, config);
       }
 
-      if(RPCRes.error){
+      if (RPCRes.error) {
         throw new Error();
       }
 
@@ -72,11 +72,11 @@ export class ArianeeHttpClient {
     }
 
    public RPCCallWithCache = async (endpoint: string, method: string, params: any) => {
-     return this.RPCCallHandler(endpoint,method,params,true)
-    }
+     return this.RPCCallHandler(endpoint, method, params, true);
+   }
 
     public RPCCall = async (endpoint: string, method: string, params: any) => {
-        return this.RPCCallHandler(endpoint,method,params,false)
+      return this.RPCCallHandler(endpoint, method, params, false);
     }
 
     /**

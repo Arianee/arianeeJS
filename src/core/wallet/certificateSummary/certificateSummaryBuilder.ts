@@ -8,11 +8,11 @@ import {
   CertificateIssuer,
   CertificateOwner,
   CertificateSummary,
-  CertificiateContent
+  CertificateContentContainer
 } from './certificateSummary';
 
 export class CertificateSummaryBuilder {
-    private _content: CertificiateContent;
+    private _content: CertificateContentContainer;
     private _events: CertificateEvents;
     private _issuer: CertificateIssuer;
     private _isRequestable: boolean;

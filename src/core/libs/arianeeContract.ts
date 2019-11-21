@@ -1,16 +1,16 @@
-import { TransactionObject } from "@arianee/arianee-abi/types/types";
-import { Transaction } from "web3-core";
-import { Contract } from "web3-eth-contract";
-import { ConfigurationService } from "../wallet/services/configurationService/configurationService";
-import { POAAndAriaService } from "../wallet/services/POAAndAriaFaucet/POAAndAriaService";
-import { WalletService } from "../wallet/services/walletService/walletService";
-import { Web3Service } from "../wallet/services/web3Service/web3Service";
-import { flatPromise } from "./flat-promise";
+import { TransactionObject } from '@arianee/arianee-abi/types/types';
+import { Transaction } from 'web3-core';
+import { Contract } from 'web3-eth-contract';
+import { ConfigurationService } from '../wallet/services/configurationService/configurationService';
+import { POAAndAriaService } from '../wallet/services/POAAndAriaFaucet/POAAndAriaService';
+import { WalletService } from '../wallet/services/walletService/walletService';
+import { Web3Service } from '../wallet/services/web3Service/web3Service';
+import { flatPromise } from './flat-promise';
 
 export class ArianeeContract<ContractImplementation extends Contract> {
   public key: ContractImplementation;
 
-  public constructor(
+  public constructor (
     private contract: Contract,
     private walletService: WalletService,
     private arianeeConfig: ConfigurationService,
@@ -18,12 +18,12 @@ export class ArianeeContract<ContractImplementation extends Contract> {
     private poaAndAriaService: POAAndAriaService
   ) {
     if (contract === undefined) {
-      throw new Error("contract is undefined");
+      throw new Error('contract is undefined');
     }
     this.key = <ContractImplementation>contract;
     Object.keys(this.key.methods).forEach(method => {
       const b = contract.methods[method];
-      if (!method.startsWith("0")) {
+      if (!method.startsWith('0')) {
         this.key.methods[method] = (...args) => {
           return {
             ...b.bind(b)(...args),
@@ -37,7 +37,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
     });
   }
 
-  public makeArianee(): ContractImplementation {
+  public makeArianee (): ContractImplementation {
     return this.key;
   }
 
@@ -47,10 +47,10 @@ export class ArianeeContract<ContractImplementation extends Contract> {
    * @param contractAddress
    * @param data
    */
-  public arianeeSignMetamask(transaction): Promise<any> {
+  public arianeeSignMetamask (transaction): Promise<any> {
     const { resolve, promise, reject } = flatPromise();
 
-    this.web3Service.web3.eth.sendTransaction(transaction, function(
+    this.web3Service.web3.eth.sendTransaction(transaction, function (
       err,
       result
     ) {
@@ -83,7 +83,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
   ): Promise<any> => {
     const nonce = await this.web3Service.web3.eth.getTransactionCount(
       this.walletService.publicKey,
-      "pending"
+      'pending'
     );
 
     const encodeABI = data.encodeABI();
@@ -94,7 +94,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
       data: encodeABI,
       to: this.contract.options.address,
       gas: 2000000,
-      gasPrice: this.web3Service.web3.utils.toWei("1", "gwei")
+      gasPrice: this.web3Service.web3.utils.toWei('1', 'gwei')
     };
     const mergedTransaction = { ...defaultTransaction, ...transaction };
 
@@ -106,7 +106,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
     return new Promise((resolve, reject) => {
       this.web3Service.web3.eth
         .sendSignedTransaction(result.rawTransaction)
-        .on("confirmation", (confirmationNumber, receipt) => {
+        .on('confirmation', (confirmationNumber, receipt) => {
           resolve({
             result,
             confirmationNumber,

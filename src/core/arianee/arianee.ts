@@ -6,6 +6,7 @@ import { ArianeeHttpClient } from '../libs/arianeeHttpClient/arianeeHttpClient';
 import { SimpleSessionCache } from '../libs/simpleCache/simpleSessionCache';
 import { ArianeeWalletBuilder } from '../wallet/walletBuilder';
 import { ProtocolConfigurationBuilder } from './protocolConfigurationBuilder/protocolConfigurationBuilder';
+import { Store } from '../libs/simpleStore/store';
 
 export class Arianee {
   public async init (
@@ -47,6 +48,12 @@ export class Arianee {
     storageObject: { get: (key: string) => Promise<string>, set: (key: string, value: string) => Promise<any> })
         : Arianee {
     container.register(SimpleSessionCache, { useValue: storageObject });
+
+    return this;
+  }
+
+  public setStore (storageObject: {getStoreItem :(storeKey: string) => Promise<any>, hasItem:(storeKey: string)=> Promise<boolean>, setStoreItem:(keyl:string, value:any)=> Promise<any>}) {
+    container.register(Store, { useValue: storageObject });
 
     return this;
   }

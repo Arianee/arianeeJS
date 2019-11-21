@@ -1,20 +1,26 @@
-import { inject, injectable } from 'tsyringe';
+import { injectable } from 'tsyringe';
 import { IdentitySummary } from '../../../../models/arianee-identity';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
-import { ArianeeWallet } from '../../wallet';
 import { ContractService } from '../contractService/contractsService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
+import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
+import { StoreNamespace } from '../../../../models/storeNamespace';
 
 @injectable()
 export class IdentityService {
   constructor (private walletService: WalletService,
               private httpClient: ArianeeHttpClient,
               private utils: UtilsService,
-              private contractService: ContractService) {
+              private contractService: ContractService,
+              private store: SimpleStore) {
   }
 
-  public getIdentity = async (address: string): Promise<IdentitySummary> => {
+  public getIdentity = async (address: string): Promise<any> => {
+    return this.store.get<IdentitySummary>(StoreNamespace.identity, address, () => this.fetchIdentity(address));
+  }
+
+  private fetchIdentity = async (address:string): Promise<IdentitySummary> => {
     const identityURI = await this.contractService.identityContract.methods
       .addressURI(address)
       .call();
@@ -42,19 +48,19 @@ export class IdentityService {
         .addressIsApproved(address)
         .call();
 
-      return {
+      return Promise.resolve({
         data: identityContentData,
         isAuthentic: isAuthentic,
         isApproved,
         address
-      };
+      });
     } else {
-      return {
+      return Promise.resolve({
         data: undefined,
         isAuthentic: false,
         isApproved: false,
         address
-      };
+      });
     }
   }
 }
