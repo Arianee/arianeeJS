@@ -162,9 +162,13 @@ export class CertificateService {
       if (isNullOrUndefined(query) || query.content) {
         const contentDetails = this.certificateDetails.getCertificateContent(
           certificateId,
-          passphrase,
-          response
-        );
+          passphrase
+        ).then((certificateContent) => {
+          response.setContent(
+            certificateContent.data,
+            certificateContent.isAuthentic
+          );
+        });
 
         requestQueue.push(
           contentDetails

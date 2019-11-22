@@ -1,6 +1,6 @@
-import {NETWORK} from "../../../..";
-import {ConfigurationService} from '../configurationService/configurationService';
-import {UtilsService} from './utilsService';
+import { NETWORK } from '../../../..';
+import { ConfigurationService } from '../configurationService/configurationService';
+import { UtilsService } from './utilsService';
 
 describe('UTILS', () => {
   describe('readLink', () => {
@@ -70,31 +70,31 @@ describe('UTILS', () => {
     test('it should return true if same chain as current wallet', () => {
       const configurationService = new ConfigurationService();
 
-      configurationService.arianeeConfiguration=
+      configurationService.arianeeConfiguration =
           configurationService.supportedConfigurations[NETWORK.arianeeTestnet] as any;
 
-      const supportedDeepLink=configurationService.supportedConfigurations[NETWORK.arianeeTestnet].deepLink
+      const supportedDeepLink = configurationService.supportedConfigurations[NETWORK.arianeeTestnet].deepLink;
 
       const utils = new UtilsService(undefined, configurationService);
 
       expect(utils.isRightChain(supportedDeepLink)).toBe(true);
     });
 
-    describe('it should throw an error if wrong chain as current wallet',()=>{
+    describe('it should throw an error if wrong chain as current wallet', () => {
       test('>with a supported chain', () => {
         const configurationService = new ConfigurationService();
 
-        configurationService.arianeeConfiguration=
+        configurationService.arianeeConfiguration =
             configurationService.supportedConfigurations[NETWORK.arianeeTestnet] as any;
 
-        const supportedDeepLink=configurationService.supportedConfigurations[NETWORK.mainnet].deepLink
+        const supportedDeepLink = configurationService.supportedConfigurations[NETWORK.mainnet].deepLink;
 
         const utils = new UtilsService(undefined, configurationService);
 
         try {
           utils.isRightChain(supportedDeepLink);
           expect(true).toBe(false);
-        } catch(err) {
+        } catch (err) {
           expect(err.chain).toBe(NETWORK.mainnet);
           expect(err.message).toBeDefined();
           expect(true).toBe(true);
@@ -104,24 +104,23 @@ describe('UTILS', () => {
       test('>with a NOT supported chain', () => {
         const configurationService = new ConfigurationService();
 
-        configurationService.arianeeConfiguration=
+        configurationService.arianeeConfiguration =
             configurationService.supportedConfigurations[NETWORK.arianeeTestnet] as any;
 
-        const supportedDeepLink=configurationService.supportedConfigurations[NETWORK.mainnet].deepLink
+        const supportedDeepLink = configurationService.supportedConfigurations[NETWORK.mainnet].deepLink;
 
         const utils = new UtilsService(undefined, configurationService);
 
         try {
           utils.isRightChain('unsupportedHost');
           expect(true).toBe(false);
-        } catch(err) {
+        } catch (err) {
           expect(err.chain).toBeUndefined();
           expect(err.message).toBeDefined();
           expect(true).toBe(true);
         }
       });
-    })
-
+    });
   });
 
   describe('urlParse', () => {
@@ -160,18 +159,17 @@ describe('UTILS', () => {
 
     test('it find for existing network', () => {
       Object.keys(configurationService.supportedConfigurations)
-          .forEach(network=>{
-            const deepLinkValue=configurationService.supportedConfigurations[network].deepLink;
-            const chain = utils.findChainFromHostname(deepLinkValue);
-            expect(chain).toBe(network);
-          })
+        .forEach(network => {
+          const deepLinkValue = configurationService.supportedConfigurations[network].deepLink;
+          const chain = utils.findChainFromHostname(deepLinkValue);
+          expect(chain).toBe(network);
+        });
     });
 
     test('it should return undefined for non existing network in configuration', () => {
       const chain = utils.findChainFromHostname('noKnowndeepLinkValue');
       expect(chain).toBeUndefined();
     });
-
   });
 
   describe('timestampIsMoreRecentThan', () => {
