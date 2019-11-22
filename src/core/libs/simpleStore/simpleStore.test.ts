@@ -2,13 +2,15 @@ import { SimpleStore } from './simpleStore';
 import { Store } from './store';
 import { ArianeeHttpClient } from '../arianeeHttpClient/arianeeHttpClient';
 import { SimpleSessionCache } from '../simpleCache/simpleSessionCache';
-import { WalletService } from '../../wallet/services/walletService/walletService';
+
 import { ConfigurationService } from '../../wallet/services/configurationService/configurationService';
+import { WalletService } from '../../wallet/services/walletService/walletService';
 
 const mockResponse = 'mockResponse';
 const countMock = jest.fn();
 const url = 'https://myurl.com/zef';
 
+jest.mock('../../wallet/services/walletService/walletService');
 jest.mock('axios', () => url => {
   countMock(url);
 
@@ -24,8 +26,7 @@ describe('SimpleStore', () => {
 
   beforeEach(() => {
     params = {
-      chainId: 1,
-      publicKey: '0x123'
+      chainId: 1
     };
     configurationServiceStub = () => {
       return {
@@ -33,11 +34,6 @@ describe('SimpleStore', () => {
           chainId: params.chainId
         }
       } as ConfigurationService;
-    };
-
-    walletServiceStub = new WalletService();
-    walletServiceStub.account = {
-      address: params.publicKey
     };
   });
 
@@ -48,7 +44,8 @@ describe('SimpleStore', () => {
   it('should fetch one', async () => {
     const store = new Store();
     const configService = configurationServiceStub();
-    const simpleStore = new SimpleStore(store, configService, walletServiceStub);
+    const walletService = new WalletService();
+    const simpleStore = new SimpleStore(store, configService, walletService);
     const simpleCache = new SimpleSessionCache();
     const httpClient = new ArianeeHttpClient(simpleCache);
 
@@ -61,7 +58,8 @@ describe('SimpleStore', () => {
   it('should fetch once with 2 calls at same time', async () => {
     const store = new Store();
     const configService = configurationServiceStub();
-    const simpleStore = new SimpleStore(store, configService, walletServiceStub);
+    const walletService = new WalletService();
+    const simpleStore = new SimpleStore(store, configService, walletService);
     const simpleCache = new SimpleSessionCache();
     const httpClient = new ArianeeHttpClient(simpleCache);
     simpleStore.get('test', 'test', () => httpClient.fetch(url));
@@ -75,7 +73,8 @@ describe('SimpleStore', () => {
   it('should fetch once with 2 calls one after the other', async () => {
     const store = new Store();
     const configService = configurationServiceStub();
-    const simpleStore = new SimpleStore(store, configService, walletServiceStub);
+    const walletService = new WalletService();
+    const simpleStore = new SimpleStore(store, configService, walletService);
     const simpleCache = new SimpleSessionCache();
     const httpClient = new ArianeeHttpClient(simpleCache);
     await simpleStore.get('test', 'test', () => httpClient.fetch(url));
@@ -90,7 +89,8 @@ describe('SimpleStore', () => {
     const store = new Store();
 
     const configService = configurationServiceStub();
-    const simpleStore = new SimpleStore(store, configService, walletServiceStub);
+    const walletService = new WalletService();
+    const simpleStore = new SimpleStore(store, configService, walletService);
     const simpleCache = new SimpleSessionCache();
 
     const httpClient = new ArianeeHttpClient(simpleCache);
@@ -107,7 +107,8 @@ describe('SimpleStore', () => {
     const store = new Store();
 
     const configService = configurationServiceStub();
-    const simpleStore = new SimpleStore(store, configService, walletServiceStub);
+    const walletService = new WalletService();
+    const simpleStore = new SimpleStore(store, configService, walletService);
     const simpleCache = new SimpleSessionCache();
 
     const httpClient = new ArianeeHttpClient(simpleCache);
