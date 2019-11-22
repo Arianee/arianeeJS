@@ -19,7 +19,8 @@
     "prepare:publish": "npm run build && npm run test",
     "build": "npm run build-web && npm run build-node",
     "build-web": "webpack -p --mode production --env browser",
-    "build-node": "./node_modules/.bin/tsc"
+    "build-node": "./node_modules/.bin/tsc",
+    "changelog": "gt -po=changelog.md"
   },
   "files": [
     "dist",
@@ -53,7 +54,7 @@
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "gitool": "^1.4.0",
+    "gitool": "^1.7.0",
     "jest": "^24.1.0",
     "node-fetch-polyfill": "^2.0.6",
     "nodemon": "^1.19.1",
