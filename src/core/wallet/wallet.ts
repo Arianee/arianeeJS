@@ -7,8 +7,8 @@ import { UtilsService } from './services/utilService/utilsService';
 import { WalletCustomMethodService } from './services/walletCustomMethodService/walletCustomMethodService';
 import { WalletService } from './services/walletService/walletService';
 import { Web3Service } from './services/web3Service/web3Service';
-import { EventWatcherCustom } from './services/eventWatcher/eventWatcher';
-import { ArianeeEventEmitter } from '../libs/arianeeEventEmitter/ArianeeEventEmitter';
+import { BlockchainEventWatcherService } from './services/blockchainEventWatcherService/blochainEventWatcherService';
+import { ArianeeEventEmitter } from './services/arianeeEventEmitterService/ArianeeEventEmitter';
 import EventEmitter = require('eventemitter3');
 
 export class ArianeeWallet {
@@ -19,12 +19,12 @@ export class ArianeeWallet {
         private _mnemonic?
     ) {
       this.container = container.createChildContainer();
-      this.registerSingletons(WalletService, Web3Service, POAAndAriaService, ArianeeEventEmitter, EventWatcherCustom);
+      this.registerSingletons(WalletService, Web3Service, POAAndAriaService, ArianeeEventEmitter, BlockchainEventWatcherService);
 
       const walletService = this.container.resolve(WalletService);
       walletService.account = this.account;
 
-      this.container.resolve(EventWatcherCustom);
+      this.container.resolve(BlockchainEventWatcherService);
     }
 
     private registerSingletons (...classNames) {
