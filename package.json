@@ -78,6 +78,7 @@
     "@arianee/arianee-abi": "0.4.0",
     "axios": "^0.18.1",
     "ethers": "^4.0.38",
+    "eventemitter3": "^4.0.0",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^3.4.0",
     "web3": "1.2.2"
