@@ -83,7 +83,7 @@ export class CertificateService {
       );
 
       if (content) {
-        const certificateSchema = await this.httpClient.fetchWithCache(
+        const certificateSchema = await this.httpClient.fetch(
           content.$schema
         );
 

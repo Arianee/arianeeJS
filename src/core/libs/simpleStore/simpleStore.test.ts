@@ -1,7 +1,6 @@
 import { SimpleStore } from './simpleStore';
 import { Store } from './store';
 import { ArianeeHttpClient } from '../arianeeHttpClient/arianeeHttpClient';
-import { SimpleSessionCache } from '../simpleCache/simpleSessionCache';
 
 import { ConfigurationService } from '../../wallet/services/configurationService/configurationService';
 import { WalletService } from '../../wallet/services/walletService/walletService';
@@ -46,8 +45,7 @@ describe('SimpleStore', () => {
     const configService = configurationServiceStub();
     const walletService = new WalletService();
     const simpleStore = new SimpleStore(store, configService, walletService);
-    const simpleCache = new SimpleSessionCache();
-    const httpClient = new ArianeeHttpClient(simpleCache);
+    const httpClient = new ArianeeHttpClient();
 
     const result = await simpleStore.get('test', 'test', () => httpClient.fetch(url));
 
@@ -60,8 +58,7 @@ describe('SimpleStore', () => {
     const configService = configurationServiceStub();
     const walletService = new WalletService();
     const simpleStore = new SimpleStore(store, configService, walletService);
-    const simpleCache = new SimpleSessionCache();
-    const httpClient = new ArianeeHttpClient(simpleCache);
+    const httpClient = new ArianeeHttpClient();
     simpleStore.get('test', 'test', () => httpClient.fetch(url));
 
     const result = await simpleStore.get('test', 'test', () => httpClient.fetch(url));
@@ -75,8 +72,7 @@ describe('SimpleStore', () => {
     const configService = configurationServiceStub();
     const walletService = new WalletService();
     const simpleStore = new SimpleStore(store, configService, walletService);
-    const simpleCache = new SimpleSessionCache();
-    const httpClient = new ArianeeHttpClient(simpleCache);
+    const httpClient = new ArianeeHttpClient();
     await simpleStore.get('test', 'test', () => httpClient.fetch(url));
 
     const result = await simpleStore.get('test', 'test', () => httpClient.fetch(url));
@@ -91,9 +87,8 @@ describe('SimpleStore', () => {
     const configService = configurationServiceStub();
     const walletService = new WalletService();
     const simpleStore = new SimpleStore(store, configService, walletService);
-    const simpleCache = new SimpleSessionCache();
 
-    const httpClient = new ArianeeHttpClient(simpleCache);
+    const httpClient = new ArianeeHttpClient();
     await simpleStore.get('test', 'test', () => httpClient.fetch(url));
 
     // @ts-ignore
@@ -109,9 +104,8 @@ describe('SimpleStore', () => {
     const configService = configurationServiceStub();
     const walletService = new WalletService();
     const simpleStore = new SimpleStore(store, configService, walletService);
-    const simpleCache = new SimpleSessionCache();
 
-    const httpClient = new ArianeeHttpClient(simpleCache);
+    const httpClient = new ArianeeHttpClient();
     await simpleStore.get('test', 'test', () => httpClient.fetch(url));
 
     // @ts-ignore
