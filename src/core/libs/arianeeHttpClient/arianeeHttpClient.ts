@@ -1,12 +1,8 @@
 import axios from 'axios';
 import { singleton } from 'tsyringe';
-import { SimpleSessionCache } from '../simpleCache/simpleSessionCache';
 
 @singleton()
 export class ArianeeHttpClient {
-  constructor (private httpCacheManage: SimpleSessionCache) {
-  }
-
     private fetchingCache = {};
 
     /**
@@ -37,7 +33,7 @@ export class ArianeeHttpClient {
       return hash(JSON.stringify(url) + JSON.stringify(config));
     }
 
-    private RPConfigFactory = (endpoint, method, params) => {
+    private RPCConfigurationFactory = (endpoint, method, params) => {
       return {
         method: 'POST',
         data: {
@@ -52,64 +48,16 @@ export class ArianeeHttpClient {
       };
     }
 
-    private RPCCallHandler=async (endpoint: string, method: string, params: any, withCache:boolean) => {
-      const config = this.RPConfigFactory(endpoint, method, params);
-      let RPCRes;
-      if (withCache) {
-        const customKey = { ...params };
-        delete customKey.authentification;
-        const storageKey = ArianeeHttpClient.createKeyFromURL(endpoint, customKey);
-        RPCRes = await this.fetchWithCache(endpoint, config, storageKey);
-      } else {
-        RPCRes = await this.fetch(endpoint, config);
-      }
+    public RPCCall=async (endpoint: string, method: string, params: any) => {
+      const config = this.RPCConfigurationFactory(endpoint, method, params);
+
+      const RPCRes = await this.fetch(endpoint, config);
 
       if (RPCRes.error) {
         throw new Error();
       }
 
       return (typeof (RPCRes.result) === 'string') ? JSON.parse(RPCRes.result) : RPCRes.result;
-    }
-
-   public RPCCallWithCache = async (endpoint: string, method: string, params: any) => {
-     return this.RPCCallHandler(endpoint, method, params, true);
-   }
-
-    public RPCCall = async (endpoint: string, method: string, params: any) => {
-      return this.RPCCallHandler(endpoint, method, params, false);
-    }
-
-    /**
-     *
-     * If HTTP call with same url & headers has been made, it will return previous result
-     * else it will make the call and store it
-     * @param url
-     * @param config
-     * @param specialKey
-     * @return Promise{any}
-     */
-    public fetchWithCache = (
-      url: string,
-      config: any = { ...ArianeeHttpClient.defaultConfig },
-      specialKey?: string
-    ) => {
-      const key = specialKey || ArianeeHttpClient.createKeyFromURL(url, config);
-
-      return this.httpCacheManage.get(key).catch(() => {
-        // it does not exist in storage cache, but it is already fetching
-        if (!Object.prototype.hasOwnProperty.call(this.fetchingCache, key)) {
-          this.fetchingCache[key] = this.fetch(url, config)
-            .then(result => {
-              this.httpCacheManage.set(key, result);
-
-              return result;
-            }).finally(() => {
-              delete this.fetchWithCache[key];
-            });
-        }
-
-        return this.fetchingCache[key];
-      });
     }
 
     /**

@@ -52,7 +52,7 @@ export class CertificateDetails {
   }
 
   private getCertificateContentFromHttp = async certificateURI => {
-    return this.httpClient.fetchWithCache(
+    return this.httpClient.fetch(
       certificateURI
     );
   }
@@ -67,7 +67,7 @@ export class CertificateDetails {
       .call();
     const identity = await this.identityService.getIdentity(issuer);
 
-    return this.httpClient.RPCCallWithCache(
+    return this.httpClient.RPCCall(
       identity.data.rpcEndpoint,
       'certificate.read',
       {
@@ -132,7 +132,7 @@ export class CertificateDetails {
       proof
     );
 
-    const certificateSchema = await this.httpClient.fetchWithCache(
+    const certificateSchema = await this.httpClient.fetch(
       certificateContentData.$schema
     );
 

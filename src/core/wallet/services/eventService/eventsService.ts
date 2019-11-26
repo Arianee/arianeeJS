@@ -160,7 +160,7 @@ export class EventService {
         privateKey
       );
     }
-    event.content = await this.httpClient.RPCCallWithCache(
+    event.content = await this.httpClient.RPCCall(
       rpcEndpoint,
       'event.read',
       requestBody

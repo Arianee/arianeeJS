@@ -3,10 +3,9 @@ import * as conf from '../../configurations'; // eslint-disable-line import/no-d
 import { appConfig } from '../../configurations'; // eslint-disable-line import/no-duplicates
 import { NETWORK, networkURL } from '../../models/networkConfiguration';
 import { ArianeeHttpClient } from '../libs/arianeeHttpClient/arianeeHttpClient';
-import { SimpleSessionCache } from '../libs/simpleCache/simpleSessionCache';
+import { Store } from '../libs/simpleStore/store';
 import { ArianeeWalletBuilder } from '../wallet/walletBuilder';
 import { ProtocolConfigurationBuilder } from './protocolConfigurationBuilder/protocolConfigurationBuilder';
-import { Store } from '../libs/simpleStore/store';
 
 export class Arianee {
   public async init (
@@ -44,10 +43,12 @@ export class Arianee {
     return protocolConfigurationBuilder.build();
   }
 
-  public setCache (
-    storageObject: { get: (key: string) => Promise<string>, set: (key: string, value: string) => Promise<any> })
+  /**
+   * @deprecated this method has been renamed init.
+   */
+  public setCache (storageObject: any)
         : Arianee {
-    container.register(SimpleSessionCache, { useValue: storageObject });
+    console.error('setCache method does not exist anymore. Please use setStore');
 
     return this;
   }

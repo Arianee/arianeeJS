@@ -26,11 +26,11 @@ export class IdentityService {
       .call();
 
     if (identityURI) {
-      const identityContentData = await this.httpClient.fetchWithCache(
+      const identityContentData = await this.httpClient.fetch(
         identityURI
       );
 
-      const identityContentSchema = await this.httpClient.fetchWithCache(
+      const identityContentSchema = await this.httpClient.fetch(
         identityContentData.$schema
       );
 
