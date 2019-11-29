@@ -9,8 +9,9 @@ import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { IdentitySummary } from '../../../../models/arianee-identity';
-import { CertificateContentContainer } from '../../certificateSummary/certificateSummary';
+import { CertificateContentContainer, ConsolidatedIssuerRequest } from '../../certificateSummary/certificateSummary';
 import { StoreNamespace } from '../../../../models/storeNamespace';
+import { get } from 'lodash';
 
 @injectable()
 export class CertificateDetails {
@@ -26,16 +27,20 @@ export class CertificateDetails {
 
   }
 
-  public getCertificateIssuer = async (certificateId: CertificateId) => {
-    return this.store.get<IdentitySummary>(StoreNamespace.certificateIssuer, certificateId, () => this.fetchCertificateIssuer(certificateId));
+  public getCertificateIssuer = async (certificateId: CertificateId, issuerQuery: ConsolidatedIssuerRequest) => {
+    const waitingIdentity = get(issuerQuery, 'waitingIdentity', false);
+    
+    return this.fetchCertificateIssuer(certificateId, waitingIdentity);
   }
 
-  public fetchCertificateIssuer = async (certificateId: CertificateId) => {
-    const issuer = await this.contractService.smartAssetContract.methods
+  public fetchCertificateIssuer = async (certificateId: CertificateId, waitingIdentity:boolean) => {
+    const issuerOf = ()=> this.contractService.smartAssetContract.methods
       .issuerOf(certificateId.toString())
       .call();
 
-    return this.identityService.getIdentity(issuer);
+   const issuer =await this.store.get<string>(StoreNamespace.certificateIssuer, certificateId, issuerOf);
+
+    return this.identityService.getIdentity(issuer, waitingIdentity);
   }
 
   public getCertificateOwner = async (

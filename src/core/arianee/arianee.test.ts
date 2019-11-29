@@ -32,7 +32,17 @@ jest.mock('../libs/arianeeHttpClient/arianeeHttpClient', () => ({
 }));
 
 describe('Arianee', () => {
-  describe('CONFIGURATION', () => {
+  describe('globalConfiguration', () => {
+    test('should be set configuration', async () => {
+      const requestConfig = { content: true };
+      const arianee = await new Arianee()
+        .setDefaultQuery(requestConfig)
+        .init();
+
+      expect(arianee.fromRandomKey().globalConfiguration.defaultQuery).toBe(requestConfig);
+    });
+  });
+  describe('Network Configuration', () => {
     describe('testnet', () => {
       test('should be fetching testnet addresses', async () => {
         await new Arianee().init(NETWORK.testnet);
@@ -49,6 +59,7 @@ describe('Arianee', () => {
         expect(faucetUrl).toBe(appConfigurations.testnet.faucetUrl);
       });
     });
+
     describe('mainet', () => {
       test('should be fetching testnet addresses', async () => {
         await new Arianee().init(NETWORK.mainnet);

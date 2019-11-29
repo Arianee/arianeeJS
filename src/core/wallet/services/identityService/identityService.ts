@@ -3,24 +3,85 @@ import { IdentitySummary } from '../../../../models/arianee-identity';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { ContractService } from '../contractService/contractsService';
 import { UtilsService } from '../utilService/utilsService';
-import { WalletService } from '../walletService/walletService';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { StoreNamespace } from '../../../../models/storeNamespace';
 
 @injectable()
 export class IdentityService {
-  constructor (private walletService: WalletService,
-              private httpClient: ArianeeHttpClient,
-              private utils: UtilsService,
-              private contractService: ContractService,
-              private store: SimpleStore) {
+  constructor(
+    private httpClient: ArianeeHttpClient,
+    private utils: UtilsService,
+    private contractService: ContractService,
+    private store: SimpleStore) {
   }
 
-  public getIdentity = async (address: string): Promise<any> => {
-    return this.store.get<IdentitySummary>(StoreNamespace.identity, address, () => this.fetchIdentity(address));
+  /**
+      * getIdentity
+      * Get identity/ waiting identity from an address
+      * @param address address of the contract
+      * @param waitingIdentity boolean to fetch waiting identity. Fallback to approved identity if no waiting identity
+      * @return Promise{IdentitySummary}
+      */
+  public getIdentity = async (address: string, waitingIdentity = false): Promise<IdentitySummary> => {
+    if (!waitingIdentity) {
+      return this.store.get<IdentitySummary>(StoreNamespace.identity, address, () => this.fetchIdentity(address));
+    } else {
+      console.warn('you are fetching waiting identity');
+      return this.store.get<IdentitySummary>(StoreNamespace.identityWaiting, address, () => this.fetchWaitingIdentity(address));
+    }
   }
 
-  private fetchIdentity = async (address:string): Promise<IdentitySummary> => {
+  /**
+     * fetchWaitingIdentity
+     * Get waiting identity from an address and Fallback to approved identity if no waiting identity
+     * @param address address of the contract
+     * @return Promise{IdentitySummary}
+     */
+  private fetchWaitingIdentity = async (address: string): Promise<IdentitySummary> => {
+
+    const identityURI = await this.contractService.identityContract.methods
+      .waitingURI(address)
+      .call();
+
+    if (identityURI) {
+      const identityContentData = await this.httpClient.fetch(
+        identityURI
+      );
+
+      const identityContentSchema = await this.httpClient.fetch(
+        identityContentData.$schema
+      );
+
+      const hash = await this.utils.cert(
+        identityContentSchema,
+        identityContentData
+      );
+
+      const imprint = await this.contractService.identityContract.methods
+        .waitingImprint(address)
+        .call();
+
+      const isAuthentic = imprint === hash;
+      const isApproved = false;
+
+      return Promise.resolve({
+        data: identityContentData,
+        isAuthentic: isAuthentic,
+        isApproved,
+        address
+      });
+    } else {
+      return this.fetchIdentity(address);
+    }
+  }
+
+  /**
+   * fetchIdentity
+   * Get approved identity from an address
+   * @param address address of the contract
+   * @return Promise{IdentitySummary}
+   */
+  private fetchIdentity = async (address: string): Promise<IdentitySummary> => {
     const identityURI = await this.contractService.identityContract.methods
       .addressURI(address)
       .call();

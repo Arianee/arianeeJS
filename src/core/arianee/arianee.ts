@@ -6,8 +6,16 @@ import { ArianeeHttpClient } from '../libs/arianeeHttpClient/arianeeHttpClient';
 import { Store } from '../libs/simpleStore/store';
 import { ArianeeWalletBuilder } from '../wallet/walletBuilder';
 import { ProtocolConfigurationBuilder } from './protocolConfigurationBuilder/protocolConfigurationBuilder';
+import { GlobalConfigurationService } from '../wallet/services/globalConfigurationService/globalConfigurationService';
+import { ConsolidatedCertificateRequest } from '../wallet/certificateSummary/certificateSummary';
 
 export class Arianee {
+  public globalConfigurationService: GlobalConfigurationService;
+
+  constructor () {
+    this.globalConfigurationService = container.resolve(GlobalConfigurationService);
+  }
+
   public async init (
     networkName: NETWORK = NETWORK.testnet
   ): Promise<ArianeeWalletBuilder> {
@@ -47,20 +55,25 @@ export class Arianee {
    * @deprecated this method has been renamed init.
    */
   public setCache (storageObject: any)
-        : Arianee {
+    : Arianee {
     console.error('setCache method does not exist anymore. Please use setStore');
 
     return this;
   }
 
-  public setStore (storageObject: {getStoreItem :(storeKey: string) => Promise<any>, hasItem:(storeKey: string)=> Promise<boolean>, setStoreItem:(keyl:string, value:any)=> Promise<any>}) {
+  public setDefaultQuery (value: ConsolidatedCertificateRequest) {
+    this.globalConfigurationService.setDefaultQuery(value);
+    return this;
+  }
+
+  public setStore (storageObject: { getStoreItem: (storeKey: string) => Promise<any>, hasItem: (storeKey: string) => Promise<boolean>, setStoreItem: (keyl: string, value: any) => Promise<any> }) {
     container.register(Store, { useValue: storageObject });
 
     return this;
   }
 
-    /**
-     * @deprecated this method has been renamed init.
-     */
-    public connectToProtocol = (args?) => this.init(args);
+  /**
+   * @deprecated this method has been renamed init.
+   */
+  public connectToProtocol = (args?) => this.init(args);
 }

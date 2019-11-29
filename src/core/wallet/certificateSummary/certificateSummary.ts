@@ -94,18 +94,18 @@ export interface ConsolidatedQuery {
   };
 }
 
-export interface ConsolidatedArianeeEventsRequest {
-  query: ConsolidatedQuery;
-  transfert: boolean | ConsolidatedQuery;
-  arianeeEvents: boolean | ConsolidatedQuery;
+export interface ConsolidatedIssuerRequestInterface {
+  waitingIdentity: boolean;
 }
+
+export type ConsolidatedIssuerRequest = ConsolidatedIssuerRequestInterface | boolean;
 
 export interface ConsolidatedCertificateRequest {
   isRequestable?: boolean;
   content?: boolean;
-  issuer?: boolean;
+  issuer?: ConsolidatedIssuerRequest;
   owner?: boolean;
-  events?: boolean | ConsolidatedArianeeEventsRequest;
-  arianeeEvents?: boolean | ConsolidatedArianeeEventsRequest;
+  events?: boolean;
+  arianeeEvents?: boolean;
   advanced?: boolean;
 }
