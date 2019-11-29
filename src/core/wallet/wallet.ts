@@ -9,6 +9,7 @@ import { WalletService } from './services/walletService/walletService';
 import { Web3Service } from './services/web3Service/web3Service';
 import { BlockchainEventWatcherService } from './services/blockchainEventWatcherService/blochainEventWatcherService';
 import { ArianeeEventEmitter } from './services/arianeeEventEmitterService/ArianeeEventEmitter';
+import { GlobalConfigurationService } from './services/globalConfigurationService/globalConfigurationService';
 import EventEmitter = require('eventemitter3');
 
 export class ArianeeWallet {
@@ -85,5 +86,9 @@ export class ArianeeWallet {
 
     public get watch (): EventEmitter {
       return this.container.resolve(ArianeeEventEmitter).EE;
+    }
+
+    public get globalConfiguration () {
+      return container.resolve(GlobalConfigurationService);
     }
 }
