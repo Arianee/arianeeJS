@@ -11,5 +11,9 @@ export const blockchainEventsName = {
   },
   arianeeEvent: {
     eventCreated: 'EventCreated'
+  },
+  identity: {
+    IdentityValidate: 'URIValidate',
+    IdentityUpdate: 'URIUpdated'
   }
 };

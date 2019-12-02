@@ -48,6 +48,7 @@ describe('CertificateDetails', () => {
       dep.configurationService,
       dep.walletService,
       dep.utils,
-      dep.simpleStore);
+      dep.simpleStore,
+      dep.globalConfigurationService);
   });
 });

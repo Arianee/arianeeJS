@@ -1,3 +1,4 @@
+import { ArianeeEventEmitter } from '../../wallet/services/arianeeEventEmitterService/ArianeeEventEmitter';
 import { SimpleStore } from './simpleStore';
 import { Store } from './store';
 import { ArianeeHttpClient } from '../arianeeHttpClient/arianeeHttpClient';
@@ -40,80 +41,107 @@ describe('SimpleStore', () => {
     jest.clearAllMocks();
   });
 
-  it('should fetch one', async () => {
-    const store = new Store();
-    const configService = configurationServiceStub();
-    const walletService = new WalletService();
-    const simpleStore = new SimpleStore(store, configService, walletService);
-    const httpClient = new ArianeeHttpClient();
+  describe('store', () => {
+    it('should fetch one', async () => {
+      const store = new Store();
+      const configService = configurationServiceStub();
+      const walletService = new WalletService();
+      const simpleStore = new SimpleStore(store, configService, walletService, new ArianeeEventEmitter());
+      const httpClient = new ArianeeHttpClient();
 
-    const result = await simpleStore.get('test', 'test', () => httpClient.fetch(url));
+      const result = await simpleStore.get('test', 'test', () => httpClient.fetch(url));
 
-    expect(countMock).toHaveBeenCalledTimes(1);
-    expect(result).toBe(mockResponse);
+      expect(countMock).toHaveBeenCalledTimes(1);
+      expect(result).toBe(mockResponse);
+    });
+
+    it('should fetch once with 2 calls at same time', async () => {
+      const store = new Store();
+      const configService = configurationServiceStub();
+      const walletService = new WalletService();
+      const simpleStore = new SimpleStore(store, configService, walletService, new ArianeeEventEmitter());
+      const httpClient = new ArianeeHttpClient();
+      simpleStore.get('test', 'test', () => httpClient.fetch(url));
+
+      const result = await simpleStore.get('test', 'test', () => httpClient.fetch(url));
+
+      expect(countMock).toHaveBeenCalledTimes(1);
+      expect(result).toBe(mockResponse);
+    });
+
+    it('should fetch once with 2 calls one after the other', async () => {
+      const store = new Store();
+      const configService = configurationServiceStub();
+      const walletService = new WalletService();
+      const simpleStore = new SimpleStore(store, configService, walletService, new ArianeeEventEmitter());
+      const httpClient = new ArianeeHttpClient();
+      await simpleStore.get('test', 'test', () => httpClient.fetch(url));
+
+      const result = await simpleStore.get('test', 'test', () => httpClient.fetch(url));
+
+      expect(countMock).toHaveBeenCalledTimes(1);
+      expect(result).toBe(mockResponse);
+    });
+
+    it('should fetch twice if chainId change', async () => {
+      const store = new Store();
+
+      const configService = configurationServiceStub();
+      const walletService = new WalletService();
+      const simpleStore = new SimpleStore(store, configService, walletService, new ArianeeEventEmitter());
+
+      const httpClient = new ArianeeHttpClient();
+      await simpleStore.get('test', 'test', () => httpClient.fetch(url));
+
+      // @ts-ignore
+      simpleStore.arianeeConfig.arianeeConfiguration.chainId = 2;
+      const result = await simpleStore.get('test', 'test', () => httpClient.fetch(url));
+
+      expect(countMock).toHaveBeenCalledTimes(2);
+      expect(result).toBe(mockResponse);
+    });
+    it('should fetch twice if privateKey Change change', async () => {
+      const store = new Store();
+
+      const configService = configurationServiceStub();
+      const walletService = new WalletService();
+      const simpleStore = new SimpleStore(store, configService, walletService, new ArianeeEventEmitter());
+
+      const httpClient = new ArianeeHttpClient();
+      await simpleStore.get('test', 'test', () => httpClient.fetch(url));
+
+      // @ts-ignore
+      simpleStore.walletService.account.address = 2;
+
+      const result = await simpleStore.get('test', 'test', () => httpClient.fetch(url));
+
+      expect(countMock).toHaveBeenCalledTimes(2);
+      expect(result).toBe(mockResponse);
+    });
   });
 
-  it('should fetch once with 2 calls at same time', async () => {
-    const store = new Store();
-    const configService = configurationServiceStub();
-    const walletService = new WalletService();
-    const simpleStore = new SimpleStore(store, configService, walletService);
-    const httpClient = new ArianeeHttpClient();
-    simpleStore.get('test', 'test', () => httpClient.fetch(url));
+  describe('force refresh', () => {
+    test('should RE fetch', async () => {
+      const store = new Store();
+      const configService = configurationServiceStub();
+      const walletService = new WalletService();
+      const simpleStore = new SimpleStore(store, configService, walletService, new ArianeeEventEmitter());
+      const httpClient = jest.fn().mockImplementation(() => Promise.resolve('data'));
 
-    const result = await simpleStore.get('test', 'test', () => httpClient.fetch(url));
+      await simpleStore.get('test', 'test', httpClient);
+      await simpleStore.get('test', 'test', httpClient, true);
+      expect(httpClient).toHaveBeenCalledTimes(2);
+    });
+    test('should NOT fetch', async () => {
+      const store = new Store();
+      const configService = configurationServiceStub();
+      const walletService = new WalletService();
+      const simpleStore = new SimpleStore(store, configService, walletService, new ArianeeEventEmitter());
+      const httpClient = jest.fn().mockImplementation(() => Promise.resolve('data'));
 
-    expect(countMock).toHaveBeenCalledTimes(1);
-    expect(result).toBe(mockResponse);
-  });
-
-  it('should fetch once with 2 calls one after the other', async () => {
-    const store = new Store();
-    const configService = configurationServiceStub();
-    const walletService = new WalletService();
-    const simpleStore = new SimpleStore(store, configService, walletService);
-    const httpClient = new ArianeeHttpClient();
-    await simpleStore.get('test', 'test', () => httpClient.fetch(url));
-
-    const result = await simpleStore.get('test', 'test', () => httpClient.fetch(url));
-
-    expect(countMock).toHaveBeenCalledTimes(1);
-    expect(result).toBe(mockResponse);
-  });
-
-  it('should fetch twice if chainId change', async () => {
-    const store = new Store();
-
-    const configService = configurationServiceStub();
-    const walletService = new WalletService();
-    const simpleStore = new SimpleStore(store, configService, walletService);
-
-    const httpClient = new ArianeeHttpClient();
-    await simpleStore.get('test', 'test', () => httpClient.fetch(url));
-
-    // @ts-ignore
-    simpleStore.arianeeConfig.arianeeConfiguration.chainId = 2;
-    const result = await simpleStore.get('test', 'test', () => httpClient.fetch(url));
-
-    expect(countMock).toHaveBeenCalledTimes(2);
-    expect(result).toBe(mockResponse);
-  });
-  it('should fetch twice if privateKey Change change', async () => {
-    const store = new Store();
-
-    const configService = configurationServiceStub();
-    const walletService = new WalletService();
-    const simpleStore = new SimpleStore(store, configService, walletService);
-
-    const httpClient = new ArianeeHttpClient();
-    await simpleStore.get('test', 'test', () => httpClient.fetch(url));
-
-    // @ts-ignore
-    simpleStore.walletService.account.address = 2;
-
-    const result = await simpleStore.get('test', 'test', () => httpClient.fetch(url));
-
-    expect(countMock).toHaveBeenCalledTimes(2);
-    expect(result).toBe(mockResponse);
+      await simpleStore.get('test', 'test', httpClient);
+      await simpleStore.get('test', 'test', httpClient, false);
+      expect(httpClient).toHaveBeenCalledTimes(1);
+    });
   });
 });

@@ -45,6 +45,18 @@ export class BlockchainEventWatcherService {
       filter: { _to: this.walletService.publicKey },
       blockchainEvent: blockchainEventsName.smartAsset.transfer,
       eventNames: [BlockchainEventWatcherEnum.Transfer, BlockchainEventWatcherEnum.TransferTo]
+    },
+    {
+      contract: this.contractService.identityContract,
+      filter: {},
+      blockchainEvent: blockchainEventsName.identity.IdentityUpdate,
+      eventNames: [BlockchainEventWatcherEnum.IdentityUpdate]
+    },
+    {
+      contract: this.contractService.identityContract,
+      filter: {},
+      blockchainEvent: blockchainEventsName.identity.IdentityValidate,
+      eventNames: [BlockchainEventWatcherEnum.IdentityValidate]
     }
   ]
 

@@ -4,12 +4,17 @@ import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpCl
 import { CertificateSummaryBuilder } from '../../certificateSummary';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
+import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { IdentitySummary } from '../../../../models/arianee-identity';
-import { CertificateContentContainer, ConsolidatedIssuerRequest } from '../../certificateSummary/certificateSummary';
+import {
+  CertificateContentContainer,
+  ConsolidatedIssuerRequest,
+  ConsolidatedIssuerRequestInterface
+} from '../../certificateSummary/certificateSummary';
 import { StoreNamespace } from '../../../../models/storeNamespace';
 import { get } from 'lodash';
 
@@ -22,25 +27,27 @@ export class CertificateDetails {
     private configurationService: ConfigurationService,
     private walletService: WalletService,
     private utils: UtilsService,
-    private store: SimpleStore
+    private store: SimpleStore,
+    private globalConfigurationService:GlobalConfigurationService
   ) {
 
   }
 
   public getCertificateIssuer = async (certificateId: CertificateId, issuerQuery: ConsolidatedIssuerRequest) => {
-    const waitingIdentity = get(issuerQuery, 'waitingIdentity', false);
-    
-    return this.fetchCertificateIssuer(certificateId, waitingIdentity);
+
+    return this.fetchCertificateIssuer(certificateId, issuerQuery);
   }
 
-  public fetchCertificateIssuer = async (certificateId: CertificateId, waitingIdentity:boolean) => {
-    const issuerOf = ()=> this.contractService.smartAssetContract.methods
+  public fetchCertificateIssuer = async (
+    certificateId: CertificateId,
+    issuerQuery: ConsolidatedIssuerRequest) => {
+    const issuerOf = () => this.contractService.smartAssetContract.methods
       .issuerOf(certificateId.toString())
       .call();
 
-   const issuer =await this.store.get<string>(StoreNamespace.certificateIssuer, certificateId, issuerOf);
+    const issuer = await this.store.get<string>(StoreNamespace.certificateIssuer, certificateId, issuerOf);
 
-    return this.identityService.getIdentity(issuer, waitingIdentity);
+    return this.identityService.getIdentity(issuer, issuerQuery);
   }
 
   public getCertificateOwner = async (

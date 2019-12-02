@@ -41,7 +41,7 @@ describe('Event Watcher', () => {
     contractService = {
 
     } as ContractService;
-    store = new SimpleStore(new Store(), configurationService, new WalletService());
+    store = new SimpleStore(new Store(), configurationService, new WalletService(), eventEmitter);
 
     let blockNumber = 10;
 

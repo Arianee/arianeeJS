@@ -95,7 +95,8 @@ export interface ConsolidatedQuery {
 }
 
 export interface ConsolidatedIssuerRequestInterface {
-  waitingIdentity: boolean;
+  waitingIdentity?: boolean;
+  forceRefresh?:boolean;
 }
 
 export type ConsolidatedIssuerRequest = ConsolidatedIssuerRequestInterface | boolean;
