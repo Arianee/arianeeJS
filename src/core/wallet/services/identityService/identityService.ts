@@ -1,33 +1,44 @@
 import { injectable } from 'tsyringe';
 import { IdentitySummary } from '../../../../models/arianee-identity';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
+import {
+  ConsolidatedIssuerRequest,
+  ConsolidatedIssuerRequestInterface
+} from '../../certificateSummary/certificateSummary';
 import { ContractService } from '../contractService/contractsService';
+import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 import { UtilsService } from '../utilService/utilsService';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { StoreNamespace } from '../../../../models/storeNamespace';
 
 @injectable()
 export class IdentityService {
-  constructor(
+  constructor (
     private httpClient: ArianeeHttpClient,
     private utils: UtilsService,
     private contractService: ContractService,
+    private globalConfigurationService:GlobalConfigurationService,
     private store: SimpleStore) {
   }
 
   /**
-      * getIdentity
-      * Get identity/ waiting identity from an address
-      * @param address address of the contract
-      * @param waitingIdentity boolean to fetch waiting identity. Fallback to approved identity if no waiting identity
-      * @return Promise{IdentitySummary}
-      */
-  public getIdentity = async (address: string, waitingIdentity = false): Promise<IdentitySummary> => {
+   * getIdentity
+   * Get identity/ waiting identity from an address
+   * @param address address of the contract
+   * @param issuerQuery
+   * @return Promise{IdentitySummary}
+   */
+  public getIdentity = async (address: string, issuerQuery?:ConsolidatedIssuerRequest): Promise<IdentitySummary> => {
+    const query = this.globalConfigurationService.getMergedQuery({ issuer: issuerQuery });
+    const { issuer } = query;
+
+    const { forceRefresh, waitingIdentity } = issuer as ConsolidatedIssuerRequestInterface;
+
     if (!waitingIdentity) {
-      return this.store.get<IdentitySummary>(StoreNamespace.identity, address, () => this.fetchIdentity(address));
+      return this.store.get<IdentitySummary>(StoreNamespace.identity, address, () => this.fetchIdentity(address), forceRefresh);
     } else {
       console.warn('you are fetching waiting identity');
-      return this.store.get<IdentitySummary>(StoreNamespace.identityWaiting, address, () => this.fetchWaitingIdentity(address));
+      return this.store.get<IdentitySummary>(StoreNamespace.identityWaiting, address, () => this.fetchWaitingIdentity(address), forceRefresh);
     }
   }
 
@@ -38,7 +49,6 @@ export class IdentityService {
      * @return Promise{IdentitySummary}
      */
   private fetchWaitingIdentity = async (address: string): Promise<IdentitySummary> => {
-
     const identityURI = await this.contractService.identityContract.methods
       .waitingURI(address)
       .call();
