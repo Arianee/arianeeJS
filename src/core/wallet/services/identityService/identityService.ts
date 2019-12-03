@@ -72,7 +72,10 @@ export class IdentityService {
         .call();
 
       const isAuthentic = imprint === hash;
-      const isApproved = false;
+
+      const isApproved = await this.contractService.identityContract.methods
+        .addressIsApproved(address)
+        .call();
 
       return Promise.resolve({
         data: identityContentData,
