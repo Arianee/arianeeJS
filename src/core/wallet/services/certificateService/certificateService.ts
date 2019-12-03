@@ -330,7 +330,7 @@ export class CertificateService {
   public isCertificateProofValid = async (
     certificateId: number,
     passphrase: string
-  ): Promise<ExtendedBoolean> => {
+  ): Promise<ExtendedBoolean<{timestamp?:number}>> => {
     return this.isProofValidSince(certificateId, passphrase, 2, 300);
   }
 
@@ -357,7 +357,7 @@ export class CertificateService {
     passphrase: string,
     tokenType: number,
     validity: number
-  ): Promise<ExtendedBoolean> => {
+  ): Promise<ExtendedBoolean<{timestamp?:number}>> => {
     const tokenHashedAccess = await this.contractService.smartAssetContract.methods
       .tokenHashedAccess(certificateId, tokenType)
       .call();
@@ -399,7 +399,8 @@ export class CertificateService {
       return {
         isTrue: false,
         code: 'proof.token.tooold',
-        message: 'token proof does not match'
+        message: 'token proof does not match',
+        timestamp: blockTimestamp*1000
       };
     }
     const lastEventTransaction = await this.web3Service.web3.eth.getTransaction(
@@ -413,14 +414,16 @@ export class CertificateService {
       return {
         isTrue: false,
         code: 'proof.token.notowner',
-        message: 'token proof does not match'
+        message: 'token proof does not match',
+        timestamp: blockTimestamp*1000
       };
     }
 
     return {
       isTrue: true,
       code: 'proof.token.valid',
-      message: 'proof is valid'
+      message: 'proof is valid',
+      timestamp: blockTimestamp*1000
     };
   }
 
