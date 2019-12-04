@@ -7,6 +7,7 @@ import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpCl
 import { sortEvents } from '../../../libs/sortEvents';
 import { CertificateSummaryBuilder } from '../../certificateSummary';
 import { CertificateSummary, ConsolidatedCertificateRequest, ConsolidatedIssuerRequest } from '../../certificateSummary/certificateSummary';
+import { CertificateAuthorizationService } from '../certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateDetails } from '../certificateDetailsService/certificatesDetailsService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
@@ -28,7 +29,8 @@ export class CertificateService {
     private walletService: WalletService,
     private eventService: EventService,
     private web3Service: Web3Service,
-    private globalConfiguration: GlobalConfigurationService
+    private globalConfiguration: GlobalConfigurationService,
+    private certificateAuthorizationService:CertificateAuthorizationService
   ) {
   }
 
@@ -193,6 +195,13 @@ export class CertificateService {
           );
         });
       requestQueue.push(issuerDetails);
+    }
+
+    if (query.messageSenders) {
+      const messageSenders = this.certificateAuthorizationService.getMessageSenders(certificateId)
+        .then(messageSenders => response.setMessageSenders(messageSenders));
+
+      requestQueue.push(messageSenders);
     }
 
     if (query.isRequestable) {
@@ -400,7 +409,7 @@ export class CertificateService {
         isTrue: false,
         code: 'proof.token.tooold',
         message: 'token proof does not match',
-        timestamp: blockTimestamp*1000
+        timestamp: blockTimestamp * 1000
       };
     }
     const lastEventTransaction = await this.web3Service.web3.eth.getTransaction(
@@ -415,7 +424,7 @@ export class CertificateService {
         isTrue: false,
         code: 'proof.token.notowner',
         message: 'token proof does not match',
-        timestamp: blockTimestamp*1000
+        timestamp: blockTimestamp * 1000
       };
     }
 
@@ -423,7 +432,7 @@ export class CertificateService {
       isTrue: true,
       code: 'proof.token.valid',
       message: 'proof is valid',
-      timestamp: blockTimestamp*1000
+      timestamp: blockTimestamp * 1000
     };
   }
 

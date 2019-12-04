@@ -19,6 +19,7 @@ export class CertificateSummaryBuilder {
     private _owner: CertificateOwner;
     private _advanced: CertificateAdvanced;
     private _certificateId: string;
+    private _messageSenders:{[key:string]:boolean}
 
     public setContent (
       data: CertificateContent,
@@ -54,6 +55,10 @@ export class CertificateSummaryBuilder {
       this._events.transfer = events;
 
       return this;
+    }
+
+    public setMessageSenders (messageSenders:{[key:string]:boolean}) {
+      this._messageSenders = messageSenders;
     }
 
     public setIsRequestable (isRequestable): CertificateSummaryBuilder {
@@ -101,7 +106,8 @@ export class CertificateSummaryBuilder {
         isRequestable: this._isRequestable,
         owner: this._owner,
         events: this._events,
-        advanced: this._advanced
+        advanced: this._advanced,
+        messageSenders: this._messageSenders
       };
 
       Object.keys(arianeCertificate).forEach(key => {
