@@ -13,7 +13,13 @@ var fetch = require('node-fetch-polyfill');
   const wallet = arianee.fromPrivateKey('0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855');
   console.log('####');
 
-  const cer = await wallet.methods.getCertificate(46713, undefined, { issuer: { waitingIdentity: true, forceRefresh: true } });
+  let cer = await wallet.methods.getCertificate(46713, undefined, { messageSenders: true, issuer: true });
+  console.log('cer', cer);
+  await wallet.methods.setMessageAuthorizationFor(cer.certificateId, cer.issuer.identity.address, false);
+  await wallet.methods.setMessageAuthorizationFor(cer.certificateId, cer.issuer.identity.address, true);
+
+  cer = await wallet.methods.getCertificate(46713, undefined, { messageSenders: true });
+  console.log('cer', cer);
 })();
 
 /*

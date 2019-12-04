@@ -231,3 +231,27 @@ Given('user{int} can see its {int} certificates and {int} issuers from groupByIs
 
     certificatesGroupBy.return;
   });
+
+Given('user{int} switch certificate{int} issuer message authorization to {string}',
+  async function (userIndex, tokenIndex, value) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const certificateId = this.store.getToken(tokenIndex);
+
+    const { issuer } = await wallet.methods.getCertificate(certificateId, undefined, { issuer: true });
+    const { address } = issuer.identity;
+
+    await wallet.methods.setMessageAuthorizationFor(certificateId, address, JSON.parse(value));
+    console.log(address);
+  });
+
+Given('user{int} certificate{int} issuer message authorization should be {string}',
+  async function (userIndex, tokenIndex, value) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const certificateId = this.store.getToken(tokenIndex);
+
+    const { issuer, messageSenders } = await wallet.methods
+      .getCertificate(certificateId, undefined, { issuer: true, messageSenders: true });
+    const { address } = issuer.identity;
+
+    expect(messageSenders[address] === JSON.parse(value)).to.be.true;
+  });

@@ -40,7 +40,7 @@ export class CertificateDetails {
 
   public fetchCertificateIssuer = async (
     certificateId: CertificateId,
-    issuerQuery: ConsolidatedIssuerRequest) => {
+    issuerQuery?: ConsolidatedIssuerRequest) => {
     const issuerOf = () => this.contractService.smartAssetContract.methods
       .issuerOf(certificateId.toString())
       .call();

@@ -1,6 +1,7 @@
 import { injectable, singleton } from 'tsyringe';
 import { creditTypeEnum } from '../../../../models/creditTypesEnum';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
+import { CertificateAuthorizationService } from '../certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateService } from '../certificateService/certificateService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
@@ -20,7 +21,8 @@ export class WalletCustomMethodService {
               private walletService: WalletService,
               private certificateService: CertificateService,
                private poaAndAriaService:POAAndAriaService,
-               private identityService:IdentityService
+               private identityService:IdentityService,
+               private certificateAuthorizationService:CertificateAuthorizationService
   ) {
 
   }
@@ -50,7 +52,10 @@ export class WalletCustomMethodService {
       getCertificateTransferEvents: this.eventService.getCertificateTransferEvents,
       getCertificateArianeeEvents: this.eventService.getCertificateArianeeEvents,
       acceptArianeeEvent: this.eventService.acceptArianeeEvent,
-      refuseArianeeEvent: this.eventService.refuseArianeeEvent
+      refuseArianeeEvent: this.eventService.refuseArianeeEvent,
+      setMessageAuthorizationFor: this.certificateAuthorizationService.setMessageAuthorizationFor,
+      getMessageSenders: this.certificateAuthorizationService.getMessageSenders
+
     };
   }
 

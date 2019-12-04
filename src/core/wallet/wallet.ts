@@ -1,5 +1,6 @@
 import { container } from 'tsyringe';
 import { ArianeeConfig } from '../../models/arianeeConfiguration';
+import { CertificateAuthorizationService } from './services/certificateAuthorizationService/certificateAuthorizationService';
 import { ConfigurationService } from './services/configurationService/configurationService';
 import { ContractService } from './services/contractService/contractsService';
 import { POAAndAriaService } from './services/POAAndAriaFaucet/POAAndAriaService';
@@ -20,7 +21,13 @@ export class ArianeeWallet {
         private _mnemonic?
     ) {
       this.container = container.createChildContainer();
-      this.registerSingletons(WalletService, Web3Service, POAAndAriaService, ArianeeEventEmitter, BlockchainEventWatcherService);
+      this.registerSingletons(WalletService,
+        Web3Service,
+        POAAndAriaService,
+        ArianeeEventEmitter,
+        BlockchainEventWatcherService,
+        CertificateAuthorizationService
+      );
 
       const walletService = this.container.resolve(WalletService);
       walletService.account = this.account;

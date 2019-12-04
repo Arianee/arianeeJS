@@ -1,3 +1,4 @@
+import { CertificateAuthorizationService } from '../certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateService } from './certificateService';
 import { UtilsService } from '../utilService/utilsService';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
@@ -22,6 +23,9 @@ describe('CertificateService > ', () => {
       getCertificateContent: jest.fn().mockResolvedValue(Promise.resolve({ data: 'content', isAuthentic: true }))
 
     } as any;
+
+    const certificateAuthorizationService: CertificateAuthorizationService = {} as CertificateAuthorizationService;
+
     const walletService: WalletService = {} as WalletService;
     const eventService: EventService = {} as EventService;
     const web3Service: Web3Service = {} as Web3Service;
@@ -35,7 +39,8 @@ describe('CertificateService > ', () => {
       walletService,
       eventService,
       web3Service,
-      globalConfigurationService
+      globalConfigurationService,
+      certificateAuthorizationService
     };
   };
   test('should intitialize', () => {
@@ -50,7 +55,8 @@ describe('CertificateService > ', () => {
       dep.walletService,
       dep.eventService,
       dep.web3Service,
-      dep.globalConfigurationService
+      dep.globalConfigurationService,
+      dep.certificateAuthorizationService
     );
 
     expect(certificateService).toBeDefined();
@@ -70,7 +76,9 @@ describe('CertificateService > ', () => {
           dep.walletService,
           dep.eventService,
           dep.web3Service,
-          globalConfig
+          globalConfig,
+          dep.certificateAuthorizationService
+
         );
 
         const result = await certificateService.getCertificate(2233);
@@ -99,7 +107,9 @@ describe('CertificateService > ', () => {
             dep.walletService,
             dep.eventService,
             dep.web3Service,
-            dep.globalConfigurationService
+            dep.globalConfigurationService,
+            dep.certificateAuthorizationService
+
           );
 
           const result = await certificateService.getCertificate(2233, undefined, { content: false });
@@ -117,7 +127,8 @@ describe('CertificateService > ', () => {
             dep.walletService,
             dep.eventService,
             dep.web3Service,
-            dep.globalConfigurationService
+            dep.globalConfigurationService,
+            dep.certificateAuthorizationService
           );
 
           const result = await certificateService.getCertificate(2233, undefined, { content: true });
@@ -145,7 +156,8 @@ describe('CertificateService > ', () => {
             dep.walletService,
             dep.eventService,
             dep.web3Service,
-            dep.globalConfigurationService
+            dep.globalConfigurationService,
+            dep.certificateAuthorizationService
           );
 
           await certificateService.getCertificate(2233, undefined, { issuer: { waitingIdentity: true } });
@@ -163,7 +175,8 @@ describe('CertificateService > ', () => {
             dep.walletService,
             dep.eventService,
             dep.web3Service,
-            dep.globalConfigurationService
+            dep.globalConfigurationService,
+            dep.certificateAuthorizationService
           );
 
           await certificateService.getCertificate(2233, undefined, { issuer: true });
@@ -181,7 +194,8 @@ describe('CertificateService > ', () => {
             dep.walletService,
             dep.eventService,
             dep.web3Service,
-            dep.globalConfigurationService
+            dep.globalConfigurationService,
+            dep.certificateAuthorizationService
           );
 
           await certificateService.getCertificate(2233, undefined, { issuer: false });

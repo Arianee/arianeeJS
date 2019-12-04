@@ -85,13 +85,9 @@ export interface CertificateSummary {
   owner?: CertificateOwner;
   events?: CertificateEvents;
   advanced?: CertificateAdvanced;
-}
-
-export interface ConsolidatedQuery {
-  query: {
-    limit: number;
-    order: string;
-  };
+  messageSenders?:{
+    [key:string]:boolean
+  }
 }
 
 export interface ConsolidatedIssuerRequestInterface {
@@ -109,4 +105,5 @@ export interface ConsolidatedCertificateRequest {
   events?: boolean;
   arianeeEvents?: boolean;
   advanced?: boolean;
+  messageSenders?:boolean
 }

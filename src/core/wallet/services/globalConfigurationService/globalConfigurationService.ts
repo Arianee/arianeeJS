@@ -13,7 +13,8 @@ export class GlobalConfigurationService {
       owner: true,
       events: true,
       arianeeEvents: true,
-      advanced: true
+      advanced: true,
+      messageSenders: true
     }
 
     getMergedQuery (query:ConsolidatedCertificateRequest):ConsolidatedCertificateRequest {
