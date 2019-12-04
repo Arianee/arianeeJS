@@ -1,3 +1,4 @@
+import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { CertificateAuthorizationService } from '../certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateService } from './certificateService';
 import { UtilsService } from '../utilService/utilsService';
@@ -29,6 +30,7 @@ describe('CertificateService > ', () => {
     const walletService: WalletService = {} as WalletService;
     const eventService: EventService = {} as EventService;
     const web3Service: Web3Service = {} as Web3Service;
+    const simpleStore:SimpleStore = {} as SimpleStore;
 
     return {
       utils,
@@ -40,7 +42,8 @@ describe('CertificateService > ', () => {
       eventService,
       web3Service,
       globalConfigurationService,
-      certificateAuthorizationService
+      certificateAuthorizationService,
+      simpleStore
     };
   };
   test('should intitialize', () => {
@@ -55,8 +58,9 @@ describe('CertificateService > ', () => {
       dep.walletService,
       dep.eventService,
       dep.web3Service,
+      dep.certificateAuthorizationService,
       dep.globalConfigurationService,
-      dep.certificateAuthorizationService
+      dep.simpleStore
     );
 
     expect(certificateService).toBeDefined();
@@ -76,9 +80,9 @@ describe('CertificateService > ', () => {
           dep.walletService,
           dep.eventService,
           dep.web3Service,
-          globalConfig,
-          dep.certificateAuthorizationService
-
+          dep.certificateAuthorizationService,
+          dep.globalConfigurationService,
+          dep.simpleStore
         );
 
         const result = await certificateService.getCertificate(2233);
@@ -107,9 +111,9 @@ describe('CertificateService > ', () => {
             dep.walletService,
             dep.eventService,
             dep.web3Service,
+            dep.certificateAuthorizationService,
             dep.globalConfigurationService,
-            dep.certificateAuthorizationService
-
+            dep.simpleStore
           );
 
           const result = await certificateService.getCertificate(2233, undefined, { content: false });
@@ -127,8 +131,9 @@ describe('CertificateService > ', () => {
             dep.walletService,
             dep.eventService,
             dep.web3Service,
+            dep.certificateAuthorizationService,
             dep.globalConfigurationService,
-            dep.certificateAuthorizationService
+            dep.simpleStore
           );
 
           const result = await certificateService.getCertificate(2233, undefined, { content: true });
@@ -156,8 +161,9 @@ describe('CertificateService > ', () => {
             dep.walletService,
             dep.eventService,
             dep.web3Service,
+            dep.certificateAuthorizationService,
             dep.globalConfigurationService,
-            dep.certificateAuthorizationService
+            dep.simpleStore
           );
 
           await certificateService.getCertificate(2233, undefined, { issuer: { waitingIdentity: true } });
@@ -175,8 +181,9 @@ describe('CertificateService > ', () => {
             dep.walletService,
             dep.eventService,
             dep.web3Service,
+            dep.certificateAuthorizationService,
             dep.globalConfigurationService,
-            dep.certificateAuthorizationService
+            dep.simpleStore
           );
 
           await certificateService.getCertificate(2233, undefined, { issuer: true });
@@ -194,8 +201,9 @@ describe('CertificateService > ', () => {
             dep.walletService,
             dep.eventService,
             dep.web3Service,
+            dep.certificateAuthorizationService,
             dep.globalConfigurationService,
-            dep.certificateAuthorizationService
+            dep.simpleStore
           );
 
           await certificateService.getCertificate(2233, undefined, { issuer: false });

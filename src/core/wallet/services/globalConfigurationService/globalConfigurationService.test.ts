@@ -66,7 +66,7 @@ describe('GlobalConfigurationService', () => {
       expect(issuer.forceRefresh).toBe(defaultQuery.issuer.forceRefresh);
       expect(issuer.waitingIdentity).toBe(true);
 
-      expect(d.content).toBeUndefined();
+      expect(d.content).toBeFalsy();
     });
 
     test('should return default value', () => {
@@ -91,7 +91,7 @@ describe('GlobalConfigurationService', () => {
       expect(issuer.forceRefresh).toBe(defaultQuery.issuer.forceRefresh);
       expect(issuer.waitingIdentity).toBe(defaultQuery.issuer.waitingIdentity);
 
-      expect(d.content).toBeUndefined();
+      expect(d.content).toBeFalsy();
     });
 
     test('should return nothing if false', () => {
@@ -116,7 +116,7 @@ describe('GlobalConfigurationService', () => {
 
       expect(issuer).toBeFalsy();
 
-      expect(d.content).toBeUndefined();
+      expect(d.content).toBeFalsy();
     });
   });
 
@@ -145,6 +145,20 @@ describe('GlobalConfigurationService', () => {
       expect(issuer.waitingIdentity).toBe(true);
 
       expect(d.content).toBeTruthy();
+    });
+  });
+
+  describe('random config', () => {
+    test('default config is false and query is true', () => {
+      const defaultQuery = {
+        content: false
+      };
+
+      const i = new GlobalConfigurationService();
+      i.setDefaultQuery(defaultQuery);
+      const d = i.getMergedQuery({ content: true });
+
+      expect(d.content).toBe(true);
     });
   });
 });

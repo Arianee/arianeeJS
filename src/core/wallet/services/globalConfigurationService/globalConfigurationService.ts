@@ -17,30 +17,32 @@ export class GlobalConfigurationService {
       messageSenders: true
     }
 
-    getMergedQuery (query:ConsolidatedCertificateRequest):ConsolidatedCertificateRequest {
-      return Object.keys(query)
+    getMergedQuery (query:ConsolidatedCertificateRequest = {}):ConsolidatedCertificateRequest {
+      return Object.keys(this.defaultQuery)
         .reduce((acc, currKey) => {
           const value = query[currKey];
-          if (value === false) {
+          if (value === undefined || value === false) {
+            // not fetching at all
             acc[currKey] = false;
           } else if (value === true) {
-            acc[currKey] = this.defaultQuery[currKey];
+            acc[currKey] = typeof this.defaultQuery[currKey] === 'boolean' ? true : this.defaultQuery[currKey];
           } else if (typeof query === 'object') {
             acc[currKey] = {
               ...this.defaultQuery[currKey],
               ...query[currKey]
             };
           }
+
           return acc;
         }, {});
-
-      //  issuer===true=> contenu exact
-      // si false=> false
-      // si object => merge
     }
 
     setDefaultQuery (defaultQuery: ConsolidatedCertificateRequest): GlobalConfigurationService {
-      this.defaultQuery = defaultQuery;
+      this.defaultQuery =
+          {
+            ...defaultQuery
+          };
+
       return this;
     }
 }

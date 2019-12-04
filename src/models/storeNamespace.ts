@@ -3,4 +3,5 @@ export enum StoreNamespace {
   identityWaiting='identity/waiting',
   certificateContent = 'certificate/content',
   certificateIssuer = 'certificate/issuer',
+  certificateIds='certificates/ids'
 }

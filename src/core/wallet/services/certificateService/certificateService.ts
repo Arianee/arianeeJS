@@ -1,22 +1,24 @@
 import { injectable } from 'tsyringe';
 import { isNullOrUndefined } from 'util';
+import { BlockchainEvent } from '../../../../models/blockchainEvent';
 import { blockchainEventsName } from '../../../../models/blockchainEventsName';
 import { CertificateId } from '../../../../models/CertificateId';
 import { ExtendedBoolean } from '../../../../models/extendedBoolean';
+import { StoreNamespace } from '../../../../models/storeNamespace';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
+import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { sortEvents } from '../../../libs/sortEvents';
 import { CertificateSummaryBuilder } from '../../certificateSummary';
-import { CertificateSummary, ConsolidatedCertificateRequest, ConsolidatedIssuerRequest } from '../../certificateSummary/certificateSummary';
+import { CertificateSummary, ConsolidatedCertificateRequest } from '../../certificateSummary/certificateSummary';
 import { CertificateAuthorizationService } from '../certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateDetails } from '../certificateDetailsService/certificatesDetailsService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
 import { EventService } from '../eventService/eventsService';
+import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
-import { BlockchainEvent } from '../../../../models/blockchainEvent';
-import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 
 @injectable()
 export class CertificateService {
@@ -29,8 +31,9 @@ export class CertificateService {
     private walletService: WalletService,
     private eventService: EventService,
     private web3Service: Web3Service,
+    private certificateAuthorizationService:CertificateAuthorizationService,
     private globalConfiguration: GlobalConfigurationService,
-    private certificateAuthorizationService:CertificateAuthorizationService
+    private store:SimpleStore
   ) {
   }
 
@@ -52,10 +55,6 @@ export class CertificateService {
       sameRequestOwnershipPassphrase,
       content
     } = data;
-
-    // hash=
-    // si il passe un complexe hash avec uri.
-    // Cert => est une alternative au hash.
 
     certificateId = certificateId || Math.ceil(Math.random() * 10000000);
 
@@ -234,15 +233,14 @@ export class CertificateService {
     return response.build();
   }
 
-  public getMyCertificates = async (
-    query?: ConsolidatedCertificateRequest
-  ): Promise<CertificateSummary[]> => {
-    // Fetch number of certificates this user owns
+  /**
+   * Get all certificate ids owned by this wallet
+   */
+  public getMyCertificateIds =async ():Promise<CertificateId[]> => {
     const numberOfCertificates = await this.contractService.smartAssetContract.methods
       .balanceOf(this.walletService.publicKey)
       .call();
 
-    // Create an array of range to be able to iterate
     const rangeOfIndex = [];
 
     for (let i = 0; i < <any>numberOfCertificates; i++) {
@@ -250,21 +248,30 @@ export class CertificateService {
     }
 
     // Fetch certificateIds of certificate with index
-    const certificateIds = await Promise.all(
+    return Promise.all(
       rangeOfIndex.map(index =>
         this.contractService.smartAssetContract.methods
           .tokenOfOwnerByIndex(this.walletService.publicKey, index)
           .call()
       )
     );
+  }
+
+  public getMyCertificates = async (
+    query?: ConsolidatedCertificateRequest,
+    verifyOwnership?:boolean
+  ): Promise<CertificateSummary[]> => {
+    // Fetch number of certificates this user owns
+    const certificateIds = await this.store.get<CertificateId[]>(StoreNamespace.certificateIds, this.walletService.publicKey, () => this.getMyCertificateIds(), verifyOwnership);
 
     const results = [];
     // Fetch details of each certificate
     await Promise.all(
       certificateIds.map(certificateId =>
-        this.getCertificate(certificateId, undefined, query).then(certificate =>
-          results.push(certificate)
-        )
+        this.getCertificate(certificateId, undefined, query)
+          .then(certificate =>
+            results.push(certificate)
+          )
       )
     );
 
