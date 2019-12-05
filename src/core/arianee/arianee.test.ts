@@ -39,7 +39,7 @@ describe('Arianee', () => {
         .setDefaultQuery(requestConfig)
         .init();
 
-      expect(arianee.fromRandomKey().globalConfiguration.defaultQuery).toBe(requestConfig);
+      expect(arianee.fromRandomKey().globalConfiguration.defaultQuery).toEqual(requestConfig);
     });
   });
   describe('Network Configuration', () => {

@@ -27,14 +27,11 @@ export class CertificateDetails {
     private configurationService: ConfigurationService,
     private walletService: WalletService,
     private utils: UtilsService,
-    private store: SimpleStore,
-    private globalConfigurationService:GlobalConfigurationService
-  ) {
+    private store: SimpleStore) {
 
   }
 
   public getCertificateIssuer = async (certificateId: CertificateId, issuerQuery: ConsolidatedIssuerRequest) => {
-
     return this.fetchCertificateIssuer(certificateId, issuerQuery);
   }
 
