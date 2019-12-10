@@ -1,7 +1,9 @@
 import { injectable } from 'tsyringe';
 import { IdentitySummary } from '../../../../models/arianee-identity';
+import { CertificateId } from '../../../../models/CertificateId';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import {
+  ConsolidatedCertificateRequest,
   ConsolidatedIssuerRequest,
   ConsolidatedIssuerRequestInterface
 } from '../../certificateSummary/certificateSummary';
@@ -21,16 +23,13 @@ export class IdentityService {
     private store: SimpleStore) {
   }
 
-  /**
-   * getIdentity
-   * Get identity/ waiting identity from an address
-   * @param address address of the contract
-   * @param issuerQuery
-   * @return Promise{IdentitySummary}
-   */
-  public getIdentity = async (address: string, issuerQuery?:ConsolidatedIssuerRequest): Promise<IdentitySummary> => {
-    const query = this.globalConfigurationService.getMergedQuery({ issuer: issuerQuery });
-    const { issuer } = query;
+  public getIdentity = async (parameters:{
+    certificateId: CertificateId,
+    address:string,
+    query: ConsolidatedCertificateRequest}
+  ): Promise<IdentitySummary> => {
+    const { query, address } = parameters;
+    const { issuer } = this.globalConfigurationService.getMergedQuery(query);
 
     const { forceRefresh, waitingIdentity } = issuer as ConsolidatedIssuerRequestInterface;
 

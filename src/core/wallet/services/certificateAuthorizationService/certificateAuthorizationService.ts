@@ -1,5 +1,6 @@
 import { injectable } from 'tsyringe';
 import { CertificateId } from '../../../../models/CertificateId';
+import { ConsolidatedCertificateRequest } from '../../certificateSummary/certificateSummary';
 import { CertificateDetails } from '../certificateDetailsService/certificatesDetailsService';
 import { ContractService } from '../contractService/contractsService';
 import { IdentityService } from '../identityService/identityService';
@@ -18,8 +19,9 @@ export class CertificateAuthorizationService {
      * For now it return only the issuer
      * @param certificateId
      */
-  public getMessageSenders= async (certificateId:CertificateId):Promise<{[key:string]:boolean}> => {
-    const { address } = await this.certificateDetailsService.fetchCertificateIssuer(certificateId);
+  public getMessageSenders= async (parameters:{certificateId:CertificateId, query:ConsolidatedCertificateRequest}):Promise<{[key:string]:boolean}> => {
+    const { address } = await this.certificateDetailsService.fetchCertificateIssuer(parameters);
+    const { certificateId } = parameters;
 
     const publicKey = this.walletService.publicKey;
     const isIssuerAuthorized = await this.contractService.whitelistContract.methods

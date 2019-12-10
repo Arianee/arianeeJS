@@ -155,7 +155,7 @@ export class CertificateService {
     passphrase?: string,
     query?: ConsolidatedCertificateRequest
   ): Promise<CertificateSummary> => {
-    query = query || this.globalConfiguration.defaultQuery;
+    query = this.globalConfiguration.getMergedQuery(query);
 
     const response = new CertificateSummaryBuilder();
     response.setCertificateId(certificateId);
@@ -164,8 +164,11 @@ export class CertificateService {
 
     if (query.content) {
       const contentDetails = this.certificateDetails.getCertificateContent(
-        certificateId,
-        passphrase
+        {
+          certificateId,
+          passphrase,
+          query
+        }
       ).then((certificateContent) => {
         response.setContent(
           certificateContent.data,
@@ -185,7 +188,10 @@ export class CertificateService {
     }
 
     if (query.issuer) {
-      const issuerDetails = this.certificateDetails.getCertificateIssuer(certificateId, query.issuer)
+      const issuerDetails = this.certificateDetails.getCertificateIssuer({
+        certificateId,
+        query
+      })
         .then(identityDetails => {
           response.setIssuer(
             identityDetails.isAuthentic,
@@ -197,7 +203,7 @@ export class CertificateService {
     }
 
     if (query.messageSenders) {
-      const messageSenders = this.certificateAuthorizationService.getMessageSenders(certificateId)
+      const messageSenders = this.certificateAuthorizationService.getMessageSenders({ certificateId, query })
         .then(messageSenders => response.setMessageSenders(messageSenders));
 
       requestQueue.push(messageSenders);
@@ -218,7 +224,9 @@ export class CertificateService {
     }
 
     if (query.arianeeEvents) {
-      const arianeeEvents = this.eventService.getCertificateArianeeEvents(certificateId, passphrase).then(events => {
+      const arianeeEvents = this.eventService.getCertificateArianeeEvents({
+        certificateId, passphrase, query
+      }).then(events => {
         response.setArianeeEvents(events);
       });
       requestQueue.push(arianeeEvents);
