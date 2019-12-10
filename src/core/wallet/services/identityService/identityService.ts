@@ -12,6 +12,7 @@ import { GlobalConfigurationService } from '../globalConfigurationService/global
 import { UtilsService } from '../utilService/utilsService';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { StoreNamespace } from '../../../../models/storeNamespace';
+import { get } from 'lodash';
 
 @injectable()
 export class IdentityService {
@@ -23,6 +24,20 @@ export class IdentityService {
     private store: SimpleStore) {
   }
 
+  public getSimpleIdentity = async (address: string, issuerQuery?:ConsolidatedIssuerRequest): Promise<IdentitySummary> => {
+    const query = this.globalConfigurationService.getMergedQuery({ issuer: issuerQuery });
+    const { issuer } = query;
+
+    const { forceRefresh, waitingIdentity } = issuer as ConsolidatedIssuerRequestInterface;
+
+    if (!waitingIdentity) {
+      return this.store.get<IdentitySummary>(StoreNamespace.identity, address, () => this.fetchIdentity(address), forceRefresh);
+    } else {
+      console.warn('you are fetching waiting identity');
+      return this.store.get<IdentitySummary>(StoreNamespace.identityWaiting, address, () => this.fetchWaitingIdentity(address), forceRefresh);
+    }
+  }
+
   public getIdentity = async (parameters:{
     certificateId: CertificateId,
     address:string,
@@ -32,7 +47,6 @@ export class IdentityService {
     const { issuer } = this.globalConfigurationService.getMergedQuery(query);
 
     const { forceRefresh, waitingIdentity } = issuer as ConsolidatedIssuerRequestInterface;
-
     if (!waitingIdentity) {
       return this.store.get<IdentitySummary>(StoreNamespace.identity, address, () => this.fetchIdentity(address), forceRefresh);
     } else {
