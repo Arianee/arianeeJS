@@ -18,23 +18,27 @@ export class GlobalConfigurationService {
     }
 
     getMergedQuery (query:ConsolidatedCertificateRequest = {}):ConsolidatedCertificateRequest {
-      return Object.keys(this.defaultQuery)
-        .reduce((acc, currKey) => {
-          const value = query[currKey];
-          if (value === undefined || value === false) {
+      if (query === undefined || Object.keys(query).length === 0) {
+        return this.defaultQuery;
+      } else {
+        return Object.keys(this.defaultQuery)
+          .reduce((acc, currKey) => {
+            const value = query[currKey];
+            if (value === undefined || value === false) {
             // not fetching at all
-            acc[currKey] = false;
-          } else if (value === true) {
-            acc[currKey] = typeof this.defaultQuery[currKey] === 'boolean' ? true : this.defaultQuery[currKey];
-          } else if (typeof query === 'object') {
-            acc[currKey] = {
-              ...this.defaultQuery[currKey],
-              ...query[currKey]
-            };
-          }
+              acc[currKey] = false;
+            } else if (value === true) {
+              acc[currKey] = typeof this.defaultQuery[currKey] === 'boolean' ? true : this.defaultQuery[currKey];
+            } else if (typeof query === 'object') {
+              acc[currKey] = {
+                ...this.defaultQuery[currKey],
+                ...query[currKey]
+              };
+            }
 
-          return acc;
-        }, {});
+            return acc;
+          }, {});
+      }
     }
 
     setDefaultQuery (defaultQuery: ConsolidatedCertificateRequest): GlobalConfigurationService {

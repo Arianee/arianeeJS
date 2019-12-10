@@ -1,5 +1,9 @@
 import { expect } from 'chai';
 import { Given, Then, When } from 'cucumber';
+import {
+  ConsolidatedCertificateRequest,
+  ConsolidatedIssuerRequest
+} from '../../src/core/wallet/certificateSummary/certificateSummary';
 import { waitFor } from './helpers/waitFor';
 
 Given('user{int} has positive credit certificate balance', async function (
@@ -12,6 +16,40 @@ Given('user{int} has positive credit certificate balance', async function (
     .send();
 
   expect(balance.toNumber() > 0).equals(true);
+});
+
+When('user{int} can make different request on certificate{int}', async function (userIndex, tokenIndex) {
+  const wallet = this.store.getUserWallet(userIndex);
+  const certificateId = this.store.getToken(tokenIndex);
+
+  const verify = async (query:ConsolidatedCertificateRequest) => {
+    const cer = await wallet.methods.getCertificate(certificateId, undefined, query);
+    const keys = Object.keys(query);
+    for (var i = 0; i < keys.length; i++) {
+      const value = keys[i];
+      expect(cer[value], `${value} does not exist on query ${JSON.stringify(query)}`).to.be.not.undefined;
+    }
+  };
+
+  const queryToTest:Array<ConsolidatedCertificateRequest> = [
+    { issuer: true },
+    { content: true },
+    { messageSenders: true },
+    { owner: true },
+    { isRequestable: true },
+    // { arianeeEvents: true }
+    // { events: true }
+    {
+      content: true,
+      issuer: {
+        waitingIdentity: true
+      }
+    },
+    { issuer: true, content: true }
+
+  ];
+
+  await Promise.all(queryToTest.map(query => verify(query)));
 });
 
 When(
@@ -142,14 +180,6 @@ Given('user{int} requests certificate{int} with passprase {word}',
   }
 );
 
-Given('user{int} makes certificate{int} {word} with passphrase {word}',
-  async function (userIndex, tokenIndex, actionType, passphrase) {
-    const wallet = this.store.getUserWallet(userIndex);
-    const certificateId = this.store.getToken(tokenIndex);
-
-    return wallet.methods.createCertificateRequestOwnershipLink(certificateId, passphrase);
-  });
-
 Given('user{int} makes certificate{int} {word} without passphrase',
   async function (userIndex, tokenIndex, actionType) {
     const wallet = this.store.getUserWallet(userIndex);
@@ -212,6 +242,14 @@ Given('user{int} can see its {int} certificates from getMyCertificates',
     });
   });
 
+Given('user{int} makes certificate{int} {word} with passphrase {word}',
+  async function (userIndex, tokenIndex, actionType, passphrase) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const certificateId = this.store.getToken(tokenIndex);
+
+    return wallet.methods.createCertificateRequestOwnershipLink(certificateId, passphrase);
+  });
+
 Given('user{int} can see its {int} certificates and {int} issuers from groupByIssuerCertificates',
   async function (userIndex, numberOfCertificates, numberOfBrands) {
     const wallet = this.store.getUserWallet(userIndex);
@@ -228,8 +266,6 @@ Given('user{int} can see its {int} certificates and {int} issuers from groupByIs
     }, 0);
 
     expect(numberOfCertificatesFetched === numberOfCertificates).to.be.true;
-
-    certificatesGroupBy.return;
   });
 
 Given('user{int} switch certificate{int} issuer message authorization to {string}',
@@ -241,7 +277,6 @@ Given('user{int} switch certificate{int} issuer message authorization to {string
     const { address } = issuer.identity;
 
     await wallet.methods.setMessageAuthorizationFor(certificateId, address, JSON.parse(value));
-    console.log(address);
   });
 
 Given('user{int} certificate{int} issuer message authorization should be {string}',
@@ -251,6 +286,7 @@ Given('user{int} certificate{int} issuer message authorization should be {string
 
     const { issuer, messageSenders } = await wallet.methods
       .getCertificate(certificateId, undefined, { issuer: true, messageSenders: true });
+
     const { address } = issuer.identity;
 
     expect(messageSenders[address] === JSON.parse(value)).to.be.true;

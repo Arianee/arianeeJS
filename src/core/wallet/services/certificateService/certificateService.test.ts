@@ -70,7 +70,7 @@ describe('CertificateService > ', () => {
     describe('global configuration', () => {
       test('should take into account global configuration', async () => {
         const dep = getAllDependencies();
-        const globalConfig = dep.globalConfigurationService.setDefaultQuery({ content: true, issuer: false });
+        dep.globalConfigurationService.setDefaultQuery({ content: true, issuer: false });
         const certificateService = new CertificateService(
           dep.utils,
           dep.httpClient,

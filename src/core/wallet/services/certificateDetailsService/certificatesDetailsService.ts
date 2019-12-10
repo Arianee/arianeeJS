@@ -11,7 +11,7 @@ import { WalletService } from '../walletService/walletService';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { IdentitySummary } from '../../../../models/arianee-identity';
 import {
-  CertificateContentContainer,
+  CertificateContentContainer, ConsolidatedCertificateRequest,
   ConsolidatedIssuerRequest,
   ConsolidatedIssuerRequestInterface
 } from '../../certificateSummary/certificateSummary';
@@ -31,20 +31,24 @@ export class CertificateDetails {
 
   }
 
-  public getCertificateIssuer = async (certificateId: CertificateId, issuerQuery: ConsolidatedIssuerRequest) => {
-    return this.fetchCertificateIssuer(certificateId, issuerQuery);
+  public getCertificateIssuer = async (parameters:{certificateId: CertificateId, query: ConsolidatedCertificateRequest}) => {
+    return this.fetchCertificateIssuer(parameters);
   }
 
   public fetchCertificateIssuer = async (
-    certificateId: CertificateId,
-    issuerQuery?: ConsolidatedIssuerRequest) => {
+    parameters:{certificateId: CertificateId, query: ConsolidatedCertificateRequest}) => {
+    const { certificateId } = parameters;
+
     const issuerOf = () => this.contractService.smartAssetContract.methods
       .issuerOf(certificateId.toString())
       .call();
 
-    const issuer = await this.store.get<string>(StoreNamespace.certificateIssuer, certificateId, issuerOf);
+    const address = await this.store.get<string>(StoreNamespace.certificateIssuer, certificateId, issuerOf);
 
-    return this.identityService.getIdentity(issuer, issuerQuery);
+    return this.identityService.getIdentity({
+      ...parameters,
+      address
+    });
   }
 
   public getCertificateOwner = async (
@@ -67,14 +71,20 @@ export class CertificateDetails {
   }
 
   private getCertificateContentFromRPC = async (
-    certificateURI,
-    certificateId,
-    proof
+    parameters:{
+      certificateURI: string, certificateId: string, proof: any, query: ConsolidatedCertificateRequest
+    }
   ) => {
-    const issuer = await this.contractService.smartAssetContract.methods
+    const { certificateId, query, proof } = parameters;
+
+    const address = await this.contractService.smartAssetContract.methods
       .issuerOf(certificateId)
       .call();
-    const identity = await this.identityService.getIdentity(issuer);
+
+    const identity = await this.identityService.getIdentity({
+      ...parameters,
+      address
+    });
 
     return this.httpClient.RPCCall(
       identity.data.rpcEndpoint,
@@ -90,25 +100,31 @@ export class CertificateDetails {
     );
   }
 
-  private getContent = (certificateURI, certificateId, proof) => {
-    return this.getCertificateContentFromRPC(
-      certificateURI,
-      certificateId,
-      proof
-    ).catch(err => this.getCertificateContentFromHttp(certificateURI));
+  private getContent = (parameters:{
+    certificateURI:string, certificateId:string, proof:any, query:ConsolidatedCertificateRequest
+  }) => {
+    return this.getCertificateContentFromRPC(parameters)
+      .catch(err => this.getCertificateContentFromHttp(parameters.certificateURI));
   }
 
   public getCertificateContent = (
-    certificateId: CertificateId,
-    passphrase?
+    parameters:{
+      certificateId: CertificateId,
+      passphrase?:string,
+      query:ConsolidatedCertificateRequest
+    }
   ) => {
-    return this.store.get<CertificateContentContainer>(StoreNamespace.certificateContent, certificateId, () => this.fetchCertificateContent(certificateId, passphrase));
+    const { certificateId } = parameters;
+    return this.store.get<CertificateContentContainer>(StoreNamespace.certificateContent, certificateId, () => this.fetchCertificateContent(parameters));
   }
 
   private fetchCertificateContent = async (
-    certificateId: CertificateId,
-    passphrase?
+    parameters:{ certificateId: CertificateId,
+        passphrase?:string,
+        query:ConsolidatedCertificateRequest}
   ) => {
+    const { certificateId, passphrase, query } = parameters;
+
     const tokenURI = await this.contractService.smartAssetContract.methods
       .tokenURI(certificateId.toString())
       .call();
@@ -136,9 +152,11 @@ export class CertificateDetails {
     }
 
     const certificateContentData: any = await this.getContent(
-      tokenURI,
-      certificateId,
-      proof
+      {
+        ...parameters,
+        proof,
+        certificateURI: tokenURI
+      }
     );
 
     const certificateSchema = await this.httpClient.fetch(

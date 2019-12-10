@@ -3,6 +3,7 @@ import { blockchainEventsName } from '../../../../models/blockchainEventsName';
 import { CertificateId } from '../../../../models/CertificateId';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { sortEvents } from '../../../libs/sortEvents';
+import { ConsolidatedCertificateRequest } from '../../certificateSummary/certificateSummary';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
 import { IdentityService } from '../identityService/identityService';
@@ -22,9 +23,13 @@ export class EventService {
   ) {
   }
 
-  public getCertificateTransferEvents = async (
-    certificateId: CertificateId
+  public getCertificateTransferEvents = async (parameters:
+      { certificateId: CertificateId,
+          query:ConsolidatedCertificateRequest
+      }
   ): Promise<any> => {
+    const { certificateId } = parameters;
+
     const sortedEvents:BlockchainEvent[] = await this.contractService.smartAssetContract
       .getPastEvents('Transfer', {
         filter: { _tokenId: certificateId },
@@ -37,7 +42,10 @@ export class EventService {
       const [timestamp, identity] = await Promise.all([
         this.utils.getTimestampFromBlock(event.blockNumber),
         this.identityService
-          .getIdentity(event.returnValues._to)
+          .getIdentity({
+            ...parameters,
+            address: event.returnValues._to
+          })
       ]);
 
       return {
@@ -53,14 +61,19 @@ export class EventService {
   }
 
   public getCertificateArianeeEvents = async (
-    certificateId: number,
-    passphrase?: string
+    parameters:{
+        certificateId: number,
+        passphrase?: string,
+        query:ConsolidatedCertificateRequest
+      }
   ): Promise<any[]> => {
+    const { certificateId, query, passphrase } = parameters;
+
     const issuer = await this.contractService.smartAssetContract.methods
       .issuerOf(certificateId)
       .call();
 
-    const issuerIdentity = await this.identityService.getIdentity(issuer);
+    const issuerIdentity = await this.identityService.getIdentity({ certificateId, address: issuer, query });
     const validateEvents = await this.getValidateEvents(certificateId, issuerIdentity.data.rpcEndpoint, passphrase);
     const pendingEvents = await this.getPendingEvents(certificateId, issuerIdentity.data.rpcEndpoint, passphrase);
 
