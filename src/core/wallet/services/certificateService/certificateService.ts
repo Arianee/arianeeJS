@@ -165,7 +165,8 @@ export class CertificateService {
     if (query.content) {
       const contentDetails = this.certificateDetails.getCertificateContent(
         certificateId,
-        passphrase
+        passphrase,
+        query
       ).then((certificateContent) => {
         response.setContent(
           certificateContent.data,
@@ -185,7 +186,7 @@ export class CertificateService {
     }
 
     if (query.issuer) {
-      const issuerDetails = this.certificateDetails.getCertificateIssuer(certificateId, query.issuer)
+      const issuerDetails = this.certificateDetails.getCertificateIssuer(certificateId, query)
         .then(identityDetails => {
           response.setIssuer(
             identityDetails.isAuthentic,
