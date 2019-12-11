@@ -217,7 +217,7 @@ export class CertificateService {
     }
 
     if (query.events) {
-      const eventsDetails = this.eventService.getCertificateTransferEvents(certificateId).then(events => {
+      const eventsDetails = this.eventService.getCertificateTransferEvents({ certificateId, query }).then(events => {
         response.setEvents(events);
       });
       requestQueue.push(eventsDetails);
