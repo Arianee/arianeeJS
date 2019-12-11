@@ -172,7 +172,8 @@ export class CertificateService {
       ).then((certificateContent) => {
         response.setContent(
           certificateContent.data,
-          certificateContent.isAuthentic
+          certificateContent.isAuthentic,
+          certificateContent.imprint
         );
       });
 
@@ -196,6 +197,7 @@ export class CertificateService {
           response.setIssuer(
             identityDetails.isAuthentic,
             identityDetails.isApproved,
+            identityDetails.imprint,
             identityDetails
           );
         });

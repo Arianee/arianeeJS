@@ -23,11 +23,13 @@ export class CertificateSummaryBuilder {
 
     public setContent (
       data: CertificateContent,
-      isAuthentic: boolean
+      isAuthentic: boolean,
+      imprint:string
     ): CertificateSummaryBuilder {
       this._content = {
         data,
-        isAuthentic
+        isAuthentic,
+        imprint
       };
 
       return this;
@@ -70,12 +72,14 @@ export class CertificateSummaryBuilder {
     public setIssuer (
       isIdentityAuthentic,
       isIdentityVerified,
+      imprint:string,
       identity?
     ): CertificateSummaryBuilder {
       this._issuer = {
         identity,
         isIdentityAuthentic,
-        isIdentityVerified
+        isIdentityVerified,
+        imprint
       };
 
       return this;

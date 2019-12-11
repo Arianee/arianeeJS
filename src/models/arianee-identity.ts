@@ -3,6 +3,7 @@ export interface IdentitySummary {
   isAuthentic: boolean;
   isApproved: boolean;
   address: string;
+  imprint:string;
 }
 
 export interface Picture {

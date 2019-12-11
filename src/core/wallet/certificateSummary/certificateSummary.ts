@@ -43,10 +43,12 @@ interface ArianeeEvents {
 
 export interface CertificateContentContainer {
   isAuthentic: boolean;
+  imprint:string;
   data: CertificateContent;
 }
 
 export interface CertificateIssuer {
+  imprint:string;
   isIdentityAuthentic: boolean;
   isIdentityVerified: boolean;
   identity: IdentitySummary;

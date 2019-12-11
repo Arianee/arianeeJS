@@ -12,7 +12,6 @@ import { GlobalConfigurationService } from '../globalConfigurationService/global
 import { UtilsService } from '../utilService/utilsService';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { StoreNamespace } from '../../../../models/storeNamespace';
-import { get } from 'lodash';
 
 @injectable()
 export class IdentityService {
@@ -94,6 +93,7 @@ export class IdentityService {
         data: identityContentData,
         isAuthentic: isAuthentic,
         isApproved,
+        imprint,
         address
       });
     } else {
@@ -139,6 +139,7 @@ export class IdentityService {
         data: identityContentData,
         isAuthentic: isAuthentic,
         isApproved,
+        imprint,
         address
       });
     } else {
@@ -146,6 +147,7 @@ export class IdentityService {
         data: undefined,
         isAuthentic: false,
         isApproved: false,
+        imprint: undefined,
         address
       });
     }
