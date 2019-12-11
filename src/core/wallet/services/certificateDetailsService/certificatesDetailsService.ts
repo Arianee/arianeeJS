@@ -174,6 +174,6 @@ export class CertificateDetails {
 
     const isCertificateContentValid = hash === tokenImprint;
 
-    return Promise.resolve({ data: certificateContentData, isAuthentic: isCertificateContentValid });
+    return Promise.resolve({ imprint: tokenImprint, data: certificateContentData, isAuthentic: isCertificateContentValid });
   }
 }
