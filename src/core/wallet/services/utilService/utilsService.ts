@@ -158,7 +158,9 @@ export class UtilsService {
     };
   }
 
-  public timestampIsMoreRecentThan (timestamp, seconds) {
+  public timestampIsMoreRecentThan= UtilsService.timestampIsMoreRecentThan;
+
+  public static timestampIsMoreRecentThan (timestamp, seconds) {
     const date = new Date().valueOf();
     const minTime = date - seconds * 1000;
 

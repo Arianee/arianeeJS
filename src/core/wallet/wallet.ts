@@ -1,36 +1,50 @@
 import { container } from 'tsyringe';
 import { ArianeeConfig } from '../../models/arianeeConfiguration';
+import { ArianeeEventEmitter } from './services/arianeeEventEmitterService/ArianeeEventEmitter';
+import { BlockchainEventWatcherService } from './services/blockchainEventWatcherService/blochainEventWatcherService';
 import { CertificateAuthorizationService } from './services/certificateAuthorizationService/certificateAuthorizationService';
 import { ConfigurationService } from './services/configurationService/configurationService';
 import { ContractService } from './services/contractService/contractsService';
+import { GlobalConfigurationService } from './services/globalConfigurationService/globalConfigurationService';
 import { POAAndAriaService } from './services/POAAndAriaFaucet/POAAndAriaService';
 import { UtilsService } from './services/utilService/utilsService';
 import { WalletCustomMethodService } from './services/walletCustomMethodService/walletCustomMethodService';
 import { WalletService } from './services/walletService/walletService';
 import { Web3Service } from './services/web3Service/web3Service';
-import { BlockchainEventWatcherService } from './services/blockchainEventWatcherService/blochainEventWatcherService';
-import { ArianeeEventEmitter } from './services/arianeeEventEmitterService/ArianeeEventEmitter';
-import { GlobalConfigurationService } from './services/globalConfigurationService/globalConfigurationService';
 import EventEmitter = require('eventemitter3');
+
+export interface ClassicConfiguration{
+    account:any,
+    mnemonic?:string,
+    bdHVaultURL?:string
+}
 
 export class ArianeeWallet {
     private container;
+    private _account;
+    private _mnemonic;
 
-    constructor (
-        private _account,
-        private _mnemonic?
-    ) {
+    public constructor (configuration:ClassicConfiguration) {
       this.container = container.createChildContainer();
-      this.registerSingletons(WalletService,
+
+      this.registerSingletons(
+        ContractService,
+        WalletService,
         Web3Service,
         POAAndAriaService,
+        WalletService,
         ArianeeEventEmitter,
         BlockchainEventWatcherService,
-        CertificateAuthorizationService
-      );
+        CertificateAuthorizationService);
 
-      const walletService = this.container.resolve(WalletService);
-      walletService.account = this.account;
+      const walletService:WalletService = this.container.resolve(WalletService);
+      const configService:ConfigurationService = this.container.resolve(ConfigurationService);
+
+      walletService.bdhVaultURL = configuration.bdHVaultURL;
+
+      walletService.account = configuration.account;
+      this._account = configuration.account;
+      this._mnemonic = configuration.mnemonic;
 
       this.container.resolve(BlockchainEventWatcherService);
     }

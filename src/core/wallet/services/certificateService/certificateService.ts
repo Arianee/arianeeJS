@@ -456,7 +456,5 @@ export class CertificateService {
   public customRequestToken = async (
     certificateId: number,
     passphrase: string
-  ) => {
-    return this.customRequestTokenFactory(certificateId, passphrase).send();
-  }
+  ) => this.customRequestTokenFactory(certificateId, passphrase).send();
 }
