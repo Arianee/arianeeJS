@@ -11,4 +11,10 @@ export class WalletService {
   public get privateKey (): string {
     return this.account.privateKey;
   }
+
+  public bdhVaultURL:string;
+
+  public isBdhVault ():boolean {
+    return this.bdhVaultURL !== undefined;
+  }
 }

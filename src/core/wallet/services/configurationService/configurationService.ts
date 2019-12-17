@@ -1,7 +1,7 @@
-import { container, singleton } from 'tsyringe';
+import { singleton } from 'tsyringe';
+import configurations from '../../../../configurations/appConfigurations';
 import { ArianeeConfig } from '../../../../models/arianeeConfiguration';
 import { ArianeeWalletBuilder } from '../../walletBuilder';
-import configurations from '../../../../configurations/appConfigurations';
 
 @singleton()
 export class ConfigurationService {
