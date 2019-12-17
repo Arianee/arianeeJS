@@ -17,3 +17,4 @@ Feature: Certificate creation
 
     Then user1 can see its 4 certificates from getMyCertificates
     Then user1 can make different request on certificate0
+

@@ -1,6 +1,8 @@
 import { expect } from 'chai';
+import axios from 'axios';
 import { Given, Then, When } from 'cucumber';
 import {
+  CertificateSummary,
   ConsolidatedCertificateRequest,
   ConsolidatedIssuerRequest
 } from '../../src/core/wallet/certificateSummary/certificateSummary';
@@ -290,4 +292,51 @@ Given('user{int} certificate{int} issuer message authorization should be {string
     const { address } = issuer.identity;
 
     expect(messageSenders[address] === JSON.parse(value)).to.be.true;
+  });
+
+Given('user{int} want to see certificateId {string} with passphrase {string}',
+  async function (userIndex, certificateId, passphrase, table) {
+    const wallet = this.store.getUserWallet(userIndex);
+
+    const tableToQuery = (queryTable) => {
+      return queryTable.reduce((acc, curr) => {
+        const propName = curr[0];
+        const value = curr[1];
+
+        acc[propName] = JSON.parse(value);
+
+        return acc;
+      }, {});
+    };
+
+    const query = tableToQuery(table.rawTable);
+    const verify = async (certificate:CertificateSummary, query) => {
+      const keys = Object.keys(query);
+      for (var i = 0; i < keys.length; i++) {
+        const value = keys[i];
+        expect(certificate[value], `${value} does not exist on query ${JSON.stringify(query)}`).to.be.not.undefined;
+      }
+    };
+
+    const certificate = await wallet.methods.getCertificate(certificateId, undefined, query);
+
+    verify(certificate, query);
+
+    this.store.storeCertificateSummary(certificateId, certificate);
+  });
+
+Then('certificateId {string} {string} imprint should be {string}',
+  async function (certificateId, contentType, expectedImprint) {
+    const summary = this.store.getCertificateSummary(certificateId);
+    let contentToBeVerified;
+
+    if (contentType === 'content') {
+      contentToBeVerified = summary.content.imprint;
+    } else if (contentType === 'identity') {
+      contentToBeVerified = summary.issuer.identity.imprint;
+    } else {
+      throw new Error('this type of content is not defined');
+    }
+
+    expect(contentToBeVerified === expectedImprint).to.be.true;
   });
