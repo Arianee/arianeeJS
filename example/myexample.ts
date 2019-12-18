@@ -1,47 +1,24 @@
+import { makeWalletReady } from '../features/steps/helpers/walletCreator';
 import { Arianee, NETWORK } from '../src';
+import { aria } from '../src/configurations';
+import { waitFor } from '../features/steps/helpers/waitFor';
 
 const fs = require('fs');
 
 var fetch = require('node-fetch-polyfill');
 
 (async function () {
-  const arianee = await new Arianee().init(NETWORK.testnet);
+  const arianee = await new Arianee().init(NETWORK.arianeeTestnet);
 
-  const wallet = arianee.fromPrivateKey('0x4a608dcdb610fb5a18850f29c85078f00e2b9266a0b0437e3c6e0a6096b1caf4',
-    'http://localhost:5000/bdharianeestef/us-central1');
+  const wallet = arianee.fromPrivateKey('0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855');
 
-  await wallet.methods.createCertificate({
-    uri: 'http://localhost:3000/mycertificate.json',
-    content: {
-      $schema: 'https://cert.arianee.org/version1/ArianeeAsset.json',
-      name: 'Arianee',
-      v: '0.1',
-      serialnumber: [{ type: 'serialnumber', value: 'SAMPLE' }],
-      brand: 'Arianee',
-      model: 'Token goody',
-      description:
-          'Here is the digital passport of your Arianee token goody, giving you a glimpse of an augmented ownership experience. This Smart-Asset has a unique ID. It is transferable and enables future groundbreaking features. \n Connect with the arianee team to learn more.',
-      type: 'SmartAsset',
-      picture:
-          'https://www.arianee.org/wp-content/uploads/2019/02/Screen-Shot-2019-02-27-at-12.12.53-PM.png',
-      pictures: [
-        {
-          src:
-              'https://www.arianee.org/wp-content/uploads/2019/02/Screen-Shot-2019-02-27-at-12.14.36-PM.png'
-        }
-      ],
-      socialmedia: { instagram: 'arianee_project', twitter: 'ArianeeProject' },
-      externalContents: [
-        {
-          title: 'About Arianee',
-          url: 'https://www.arianee.org',
-          backgroundColor: '#000',
-          color: '#FFF'
-        }
-      ],
-      jsonSurcharger: 'url'
-    }
-  });
+  const cert1 = '1,cert1passphrase'; // valid et un waiting
+  const cert2 = '2,cert2passphrase;,'; // only waiting
+
+  // 0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0
+  const cert = await wallet.methods.getCertificate(2, 'cert2passphrase;,', { content: true, issuer: true });
+  console.log(cert.issuer.identity.imprint);
+  console.log(cert.content.imprint);
 
   console.log('####');
 })();
@@ -50,7 +27,7 @@ var fetch = require('node-fetch-polyfill');
 public syncWithBlockChain ():Observable<any> {
   console.log('here');
 return this.$wallet.pipe(
-    take(1),
+    take(1),0x31bd6f933aa9260509f4dced76f3410872f220e828c05d7f009a8796bff1ac05
     delay(1000),
     mergeMap(wallet => {
       const currentConfig = wallet.globalConfiguration.getMergedQuery({});
