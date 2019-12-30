@@ -103,8 +103,15 @@ export class CertificateDetails {
   private getContent = (parameters:{
     certificateURI:string, certificateId:string, proof:any, query:ConsolidatedCertificateRequest
   }) => {
+    const { certificateURI, certificateId } = parameters;
     return this.getCertificateContentFromRPC(parameters)
-      .catch(err => this.getCertificateContentFromHttp(parameters.certificateURI));
+      .catch(err => {
+        console.error(`# ${certificateId} # fetch content from RPC server with uri: ${parameters.certificateURI}`);
+        console.error(`# ${certificateId} # Fallback to simple http call`);
+
+        return this.getCertificateContentFromHttp(parameters.certificateURI);
+      })
+      .catch(d => console.log(`# ${certificateId} # Impossible to fetch content of this certificate ${parameters.certificateId}`));
   }
 
   public getCertificateContent = (
@@ -128,7 +135,6 @@ export class CertificateDetails {
     const tokenURI = await this.contractService.smartAssetContract.methods
       .tokenURI(certificateId.toString())
       .call();
-
     let proof;
 
     if (passphrase) {

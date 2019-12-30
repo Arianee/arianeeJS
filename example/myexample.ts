@@ -9,7 +9,7 @@ var fetch = require('node-fetch-polyfill');
 
 (async function () {
   const content = {
-    uri: '',
+    uri: 'https://bdharianeestef.firebaseapp.com/rpc',
     content: {
       $schema: 'https://cert.arianee.org/version1/ArianeeAsset.json',
       name: 'Arianeetest certificate 1',
@@ -35,13 +35,15 @@ var fetch = require('node-fetch-polyfill');
     'https://bdharianeestef.firebaseapp.com');
   // await makeWalletReady(wallet);
   //  await wallet.methods.buyCredits('certificate', 1);
-  // const res = await wallet.methods.createCertificate(content);
-  // console.log(res);
-  // const content1 = await wallet.methods.getCertificate(res.certificateId, undefined, { content: true });
-  // console.log(content1);
-  const i = await wallet.methods.storeContentInRPCServer('7225309', content.content);
-  // const content2 = await wallet.methods.getCertificate(res.certificateId, undefined, { content: true });
+  const certificateid = 2677652;
+  const passphrase = 'tca17v5ce257';
 
+  /// const res = await wallet.methods.createCertificate(content);
+  const content1 = await wallet.methods.getCertificate(certificateid, passphrase, { content: true });
+
+  const i = await wallet.methods.storeContentInRPCServer(certificateid, content.content);
+  const content2 = await wallet.methods.getCertificate(certificateid, passphrase, { content: true });
+  console.log(content2);
   console.log('done');
 })();
 
