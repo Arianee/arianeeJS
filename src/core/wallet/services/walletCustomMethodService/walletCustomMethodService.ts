@@ -52,8 +52,8 @@ export class WalletCustomMethodService {
       acceptArianeeEvent: this.eventService.acceptArianeeEvent,
       refuseArianeeEvent: this.eventService.refuseArianeeEvent,
       setMessageAuthorizationFor: this.certificateAuthorizationService.setMessageAuthorizationFor,
-      getMessageSenders: this.certificateAuthorizationService.getMessageSenders
-
+      getMessageSenders: this.certificateAuthorizationService.getMessageSenders,
+      storeContentInRPCServer: this.certificateService.storeContentInRPCServer
     };
   }
 
