@@ -280,14 +280,10 @@ export class CertificateService {
     // Fetch number of certificates this user owns
     const certificateIds = await this.store.get<CertificateId[]>(StoreNamespace.certificateIds, this.walletService.publicKey, () => this.getMyCertificateIds(), verifyOwnership);
 
-    const results = [];
     // Fetch details of each certificate
-    await Promise.all(
+    const results = await Promise.all(
       certificateIds.map(certificateId =>
         this.getCertificate(certificateId, undefined, query)
-          .then(certificate =>
-            results.push(certificate)
-          )
       )
     );
 
