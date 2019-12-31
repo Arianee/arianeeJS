@@ -109,6 +109,12 @@ export class CertificateService {
       }));
   }
 
+  public storeContentInRPCServer =async (certificateId:CertificateId, content, url?:string) => {
+    const urlOfServer = url || `${this.walletService.bdhVaultURL}/rpc`;
+
+    return this.httpClient.RPCCall(urlOfServer, 'certificate.create', { certificateId: certificateId, json: content });
+  }
+
   private customRequestTokenFactory = (certificateId, passphrase) => {
     const temporaryWallet = this.configurationService
       .walletFactory()
