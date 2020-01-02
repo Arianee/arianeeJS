@@ -56,13 +56,13 @@ export class ArianeeWalletBuilder {
    *  From a mnemonic and return ArianeeProtocol
    * @param mnemonic
    */
-  public fromMnemonic (mnemonic: string, bdHVaultURL?:string): ArianeeWallet {
+  public fromMnemonic (mnemonic: string): ArianeeWallet {
     const isValidMnemonic = ethers.utils.HDNode.isValidMnemonic(mnemonic);
     if (isValidMnemonic) {
       const { privateKey } = etherWallet.fromMnemonic(mnemonic);
       const account = this.web3.eth.accounts.privateKeyToAccount(privateKey);
 
-      return this.buildAriaWalletFrom({ account, bdHVaultURL, mnemonic });
+      return this.buildAriaWalletFrom({ account, mnemonic });
     } else {
       throw new Error('invalid mnemonic');
     }
@@ -73,9 +73,9 @@ export class ArianeeWalletBuilder {
    * @param privateKey
    * @param bdHVaultURL
    */
-  public fromPrivateKey (privateKey: string, bdHVaultURL?:string): ArianeeWallet {
+  public fromPrivateKey (privateKey: string): ArianeeWallet {
     const account = this.web3.eth.accounts.privateKeyToAccount(privateKey);
 
-    return this.buildAriaWalletFrom({ account, bdHVaultURL });
+    return this.buildAriaWalletFrom({ account });
   }
 }

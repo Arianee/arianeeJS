@@ -15,8 +15,7 @@ import EventEmitter = require('eventemitter3');
 
 export interface ClassicConfiguration{
     account:any,
-    mnemonic?:string,
-    bdHVaultURL?:string
+    mnemonic?:string
 }
 
 export class ArianeeWallet {
@@ -40,8 +39,6 @@ export class ArianeeWallet {
       const walletService:WalletService = this.container.resolve(WalletService);
       const configService:ConfigurationService = this.container.resolve(ConfigurationService);
 
-      walletService.bdhVaultURL = configuration.bdHVaultURL;
-
       walletService.account = configuration.account;
       this._account = configuration.account;
       this._mnemonic = configuration.mnemonic;
@@ -53,6 +50,16 @@ export class ArianeeWallet {
       classNames.forEach(className => {
         this.container.registerSingleton(className);
       });
+    }
+
+    /**
+     * Set BDH vault URL
+     * @param url
+     */
+    public useBDHVault (url:string):ArianeeWallet {
+      const walletService:WalletService = this.container.resolve(WalletService);
+      walletService.bdhVaultURL = url;
+      return this;
     }
 
     public get publicKey (): string {

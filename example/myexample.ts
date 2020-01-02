@@ -31,14 +31,14 @@ var fetch = require('node-fetch-polyfill');
 
   const arianee = await new Arianee().init(NETWORK.testnet);
 
-  const wallet = arianee.fromPrivateKey('0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855',
-    'https://bdharianeestef.firebaseapp.com');
+  const wallet = arianee.fromPrivateKey('0xe7cfc290a5b9f5ad89978fa91eac0af0ca05eaa478c77735e13cf493cab40855');
+  wallet.useBDHVault('https://bdharianeestef.firebaseapp.com');
   // await makeWalletReady(wallet);
   //  await wallet.methods.buyCredits('certificate', 1);
-  const certificateid = 2677652;
-  const passphrase = 'tca17v5ce257';
 
-  /// const res = await wallet.methods.createCertificate(content);
+  const res = await wallet.methods.createCertificate(content);
+  const certificateid = res.certificateId;
+  const passphrase = res.passphrase;
   const content1 = await wallet.methods.getCertificate(certificateid, passphrase, { content: true });
 
   const i = await wallet.methods.storeContentInRPCServer(certificateid, content.content);
