@@ -84,7 +84,13 @@ export class CertificateDetails {
     const identity = await this.identityService.getIdentity({
       ...parameters,
       address
-    });
+    })
+      .then(d => {
+        if (d.data === undefined) {
+          console.error(`# ${parameters.certificateURI} # failing to retrieve identity`);
+        };
+        return d;
+      });
 
     return this.httpClient.RPCCall(
       identity.data.rpcEndpoint,
@@ -106,7 +112,7 @@ export class CertificateDetails {
     const { certificateURI, certificateId } = parameters;
     return this.getCertificateContentFromRPC(parameters)
       .catch(err => {
-        console.error(`# ${certificateId} # fetch content from RPC server with uri: ${parameters.certificateURI}`);
+        console.error(`# ${certificateId} # Impossible to fetch content from RPC server`);
         console.error(`# ${certificateId} # Fallback to simple http call`);
 
         return this.getCertificateContentFromHttp(parameters.certificateURI);
