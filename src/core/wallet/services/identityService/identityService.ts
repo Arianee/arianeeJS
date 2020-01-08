@@ -143,6 +143,7 @@ export class IdentityService {
         address
       });
     } else {
+      console.error(`# ${address} # does not has identity uri or identity`);
       return Promise.resolve({
         data: undefined,
         isAuthentic: false,
