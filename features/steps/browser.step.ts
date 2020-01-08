@@ -1,14 +1,22 @@
 import { Given } from 'cucumber';
 import fs from 'fs';
+import { waitFor } from './helpers/waitFor';
 
+const pptrFirefox = require('puppeteer-firefox');
 const puppeteer = require('puppeteer');
 
-Given('ArianeeLib is used on browser it works', async function () {
+Given('ArianeeLib is used on browser {string} it works', async function (browserName) {
   const contentHtml = '<!doctype html><html><body id=\'div1\'></body></html>';
   const contentJSBundle = fs.readFileSync('./browser/bundle.js', 'utf8');
   const contentTestJS = fs.readFileSync('./dist/example/myexecfile.js', 'utf8');
 
-  const browser = await puppeteer.launch({ headless: true });
+  let browser;
+  if (browserName === 'chrome') {
+    browser = await puppeteer.launch({ headless: true });
+  } else if (browserName === 'firefox') {
+    browser = await pptrFirefox.launch({ headless: true });
+  }
+
   const page = await browser.newPage();
 
   // launch any page
