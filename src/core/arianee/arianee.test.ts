@@ -77,6 +77,34 @@ describe('Arianee', () => {
       });
     });
   });
+  describe('brandDataHubReward walletReward', () => {
+    test('should have a default setting', async () => {
+      const arianee = await new Arianee()
+        .init(NETWORK.testnet);
+
+      const wallet = arianee.fromRandomKey();
+      expect(wallet.configuration.brandDataHubReward.address).toBeDefined();
+      expect(wallet.configuration.walletReward.address).toBeDefined();
+    });
+
+    test('should be setting custom brandDataHubReward', async () => {
+      const brandDataHubReward = { address: '0x640D422Af7a6e9A21adC919b5909ED745ABED58' };
+      const arianee = await new Arianee()
+        .init(NETWORK.testnet, { brandDataHubReward });
+
+      const wallet = arianee.fromRandomKey();
+      expect(wallet.configuration.brandDataHubReward).toEqual(brandDataHubReward);
+    });
+
+    test('should be setting custom walletReward', async () => {
+      const walletReward = { address: '0x640D422Af7a6e9A21adC919b59609ED745ABED58' };
+      const arianee = await new Arianee()
+        .init(NETWORK.testnet, { walletReward });
+
+      const wallet = arianee.fromRandomKey();
+      expect(wallet.configuration.walletReward).toEqual(walletReward);
+    });
+  });
   describe('should output same wallet public key for each arianeeJS version', () => {
     describe('with a same mnemonic', () => {
       const mnemonic = 'hire super odor text avocado detail remain air end live sauce wife';
