@@ -6,6 +6,9 @@ Feature: Request token with Secret
     Given user2 with account from randomKey
     Given user2 has positive credits of POA and ARIA
 
+    Given user3 with account from randomKey
+    Given user3 has positive credits of POA and ARIA
+
   Scenario: User can request token with Secret
     When user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase
     When user2 requests certificate0 with passprase MyPassPhrase
@@ -30,3 +33,9 @@ Feature: Request token with Secret
   Scenario: A brand creates a certificate, user1 can check if it can be requestable with wrong passphrase
     Given user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase
     Then user1 checks if certificate0 can not be requested with passphrase WRONGPASSPHRASE
+
+  Scenario:A certificate can not be transfer twice with same passphrase
+    Given user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase
+    Given user2 requests certificate0 with passprase MyPassPhrase
+    Then user3 checks if certificate0 can not be requested with passphrase WRONGPASSPHRASE
+    Then user2 is the owner of the certificate0
