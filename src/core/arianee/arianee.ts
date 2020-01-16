@@ -1,13 +1,12 @@
 import { container } from 'tsyringe';
-import * as conf from '../../configurations'; // eslint-disable-line import/no-duplicates
-import { appConfig } from '../../configurations'; // eslint-disable-line import/no-duplicates
+import * as conf from '../../configurations';
 import { NETWORK, networkURL } from '../../models/networkConfiguration';
 import { ArianeeHttpClient } from '../libs/arianeeHttpClient/arianeeHttpClient';
 import { Store } from '../libs/simpleStore/store';
+import { ConsolidatedCertificateRequest } from '../wallet/certificateSummary/certificateSummary';
+import { GlobalConfigurationService } from '../wallet/services/globalConfigurationService/globalConfigurationService';
 import { ArianeeWalletBuilder } from '../wallet/walletBuilder';
 import { ProtocolConfigurationBuilder } from './protocolConfigurationBuilder/protocolConfigurationBuilder';
-import { GlobalConfigurationService } from '../wallet/services/globalConfigurationService/globalConfigurationService';
-import { ConsolidatedCertificateRequest } from '../wallet/certificateSummary/certificateSummary';
 
 export class Arianee {
   public globalConfigurationService: GlobalConfigurationService;
@@ -17,7 +16,11 @@ export class Arianee {
   }
 
   public async init (
-    networkName: NETWORK = NETWORK.testnet
+    networkName: NETWORK = NETWORK.testnet,
+    arianeeCustomConfiguration:{
+      walletReward?: { address: string },
+      brandDataHubReward?: { address: string }
+    } = {}
   ): Promise<ArianeeWalletBuilder> {
     const url = networkURL[networkName];
 
@@ -38,7 +41,7 @@ export class Arianee {
       }
     });
 
-    const { deepLink, faucetUrl } = appConfig[networkName];
+    const { deepLink, faucetUrl } = conf.appConfig[networkName];
 
     protocolConfigurationBuilder.setDeepLink(deepLink);
     protocolConfigurationBuilder.setFaucetUrl(faucetUrl);
@@ -47,6 +50,14 @@ export class Arianee {
       addressesResult.httpProvider,
       addressesResult.chainId
     );
+
+    if (arianeeCustomConfiguration.walletReward && arianeeCustomConfiguration.walletReward.address) {
+      protocolConfigurationBuilder.setWalletReward(arianeeCustomConfiguration.walletReward.address);
+    }
+
+    if (arianeeCustomConfiguration.brandDataHubReward && arianeeCustomConfiguration.brandDataHubReward.address) {
+      protocolConfigurationBuilder.setBrandDataHubReward(arianeeCustomConfiguration.brandDataHubReward.address);
+    }
 
     return protocolConfigurationBuilder.build();
   }

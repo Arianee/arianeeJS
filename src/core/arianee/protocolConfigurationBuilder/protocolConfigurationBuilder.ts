@@ -17,9 +17,18 @@ export class ProtocolConfigurationBuilder {
     faucetUrl: undefined,
     deepLink: undefined,
     walletReward: { address: '0x39da7e30d2D5F2168AE3B8599066ab122680e1ef' },
-    // TODO
     brandDataHubReward: { address: '0xA79B29AD7e0196C95B87f4663ded82Fbf2E3ADD8' }
   };
+
+  public setWalletReward (walletReward:string) {
+    this.config.walletReward.address = walletReward;
+    return this;
+  }
+
+  public setBrandDataHubReward (brandDataHubReward:string) {
+    this.config.brandDataHubReward.address = brandDataHubReward;
+    return this;
+  }
 
   public setSmartContractConfiguration (
     name: string,
