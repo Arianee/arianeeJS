@@ -129,7 +129,7 @@ export class CertificateService {
     return this.contractService.storeContract.methods.requestToken(
       certificateId,
       proof.messageHash,
-      true,
+      false,
       this.configurationService.arianeeConfiguration.brandDataHubReward.address,
       proof.signature
     );
