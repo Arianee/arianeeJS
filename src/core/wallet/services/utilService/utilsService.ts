@@ -54,6 +54,10 @@ export class UtilsService {
     return m && r;
   }
 
+  public createUID ():number {
+    return Math.ceil(Math.random() * 10000000);
+  }
+
   public createPassphrase () {
     return (
       Math.random()

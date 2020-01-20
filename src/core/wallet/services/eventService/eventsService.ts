@@ -1,4 +1,5 @@
 import { injectable } from 'tsyringe';
+import { isNullOrUndefined } from 'util';
 import { blockchainEventsName } from '../../../../models/blockchainEventsName';
 import { CertificateId } from '../../../../models/CertificateId';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
@@ -73,8 +74,10 @@ export class EventService {
       .issuerOf(certificateId)
       .call();
 
-    const issuerIdentity = await this.identityService.getIdentity({ certificateId, address: issuer, query });
+    const issuerIdentity = await this.identityService.getIdentity({ address: issuer, query });
+
     const validateEvents = await this.getValidateEvents(certificateId, issuerIdentity.data.rpcEndpoint, passphrase);
+
     const pendingEvents = await this.getPendingEvents(certificateId, issuerIdentity.data.rpcEndpoint, passphrase);
 
     return this.orderArianeeEvents(validateEvents.concat(pendingEvents), certificateId);
@@ -149,15 +152,15 @@ export class EventService {
       { fromBlock: 0, toBlock: 'latest', filter: { _eventId: eventId } }
     );
 
-    event.identity = await this.identityService.getIdentity(eventBc['2']);
+    event.identity = await this.identityService.getIdentity({ address: eventBc['2'], query: { issuer: true } });
     event.timestamp = await this.utils.getTimestampFromBlock(creationEvent[0].blockNumber);
-
     const requestBody: any = {
       eventId: eventId,
       certificateId: certificateId
     };
 
     let privateKey: string;
+
     if (passphrase) {
       privateKey = this.configurationService
         .walletFactory()
@@ -173,11 +176,16 @@ export class EventService {
         privateKey
       );
     }
-    event.content = await this.httpClient.RPCCall(
-      rpcEndpoint,
-      'event.read',
-      requestBody
-    );
+
+    try {
+      event.content = await this.httpClient.RPCCall(
+        rpcEndpoint,
+        'event.read',
+        requestBody
+      );
+    } catch (err) {
+      event.content = undefined;
+    }
 
     return event;
   }
@@ -190,5 +198,60 @@ export class EventService {
   public refuseArianeeEvent = (eventId) => {
     return this.contractService.storeContract.methods
       .refuseEvent(eventId, this.configurationService.arianeeConfiguration.walletReward.address).send();
+  }
+
+  public storeArianeeEventContentInRPCServer =async (
+    certificateId:CertificateId,
+    arianeeEventId:number,
+    content,
+    url:string) => {
+    return this.httpClient.RPCCall(url, 'event.create', {
+      certificateId: certificateId,
+      eventId: arianeeEventId,
+      json: content
+    });
+  }
+
+  public createArianeeEvent=async (data: {
+    uri?: string;
+    contentImprint?: string;
+    certificateId: number,
+    arianeeEventId?:number;
+    content?: { $schema: string;[key: string]: any };
+  }):Promise<
+      { contentImprint: string,
+       arianeeEventId: number}
+    > => {
+    data.arianeeEventId = data.arianeeEventId || this.utils.createUID();
+    data.uri = data.uri || '';
+
+    let { arianeeEventId, certificateId, contentImprint, uri, content } = data;
+    const brandReward = this.configurationService.arianeeConfiguration.brandDataHubReward.address;
+
+    console.assert(
+      !(contentImprint && content),
+      'you should choose between contentImprint parameter and content contentImprint'
+    );
+    console.assert(
+      !(isNullOrUndefined(contentImprint) && isNullOrUndefined(content)),
+      'you should pass at least on parameter'
+    );
+
+    if (content) {
+      const certificateSchema = await this.httpClient.fetch(
+        content.$schema
+      );
+
+      contentImprint = await this.utils.cert(certificateSchema, content);
+    }
+
+    const result = await this.contractService.storeContract.methods.createEvent(arianeeEventId, certificateId, contentImprint, uri, brandReward).send();
+
+    return {
+      store: this.storeArianeeEventContentInRPCServer,
+      ...result,
+      contentImprint: contentImprint,
+      arianeeEventId: arianeeEventId
+    };
   }
 }

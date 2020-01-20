@@ -1,4 +1,4 @@
-Feature: Certificate creation
+Feature: Fetch certificates
 
   Background: User has a valid wallet
     Given user1 with account from randomKey
