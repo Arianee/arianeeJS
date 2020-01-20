@@ -38,9 +38,8 @@ export class IdentityService {
   }
 
   public getIdentity = async (parameters:{
-    certificateId: CertificateId,
     address:string,
-    query: ConsolidatedCertificateRequest}
+    query?: ConsolidatedCertificateRequest}
   ): Promise<IdentitySummary> => {
     const { query, address } = parameters;
     const { issuer } = this.globalConfigurationService.getMergedQuery(query);

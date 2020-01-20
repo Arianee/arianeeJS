@@ -6,6 +6,8 @@ import { ArianeeWalletBuilder } from '../../../src/core/wallet/walletBuilder';
 export class CCStore {
     private users: ArianeeWallet[] = [];
     private tokens: number[] = [];
+    private events: number[] = [];
+
     private cache = {};
     private certificateSummaries = {};
 
@@ -15,6 +17,14 @@ export class CCStore {
 
     public storeWallet (userIndex: number, wallet: ArianeeWallet) {
       this.users[userIndex] = wallet;
+    }
+
+    public getEvent (eventIndex: number):number {
+      return this.events[eventIndex];
+    }
+
+    public storeEvent (eventIndex: number, eventId: number) {
+      this.events[eventIndex] = eventId;
     }
 
     public getToken (tokenIndex) {
