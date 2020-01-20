@@ -24,7 +24,14 @@ export class IdentityService {
   }
 
   public getSimpleIdentity = async (address: string, issuerQuery?:ConsolidatedIssuerRequest): Promise<IdentitySummary> => {
-    const query = this.globalConfigurationService.getMergedQuery({ issuer: issuerQuery });
+    let query;
+    if(issuerQuery){
+      query = this.globalConfigurationService.getMergedQuery({ issuer: issuerQuery });
+    }
+    else{
+      query = this.globalConfigurationService.getMergedQuery();
+    }
+    
     const { issuer } = query;
 
     const { forceRefresh, waitingIdentity } = issuer as ConsolidatedIssuerRequestInterface;
