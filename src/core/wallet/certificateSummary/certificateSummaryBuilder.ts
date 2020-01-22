@@ -102,7 +102,7 @@ export class CertificateSummaryBuilder {
       return this;
     }
 
-    build (): CertificateSummary {
+    build (): CertificateSummary<any, any> {
       const arianeCertificate: CertificateSummary = {
         certificateId: this._certificateId,
         content: this._content,

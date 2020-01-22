@@ -6,10 +6,16 @@ import { CertificateId } from '../../../../models/CertificateId';
 import { ExtendedBoolean } from '../../../../models/extendedBoolean';
 import { StoreNamespace } from '../../../../models/storeNamespace';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
+import { replaceLanguage } from '../../../libs/certificateLanguage/certificateLanguage';
+import { isCertificateI18n } from '../../../libs/certificateVersion';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { sortEvents } from '../../../libs/sortEvents';
 import { CertificateSummaryBuilder } from '../../certificateSummary';
-import { CertificateSummary, ConsolidatedCertificateRequest } from '../../certificateSummary/certificateSummary';
+import {
+  CertificateContentContainer,
+  CertificateSummary,
+  ConsolidatedCertificateRequest
+} from '../../certificateSummary/certificateSummary';
 import { CertificateAuthorizationService } from '../certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateDetails } from '../certificateDetailsService/certificatesDetailsService';
 import { ConfigurationService } from '../configurationService/configurationService';
@@ -156,11 +162,11 @@ export class CertificateService {
     }
   }
 
-  public getCertificate = async (
+  public getCertificate = async <CertificateType=any, IdentityType=any>(
     certificateId: CertificateId,
     passphrase?: string,
     query?: ConsolidatedCertificateRequest
-  ): Promise<CertificateSummary> => {
+  ): Promise<CertificateSummary<CertificateType, IdentityType>> => {
     query = this.globalConfiguration.getMergedQuery(query);
 
     const response = new CertificateSummaryBuilder();
@@ -246,7 +252,13 @@ export class CertificateService {
       console.error(err);
     }
 
-    return response.build();
+    const summary = response.build();
+
+    if (query.advanced && query.advanced.languages && isCertificateI18n(summary.content.data)) {
+      return replaceLanguage(summary, query.advanced.languages) as any;
+    } else {
+      return summary;
+    }
   }
 
   /**

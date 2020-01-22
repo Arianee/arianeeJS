@@ -1,6 +1,7 @@
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import {
+  ConsolidatedCertificateRequest,
   ConsolidatedIssuerRequest,
   ConsolidatedIssuerRequestInterface
 } from '../../certificateSummary/certificateSummary';
@@ -54,8 +55,7 @@ describe('GlobalConfigurationService', () => {
         },
         owner: true,
         events: true,
-        arianeeEvents: true,
-        advanced: true
+        arianeeEvents: true
       };
 
       const i = new GlobalConfigurationService();
@@ -80,8 +80,7 @@ describe('GlobalConfigurationService', () => {
         },
         owner: true,
         events: true,
-        arianeeEvents: true,
-        advanced: true
+        arianeeEvents: true
       };
 
       const i = new GlobalConfigurationService();
@@ -105,8 +104,7 @@ describe('GlobalConfigurationService', () => {
         },
         owner: true,
         events: true,
-        arianeeEvents: true,
-        advanced: true
+        arianeeEvents: true
       };
 
       const i = new GlobalConfigurationService();
@@ -132,8 +130,7 @@ describe('GlobalConfigurationService', () => {
         },
         owner: true,
         events: true,
-        arianeeEvents: true,
-        advanced: true
+        arianeeEvents: true
       };
 
       const i = new GlobalConfigurationService();
@@ -159,6 +156,62 @@ describe('GlobalConfigurationService', () => {
       const d = i.getMergedQuery({ content: true });
 
       expect(d.content).toBe(true);
+    });
+  });
+
+  describe('Config language', () => {
+    test('No language defined', () => {
+      const defaultQuery:ConsolidatedCertificateRequest = {
+        content: false,
+        advanced: {
+          languages: undefined
+        }
+      };
+
+      const i = new GlobalConfigurationService();
+      i.setDefaultQuery(defaultQuery);
+      const d = i.getMergedQuery();
+
+      expect(d.content).toBe(false);
+      expect(d.advanced.languages).toBeUndefined();
+    });
+
+    test('If no language defined in default query', () => {
+      const defaultQuery:ConsolidatedCertificateRequest = {
+        content: false,
+        advanced: {
+          languages: undefined
+        }
+      };
+
+      const i = new GlobalConfigurationService();
+      i.setDefaultQuery(defaultQuery);
+      const d = i.getMergedQuery({ advanced: { languages: ['fr'] } });
+
+      expect(d.content).toBe(false);
+      expect(d.advanced.languages).toEqual(['fr']);
+    });
+
+    test('If no language defined at all', () => {
+      const i = new GlobalConfigurationService();
+      const d = i.getMergedQuery({ content: true });
+      expect(d.content).toBe(true);
+      expect(d.advanced).toBeDefined();
+    });
+    test('If language defined in default query', () => {
+      const defaultQuery:ConsolidatedCertificateRequest = {
+        content: false,
+        advanced: {
+          languages: ['fr']
+        }
+      };
+
+      const i = new GlobalConfigurationService();
+      i.setDefaultQuery(defaultQuery);
+      const d = i.getMergedQuery({ advanced: { languages: ['es'] } });
+
+      expect(d.content).toBe(false);
+      expect(d.advanced.languages).toEqual(['es']);
     });
   });
 });
