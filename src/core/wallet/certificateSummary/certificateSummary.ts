@@ -1,4 +1,5 @@
 import { IdentitySummary } from '../../../models/arianee-identity';
+import { CertificateId } from '../../../models/CertificateId';
 import { sortEvents } from '../../libs/sortEvents';
 
 export interface Serialnumber {
@@ -41,17 +42,17 @@ export interface CertificateContent {
 interface ArianeeEvents {
 }
 
-export interface CertificateContentContainer {
+export interface CertificateContentContainer<CertificateType=CertificateContent> {
   isAuthentic: boolean;
   imprint:string;
-  data: CertificateContent;
+  data: CertificateType;
 }
 
-export interface CertificateIssuer {
+export interface CertificateIssuer<IdentityType=any> {
   imprint:string;
   isIdentityAuthentic: boolean;
   isIdentityVerified: boolean;
-  identity: IdentitySummary;
+  identity: IdentitySummary<IdentityType>;
 }
 
 export interface CertificateOwner {
@@ -76,14 +77,15 @@ export class CertificateEventsSummary implements CertificateEvents {
 }
 
 export interface CertificateAdvanced {
-  tokenRecoveryDate: string;
+  tokenRecoveryDate?: string;
+  languages?:string[]
 }
 
-export interface CertificateSummary {
-  certificateId: string;
-  content?: CertificateContentContainer;
+export interface CertificateSummary<CertificateType={}, IdentityType={}> {
+  certificateId: CertificateId;
+  content?: CertificateContentContainer<CertificateType>;
   isRequestable?: boolean;
-  issuer?: CertificateIssuer;
+  issuer?: CertificateIssuer<IdentityType>;
   owner?: CertificateOwner;
   events?: CertificateEvents;
   advanced?: CertificateAdvanced;
@@ -106,6 +108,6 @@ export interface ConsolidatedCertificateRequest {
   owner?: boolean;
   events?: boolean;
   arianeeEvents?: boolean;
-  advanced?: boolean;
+  advanced?: CertificateAdvanced;
   messageSenders?:boolean
 }

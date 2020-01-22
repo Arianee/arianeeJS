@@ -13,7 +13,9 @@ export class GlobalConfigurationService {
       owner: true,
       events: true,
       arianeeEvents: true,
-      advanced: true,
+      advanced: {
+        languages: undefined
+      },
       messageSenders: true
     }
 
