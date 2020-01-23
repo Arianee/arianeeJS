@@ -81,7 +81,7 @@ export interface CertificateAdvanced {
   languages?:string[]
 }
 
-export interface CertificateSummary<CertificateType={}, IdentityType={}> {
+export interface CertificateSummary<CertificateType=any, IdentityType=any> {
   certificateId: CertificateId;
   content?: CertificateContentContainer<CertificateType>;
   isRequestable?: boolean;
