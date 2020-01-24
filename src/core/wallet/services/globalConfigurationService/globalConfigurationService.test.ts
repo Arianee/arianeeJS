@@ -175,6 +175,21 @@ describe('GlobalConfigurationService', () => {
       expect(d.content).toBe(false);
       expect(d.advanced.languages).toBeUndefined();
     });
+    test('No language defined in query but in defaultquery', () => {
+      const defaultQuery:ConsolidatedCertificateRequest = {
+        content: false,
+        advanced: {
+          languages: ['fr']
+        }
+      };
+
+      const i = new GlobalConfigurationService();
+      i.setDefaultQuery(defaultQuery);
+      const d = i.getMergedQuery();
+
+      expect(d.content).toBe(false);
+      expect(d.advanced.languages).toEqual(defaultQuery.advanced.languages);
+    });
 
     test('If no language defined in default query', () => {
       const defaultQuery:ConsolidatedCertificateRequest = {
