@@ -1,22 +1,19 @@
 import { injectable } from 'tsyringe';
 import { CertificateId } from '../../../../models/CertificateId';
+import { StoreNamespace } from '../../../../models/storeNamespace';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
+import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { CertificateSummaryBuilder } from '../../certificateSummary';
+import {
+  CertificateContentContainer,
+  ConsolidatedCertificateRequest,
+  ConsolidatedIssuerRequestInterface
+} from '../../certificateSummary/certificateSummary';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
-import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
-import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
-import { IdentitySummary } from '../../../../models/arianee-identity';
-import {
-  CertificateContentContainer, ConsolidatedCertificateRequest,
-  ConsolidatedIssuerRequest,
-  ConsolidatedIssuerRequestInterface
-} from '../../certificateSummary/certificateSummary';
-import { StoreNamespace } from '../../../../models/storeNamespace';
-import { get } from 'lodash';
 
 @injectable()
 export class CertificateDetails {
@@ -76,24 +73,32 @@ export class CertificateDetails {
     }
   ) => {
     const { certificateId, query, proof } = parameters;
+    const issuer = query.issuer as ConsolidatedIssuerRequestInterface;
 
-    const address = await this.contractService.smartAssetContract.methods
-      .issuerOf(certificateId)
-      .call();
+    let rpcEndPoint;
+    if (issuer.rpcURI) {
+      rpcEndPoint = issuer.rpcURI;
+    } else {
+      const address = await this.contractService.smartAssetContract.methods
+        .issuerOf(certificateId)
+        .call();
 
-    const identity = await this.identityService.getIdentity({
-      ...parameters,
-      address
-    })
-      .then(d => {
-        if (d.data === undefined) {
-          console.error(`# ${parameters.certificateURI} # failing to retrieve identity`);
-        };
-        return d;
-      });
+      const identity = await this.identityService.getIdentity({
+        ...parameters,
+        address
+      })
+        .then(d => {
+          if (d.data === undefined) {
+            console.error(`# ${parameters.certificateURI} # failing to retrieve identity`);
+          };
+          return d;
+        });
+
+      rpcEndPoint = identity.data.rpcEndpoint;
+    }
 
     return this.httpClient.RPCCall(
-      identity.data.rpcEndpoint,
+      rpcEndPoint,
       'certificate.read',
       {
         certificateId: certificateId,
@@ -112,8 +117,8 @@ export class CertificateDetails {
     const { certificateURI, certificateId } = parameters;
     return this.getCertificateContentFromRPC(parameters)
       .catch(err => {
-        console.error(`# ${certificateId} # Impossible to fetch content from RPC server`);
-        console.error(`# ${certificateId} # Fallback to simple http call`);
+        console.error(`# ${certificateId} # Impossible to fetch content from RPC server ${certificateURI}`);
+        console.error(`# ${certificateId} # Fallback to simple http call ${certificateURI}`);
 
         return this.getCertificateContentFromHttp(parameters.certificateURI);
       })
@@ -136,37 +141,38 @@ export class CertificateDetails {
         passphrase?:string,
         query:ConsolidatedCertificateRequest}
   ) => {
-    const { certificateId, passphrase, query } = parameters;
+    const { certificateId, passphrase } = parameters;
+
+    const generateProof = () => {
+      if (passphrase) {
+        const temporaryWallet = this.configurationService.walletFactory()
+          .fromPassPhrase(passphrase);
+        return this.utils.signProof(
+          JSON.stringify({
+            certificateId: certificateId,
+            timestamp: new Date()
+          }),
+          temporaryWallet.privateKey
+        );
+      } else {
+        return this.utils.signProof(
+          JSON.stringify({
+            certificateId: certificateId,
+            timestamp: new Date()
+          }),
+          this.walletService.privateKey
+        );
+      }
+    };
 
     const tokenURI = await this.contractService.smartAssetContract.methods
       .tokenURI(certificateId.toString())
       .call();
-    let proof;
-
-    if (passphrase) {
-      const temporaryWallet = this.configurationService.walletFactory()
-        .fromPassPhrase(passphrase);
-      proof = this.utils.signProof(
-        JSON.stringify({
-          certificateId: certificateId,
-          timestamp: new Date()
-        }),
-        temporaryWallet.privateKey
-      );
-    } else {
-      proof = this.utils.signProof(
-        JSON.stringify({
-          certificateId: certificateId,
-          timestamp: new Date()
-        }),
-        this.walletService.privateKey
-      );
-    }
 
     const certificateContentData: any = await this.getContent(
       {
         ...parameters,
-        proof,
+        proof: generateProof(),
         certificateURI: tokenURI
       }
     );
