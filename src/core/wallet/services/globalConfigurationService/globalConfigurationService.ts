@@ -26,7 +26,12 @@ export class GlobalConfigurationService {
         return Object.keys(this.defaultQuery)
           .reduce((acc, currKey) => {
             const value = query[currKey];
-            if (value === undefined || value === false) {
+            if (currKey === 'advanced') {
+              acc[currKey] = {
+                ...this.defaultQuery.advanced,
+                ...query.advanced
+              };
+            } else if (value === undefined || value === false) {
             // not fetching at all
               acc[currKey] = false;
             } else if (value === true) {
