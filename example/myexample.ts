@@ -4,9 +4,19 @@ import { ArianeeCertificatei18n } from '../src/models/jsonSchema/certificates/Ar
 import { ArianeeBrandIdentityi18n } from '../src/models/jsonSchema/identities/ArianeeBrandIdentityi18n';
 
 (async function () {
-  const arianee = await new Arianee().init(NETWORK.testnet);
+  const arianee = await new Arianee().init(NETWORK.arianeeTestnet);
 
   const wallet = arianee.fromRandomMnemonic();
+  const certificateId = 1;
+  const passphrase = 'cert1passphrase';
 
-  const e = await wallet.methods.getCertificate<ArianeeCertificatei18n, ArianeeBrandIdentityi18n>(522425, 'z2s1gdbc8uptp', { content: true, advanced: { languages: ['fr'] } });
+  const certificateSummary = await wallet.methods.getCertificate(certificateId, passphrase, { content: true });
+  console.log('got');
+  await wallet.methods.storeContentInRPCServer(certificateId, certificateSummary.content.data, 'http://localhost:3000/rpc');
+  console.log('stored');
+
+  const wallet2 = arianee.fromRandomMnemonic();
+  const summar = await wallet2.methods.getCertificate(certificateId, passphrase, { content: true, issuer: { rpcURI: 'http://localhost:3000/rpc' } });
+
+  console.log(summar.content.data);
 })();

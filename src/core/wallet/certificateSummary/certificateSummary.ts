@@ -97,6 +97,7 @@ export interface CertificateSummary<CertificateType=any, IdentityType=any> {
 export interface ConsolidatedIssuerRequestInterface {
   waitingIdentity?: boolean;
   forceRefresh?:boolean;
+  rpcURI?:string
 }
 
 export type ConsolidatedIssuerRequest = ConsolidatedIssuerRequestInterface | boolean;
