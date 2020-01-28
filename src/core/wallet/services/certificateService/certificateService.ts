@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import { injectable } from 'tsyringe';
 import { isNullOrUndefined } from 'util';
 import { BlockchainEvent } from '../../../../models/blockchainEvent';
@@ -11,11 +12,7 @@ import { isCertificateI18n } from '../../../libs/certificateVersion';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { sortEvents } from '../../../libs/sortEvents';
 import { CertificateSummaryBuilder } from '../../certificateSummary';
-import {
-  CertificateContentContainer,
-  CertificateSummary,
-  ConsolidatedCertificateRequest
-} from '../../certificateSummary/certificateSummary';
+import { CertificateSummary, ConsolidatedCertificateRequest } from '../../certificateSummary/certificateSummary';
 import { CertificateAuthorizationService } from '../certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateDetails } from '../certificateDetailsService/certificatesDetailsService';
 import { ConfigurationService } from '../configurationService/configurationService';
@@ -254,7 +251,9 @@ export class CertificateService {
 
     const summary = response.build();
 
-    if (query.advanced && query.advanced.languages && isCertificateI18n(summary.content.data)) {
+    if (query.advanced && query.advanced.languages &&
+        get(summary, 'content.data') &&
+        isCertificateI18n(summary.content.data)) {
       return replaceLanguage(summary, query.advanced.languages) as any;
     } else {
       return summary;
