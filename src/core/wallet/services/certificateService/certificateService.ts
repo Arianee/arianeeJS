@@ -453,7 +453,7 @@ export class CertificateService {
       return {
         isTrue: false,
         code: 'proof.token.notowner',
-        message: 'token proof does not match',
+        message: 'token proof is too old',
         timestamp: blockTimestamp * 1000
       };
     }
