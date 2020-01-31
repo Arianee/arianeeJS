@@ -25,6 +25,7 @@
         "jest"
     ],
     "rules": {
+        "prefer-promise-reject-errors": "off",
         "no-unused-vars": "off",
         "handle-callback-err": "off",
         "node/no-deprecated-api":"off",

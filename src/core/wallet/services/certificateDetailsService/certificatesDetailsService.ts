@@ -89,7 +89,7 @@ export class CertificateDetails {
       })
         .then(d => {
           if (d.data === undefined) {
-            console.error(`# ${parameters.certificateURI} # failing to retrieve identity`);
+            console.warn(`# ${parameters.certificateURI} # failing to retrieve identity`);
           };
           return d;
         });
@@ -117,8 +117,8 @@ export class CertificateDetails {
     const { certificateURI, certificateId } = parameters;
     return this.getCertificateContentFromRPC(parameters)
       .catch(err => {
-        console.error(`# ${certificateId} # Impossible to fetch content from RPC server ${certificateURI}`);
-        console.error(`# ${certificateId} # Fallback to simple http call ${certificateURI}`);
+        console.warn(`# ${certificateId} # Impossible to fetch content from RPC server`);
+        console.warn(`# ${certificateId} # Fallback to simple http call ${certificateURI}`);
 
         return this.getCertificateContentFromHttp(parameters.certificateURI);
       })

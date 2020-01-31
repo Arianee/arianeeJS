@@ -25,13 +25,12 @@ export class IdentityService {
 
   public getSimpleIdentity = async (address: string, issuerQuery?:ConsolidatedIssuerRequest): Promise<IdentitySummary> => {
     let query;
-    if(issuerQuery){
+    if (issuerQuery) {
       query = this.globalConfigurationService.getMergedQuery({ issuer: issuerQuery });
-    }
-    else{
+    } else {
       query = this.globalConfigurationService.getMergedQuery();
     }
-    
+
     const { issuer } = query;
 
     const { forceRefresh, waitingIdentity } = issuer as ConsolidatedIssuerRequestInterface;
@@ -53,10 +52,12 @@ export class IdentityService {
 
     const { forceRefresh, waitingIdentity } = issuer as ConsolidatedIssuerRequestInterface;
     if (!waitingIdentity) {
-      return this.store.get<IdentitySummary>(StoreNamespace.identity, address, () => this.fetchIdentity(address), forceRefresh);
+      return this.store.get<IdentitySummary>(StoreNamespace.identity, address, () => this.fetchIdentity(address), forceRefresh)
+        .catch(d => d);
     } else {
       console.warn('you are fetching waiting identity');
-      return this.store.get<IdentitySummary>(StoreNamespace.identityWaiting, address, () => this.fetchWaitingIdentity(address), forceRefresh);
+      return this.store.get<IdentitySummary>(StoreNamespace.identityWaiting, address, () => this.fetchWaitingIdentity(address), forceRefresh)
+        .catch(d => d);
     }
   }
 
@@ -67,44 +68,47 @@ export class IdentityService {
      * @return Promise{IdentitySummary}
      */
   private fetchWaitingIdentity = async (address: string): Promise<IdentitySummary> => {
-    const identityURI = await this.contractService.identityContract.methods
-      .waitingURI(address)
-      .call();
-
-    if (identityURI) {
-      const identityContentData = await this.httpClient.fetch(
-        identityURI
-      );
-
-      const identityContentSchema = await this.httpClient.fetch(
-        identityContentData.$schema
-      );
-
-      const hash = await this.utils.cert(
-        identityContentSchema,
-        identityContentData
-      );
-
-      const imprint = await this.contractService.identityContract.methods
-        .waitingImprint(address)
+    try {
+      const identityURI = await this.contractService.identityContract.methods
+        .waitingURI(address)
         .call();
 
-      const isAuthentic = imprint === hash;
+      if (identityURI) {
+        const identityContentData = await this.httpClient.fetch(
+          identityURI
+        );
 
-      const isApproved = await this.contractService.identityContract.methods
-        .addressIsApproved(address)
-        .call();
+        const identityContentSchema = await this.httpClient.fetch(
+          identityContentData.$schema
+        );
 
-      return Promise.resolve({
-        data: identityContentData,
-        isAuthentic: isAuthentic,
-        isApproved,
-        imprint,
-        address
-      });
-    } else {
-      return this.fetchIdentity(address);
+        const hash = await this.utils.cert(
+          identityContentSchema,
+          identityContentData
+        );
+
+        const imprint = await this.contractService.identityContract.methods
+          .waitingImprint(address)
+          .call();
+
+        const isAuthentic = imprint === hash;
+
+        const isApproved = await this.contractService.identityContract.methods
+          .addressIsApproved(address)
+          .call();
+
+        return Promise.resolve({
+          data: identityContentData,
+          isAuthentic: isAuthentic,
+          isApproved,
+          imprint,
+          address
+        });
+      }
+    } catch {
+      console.warn(`# ${address} # does not have waiting identity uri or identity`);
     }
+    return this.fetchIdentity(address);
   }
 
   /**
@@ -114,49 +118,51 @@ export class IdentityService {
    * @return Promise{IdentitySummary}
    */
   private fetchIdentity = async (address: string): Promise<IdentitySummary> => {
-    const identityURI = await this.contractService.identityContract.methods
-      .addressURI(address)
-      .call();
-
-    if (identityURI) {
-      const identityContentData = await this.httpClient.fetch(
-        identityURI
-      );
-
-      const identityContentSchema = await this.httpClient.fetch(
-        identityContentData.$schema
-      );
-
-      const hash = await this.utils.cert(
-        identityContentSchema,
-        identityContentData
-      );
-
-      const imprint = await this.contractService.identityContract.methods
-        .addressImprint(address)
+    try {
+      const identityURI = await this.contractService.identityContract.methods
+        .addressURI(address)
         .call();
 
-      const isAuthentic = imprint === hash;
-      const isApproved = await this.contractService.identityContract.methods
-        .addressIsApproved(address)
-        .call();
+      if (identityURI) {
+        const identityContentData = await this.httpClient.fetch(
+          identityURI
+        );
 
-      return Promise.resolve({
-        data: identityContentData,
-        isAuthentic: isAuthentic,
-        isApproved,
-        imprint,
-        address
-      });
-    } else {
-      console.error(`# ${address} # does not has identity uri or identity`);
-      return Promise.resolve({
-        data: undefined,
-        isAuthentic: false,
-        isApproved: false,
-        imprint: undefined,
-        address
-      });
+        const identityContentSchema = await this.httpClient.fetch(
+          identityContentData.$schema
+        );
+
+        const hash = await this.utils.cert(
+          identityContentSchema,
+          identityContentData
+        );
+        const imprint = await this.contractService.identityContract.methods
+          .addressImprint(address)
+          .call();
+
+        const isAuthentic = imprint === hash;
+        const isApproved = await this.contractService.identityContract.methods
+          .addressIsApproved(address)
+          .call();
+
+        return Promise.resolve({
+          data: identityContentData,
+          isAuthentic: isAuthentic,
+          isApproved,
+          imprint,
+          address
+        });
+      }
+    } catch (e) {
+      console.warn(`# ${address} # does not have identity uri or identity`);
     }
+
+    return Promise.reject({
+      data: undefined,
+      isAuthentic: false,
+      isApproved: false,
+      imprint: undefined,
+      address
+    });
   }
 }
