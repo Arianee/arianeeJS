@@ -78,7 +78,6 @@ public arianeeSignMetamask (transaction): Promise<any> {
     const defaultTransaction = {
       from: this.walletService.publicKey
     };
-
     const mergedTransaction = { ...defaultTransaction, ...transaction };
 
     return data.call(mergedTransaction);

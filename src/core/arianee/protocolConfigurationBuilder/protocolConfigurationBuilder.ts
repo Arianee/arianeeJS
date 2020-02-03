@@ -1,6 +1,7 @@
 import { isNullOrUndefined } from 'util';
 import { ArianeeConfig } from '../../../models/arianeeConfiguration';
 import { ArianeeWalletBuilder } from '../../wallet/walletBuilder';
+import { provider } from 'web3-core';
 
 export class ProtocolConfigurationBuilder {
   private config: ArianeeConfig = {
@@ -12,7 +13,7 @@ export class ProtocolConfigurationBuilder {
     whitelist: { abi: undefined, address: undefined },
     eventArianee: { abi: undefined, address: undefined },
     smartAsset: { abi: undefined, address: undefined },
-    provider: undefined,
+    web3Provider: undefined,
     chainId: undefined,
     faucetUrl: undefined,
     deepLink: undefined,
@@ -41,8 +42,8 @@ export class ProtocolConfigurationBuilder {
     return this;
   }
 
-  public setWeb3HttpProvider (provider: string, chainId: number) {
-    this.config.provider = provider;
+  public setWeb3HttpProvider (provider: provider, chainId: number) {
+    this.config.web3Provider = provider;
     this.config.chainId = chainId;
 
     return this;
@@ -73,7 +74,8 @@ export class ProtocolConfigurationBuilder {
   }
 
   public isReadyForBuild (): { missingProperties: string[]; isValid: boolean } {
-    const properties = ['provider', 'chainId'];
+    const properties = ['web3Provider', 'chainId'];
+
     const missingProperties = properties.filter(property =>
       isNullOrUndefined(this.config[property])
     );

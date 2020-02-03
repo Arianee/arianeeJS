@@ -1,22 +1,15 @@
+import Web3 from 'web3';
 import { Arianee, NETWORK } from '../src';
-import { ArianeeCertificate } from '../src/models/jsonSchema/certificates/ArianeeAsset';
-import { ArianeeCertificatei18n } from '../src/models/jsonSchema/certificates/ArianeeProducti18n';
-import { ArianeeBrandIdentityi18n } from '../src/models/jsonSchema/identities/ArianeeBrandIdentityi18n';
 
 (async function () {
-  const arianee = await new Arianee().init(NETWORK.arianeeTestnet);
+  var options = { headers: [{ name: 'apikey', value: 'REPLACE BY API KEYS' }] };
+  var web3Provider = new Web3.providers.HttpProvider('https://api.rockside.io/ethereum/poanetwork/jsonrpc', options);
 
-  const wallet = arianee.fromRandomMnemonic();
-  const certificateId = 1;
-  const passphrase = 'cert1passphrase';
+  console.time('label');
+  const arianee = await new Arianee().init(NETWORK.mainnet);
 
-  const certificateSummary = await wallet.methods.getCertificate(certificateId, passphrase, { content: true });
-  console.log('got');
-  await wallet.methods.storeContentInRPCServer(certificateId, certificateSummary.content.data, 'http://localhost:3000/rpc');
-  console.log('stored');
+  const wallet = arianee.fromMnemonic('Latin math normal cargo divert brick mechanic occur find thunder click travel');
 
-  const wallet2 = arianee.fromRandomMnemonic();
-  const summar = await wallet2.methods.getCertificate(certificateId, passphrase, { content: true, issuer: { rpcURI: 'http://localhost:3000/rpc' } });
-
-  console.log(summar.content.data);
+  const certificateSummary = await wallet.methods.getMyCertificates({ content: true, issuer: true });
+  console.timeEnd('label');
 })();

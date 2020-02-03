@@ -5,7 +5,7 @@ import { ConfigurationService } from '../configurationService/configurationServi
 @injectable()
 export class Web3Service {
   constructor (private configurationService: ConfigurationService) {
-    this.web3 = new Web3(configurationService.arianeeConfiguration.provider);
+    this.web3 = new Web3(configurationService.arianeeConfiguration.web3Provider);
   }
 
     public web3: any;

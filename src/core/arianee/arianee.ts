@@ -1,4 +1,6 @@
 import { container } from 'tsyringe';
+import Web3 from 'web3';
+import { provider } from 'web3-core';
 import * as conf from '../../configurations';
 import { NETWORK, networkURL } from '../../models/networkConfiguration';
 import { ArianeeHttpClient } from '../libs/arianeeHttpClient/arianeeHttpClient';
@@ -19,7 +21,8 @@ export class Arianee {
     networkName: NETWORK = NETWORK.testnet,
     arianeeCustomConfiguration:{
       walletReward?: { address: string },
-      brandDataHubReward?: { address: string }
+      brandDataHubReward?: { address: string },
+      httpProvider?:provider,
     } = {}
   ): Promise<ArianeeWalletBuilder> {
     const url = networkURL[networkName];
@@ -46,8 +49,21 @@ export class Arianee {
     protocolConfigurationBuilder.setDeepLink(deepLink);
     protocolConfigurationBuilder.setFaucetUrl(faucetUrl);
 
+    const httpProvider = (function () {
+      if (arianeeCustomConfiguration.httpProvider) {
+        return arianeeCustomConfiguration.httpProvider;
+      } else {
+        if (typeof addressesResult.httpProvider === 'string') {
+          return addressesResult.httpProvider;
+        } else {
+          const HttpProviderConstructor:any = Web3.providers.HttpProvider as any;
+          return new HttpProviderConstructor(...addressesResult.httpProvider);
+        }
+      }
+    })();
+
     protocolConfigurationBuilder.setWeb3HttpProvider(
-      addressesResult.httpProvider,
+      httpProvider,
       addressesResult.chainId
     );
 

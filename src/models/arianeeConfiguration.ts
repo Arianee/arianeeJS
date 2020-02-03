@@ -1,3 +1,5 @@
+import { provider } from 'web3-core';
+
 interface ContractConfiguration {
   abi: string;
   address: string;
@@ -14,7 +16,7 @@ export interface ArianeeConfig {
   store: ContractConfiguration;
   whitelist: ContractConfiguration;
 
-  provider: string;
+  web3Provider: provider;
   chainId: number;
   faucetUrl: string;
   walletReward: { address: string };
