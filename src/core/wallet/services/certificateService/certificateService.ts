@@ -470,4 +470,13 @@ export class CertificateService {
     certificateId: number,
     passphrase: string
   ) => this.customRequestTokenFactory(certificateId, passphrase).send();
+
+  public destroyCertificate =(certificateId:CertificateId):Promise<any> => {
+    return this.contractService.smartAssetContract.methods
+      .transferFrom(
+        this.walletService.publicKey,
+        '0x000000000000000000000000000000000000dead',
+        certificateId)
+      .send();
+  }
 }

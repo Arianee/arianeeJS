@@ -31,6 +31,7 @@ export class WalletCustomMethodService {
     return {
       createCertificate: this.certificateService.customHydrateToken,
       getCertificate: this.certificateService.getCertificate,
+      destroyCertificate: this.certificateService.destroyCertificate,
       getMyCertificates: this.certificateService.getMyCertificates,
       getMyCertificatesGroupByIssuer: this.certificateService.getMyCertificatesGroupByIssuer,
       getIdentity: this.identityService.getSimpleIdentity,

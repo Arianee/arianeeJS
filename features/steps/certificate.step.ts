@@ -155,6 +155,27 @@ Then('user{int} is the owner of the certificate{int}', async function (
   expect(wallet.publicKey).equals(owner);
 });
 
+Then('user{int} destroys certificate{int}', async function (
+  userIndex,
+  certificateIndex
+) {
+  const token = this.store.getToken(certificateIndex);
+  const wallet = this.store.getUserWallet(userIndex);
+
+  await wallet.methods.destroyCertificate(token);
+});
+
+Then('user{int} is not the owner of the certificate{int}', async function (
+  userIndex,
+  certificateIndex
+) {
+  const token = this.store.getToken(certificateIndex);
+  const wallet = this.store.getUserWallet(userIndex);
+
+  const owner = await wallet.contracts.smartAssetContract.methods.ownerOf(token).call();
+  expect(wallet.publicKey !== owner).to.be.true;
+});
+
 Then(
   'user{int} is the owner of the certificate{int} with uri {string}',
   async function (userIndex, tokenIndex, expectedUri) {
