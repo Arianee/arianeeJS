@@ -88,7 +88,7 @@ When(
 
     const hash = wallet.web3.utils.keccak256('ezofnzefon');
     try {
-      const { certificateId } = await wallet.methods.createCertificate({
+      const { certificateId, passphrase, deepLink } = await wallet.methods.createCertificate({
         uri: uri,
         hash,
         passphrase: password
@@ -97,6 +97,10 @@ When(
       await waitFor();
 
       this.store.storeToken(tokenIndex, certificateId);
+
+      expect(deepLink).to.be.not.undefined;
+      expect(certificateId).to.be.not.undefined;
+      expect(deepLink).to.be.not.undefined;
 
       expect(true).equals(true);
     } catch (err) {

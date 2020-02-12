@@ -48,7 +48,12 @@ export class CertificateService {
     tokenRecoveryTimestamp?: number | number;
     sameRequestOwnershipPassphrase?: boolean;
     content?: { $schema: string;[key: string]: any };
-  }): Promise<any> => {
+  }): Promise<{
+    [key:string]:any;
+    passphrase:string;
+    certificateId: CertificateId;
+    deepLink:string
+  }> => {
     let {
       uri,
       hash,
@@ -108,7 +113,8 @@ export class CertificateService {
       .then(i => ({
         ...(<any>i),
         passphrase,
-        certificateId: certificateId
+        certificateId: certificateId,
+        deepLink: this.utils.createLink(certificateId, passphrase)
       }));
   }
 
