@@ -114,7 +114,7 @@ export class CertificateService {
         ...(<any>i),
         passphrase,
         certificateId: certificateId,
-        deepLink: this.utils.createLink(certificateId, passphrase)
+        deepLink: this.utils.createLink(certificateId, passphrase).link
       }));
   }
 
