@@ -88,7 +88,7 @@ When(
 
     const hash = wallet.web3.utils.keccak256('ezofnzefon');
     try {
-      const { certificateId } = await wallet.methods.createCertificate({
+      const { certificateId, passphrase, deepLink } = await wallet.methods.createCertificate({
         uri: uri,
         hash,
         passphrase: password
@@ -97,6 +97,10 @@ When(
       await waitFor();
 
       this.store.storeToken(tokenIndex, certificateId);
+
+      expect(deepLink).to.be.not.undefined;
+      expect(certificateId).to.be.not.undefined;
+      expect(deepLink).to.be.not.undefined;
 
       expect(true).equals(true);
     } catch (err) {
@@ -153,6 +157,37 @@ Then('user{int} is the owner of the certificate{int}', async function (
 
   const owner = await wallet.contracts.smartAssetContract.methods.ownerOf(token).call();
   expect(wallet.publicKey).equals(owner);
+});
+
+Then('user{int} destroys certificate{int}', async function (
+  userIndex,
+  certificateIndex
+) {
+  const token = this.store.getToken(certificateIndex);
+  const wallet = this.store.getUserWallet(userIndex);
+
+  await wallet.methods.destroyCertificate(token);
+});
+
+Then('user{int} recovers certificate{int}', async function (
+  userIndex,
+  certificateIndex
+) {
+  const token = this.store.getToken(certificateIndex);
+  const wallet = this.store.getUserWallet(userIndex);
+
+  await wallet.methods.recoverCertificate(token);
+});
+
+Then('user{int} is not the owner of the certificate{int}', async function (
+  userIndex,
+  certificateIndex
+) {
+  const token = this.store.getToken(certificateIndex);
+  const wallet = this.store.getUserWallet(userIndex);
+
+  const owner = await wallet.contracts.smartAssetContract.methods.ownerOf(token).call();
+  expect(wallet.publicKey !== owner).to.be.true;
 });
 
 Then(

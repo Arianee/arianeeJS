@@ -48,7 +48,12 @@ export class CertificateService {
     tokenRecoveryTimestamp?: number | number;
     sameRequestOwnershipPassphrase?: boolean;
     content?: { $schema: string;[key: string]: any };
-  }): Promise<any> => {
+  }): Promise<{
+    [key:string]:any;
+    passphrase:string;
+    certificateId: CertificateId;
+    deepLink:string
+  }> => {
     let {
       uri,
       hash,
@@ -108,7 +113,8 @@ export class CertificateService {
       .then(i => ({
         ...(<any>i),
         passphrase,
-        certificateId: certificateId
+        certificateId: certificateId,
+        deepLink: this.utils.createLink(certificateId, passphrase)
       }));
   }
 
@@ -470,4 +476,19 @@ export class CertificateService {
     certificateId: number,
     passphrase: string
   ) => this.customRequestTokenFactory(certificateId, passphrase).send();
+
+  public destroyCertificate =(certificateId:CertificateId):Promise<any> => {
+    return this.contractService.smartAssetContract.methods
+      .transferFrom(
+        this.walletService.publicKey,
+        '0x000000000000000000000000000000000000dead',
+        certificateId)
+      .send();
+  }
+
+  public recoverCertificate =(certificateId:CertificateId):Promise<any> => {
+    return this.contractService.smartAssetContract.methods
+      .recoverTokenToIssuer(certificateId)
+      .send();
+  }
 }
