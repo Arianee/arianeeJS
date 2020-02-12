@@ -479,4 +479,10 @@ export class CertificateService {
         certificateId)
       .send();
   }
+
+  public recoverCertificate =(certificateId:CertificateId):Promise<any> => {
+    return this.contractService.smartAssetContract.methods
+      .recoverTokenToIssuer(certificateId)
+      .send();
+  }
 }

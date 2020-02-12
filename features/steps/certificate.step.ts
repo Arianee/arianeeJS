@@ -165,6 +165,16 @@ Then('user{int} destroys certificate{int}', async function (
   await wallet.methods.destroyCertificate(token);
 });
 
+Then('user{int} recovers certificate{int}', async function (
+  userIndex,
+  certificateIndex
+) {
+  const token = this.store.getToken(certificateIndex);
+  const wallet = this.store.getUserWallet(userIndex);
+
+  await wallet.methods.recoverCertificate(token);
+});
+
 Then('user{int} is not the owner of the certificate{int}', async function (
   userIndex,
   certificateIndex
