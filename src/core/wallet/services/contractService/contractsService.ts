@@ -59,7 +59,6 @@ export class ContractService {
       return new ArianeeContract<T>(
         contract,
         this.walletService,
-        this.configurationService,
         this.web3Service,
         this.poaAndAriaService,
         this.utilsService

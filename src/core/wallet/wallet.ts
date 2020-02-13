@@ -34,7 +34,8 @@ export class ArianeeWallet {
         WalletService,
         ArianeeEventEmitter,
         BlockchainEventWatcherService,
-        CertificateAuthorizationService);
+        CertificateAuthorizationService,
+        UtilsService);
 
       const walletService:WalletService = this.container.resolve(WalletService);
       const configService:ConfigurationService = this.container.resolve(ConfigurationService);
