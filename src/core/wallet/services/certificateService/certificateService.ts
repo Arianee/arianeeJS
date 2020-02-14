@@ -22,6 +22,9 @@ import { GlobalConfigurationService } from '../globalConfigurationService/global
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
+import { TransactionObject } from '@arianee/arianee-abi/types/types';
+import { hydrateTokenParameters } from '../../../../models/transaction-parameters';
+import { BatchService } from '../batchService/batchService';
 
 @injectable()
 export class CertificateService {
@@ -36,24 +39,12 @@ export class CertificateService {
     private web3Service: Web3Service,
     private certificateAuthorizationService:CertificateAuthorizationService,
     private globalConfiguration: GlobalConfigurationService,
-    private store:SimpleStore
+    private store:SimpleStore,
+    private batchService:BatchService
   ) {
   }
 
-  public customHydrateToken = async (data: {
-    uri: string;
-    hash?: string;
-    certificateId?: number;
-    passphrase?: string;
-    tokenRecoveryTimestamp?: number | number;
-    sameRequestOwnershipPassphrase?: boolean;
-    content?: { $schema: string;[key: string]: any };
-  }): Promise<{
-    [key:string]:any;
-    passphrase:string;
-    certificateId: CertificateId;
-    deepLink:string
-  }> => {
+  private prepareHydrateToken = async (data: hydrateTokenParameters):Promise<hydrateTokenParameters> => {
     let {
       uri,
       hash,
@@ -99,23 +90,66 @@ export class CertificateService {
       hash = await this.utils.cert(certificateSchema, content);
     }
 
+    return {
+      uri,
+      hash,
+      certificateId,
+      encryptedInitialKey: temporaryWallet.publicKey,
+      passphrase,
+      tokenRecoveryTimestamp,
+      sameRequestOwnershipPassphrase,
+      content
+    };
+  };
+
+  private hydrateTokenTranscation = (data:hydrateTokenParameters):TransactionObject<any> => {
+    const {
+      uri,
+      hash,
+      certificateId,
+      encryptedInitialKey,
+      tokenRecoveryTimestamp,
+      sameRequestOwnershipPassphrase
+    } = data;
+
     return this.contractService.storeContract.methods
       .hydrateToken(
         certificateId,
         hash,
         uri,
-        temporaryWallet.publicKey,
+        encryptedInitialKey,
         tokenRecoveryTimestamp,
         sameRequestOwnershipPassphrase,
         this.configurationService.arianeeConfiguration.brandDataHubReward.address
-      )
-      .send()
+      );
+  }
+
+  public customHydrateToken = async (data: hydrateTokenParameters): Promise<{
+    [key:string]:any;
+    passphrase:string;
+    certificateId: CertificateId;
+    deepLink:string
+  }> => {
+    const preparedData = await this.prepareHydrateToken(data);
+    const transcationObject = this.hydrateTokenTranscation(preparedData);
+
+    return transcationObject.send()
       .then(i => ({
         ...(<any>i),
-        passphrase,
-        certificateId: certificateId,
-        deepLink: this.utils.createLink(certificateId, passphrase).link
+        passphrase: preparedData.passphrase,
+        certificateId: preparedData.certificateId,
+        deepLink: this.utils.createLink(preparedData.certificateId, preparedData.passphrase)
       }));
+  }
+
+  public customHydrateTokenBatch = async (datas:hydrateTokenParameters[]) => {
+    datas.forEach(async (data) => {
+      const preparedData = await this.prepareHydrateToken(data);
+      const transcationObject = await this.hydrateTokenTranscation(preparedData);
+      this.batchService.addToBatch(transcationObject);
+    });
+
+    return this.batchService.executeBatch();
   }
 
   public storeContentInRPCServer =async (certificateId:CertificateId, content, url?:string) => {

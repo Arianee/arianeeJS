@@ -10,7 +10,8 @@ describe('UTILS', () => {
           deepLink: 'test.arian.ee'
         }
       };
-      const utils = new UtilsService(undefined, configurationServiceStub);
+
+      const utils = new UtilsService(undefined, configurationServiceStub, undefined);
 
       const certificateId = 1314;
       const passphrase = 'mypassaezfkzn';
@@ -30,7 +31,7 @@ describe('UTILS', () => {
           deepLink: 'test.arian.ee'
         }
       };
-      const utils = new UtilsService(undefined, configurationServiceStub);
+      const utils = new UtilsService(undefined, configurationServiceStub, undefined);
 
       const certificateId = 1314;
       const passphrase = 'mypassaezfkzn';
@@ -50,7 +51,7 @@ describe('UTILS', () => {
           deepLink: 'test.arian.ee'
         }
       };
-      const utils = new UtilsService(undefined, configurationServiceStub);
+      const utils = new UtilsService(undefined, configurationServiceStub, undefined);
 
       const certificateId = 1314;
       const passphrase = 'mypassaezfkzn';
@@ -75,7 +76,7 @@ describe('UTILS', () => {
 
       const supportedDeepLink = configurationService.supportedConfigurations[NETWORK.arianeeTestnet].deepLink;
 
-      const utils = new UtilsService(undefined, configurationService);
+      const utils = new UtilsService(undefined, configurationService, undefined);
 
       expect(utils.isRightChain(supportedDeepLink)).toBe(true);
     });
@@ -89,7 +90,7 @@ describe('UTILS', () => {
 
         const supportedDeepLink = configurationService.supportedConfigurations[NETWORK.mainnet].deepLink;
 
-        const utils = new UtilsService(undefined, configurationService);
+        const utils = new UtilsService(undefined, configurationService, undefined);
 
         try {
           utils.isRightChain(supportedDeepLink);
@@ -109,7 +110,7 @@ describe('UTILS', () => {
 
         const supportedDeepLink = configurationService.supportedConfigurations[NETWORK.mainnet].deepLink;
 
-        const utils = new UtilsService(undefined, configurationService);
+        const utils = new UtilsService(undefined, configurationService, undefined);
 
         try {
           utils.isRightChain('unsupportedHost');
@@ -124,7 +125,7 @@ describe('UTILS', () => {
   });
 
   describe('urlParse', () => {
-    const utils = new UtilsService(undefined, undefined);
+    const utils = new UtilsService(undefined, undefined, undefined);
 
     test('it should parse complicated url', () => {
       const myURL =
@@ -155,7 +156,7 @@ describe('UTILS', () => {
 
   describe('find chain from hostname', () => {
     const configurationService = new ConfigurationService();
-    const utils = new UtilsService(undefined, configurationService);
+    const utils = new UtilsService(undefined, configurationService, undefined);
 
     test('it find for existing network', () => {
       Object.keys(configurationService.supportedConfigurations)
@@ -173,7 +174,7 @@ describe('UTILS', () => {
   });
 
   describe('timestampIsMoreRecentThan', () => {
-    const utils = new UtilsService(undefined, undefined);
+    const utils = new UtilsService(undefined, undefined, undefined);
     test('it should return true if timestamp is recent', () => {
       const testTimestamp = Math.round((new Date().valueOf() - 3000) / 1000); // now - 3 secondes (in seconds)
       const isRecent = utils.timestampIsMoreRecentThan(testTimestamp, 300); // test if timestamp is > (now - 3 minutes)

@@ -1,12 +1,22 @@
 import { Cert } from '@0xcert/cert';
 import { singleton } from 'tsyringe';
-import { Sign } from 'web3-core';
+import { Sign, SignedTransaction } from 'web3-core';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { Web3Service } from '../web3Service/web3Service';
+
+import { WalletService } from '../walletService/walletService';
+import { BDHAPIService } from '../BDHAPIService/BDHAPIService';
 @singleton()
 export class UtilsService {
-  constructor (private web3Service: Web3Service, private configurationService: ConfigurationService) {
+  constructor (
+    private web3Service: Web3Service,
+    private configurationService: ConfigurationService,
+    private walletService: WalletService
+  ) {
+    this.bdhVaultService = new BDHAPIService(walletService, this);
   }
+
+  private bdhVaultService:BDHAPIService;
 
   private get web3 () {
     return this.web3Service.web3;
@@ -176,5 +186,30 @@ export class UtilsService {
       blockNumber
     );
     return block.timestamp;
+  }
+
+  public async signTransaction (encodeABI, contractAddress, overrideNonce?, transaction?):Promise<SignedTransaction> {
+    const nonce = overrideNonce || await this.web3.eth.getTransactionCount(
+      this.walletService.publicKey,
+      'pending'
+    );
+
+    const defaultTransaction = {
+      nonce,
+      chainId: this.configurationService.arianeeConfiguration.chainId,
+      from: this.walletService.publicKey,
+      data: encodeABI,
+      to: contractAddress,
+      gas: 2000000,
+      gasPrice: this.web3.utils.toWei('1', 'gwei')
+    };
+
+    const mergedTransaction = { ...defaultTransaction, ...transaction };
+
+    const signTransaction:Promise<any> = this.walletService.isBdhVault()
+      ? this.bdhVaultService.signTransaction(mergedTransaction)
+      : this.walletService.account.signTransaction(mergedTransaction);
+
+    return signTransaction;
   }
 }
