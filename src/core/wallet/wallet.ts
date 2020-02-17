@@ -11,6 +11,7 @@ import { UtilsService } from './services/utilService/utilsService';
 import { WalletCustomMethodService } from './services/walletCustomMethodService/walletCustomMethodService';
 import { WalletService } from './services/walletService/walletService';
 import { Web3Service } from './services/web3Service/web3Service';
+import { BatchService } from './services/batchService/batchService';
 import EventEmitter = require('eventemitter3');
 
 export interface ClassicConfiguration{
@@ -35,7 +36,8 @@ export class ArianeeWallet {
         ArianeeEventEmitter,
         BlockchainEventWatcherService,
         CertificateAuthorizationService,
-        UtilsService);
+        UtilsService,
+        BatchService);
 
       const walletService:WalletService = this.container.resolve(WalletService);
       const configService:ConfigurationService = this.container.resolve(ConfigurationService);

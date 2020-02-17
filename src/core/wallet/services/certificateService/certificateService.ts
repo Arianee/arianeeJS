@@ -144,9 +144,11 @@ export class CertificateService {
 
   public customHydrateTokenBatch = async (datas:hydrateTokenParameters[]) => {
     datas.forEach(async (data) => {
-      const preparedData = await this.prepareHydrateToken(data);
-      const transcationObject = await this.hydrateTokenTranscation(preparedData);
-      this.batchService.addToBatch(transcationObject);
+      if (data) {
+        const preparedData = await this.prepareHydrateToken(data);
+        const transcationObject = await this.hydrateTokenTranscation(preparedData);
+        this.batchService.addToBatch(transcationObject);
+      }
     });
 
     return this.batchService.executeBatch();
