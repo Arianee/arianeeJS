@@ -1,6 +1,6 @@
 {
   "name": "@arianee/arianeejs",
-  "version": "0.43.0",
+  "version": "1.0.0",
   "main": "dist/src/index.js",
   "browser": "dist/src/index.js",
   "unpkg": "browser/bundle.js",
@@ -54,7 +54,7 @@
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "gitool": "^1.7.0",
+    "gitool": "^1.13.0",
     "jest": "^24.1.0",
     "node-fetch-polyfill": "^2.0.6",
     "nodemon": "^1.19.1",

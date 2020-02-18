@@ -6,7 +6,7 @@
 
 ## Getting Started
 
-The full doc is avalaible here: https://docs.arianee.org/docs/ArianeeJS
+The full doc is avalaible here: https://docs.arianee.org/docs/arianee-js
  
 ### Get ready : installation
   
@@ -30,7 +30,6 @@ import { Arianee } from '@arianee/arianeejs'
   const wallet = arianee.fromRandomKey();
 
 // Request POA and Aria and approves store to make transaction on blockchain
-
   await wallet.requestPoa();
   await wallet.requestAria();
 
