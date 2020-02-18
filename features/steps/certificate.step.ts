@@ -54,6 +54,16 @@ When('user{int} can make different request on certificate{int}', async function 
   await Promise.all(queryToTest.map(query => verify(query)));
 });
 
+Then(
+  'user{int} certificates balance is {int}',
+  async function (userIndex, expectedBalance) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const balance = await wallet.contracts.smartAssetContract.methods.balanceOf(wallet.publicKey).call() as any;
+
+    expect(parseInt(balance)).equals(expectedBalance);
+  }
+);
+
 When(
   'user{int} creates a new certificate{int} with uri {string}',
   { timeout: 45000 },
@@ -74,6 +84,24 @@ When(
       expect(true).equals(true);
     } catch (err) {
       console.error('ERROR');
+      expect(true).equals(false);
+    }
+  }
+);
+
+When(
+  'user{int} creates {int} new certificate in batch',
+  async function (userIndex, certNb) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const cert = [];
+    for (let i = 0; i < certNb; i++) {
+      cert.push({ uri: '', content: { $schema: 'https://cert.arianee.org/version1/ArianeeAsset.json', name: 'test batch' } });
+    }
+    try {
+      await wallet.methods.createCertificatesBatch(cert);
+      expect(true).equals(true);
+    } catch (err) {
+      console.error('ERROR', err);
       expect(true).equals(false);
     }
   }

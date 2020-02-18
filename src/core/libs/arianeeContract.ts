@@ -1,12 +1,12 @@
-import {TransactionObject} from '@arianee/arianee-abi/types/types';
-import {injectable} from 'tsyringe';
-import {Transaction} from 'web3-core';
-import {Contract} from 'web3-eth-contract';
-import {POAAndAriaService} from '../wallet/services/POAAndAriaFaucet/POAAndAriaService';
-import {UtilsService} from '../wallet/services/utilService/utilsService';
-import {WalletService} from '../wallet/services/walletService/walletService';
-import {Web3Service} from '../wallet/services/web3Service/web3Service';
-import {flatPromise} from './flat-promise';
+import { TransactionObject } from '@arianee/arianee-abi/types/types';
+import { injectable } from 'tsyringe';
+import { Transaction } from 'web3-core';
+import { Contract } from 'web3-eth-contract';
+import { POAAndAriaService } from '../wallet/services/POAAndAriaFaucet/POAAndAriaService';
+import { UtilsService } from '../wallet/services/utilService/utilsService';
+import { WalletService } from '../wallet/services/walletService/walletService';
+import { Web3Service } from '../wallet/services/web3Service/web3Service';
+import { flatPromise } from './flat-promise';
 
 @injectable()
 export class ArianeeContract<ContractImplementation extends Contract> {
