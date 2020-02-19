@@ -1,5 +1,4 @@
 import { Arianee, NETWORK } from '../src';
-import { Transaction } from 'ethers/utils';
 import { hydrateTokenParameters } from '../src/models/transaction-parameters';
 
 (async function () {
