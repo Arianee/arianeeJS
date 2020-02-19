@@ -20,12 +20,12 @@ const httpMock = {
 };
 jest.mock('../libs/arianeeHttpClient/arianeeHttpClient', () => ({
   ArianeeHttpClient: class ArianeeHttpClientStub {
-    public fetch = ArianeeHttpClientStub.fetch;
+        public fetch = ArianeeHttpClientStub.fetch;
 
-    public static fetch = url => {
-      myFetchMock(url);
-      return Promise.resolve(httpMock);
-    };
+        public static fetch = url => {
+          myFetchMock(url);
+          return Promise.resolve(httpMock);
+        };
   }
 }));
 
@@ -147,6 +147,41 @@ describe('Arianee', () => {
         const wallet = arianee.fromPassPhrase(passphrase);
         expect(wallet.publicKey).toBe(publicKey);
         expect(wallet.privateKey).toBe(privateKey);
+      });
+    });
+  });
+
+  describe('What is a valid private key', () => {
+    describe('from passphrase', () => {
+      test('should be accepted private key', async (done) => {
+        const privateKey = '0x0000000000000000000000000000000000000000000070617373706872617365';
+        const arianee = await new Arianee().init(NETWORK.testnet);
+        try {
+          arianee.fromPrivateKey(privateKey);
+          done();
+        } catch (e) {
+          expect(false).toBeTruthy();
+        }
+      });
+
+      test('should be not accepted private key if not oX', async (done) => {
+        const privateKey = '0000000000000000000000000000000000000000000070617373706872617365';
+        const arianee = await new Arianee().init(NETWORK.testnet);
+        try {
+          arianee.fromPrivateKey(privateKey);
+        } catch (e) {
+          done();
+        }
+      });
+      test('should be not accepted private key if not 64/66 chars', async (done) => {
+        const privateKey = '0x0000000000000070617373706872617365';
+        const arianee = await new Arianee().init(NETWORK.testnet);
+        try {
+          arianee.fromPrivateKey(privateKey);
+        } catch (e) {
+          console.log('here');
+          done();
+        }
       });
     });
   });

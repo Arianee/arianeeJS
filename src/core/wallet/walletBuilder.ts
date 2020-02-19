@@ -1,6 +1,7 @@
 import { ethers, Wallet as etherWallet } from 'ethers';
 import { container } from 'tsyringe';
 import { ArianeeConfig } from '../../models/arianeeConfiguration';
+import { isPrivateKeyValid } from '../libs/isPrivateKeyValid';
 import { ConfigurationService } from './services/configurationService/configurationService';
 import { Web3Service } from './services/web3Service/web3Service';
 import { ArianeeWallet, ClassicConfiguration } from './wallet';
@@ -74,6 +75,9 @@ export class ArianeeWalletBuilder {
    * @param bdHVaultURL
    */
   public fromPrivateKey (privateKey: string): ArianeeWallet {
+    if (!isPrivateKeyValid(privateKey)) {
+      throw new Error('privateKey should start with 0x and should be 0x+64 characters');
+    }
     const account = this.web3.eth.accounts.privateKeyToAccount(privateKey);
 
     return this.buildAriaWalletFrom({ account });
