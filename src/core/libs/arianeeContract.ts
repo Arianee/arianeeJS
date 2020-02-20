@@ -95,10 +95,9 @@ export class ArianeeContract<ContractImplementation extends Contract> {
     return new Promise((resolve, reject) => {
       this.web3Service.web3.eth
         .sendSignedTransaction(result.rawTransaction)
-        .on('confirmation', (confirmationNumber, receipt) => {
+        .once('receipt', (receipt) => {
           resolve({
             result,
-            confirmationNumber,
             receipt
           });
         });
