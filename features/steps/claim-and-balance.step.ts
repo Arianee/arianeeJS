@@ -26,6 +26,13 @@ When('user{int} buys {int} credit of type {word}', async function (userIndex, qu
   await wallet.methods.buyCredits(creditType, quantity, wallet.publicKey);
 });
 
+When('user{int} has credit of type {word} balance of {int}', async function (userIndex, creditType, quantity) {
+  const wallet = this.store.getUserWallet(userIndex);
+
+  const balance = await wallet.methods.balanceOfCredit(creditType, wallet.publicKey);
+  expect(balance).equals(quantity.toString());
+});
+
 Then('user{int} has postive Aria balance', async function (userIndex) {
   const wallet = this.store.getUserWallet(userIndex);
 

@@ -1,6 +1,5 @@
-import { AfterAll, Before, BeforeAll, setDefaultTimeout } from 'cucumber';
-import { NETWORK } from '../../src';
-import { Arianee } from '../../src/core/arianee';
+import { Before, BeforeAll, setDefaultTimeout } from 'cucumber';
+import { Arianee, NETWORK } from '../../src';
 import { CCStore } from './helpers/store';
 
 setDefaultTimeout(60 * 2 * 1000);
