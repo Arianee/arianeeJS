@@ -51,6 +51,7 @@ export class WalletCustomMethodService {
       balanceOfPoa: this.balanceOfPoa,
       approveStore: this.approveStore,
       buyCredits: this.buyCredits,
+      balanceOfCredit: this.balanceOfCredit,
 
       acceptArianeeEvent: this.eventService.acceptArianeeEvent,
       refuseArianeeEvent: this.eventService.refuseArianeeEvent,
@@ -60,6 +61,14 @@ export class WalletCustomMethodService {
       createArianeeEvent: this.eventService.createArianeeEvent,
       storeArianeeEvent: this.eventService.storeArianeeEventContentInRPCServer
     };
+  }
+
+  public balanceOfCredit = async (creditType:string, address = this.walletService.account.address): Promise<string> => {
+    if (!Object.prototype.hasOwnProperty.call(creditTypeEnum, creditType)) {
+      throw new Error('this credit type does not exist !!! ' + creditType);
+    }
+    const balance = await this.contractService.creditHistoryContract.methods.balanceOf(address, creditTypeEnum[creditType]).call();
+    return balance.toString();
   }
 
   public balanceOfAria = async (address = this.walletService.account.address): Promise<string> => {
