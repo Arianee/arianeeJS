@@ -95,6 +95,12 @@ export class ArianeeContract<ContractImplementation extends Contract> {
     return new Promise((resolve, reject) => {
       this.web3Service.web3.eth
         .sendSignedTransaction(result.rawTransaction)
+        .once('error', async (error, receipt) => {
+          reject({
+            receipt,
+            error
+          });
+        })
         .once('receipt', (receipt) => {
           resolve({
             result,
