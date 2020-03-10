@@ -5,7 +5,7 @@ Feature: Certificate owner can accept or refuse event
     Given user1 buys 1 credit of type event
 
     Given user2 with account from randomKey
-    Given user2 has positive credits of POA and ARIA
+    Given user2 requests credits of POA and ARIA
 
   Scenario: Brand can create event and user2 can accept it
     When user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase

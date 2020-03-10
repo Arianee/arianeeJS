@@ -133,6 +133,7 @@ When(
       expect(true).equals(true);
     } catch (err) {
       console.error('ERROR');
+      console.log(err);
       expect(true).equals(false);
     }
   }

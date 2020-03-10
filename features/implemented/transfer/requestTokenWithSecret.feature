@@ -4,10 +4,10 @@ Feature: Request token with Secret
     Given user1 buys 1 credit of type certificate
 
     Given user2 with account from randomKey
-    Given user2 has positive credits of POA and ARIA
+    Given user2 requests credits of POA and ARIA
 
     Given user3 with account from randomKey
-    Given user3 has positive credits of POA and ARIA
+    Given user3 requests credits of POA and ARIA
 
   Scenario: User can request token with Secret
     When user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase
