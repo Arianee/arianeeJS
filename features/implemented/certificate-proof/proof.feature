@@ -4,7 +4,7 @@ Feature: Create and read certificate proof
     Given user1 buys 1 credit of type certificate
 
     Given user2 with account from randomKey
-    Given user2 has positive credits of POA and ARIA
+    Given user2 requests credits of POA and ARIA
 
     Scenario: Owner can create a proof that can be check by user2
       When user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase

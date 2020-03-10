@@ -200,8 +200,8 @@ export class UtilsService {
       from: this.walletService.publicKey,
       data: encodeABI,
       to: contractAddress,
-      gas: 2000000,
-      gasPrice: this.web3.utils.toWei('1', 'gwei')
+      gas: this.configurationService.arianeeConfiguration.transactionOptions.gas,
+      gasPrice: this.configurationService.arianeeConfiguration.transactionOptions.gasPrice
     };
 
     const mergedTransaction = { ...defaultTransaction, ...transaction };

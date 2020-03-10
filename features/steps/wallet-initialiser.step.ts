@@ -65,7 +65,7 @@ Given('user{int} can retrieve its mnemonic', async function (userIndex) {
   expect(wallet.mnemnonic).to.not.be.undefined;
 });
 
-Given('user{int} has positive credits of POA and ARIA', async function (userIndex) {
+Given('user{int} requests credits of POA and ARIA', async function (userIndex) {
   const wallet: ArianeeWallet = this.store.getUserWallet(userIndex);
   await wallet.requestPoa();
 

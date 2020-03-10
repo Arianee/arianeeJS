@@ -4,7 +4,7 @@ Feature: Authorized users can get certificate's arianee events.
     Given user1 buys 1 credit of type certificate
 
     Given user2 with account from randomKey
-    Given user2 has positive credits of POA and ARIA
+    Given user2 requests credits of POA and ARIA
 
   Scenario: Brand can create event and user2 can read it with passphrase
     When user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase

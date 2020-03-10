@@ -1,4 +1,5 @@
 import appConfigurations from '../../configurations/appConfigurations';
+import { TransactionOptions } from '../../models/arianeeConfiguration';
 import { NETWORK, networkURL } from '../../models/networkConfiguration';
 import { Arianee } from './arianee';
 
@@ -101,6 +102,27 @@ describe('Arianee', () => {
 
       const wallet = arianee.fromRandomKey();
       expect(wallet.configuration.walletReward).toEqual(walletReward);
+    });
+  });
+
+  describe('transactionOptions', () => {
+    test('should have a default setting 1111', async () => {
+      const arianee = await new Arianee()
+        .init(NETWORK.testnet);
+
+      const wallet = arianee.fromRandomKey();
+      expect(wallet.configuration.transactionOptions).toBeDefined();
+      expect(wallet.configuration.transactionOptions.gas).toBeDefined();
+      expect(wallet.configuration.transactionOptions.gasPrice).toBeDefined();
+    });
+
+    test('should be setting custom transactionOptions', async () => {
+      const transactionOptions:TransactionOptions = { gasPrice: 2, gas: 1 };
+      const arianee = await new Arianee()
+        .init(NETWORK.testnet, { transactionOptions });
+
+      const wallet = arianee.fromRandomKey();
+      expect(wallet.configuration.transactionOptions).toEqual(transactionOptions);
     });
   });
 

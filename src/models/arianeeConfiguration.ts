@@ -6,6 +6,11 @@ interface ContractConfiguration {
 
 }
 
+export interface TransactionOptions {
+  gas: number,
+  gasPrice: any
+}
+
 export interface ArianeeConfig {
   aria: ContractConfiguration;
   creditHistory: ContractConfiguration;
@@ -22,4 +27,5 @@ export interface ArianeeConfig {
   walletReward: { address: string };
   brandDataHubReward: { address: string };
   deepLink: string;
+  transactionOptions?:TransactionOptions
 }

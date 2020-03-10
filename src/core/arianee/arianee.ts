@@ -2,13 +2,14 @@ import { container } from 'tsyringe';
 import Web3 from 'web3';
 import { provider } from 'web3-core';
 import * as conf from '../../configurations';
+import { ArianeeConfig, TransactionOptions } from '../../models/arianeeConfiguration';
 import { NETWORK, networkURL } from '../../models/networkConfiguration';
 import { ArianeeHttpClient } from '../libs/arianeeHttpClient/arianeeHttpClient';
 import { Store } from '../libs/simpleStore/store';
 import { ConsolidatedCertificateRequest } from '../wallet/certificateSummary/certificateSummary';
 import { GlobalConfigurationService } from '../wallet/services/globalConfigurationService/globalConfigurationService';
 import { ArianeeWalletBuilder } from '../wallet/walletBuilder';
-import { ProtocolConfigurationBuilder } from './protocolConfigurationBuilder/protocolConfigurationBuilder';
+import { get } from 'lodash';
 
 export class Arianee {
   public globalConfigurationService: GlobalConfigurationService;
@@ -23,22 +24,20 @@ export class Arianee {
       walletReward?: { address: string },
       brandDataHubReward?: { address: string },
       httpProvider?:provider,
+      transactionOptions?: TransactionOptions
     } = {}
   ): Promise<ArianeeWalletBuilder> {
     const url = networkURL[networkName];
 
-    const addressesResult = await ArianeeHttpClient.fetch(url).catch(err => console.error(`${url} not working`));
+    const arianeeConfiguration: ArianeeConfig = {
+    } as ArianeeConfig;
 
-    const protocolConfigurationBuilder = new ProtocolConfigurationBuilder();
+    const addressesResult = await ArianeeHttpClient.fetch(url).catch(err => console.error(`${url} not working`));
 
     Object.keys(addressesResult.contractAdresses).forEach(contractName => {
       const contractAddress = addressesResult.contractAdresses[contractName];
       try {
-        protocolConfigurationBuilder.setSmartContractConfiguration(
-          contractName,
-          conf[contractName],
-          contractAddress
-        );
+        arianeeConfiguration[contractName] = { abi: conf[contractName], address: contractAddress };
       } catch (e) {
         console.error(`this contract is not working ${contractName}`);
       }
@@ -46,10 +45,10 @@ export class Arianee {
 
     const { deepLink, faucetUrl } = conf.appConfig[networkName];
 
-    protocolConfigurationBuilder.setDeepLink(deepLink);
-    protocolConfigurationBuilder.setFaucetUrl(faucetUrl);
+    arianeeConfiguration.deepLink = deepLink;
+    arianeeConfiguration.faucetUrl = faucetUrl;
 
-    const httpProvider = (function () {
+    arianeeConfiguration.web3Provider = (function () {
       if (arianeeCustomConfiguration.httpProvider) {
         return arianeeCustomConfiguration.httpProvider;
       } else {
@@ -62,24 +61,25 @@ export class Arianee {
       }
     })();
 
-    protocolConfigurationBuilder.setWeb3HttpProvider(
-      httpProvider,
-      addressesResult.chainId
-    );
+    arianeeConfiguration.chainId = addressesResult.chainId;
 
-    if (arianeeCustomConfiguration.walletReward && arianeeCustomConfiguration.walletReward.address) {
-      protocolConfigurationBuilder.setWalletReward(arianeeCustomConfiguration.walletReward.address);
+    if (get(arianeeCustomConfiguration, 'transactionOptions')) {
+      arianeeConfiguration.transactionOptions = get(arianeeCustomConfiguration, 'transactionOptions');
     }
 
-    if (arianeeCustomConfiguration.brandDataHubReward && arianeeCustomConfiguration.brandDataHubReward.address) {
-      protocolConfigurationBuilder.setBrandDataHubReward(arianeeCustomConfiguration.brandDataHubReward.address);
+    if (get(arianeeCustomConfiguration, 'walletReward.address')) {
+      arianeeConfiguration.walletReward = arianeeCustomConfiguration.walletReward;
     }
 
-    return protocolConfigurationBuilder.build();
+    if (get(arianeeCustomConfiguration, 'brandDataHubReward.address')) {
+      arianeeConfiguration.brandDataHubReward = arianeeCustomConfiguration.brandDataHubReward;
+    }
+
+    return new ArianeeWalletBuilder(arianeeConfiguration);
   }
 
   /**
-   * @deprecated this method has been renamed init.
+   * @deprecated this method has been renamed setStore.
    */
   public setCache (storageObject: any)
     : Arianee {
