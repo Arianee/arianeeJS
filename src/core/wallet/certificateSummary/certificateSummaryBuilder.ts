@@ -1,14 +1,13 @@
-import { isNullOrUndefined } from 'util';
-import { WalletService } from '../services/walletService/walletService';
+import { isNullOrUndefined } from './../../libs/isNullOrUndefined';
 import {
   CertificateAdvanced,
   CertificateContent,
+  CertificateContentContainer,
   CertificateEvents,
   CertificateEventsSummary,
   CertificateIssuer,
   CertificateOwner,
-  CertificateSummary,
-  CertificateContentContainer
+  CertificateSummary
 } from './certificateSummary';
 
 export class CertificateSummaryBuilder {

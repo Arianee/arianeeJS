@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe';
-import { isNullOrUndefined } from 'util';
+import { isNullOrUndefined } from '../../../libs/isNullOrUndefined';
 import { blockchainEventsName } from '../../../../models/blockchainEventsName';
 import { CertificateId } from '../../../../models/CertificateId';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
@@ -232,6 +232,7 @@ export class EventService {
       !(contentImprint && content),
       'you should choose between contentImprint parameter and content contentImprint'
     );
+
     console.assert(
       !(isNullOrUndefined(contentImprint) && isNullOrUndefined(content)),
       'you should pass at least on parameter'
