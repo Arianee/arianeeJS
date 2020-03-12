@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { injectable } from 'tsyringe';
-import { isNullOrUndefined } from 'util';
+import { isNullOrUndefined } from '../../../libs/isNullOrUndefined';
 import { BlockchainEvent } from '../../../../models/blockchainEvent';
 import { blockchainEventsName } from '../../../../models/blockchainEventsName';
 import { CertificateId } from '../../../../models/CertificateId';
