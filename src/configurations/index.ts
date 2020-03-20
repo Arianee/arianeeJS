@@ -8,6 +8,7 @@ import smartAsset from '@arianee/arianee-abi/abi/js/ArianeeSmartAsset';
 import staking from '@arianee/arianee-abi/abi/js/ArianeeStaking';
 import store from '@arianee/arianee-abi/abi/js/ArianeeStore';
 import whitelist from '@arianee/arianee-abi/abi/js/ArianeeWhitelist';
+import lost from '@arianee/arianee-abi/abi/js/ArianeeLost';
 
 export {
   appConfig,
@@ -18,5 +19,6 @@ export {
   eventArianee,
   creditHistory,
   whitelist,
-  staking
+  staking,
+  lost
 };

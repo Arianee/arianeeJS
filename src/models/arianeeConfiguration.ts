@@ -20,6 +20,7 @@ export interface ArianeeConfig {
   staking: ContractConfiguration;
   store: ContractConfiguration;
   whitelist: ContractConfiguration;
+  lost:ContractConfiguration;
 
   web3Provider: provider;
   chainId: number;
