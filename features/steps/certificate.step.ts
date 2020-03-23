@@ -83,6 +83,7 @@ When(
 
       expect(true).equals(true);
     } catch (err) {
+        console.error(err)
       console.error('ERROR');
       expect(true).equals(false);
     }

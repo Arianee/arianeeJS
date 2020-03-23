@@ -1,28 +1,28 @@
+import { makeWalletReady } from '../features/steps/helpers/walletCreator';
 import { Arianee, NETWORK } from '../src';
+import { blockchainEventsName } from '../src/models/blockchainEventsName';
 
 (async function () {
-  const arianee = await new Arianee().init(NETWORK.arianeeTestnet, {
-    transactionOptions: {
-      gasPrice: 1000000000,
-      gas: 1000000000
-    }
-  });
+  const arianee = await new Arianee().init(NETWORK.testnet);
 
-  const wallet = arianee.fromRandomKey();
+  const wallet = arianee.fromMnemonic('autumn balcony range return enact educate firm glare then pool round message');
 
-  // await wallet.requestAria();
-  await wallet.requestAria();
-  const b = await wallet.methods.balanceOfAria();
-  console.log(b);
-  // await wallet.methods.approveStore();
-  // await wallet.methods.buyCredits('certificate', 100, wallet.publicKey);
+  const res = {
+    certificateId: 9818467,
+    passphrase: 'u948df0ohef0'
+  };
 
-  //  batch.execute();
+  let isLost = await wallet.contracts.lostContract.methods.isLost(9818467).call();
+  console.log(isLost);
 
-  /* wallet.web3.eth.sendSignedTransaction(transaction.c)
-    .on('transactionHash', console.log)
-    .on('confirmation', (confirmationNumber, receipt) => {
-      console.log('receipt', receipt);
-    })
-    .on('error', console.error); */
+  await wallet.contracts.lostContract.methods.setLost(9818467)
+    .send();
+  isLost = await wallet.contracts.lostContract.methods.isLost(9818467).call();
+  console.log(isLost);
+
+  await wallet.contracts.lostContract.methods.unsetLost(9818467)
+    .send();
+
+  isLost = await wallet.contracts.lostContract.methods.isLost(9818467).call();
+  console.log(isLost);
 })();

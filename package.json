@@ -8,7 +8,8 @@
     "start": "./node_modules/.bin/tsc --watch",
     "launch": "nodemon ./dist/example/myexample.js",
     "test:watch": "./node_modules/.bin/jest --watch",
-    "test:e2e": "./node_modules/.bin/cucumber-js features/implemented/**/*.feature --require 'dist/features/steps/*.step.js' --parallel 2",
+    "test:e2e": "./node_modules/.bin/cucumber-js features/implemented/**/*.feature --require 'dist/features/steps/*.step.js' --parallel 2 --fail-fast",
+    "test:rerunFailTest": "./node_modules/.bin/cucumber-js @rerun.txt --require 'dist/features/steps/*.step.js'",
     "test:e2e-pretty": "./node_modules/.bin/cucumber-js features/implemented/**/*.feature --require 'dist/features/steps/*.step.js' --format node_modules/cucumber-pretty",
     "test:e2e-dev": "./node_modules/.bin/cucumber-js features/dev/**/*.feature --require 'dist/features/steps/*.step.js' --format node_modules/cucumber-pretty",
     "test:unit": "./node_modules/.bin/jest",
@@ -76,7 +77,7 @@
   "dependencies": {
     "@0xcert/cert": "1.5.2",
     "@0xcert/conventions": "^2.0.0-alpha3",
-    "@arianee/arianee-abi": "0.4.0",
+    "@arianee/arianee-abi": "0.7.0",
     "axios": "^0.18.1",
     "ethers": "^4.0.38",
     "eventemitter3": "^4.0.0",

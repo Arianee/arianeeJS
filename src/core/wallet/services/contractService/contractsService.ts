@@ -8,6 +8,7 @@ import {
   ArianeeStore,
   ArianeeWhitelist
 } from '@arianee/arianee-abi';
+import { ArianeeLost } from '@arianee/arianee-abi/types/ArianeeLost';
 import { container, injectable } from 'tsyringe';
 import { Contract } from 'web3-eth-contract';
 import { ArianeeContract } from '../../../libs/arianeeContract';
@@ -16,6 +17,7 @@ import { POAAndAriaService } from '../POAAndAriaFaucet/POAAndAriaService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
+import { get } from 'lodash';
 
 @injectable()
 export class ContractService {
@@ -27,6 +29,7 @@ export class ContractService {
   public whitelistContract: ArianeeWhitelist;
   public stakingContract: ArianeeStaking;
   public eventContract: ArianeeEvent;
+  public lostContract: ArianeeLost;
 
   constructor (private walletService: WalletService,
               private web3Service: Web3Service,
@@ -43,9 +46,20 @@ export class ContractService {
     this.whitelistContract = this.create<ArianeeWhitelist>('whitelist');
     this.stakingContract = this.create<ArianeeStaking>('staking');
 
-    if (this.configurationService.arianeeConfiguration.eventArianee.abi &&
-      this.configurationService.arianeeConfiguration.eventArianee.address) {
+    const isEventArianee =
+        get(this.configurationService, 'arianeeConfiguration.eventArianee.abi') &&
+    get(this.configurationService, 'arianeeConfiguration.eventArianee.address');
+
+    if (isEventArianee) {
       this.eventContract = this.create<ArianeeEvent>('eventArianee');
+    }
+
+    const islostArianee =
+        get(this.configurationService, 'arianeeConfiguration.lost.abi') &&
+        get(this.configurationService, 'arianeeConfiguration.lost.address');
+
+    if (islostArianee) {
+      this.lostContract = this.create<ArianeeLost>('lost');
     }
   }
 
