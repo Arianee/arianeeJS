@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe';
-import { CertificateId } from '../../../../models/CertificateId';
+import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
 import { StoreNamespace } from '../../../../models/storeNamespace';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
@@ -28,12 +28,12 @@ export class CertificateDetails {
 
   }
 
-  public getCertificateIssuer = async (parameters:{certificateId: CertificateId, query: ConsolidatedCertificateRequest}) => {
+  public getCertificateIssuer = async (parameters:{certificateId: ArianeeTokenId, query: ConsolidatedCertificateRequest}) => {
     return this.fetchCertificateIssuer(parameters);
   }
 
   public fetchCertificateIssuer = async (
-    parameters:{certificateId: CertificateId, query: ConsolidatedCertificateRequest}) => {
+    parameters:{certificateId: ArianeeTokenId, query: ConsolidatedCertificateRequest}) => {
     const { certificateId } = parameters;
 
     const issuerOf = () => this.contractService.smartAssetContract.methods
@@ -49,7 +49,7 @@ export class CertificateDetails {
   }
 
   public getCertificateOwner = async (
-    certificateId: CertificateId,
+    certificateId: ArianeeTokenId,
     certificateBuilder?: CertificateSummaryBuilder
   ) => {
     const owner = await this.contractService.smartAssetContract.methods
@@ -129,7 +129,7 @@ export class CertificateDetails {
 
   public getCertificateContent = (
     parameters:{
-      certificateId: CertificateId,
+      certificateId: ArianeeTokenId,
       passphrase?:string,
       query:ConsolidatedCertificateRequest
     }
@@ -139,7 +139,7 @@ export class CertificateDetails {
   }
 
   private fetchCertificateContent = async (
-    parameters:{ certificateId: CertificateId,
+    parameters:{ certificateId: ArianeeTokenId,
         passphrase?:string,
         query:ConsolidatedCertificateRequest}
   ) => {

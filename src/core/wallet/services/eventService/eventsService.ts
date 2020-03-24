@@ -1,16 +1,24 @@
 import { injectable } from 'tsyringe';
+import { identity } from '../../../../configurations';
+import { isCertificateI18n } from '../../../libs/certificateVersion';
+import { replaceLanguage } from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
 import { isNullOrUndefined } from '../../../libs/isNullOrUndefined';
 import { blockchainEventsName } from '../../../../models/blockchainEventsName';
-import { CertificateId } from '../../../../models/CertificateId';
+import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { sortEvents } from '../../../libs/sortEvents';
-import { ConsolidatedCertificateRequest } from '../../certificateSummary/certificateSummary';
+import {
+  ArianeeEvent,
+  CertificateContentContainer,
+  ConsolidatedCertificateRequest
+} from '../../certificateSummary/certificateSummary';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
 import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { ArianeeEventContent, BlockchainEvent, EventContent } from '../../../../models/blockchainEvent';
+import { get } from 'lodash';
 
 @injectable()
 export class EventService {
@@ -25,7 +33,7 @@ export class EventService {
   }
 
   public getCertificateTransferEvents = async (parameters:
-      { certificateId: CertificateId,
+      { certificateId: ArianeeTokenId,
           query:ConsolidatedCertificateRequest
       }
   ): Promise<any> => {
@@ -61,13 +69,13 @@ export class EventService {
     );
   }
 
-  public getCertificateArianeeEvents = async (
+  public getCertificateArianeeEvents = async <EventType, IdentityType>(
     parameters:{
         certificateId: number,
         passphrase?: string,
         query:ConsolidatedCertificateRequest
       }
-  ): Promise<any[]> => {
+  ): Promise<ArianeeEvent<EventType, IdentityType>[]> => {
     const { certificateId, query, passphrase } = parameters;
 
     const issuer = await this.contractService.smartAssetContract.methods
@@ -76,23 +84,33 @@ export class EventService {
 
     const issuerIdentity = await this.identityService.getIdentity({ address: issuer, query });
 
-    const validateEvents = await this.getValidateEvents(certificateId, issuerIdentity.data.rpcEndpoint, passphrase);
+    const [validateEvents, pendingEvents] = await Promise.all([
+      this.getValidateEvents(certificateId, issuerIdentity.data.rpcEndpoint, passphrase),
+      this.getPendingEvents(certificateId, issuerIdentity.data.rpcEndpoint, passphrase)
+    ]);
+    const allEvents = [...validateEvents, ...pendingEvents];
 
-    const pendingEvents = await this.getPendingEvents(certificateId, issuerIdentity.data.rpcEndpoint, passphrase);
+    const orderedArianeeEvents = allEvents.sort(EventService.orderArianeeEvents);
 
-    return this.orderArianeeEvents(validateEvents.concat(pendingEvents), certificateId);
+    if (get(query, 'advanced.languages')) {
+      return orderedArianeeEvents
+        .map(arianeeEvent => {
+          if (isCertificateI18n(arianeeEvent.content.data)) {
+            return replaceLanguage(arianeeEvent, query.advanced.languages) as any;
+          }
+        });
+    } else {
+      return orderedArianeeEvents;
+    }
   }
 
-  private orderArianeeEvents= async (events:any[], certificateId) => {
-    const aEvents:BlockchainEvent[] = await this.contractService.eventContract.getPastEvents(blockchainEventsName.arianeeEvent.eventCreated,
-      { fromBlock: 0, toBlock: 'latest', filter: { _tokenId: certificateId } });
+  /*
 
-    events.map((event) => {
-      event.blockNumber = aEvents.find((aEvent) => { return aEvent.returnValues._eventId === event.id; }).blockNumber;
-    });
-
-    return events.sort(sortEvents);
-  }
+  Reste à faire:
+  LES eveneents sont classés dans quel ordre?
+  les events transfert doivent ils avoir la meme tete?
+   */
+  static orderArianeeEvents= (leftEvent:ArianeeEvent, rightEvent:ArianeeEvent) => leftEvent.timestamp - leftEvent.timestamp
 
   private getValidateEvents = async (certificateId, rpcEndpoint, passphrase?) => {
     const eventLenth = await this.contractService.eventContract.methods.eventsLength(certificateId).call();
@@ -112,8 +130,7 @@ export class EventService {
 
     return Promise.all(
       eventIds.map(async (eventId) => {
-        return this.getArianeeEvent(eventId, certificateId, rpcEndpoint, passphrase)
-          .then(event => { return { ...event, pending: false }; });
+        return this.getArianeeEvent(eventId, certificateId, rpcEndpoint, false, passphrase);
       })
     );
   }
@@ -138,57 +155,105 @@ export class EventService {
 
     return Promise.all(
       pendingEventIds.map(async (eventId) => {
-        return this.getArianeeEvent(eventId, certificateId, rpcEndpoint, passphrase)
-          .then(event => { return { ...event, pending: true }; });
+        return this.getArianeeEvent(eventId, certificateId, rpcEndpoint, true, passphrase);
       })
     );
   }
 
-  private getArianeeEvent= async (eventId, certificateId, rpcEndpoint, passphrase?) => {
-    const event:ArianeeEventContent = { id: eventId };
-    const eventBc:any = await this.contractService.eventContract.methods.getEvent(eventId).call();
-    const creationEvent:BlockchainEvent[] = await this.contractService.eventContract.getPastEvents(
-      blockchainEventsName.arianeeEvent.eventCreated,
-      { fromBlock: 0, toBlock: 'latest', filter: { _eventId: eventId } }
-    );
+  private getArianeeEvent= async (arianeeEventId, certificateId, rpcEndpoint, isPending, passphrase?):Promise<ArianeeEvent> => {
+    const eventBc:any = await this.contractService.eventContract.methods.getEvent(arianeeEventId).call();
 
-    event.identity = await this.identityService.getIdentity({ address: eventBc['2'], query: { issuer: true } });
-    event.timestamp = await this.utils.getTimestampFromBlock(creationEvent[0].blockNumber);
-    const requestBody: any = {
-      eventId: eventId,
-      certificateId: certificateId
+    const getTimestamp = async ():Promise<number> => {
+      const creationEvent:BlockchainEvent[] = await this.contractService.eventContract.getPastEvents(
+        blockchainEventsName.arianeeEvent.eventCreated,
+        { fromBlock: 0, toBlock: 'latest', filter: { _eventId: arianeeEventId } }
+      );
+      return this.utils.getTimestampFromBlock(creationEvent[0].blockNumber);
     };
 
-    let privateKey: string;
+    const getEventContent = async () => {
+      const requestBody: any = {
+        eventId: arianeeEventId,
+        certificateId: certificateId
+      };
 
-    if (passphrase) {
-      privateKey = this.configurationService
-        .walletFactory()
-        .fromPassPhrase(passphrase).privateKey;
-      requestBody.authentification = this.utils.signProofForRpc(
-        certificateId,
-        privateKey
-      );
-    } else {
-      privateKey = this.walletService.privateKey;
-      requestBody.authentification = this.utils.signProofForRpc(
-        certificateId,
-        privateKey
-      );
-    }
+      let privateKey: string;
 
-    try {
-      const RPCEvent = await this.httpClient.RPCCall<EventContent>(
-        rpcEndpoint,
-        'event.read',
-        requestBody
-      );
-      event.content = RPCEvent.result;
-    } catch (err) {
-      event.content = undefined;
-    }
+      if (passphrase) {
+        privateKey = this.configurationService
+          .walletFactory()
+          .fromPassPhrase(passphrase).privateKey;
+        requestBody.authentification = this.utils.signProofForRpc(
+          certificateId,
+          privateKey
+        );
+      } else {
+        privateKey = this.walletService.privateKey;
+        requestBody.authentification = this.utils.signProofForRpc(
+          certificateId,
+          privateKey
+        );
+      }
 
-    return event;
+      let eventContent:EventContent;
+
+      try {
+        const RPCEvent = await this.httpClient.RPCCall<EventContent>(
+          rpcEndpoint,
+          'event.read',
+          requestBody
+        );
+
+        eventContent = RPCEvent.result;
+      } catch (err) {
+        eventContent = undefined;
+      }
+
+      if (eventContent) {
+        const $schema = await this.httpClient.fetch(eventContent.$schema);
+
+        const hash = await this.utils.cert(
+          $schema,
+          eventContent
+        );
+
+        const tokenImprint = await this.contractService.eventContract.methods.getEvent(arianeeEventId).call();
+
+        const isCertificateContentValid = hash === tokenImprint[1];
+        return {
+          data: eventContent,
+          imprint: tokenImprint[1],
+          isAuthentic: isCertificateContentValid
+        };
+      } else {
+        return {
+          data: eventContent,
+          imprint: undefined,
+          isAuthentic: false
+        };
+      }
+    };
+
+    const [issuer, timestamp, content] = await Promise.all([
+      this.identityService.getIdentity({ address: eventBc['2'], query: { issuer: true } }),
+      getTimestamp(),
+      getEventContent(),
+      getEventContent()
+    ]);
+
+    return {
+      certificateId,
+      timestamp: timestamp,
+      issuer: {
+        isIdentityVerified: issuer.isApproved,
+        isIdentityAuthentic: issuer.isAuthentic,
+        imprint: issuer.imprint,
+        identity: issuer.data
+      },
+      arianeeEventId,
+      content,
+      pending: isPending
+    };
   }
 
   public acceptArianeeEvent = (eventId) => {
@@ -202,7 +267,7 @@ export class EventService {
   }
 
   public storeArianeeEventContentInRPCServer =async (
-    certificateId:CertificateId,
+    certificateId:ArianeeTokenId,
     arianeeEventId:number,
     content,
     url:string) => {
