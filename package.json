@@ -8,7 +8,7 @@
     "start": "./node_modules/.bin/tsc --watch",
     "launch": "nodemon ./dist/example/myexample.js",
     "test:watch": "./node_modules/.bin/jest --watch",
-    "test:e2e": "./node_modules/.bin/cucumber-js features/implemented/**/*.feature --require 'dist/features/steps/*.step.js' --parallel 8 --fail-fast",
+    "test:e2e": "./node_modules/.bin/cucumber-js features/implemented/**/*.feature --require 'dist/features/steps/*.step.js' --parallel 2 --fail-fast",
     "test:rerunFailTest": "./node_modules/.bin/cucumber-js @rerun.txt --require 'dist/features/steps/*.step.js'",
     "test:e2e-pretty": "./node_modules/.bin/cucumber-js features/implemented/**/*.feature --require 'dist/features/steps/*.step.js' --format node_modules/cucumber-pretty",
     "test:e2e-dev": "./node_modules/.bin/cucumber-js features/dev/**/*.feature --require 'dist/features/steps/*.step.js' --format node_modules/cucumber-pretty",

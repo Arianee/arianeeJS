@@ -10,19 +10,31 @@ export class POAAndAriaService {
                 private walletService:WalletService) {}
 
     public requestPoa = (): Promise<any> => {
-      return this.httpClient.fetch(
-        this.configurationService.arianeeConfiguration.faucetUrl +
-            '&address=' +
-            this.walletService.account.address
-      );
+      const url = this.configurationService.arianeeConfiguration.faucetUrl +
+          '&address=' +
+          this.walletService.account.address;
+      try {
+        return this.httpClient.fetch(url);
+      } catch (e) {
+        console.warn(e);
+        const message = `An error occured when requesting POA. url: ${url}`;
+        console.warn(message);
+        return Promise.reject(message);
+      }
     }
 
     public requestAria = (): Promise<any> => {
-      return this.httpClient.fetch(
-        this.configurationService.arianeeConfiguration.faucetUrl +
-            '&address=' +
-            this.walletService.account.address +
-            '&aria=true'
-      );
+      const url = this.configurationService.arianeeConfiguration.faucetUrl +
+          '&address=' +
+          this.walletService.account.address +
+          '&aria=true';
+      try {
+        return this.httpClient.fetch(url);
+      } catch (e) {
+        console.warn(e);
+        const message = `An error occured when requesting Aria. url: ${url}`;
+        console.warn(message);
+        return Promise.reject(message);
+      }
     }
 }

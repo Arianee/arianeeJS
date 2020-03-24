@@ -95,7 +95,12 @@ export class ArianeeHttpClient {
         config.data = config.body;
       }
 
-      return axios(url, config).then(result => result.data);
+      try {
+        return axios(url, config).then(result => result.data);
+      } catch (e) {
+        console.warn('Error on fetch', url, config);
+        Promise.reject(e);
+      }
     }
 
     /**
