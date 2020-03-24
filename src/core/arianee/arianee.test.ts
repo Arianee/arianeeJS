@@ -201,7 +201,6 @@ describe('Arianee', () => {
         try {
           arianee.fromPrivateKey(privateKey);
         } catch (e) {
-          console.log('here');
           done();
         }
       });

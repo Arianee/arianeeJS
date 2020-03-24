@@ -25,6 +25,7 @@
         "jest"
     ],
     "rules": {
+        "no-console": [2,{ "allow": ["warn","error","assert"] } ],
         "prefer-promise-reject-errors": "off",
         "no-unused-vars": "off",
         "handle-callback-err": "off",

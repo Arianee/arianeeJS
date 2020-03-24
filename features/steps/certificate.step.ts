@@ -83,7 +83,32 @@ When(
 
       expect(true).equals(true);
     } catch (err) {
-        console.error(err)
+      console.error(err);
+      console.error('ERROR');
+      expect(true).equals(false);
+    }
+  }
+);
+
+When(
+  'user{int} createsAndStores certificate{int}',
+  { timeout: 45000 },
+  async function (userIndex, tokenIndex) {
+    const wallet = this.store.getUserWallet(userIndex);
+
+    try {
+      const { certificateId } = await wallet.methods.createAndStoreCertificate({
+        content: {
+          $schema: 'https://cert.arianee.org/version1/ArianeeProductCertificate-i18n.json',
+          name: 'Top Time Limited Edition'
+        }
+      }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`);
+
+      this.store.storeToken(tokenIndex, certificateId);
+
+      expect(true).equals(true);
+    } catch (err) {
+      console.error(err);
       console.error('ERROR');
       expect(true).equals(false);
     }
@@ -282,6 +307,17 @@ Given('user{int} checks if certificate{int} can not be requested with passphrase
 
     const isRequestable = await wallet.methods.isCertificateOwnershipRequestable(certificateId, passphrase);
     expect(isRequestable.isTrue).equal(false);
+  });
+
+Given('user{int} want to see certificate{int} details',
+  async function (userIndex, tokenIndex) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const certificateId = this.store.getToken(tokenIndex);
+
+    const certficiateDetails = await wallet.methods.getCertificate(certificateId, undefined, { owner: true });
+    expect(certficiateDetails).to.be.not.undefined;
+
+    expect(certficiateDetails.owner).to.be.not.undefined;
   });
 
 Given('user{int} want to see certificate{int} details with passphrase {word}',

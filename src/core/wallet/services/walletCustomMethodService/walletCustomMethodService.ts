@@ -31,6 +31,8 @@ export class WalletCustomMethodService {
     return {
       createCertificate: this.certificateService.customHydrateToken,
       createCertificatesBatch: this.certificateService.customHydrateTokenBatch,
+      createAndStoreCertificate: this.certificateService.createAndStoreCertificate,
+
       getCertificate: this.certificateService.getCertificate,
       destroyCertificate: this.certificateService.destroyCertificate,
       recoverCertificate: this.certificateService.recoverCertificate,
@@ -59,7 +61,8 @@ export class WalletCustomMethodService {
       getMessageSenders: this.certificateAuthorizationService.getMessageSenders,
       storeContentInRPCServer: this.certificateService.storeContentInRPCServer,
       createArianeeEvent: this.eventService.createArianeeEvent,
-      storeArianeeEvent: this.eventService.storeArianeeEventContentInRPCServer
+      storeArianeeEvent: this.eventService.storeArianeeEventContentInRPCServer,
+      createAndStoreArianeeEvent: this.eventService.createAndStoreArianeeEvent
     };
   }
 

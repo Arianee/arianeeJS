@@ -122,7 +122,7 @@ export class CertificateDetails {
 
         return this.getCertificateContentFromHttp(parameters.certificateURI);
       })
-      .catch(d => console.log(`# ${certificateId} # Impossible to fetch content of this certificate ${parameters.certificateId}`));
+      .catch(d => console.warn(`# ${certificateId} # Impossible to fetch content of this certificate ${parameters.certificateId}`));
   }
 
   public getCertificateContent = (

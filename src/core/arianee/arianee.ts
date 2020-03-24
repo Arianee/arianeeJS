@@ -39,7 +39,7 @@ export class Arianee {
       try {
         arianeeConfiguration[contractName] = { abi: conf[contractName], address: contractAddress };
       } catch (e) {
-        console.error(`this contract is not working ${contractName}`);
+        console.warn(`this contract is not working ${contractName}`);
       }
     });
 
