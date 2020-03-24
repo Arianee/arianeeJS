@@ -3,7 +3,7 @@ import { CertificateId } from '../../../../models/CertificateId';
 import { StoreNamespace } from '../../../../models/storeNamespace';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
-import { CertificateSummaryBuilder } from '../../certificateSummary';
+import { CertificateSummary, CertificateSummaryBuilder } from '../../certificateSummary';
 import {
   CertificateContentContainer,
   ConsolidatedCertificateRequest,
@@ -97,7 +97,7 @@ export class CertificateDetails {
       rpcEndPoint = identity.data.rpcEndpoint;
     }
 
-    return this.httpClient.RPCCall(
+    const certificateRPCResult = await this.httpClient.RPCCall<CertificateContentContainer>(
       rpcEndPoint,
       'certificate.read',
       {
@@ -109,6 +109,8 @@ export class CertificateDetails {
         }
       }
     );
+
+    return certificateRPCResult.result;
   }
 
   private getContent = (parameters:{

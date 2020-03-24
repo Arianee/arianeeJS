@@ -48,7 +48,11 @@ export class ArianeeHttpClient {
       };
     }
 
-    public RPCCall=async (endpoint: string, method: string, params: any) => {
+    public RPCCall = async <resultType=any>(endpoint: string, method: string, params: any): Promise<{
+        jsonrpc: number,
+        id: string,
+        result?: resultType
+    }> => {
       const config = this.RPCConfigurationFactory(endpoint, method, params);
 
       const RPCRes = await this.fetch(endpoint, config);
@@ -57,7 +61,11 @@ export class ArianeeHttpClient {
         throw new Error();
       }
 
-      return (typeof (RPCRes.result) === 'string') ? JSON.parse(RPCRes.result) : RPCRes.result;
+      if (RPCRes.result) {
+        RPCRes.result = (typeof (RPCRes.result) === 'string') ? JSON.parse(RPCRes.result) : RPCRes.result;
+      }
+
+      return RPCRes;
     }
 
     /**

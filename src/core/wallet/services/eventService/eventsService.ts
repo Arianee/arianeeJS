@@ -10,7 +10,7 @@ import { ContractService } from '../contractService/contractsService';
 import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
-import { ArianeeEventContent, BlockchainEvent } from '../../../../models/blockchainEvent';
+import { ArianeeEventContent, BlockchainEvent, EventContent } from '../../../../models/blockchainEvent';
 
 @injectable()
 export class EventService {
@@ -178,11 +178,12 @@ export class EventService {
     }
 
     try {
-      event.content = await this.httpClient.RPCCall(
+      const RPCEvent = await this.httpClient.RPCCall<EventContent>(
         rpcEndpoint,
         'event.read',
         requestBody
       );
+      event.content = RPCEvent.result;
     } catch (err) {
       event.content = undefined;
     }
