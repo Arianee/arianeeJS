@@ -213,6 +213,18 @@ export class EventService {
     });
   }
 
+  public createAndStoreArianeeEvent=async (data: {
+    uri?: string;
+    certificateId: number,
+    arianeeEventId?:number;
+    content?: { $schema: string;[key: string]: any };
+  }, url:string) => {
+    const result = await this.createArianeeEvent(data);
+    await this.storeArianeeEventContentInRPCServer(data.certificateId, result.arianeeEventId, data.content, url);
+
+    return result;
+  }
+
   public createArianeeEvent=async (data: {
     uri?: string;
     contentImprint?: string;

@@ -11,7 +11,7 @@
     "test:e2e": "./node_modules/.bin/cucumber-js features/implemented/**/*.feature --require 'dist/features/steps/*.step.js' --parallel 2 --fail-fast",
     "test:rerunFailTest": "./node_modules/.bin/cucumber-js @rerun.txt --require 'dist/features/steps/*.step.js'",
     "test:e2e-pretty": "./node_modules/.bin/cucumber-js features/implemented/**/*.feature --require 'dist/features/steps/*.step.js' --format node_modules/cucumber-pretty",
-    "test:e2e-dev": "./node_modules/.bin/cucumber-js features/dev/**/*.feature --require 'dist/features/steps/*.step.js' --format node_modules/cucumber-pretty",
+    "test:e2e-dev": "./node_modules/.bin/cucumber-js features/implemented/**/*.feature --require 'dist/features/steps/*.step.js' --format node_modules/cucumber-pretty --tags @dev",
     "test:unit": "./node_modules/.bin/jest",
     "test": "gitool -cl=3 && npm run lint && npm run test:unit &&npm run test:e2e",
     "lint": "./node_modules/.bin/eslint -c .eslintrc.json --fix 'src/core/**/*.ts'",

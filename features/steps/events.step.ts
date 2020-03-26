@@ -18,6 +18,24 @@ Given('user{int} creates an event{int} with title {string} on certificate{int}',
   this.store.storeEvent(eventIndex, arianeeEventId);
 });
 
+Given('user{int} createsAndStores an event{int} with title {string} on certificate{int}', async function (
+  userIndex, eventIndex, title, certificateIndex
+) {
+  const wallet = this.store.getUserWallet(userIndex);
+  const certificateId = this.store.getToken(certificateIndex);
+
+  const { arianeeEventId } = await wallet.methods.createAndStoreArianeeEvent({
+    certificateId,
+    content: {
+      title,
+      $schema: 'https://cert.arianee.org/version1/ArianeeEvent-i18n.json'
+    }
+  }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`
+  );
+
+  this.store.storeEvent(eventIndex, arianeeEventId);
+});
+
 Given('user{int} accepts event{int}', async function (
   userIndex, eventIndex
 ) {

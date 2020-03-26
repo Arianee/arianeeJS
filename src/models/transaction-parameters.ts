@@ -1,5 +1,5 @@
 export interface hydrateTokenParameters {
-  uri: string;
+  uri?: string;
   hash?: string;
   certificateId?: number;
   passphrase?: string;

@@ -126,12 +126,25 @@ export class CertificateService {
       );
   }
 
+  public createAndStoreCertificate=async (data:hydrateTokenParameters, urlOfRPCServer:string): Promise<{
+  [key:string]:any;
+  passphrase:string;
+  certificateId: CertificateId;
+  deepLink:string
+}> => {
+    const result = await this.customHydrateToken(data);
+    await this.storeContentInRPCServer(result.certificateId, data.content, urlOfRPCServer);
+    return result;
+  }
+
   public customHydrateToken = async (data: hydrateTokenParameters): Promise<{
     [key:string]:any;
     passphrase:string;
     certificateId: CertificateId;
     deepLink:string
   }> => {
+    data.uri = data.uri || '';
+
     const preparedData = await this.prepareHydrateToken(data);
     const transcationObject = this.hydrateTokenTranscation(preparedData);
 

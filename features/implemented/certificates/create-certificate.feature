@@ -8,3 +8,8 @@ Feature: Certificate creation
     When user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph"
     Then user1 is the owner of the certificate0
     And user1 is the owner of the certificate0 with uri "https://api.myjson.com/bins/cf4ph"
+
+  Scenario: User wants to create and store a certificate
+    When user1 createsAndStores certificate0
+    Then user1 is the owner of the certificate0
+    Given user1 want to see certificate0 details

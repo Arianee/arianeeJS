@@ -1,4 +1,3 @@
-@dev
 Feature: User can set or unset its certificate as lost and
 
   Background: User has a wallet
