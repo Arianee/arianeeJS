@@ -472,20 +472,24 @@ export class CertificateService {
       };
     }
 
-    const events: BlockchainEvent[] = await this.contractService.smartAssetContract.getPastEvents(
+    const currentBlock = await this.web3Service.web3.eth.getBlockNumber();
+
+    let events: BlockchainEvent[] = await this.contractService.smartAssetContract.getPastEvents(
       blockchainEventsName.smartAsset.tokenAccessAdded,
       {
-        fromBlock: 0,
-        toBlock: 'latest',
-        filter: {
-          _tokenId: certificateId,
-          _encryptedTokenKey: tokenHashedAccess,
-          _tokenType: tokenType
-        }
+        fromBlock: currentBlock - Math.round(validity/5 +30),
+        toBlock: currentBlock
+
       }
     );
 
-    events.sort(sortEvents).reverse();
+    events = events.filter(event => {
+      return event.returnValues._tokenId === certificateId.toString() &&
+        event.returnValues._tokenType === tokenType.toString() &&
+        event.returnValues._encryptedTokenKey === tokenHashedAccess &&
+        event.returnValues._enable === true;
+    }).sort(sortEvents).reverse();
+
     const lastEvent = events[0];
     const blockTimestamp = await this.utils.getTimestampFromBlock(lastEvent.blockNumber);
 

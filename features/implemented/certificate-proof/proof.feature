@@ -26,3 +26,13 @@ Feature: Create and read certificate proof
       Given user1 makes certificate0 transferable with passphrase MyPassPhrase
       Given user2 requests certificate0 with passprase MyPassPhrase
       Then user2 cannot check the proof in certificate0 with passphrase MyPassPhrase
+
+    Scenario: Proof should be valid if another user create a proof on another certificate
+      Given user3 is a brand
+      Given user1 buys 1 credit of type certificate
+      Given user3 buys 1 credit of type certificate
+      And user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase
+      And user3 creates a new certificate1 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase
+      When user1 create a proof in certificate0 with passphrase MyPassPhrase1
+      When user3 create a proof in certificate1 with passphrase MyPassPhrase2
+      Then user2 can check the proof in certificate0 with passphrase MyPassPhrase1
