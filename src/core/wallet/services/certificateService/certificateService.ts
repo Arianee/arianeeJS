@@ -57,10 +57,12 @@ export class CertificateService {
 
     certificateId = certificateId || Math.ceil(Math.random() * 10000000);
 
+    const fiveYears = 60 * 60 * 24 * 365 * 5;
     const now = new Date();
+
     tokenRecoveryTimestamp =
       tokenRecoveryTimestamp ||
-      Math.round(now.setDate(now.getDate()) / 1000) + 90 * 60 * 60 * 24;
+      Math.round(now.setDate(now.getDate()) / 1000) + fiveYears;
 
     sameRequestOwnershipPassphrase =
       sameRequestOwnershipPassphrase !== undefined
