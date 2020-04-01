@@ -1,13 +1,13 @@
 import { get } from 'lodash';
 import { injectable } from 'tsyringe';
 import { isNullOrUndefined } from '../../../libs/isNullOrUndefined';
-import { BlockchainEvent } from '../../../../models/blockchainEvent';
+import { BlockchainEvent, EventContent } from '../../../../models/blockchainEvent';
 import { blockchainEventsName } from '../../../../models/blockchainEventsName';
-import { CertificateId } from '../../../../models/CertificateId';
+import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
 import { ExtendedBoolean } from '../../../../models/extendedBoolean';
 import { StoreNamespace } from '../../../../models/storeNamespace';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
-import { replaceLanguage } from '../../../libs/certificateLanguage/certificateLanguage';
+import { replaceLanguage } from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
 import { isCertificateI18n } from '../../../libs/certificateVersion';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { sortEvents } from '../../../libs/sortEvents';
@@ -129,7 +129,7 @@ export class CertificateService {
   public createAndStoreCertificate=async (data:hydrateTokenParameters, urlOfRPCServer:string): Promise<{
   [key:string]:any;
   passphrase:string;
-  certificateId: CertificateId;
+  certificateId: ArianeeTokenId;
   deepLink:string
 }> => {
     const result = await this.customHydrateToken(data);
@@ -140,7 +140,7 @@ export class CertificateService {
   public customHydrateToken = async (data: hydrateTokenParameters): Promise<{
     [key:string]:any;
     passphrase:string;
-    certificateId: CertificateId;
+    certificateId: ArianeeTokenId;
     deepLink:string
   }> => {
     data.uri = data.uri || '';
@@ -169,7 +169,7 @@ export class CertificateService {
     return this.batchService.executeBatch();
   }
 
-  public storeContentInRPCServer =async (certificateId:CertificateId, content, url?:string) => {
+  public storeContentInRPCServer =async (certificateId:ArianeeTokenId, content, url?:string) => {
     const urlOfServer = url || `${this.walletService.bdhVaultURL}/rpc`;
 
     return this.httpClient.RPCCall(urlOfServer, 'certificate.create', { certificateId: certificateId, json: content });
@@ -217,7 +217,7 @@ export class CertificateService {
   }
 
   public getCertificate = async <CertificateType=any, IdentityType=any>(
-    certificateId: CertificateId,
+    certificateId: ArianeeTokenId,
     passphrase?: string,
     query?: ConsolidatedCertificateRequest
   ): Promise<CertificateSummary<CertificateType, IdentityType>> => {
@@ -292,7 +292,7 @@ export class CertificateService {
     }
 
     if (query.arianeeEvents) {
-      const arianeeEvents = this.eventService.getCertificateArianeeEvents({
+      const arianeeEvents = this.eventService.getCertificateArianeeEvents<EventContent, IdentityType>({
         certificateId, passphrase, query
       }).then(events => {
         response.setArianeeEvents(events);
@@ -308,7 +308,7 @@ export class CertificateService {
 
     const summary = response.build();
 
-    if (query.advanced && query.advanced.languages &&
+    if (get(query, 'advanced.languages') &&
         get(summary, 'content.data') &&
         isCertificateI18n(summary.content.data)) {
       return replaceLanguage(summary, query.advanced.languages) as any;
@@ -320,7 +320,7 @@ export class CertificateService {
   /**
    * Get all certificate ids owned by this wallet
    */
-  public getMyCertificateIds =async ():Promise<CertificateId[]> => {
+  public getMyCertificateIds =async ():Promise<ArianeeTokenId[]> => {
     const numberOfCertificates = await this.contractService.smartAssetContract.methods
       .balanceOf(this.walletService.publicKey)
       .call();
@@ -346,7 +346,7 @@ export class CertificateService {
     verifyOwnership?:boolean
   ): Promise<CertificateSummary[]> => {
     // Fetch number of certificates this user owns
-    const certificateIds = await this.store.get<CertificateId[]>(StoreNamespace.certificateIds, this.walletService.publicKey, () => this.getMyCertificateIds(), verifyOwnership);
+    const certificateIds = await this.store.get<ArianeeTokenId[]>(StoreNamespace.certificateIds, this.walletService.publicKey, () => this.getMyCertificateIds(), verifyOwnership);
 
     // Fetch details of each certificate
     const results = await Promise.all(
@@ -477,7 +477,7 @@ export class CertificateService {
     let events: BlockchainEvent[] = await this.contractService.smartAssetContract.getPastEvents(
       blockchainEventsName.smartAsset.tokenAccessAdded,
       {
-        fromBlock: currentBlock - Math.round(validity/5 +30),
+        fromBlock: currentBlock - Math.round(validity / 5 + 30),
         toBlock: currentBlock
 
       }
@@ -532,7 +532,7 @@ export class CertificateService {
     passphrase: string
   ) => this.customRequestTokenFactory(certificateId, passphrase).send();
 
-  public destroyCertificate =(certificateId:CertificateId):Promise<any> => {
+  public destroyCertificate =(certificateId:ArianeeTokenId):Promise<any> => {
     return this.contractService.smartAssetContract.methods
       .transferFrom(
         this.walletService.publicKey,
@@ -541,7 +541,7 @@ export class CertificateService {
       .send();
   }
 
-  public recoverCertificate =(certificateId:CertificateId):Promise<any> => {
+  public recoverCertificate =(certificateId:ArianeeTokenId):Promise<any> => {
     return this.contractService.smartAssetContract.methods
       .recoverTokenToIssuer(certificateId)
       .send();

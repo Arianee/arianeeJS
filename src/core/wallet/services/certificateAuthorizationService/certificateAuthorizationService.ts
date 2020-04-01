@@ -1,5 +1,5 @@
 import { injectable } from 'tsyringe';
-import { CertificateId } from '../../../../models/CertificateId';
+import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
 import { ConsolidatedCertificateRequest } from '../../certificateSummary/certificateSummary';
 import { CertificateDetails } from '../certificateDetailsService/certificatesDetailsService';
 import { ContractService } from '../contractService/contractsService';
@@ -19,7 +19,7 @@ export class CertificateAuthorizationService {
      * For now it return only the issuer
      * @param certificateId
      */
-  public getMessageSenders= async (parameters:{certificateId:CertificateId, query:ConsolidatedCertificateRequest}):Promise<{[key:string]:boolean}> => {
+  public getMessageSenders= async (parameters:{certificateId:ArianeeTokenId, query:ConsolidatedCertificateRequest}):Promise<{[key:string]:boolean}> => {
     const { address } = await this.certificateDetailsService.fetchCertificateIssuer(parameters);
     const { certificateId } = parameters;
 
@@ -33,7 +33,7 @@ export class CertificateAuthorizationService {
     };
   }
 
-    public setMessageAuthorizationFor= async (certificateId:CertificateId, senderAddress:string, isAuthorized:boolean):Promise<any> => {
+    public setMessageAuthorizationFor= async (certificateId:ArianeeTokenId, senderAddress:string, isAuthorized:boolean):Promise<any> => {
       return this.contractService.whitelistContract.methods.addBlacklistedAddress(senderAddress, certificateId, !isAuthorized).send();
     }
 }

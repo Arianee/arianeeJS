@@ -7,22 +7,14 @@ import { blockchainEventsName } from '../src/models/blockchainEventsName';
 
   const wallet = arianee.fromMnemonic('autumn balcony range return enact educate firm glare then pool round message');
 
-  const res = {
-    certificateId: 9818467,
-    passphrase: 'u948df0ohef0'
-  };
-
-  let isLost = await wallet.contracts.lostContract.methods.isLost(9818467).call();
-  console.log(isLost);
-
-  await wallet.contracts.lostContract.methods.setLost(9818467)
-    .send();
-  isLost = await wallet.contracts.lostContract.methods.isLost(9818467).call();
-  console.log(isLost);
-
-  await wallet.contracts.lostContract.methods.unsetLost(9818467)
-    .send();
-
-  isLost = await wallet.contracts.lostContract.methods.isLost(9818467).call();
-  console.log(isLost);
+  const i = await wallet.methods.getCertificate(49400, 'y9a2obb58tgo',
+    {
+      arianeeEvents: true,
+      content: true,
+      issuer: true,
+      advanced: {
+        languages: ['zh-TW']
+      }
+    });
+  console.log(i.events.arianeeEvents[0].content.data);
 })();

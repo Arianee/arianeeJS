@@ -1,5 +1,6 @@
 import { IdentitySummary } from '../../../models/arianee-identity';
-import { CertificateId } from '../../../models/CertificateId';
+import { EventContent } from '../../../models/blockchainEvent';
+import { ArianeeTokenId } from '../../../models/ArianeeTokenId';
 import { sortEvents } from '../../libs/sortEvents';
 
 export interface Serialnumber {
@@ -61,10 +62,19 @@ export interface CertificateOwner {
   identity?: IdentitySummary;
 }
 
+export interface ArianeeEvent<EventType=any, IdentityType=any>{
+  certificateId: ArianeeTokenId;
+  arianeeEventId:ArianeeTokenId;
+  content: CertificateContentContainer<EventType>;
+  issuer: CertificateIssuer<IdentityType>;
+  timestamp:number;
+  pending:boolean;
+}
+
 export interface CertificateEvents {
   transfer?: any[];
-  arianeeEvents?: any[];
-  all?: any[];
+  arianeeEvents?: ArianeeEvent[];
+  all?: CertificateContentContainer<EventContent>[];
 }
 
 export class CertificateEventsSummary implements CertificateEvents {
@@ -82,7 +92,7 @@ export interface CertificateAdvanced {
 }
 
 export interface CertificateSummary<CertificateType=any, IdentityType=any> {
-  certificateId: CertificateId;
+  certificateId: ArianeeTokenId;
   content?: CertificateContentContainer<CertificateType>;
   isRequestable?: boolean;
   issuer?: CertificateIssuer<IdentityType>;

@@ -1,6 +1,6 @@
 import { injectable } from 'tsyringe';
 import { IdentitySummary } from '../../../../models/arianee-identity';
-import { CertificateId } from '../../../../models/CertificateId';
+import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import {
   ConsolidatedCertificateRequest,
