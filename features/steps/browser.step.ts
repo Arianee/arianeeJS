@@ -1,6 +1,5 @@
 import { Given } from 'cucumber';
 import fs from 'fs';
-import { waitFor } from './helpers/waitFor';
 
 const pptrFirefox = require('puppeteer-firefox');
 const puppeteer = require('puppeteer');

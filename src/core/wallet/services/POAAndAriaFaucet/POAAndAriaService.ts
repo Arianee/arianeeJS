@@ -9,12 +9,12 @@ export class POAAndAriaService {
                 private configurationService:ConfigurationService,
                 private walletService:WalletService) {}
 
-    public requestPoa = (): Promise<any> => {
+    public requestPoa = async (): Promise<any> => {
       const url = this.configurationService.arianeeConfiguration.faucetUrl +
           '&address=' +
           this.walletService.account.address;
       try {
-        return this.httpClient.fetch(url);
+        return await this.httpClient.fetch(url);
       } catch (e) {
         console.warn(e);
         const message = `An error occured when requesting POA. url: ${url}`;
@@ -23,13 +23,13 @@ export class POAAndAriaService {
       }
     }
 
-    public requestAria = (): Promise<any> => {
+    public requestAria = async (): Promise<any> => {
       const url = this.configurationService.arianeeConfiguration.faucetUrl +
           '&address=' +
           this.walletService.account.address +
           '&aria=true';
       try {
-        return this.httpClient.fetch(url);
+        return await this.httpClient.fetch(url);
       } catch (e) {
         console.warn(e);
         const message = `An error occured when requesting Aria. url: ${url}`;

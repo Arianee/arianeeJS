@@ -5,6 +5,7 @@ import { BlockchainEventWatcherService } from './services/blockchainEventWatcher
 import { CertificateAuthorizationService } from './services/certificateAuthorizationService/certificateAuthorizationService';
 import { ConfigurationService } from './services/configurationService/configurationService';
 import { ContractService } from './services/contractService/contractsService';
+import { DiagnosisService } from './services/diagnosisService/diagnosisService';
 import { GlobalConfigurationService } from './services/globalConfigurationService/globalConfigurationService';
 import { POAAndAriaService } from './services/POAAndAriaFaucet/POAAndAriaService';
 import { UtilsService } from './services/utilService/utilsService';
@@ -37,7 +38,9 @@ export class ArianeeWallet {
         BlockchainEventWatcherService,
         CertificateAuthorizationService,
         UtilsService,
-        BatchService);
+        BatchService,
+        DiagnosisService
+      );
 
       const walletService:WalletService = this.container.resolve(WalletService);
       const configService:ConfigurationService = this.container.resolve(ConfigurationService);
@@ -100,11 +103,11 @@ export class ArianeeWallet {
     }
 
     public get requestPoa () {
-      return this.container.resolve(WalletCustomMethodService).requestPoa;
+      return this.methods.requestPoa;
     }
 
     public get requestAria () {
-      return this.container.resolve(WalletCustomMethodService).requestAria;
+      return this.methods.requestAria;
     }
 
     public get account () {

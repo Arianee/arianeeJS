@@ -91,6 +91,30 @@ When(
 );
 
 When(
+  'user{int} creates a new certificate{int} with expected errors',
+  { timeout: 45000 },
+  async function (userIndex, tokenIndex) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const hash = wallet.web3.utils.keccak256('ezofnzefon');
+
+    try {
+      await wallet.methods.createCertificate({
+        hash
+      });
+      expect(false).to.be.true;
+    } catch (err) {
+      const isCertificateCreditError:boolean = err.find(d => d.code === 'credit.certificate') !== undefined;
+      const isApproveStoreError:boolean = err.find(d => d.code === 'approve.store') !== undefined;
+      const isCreditPoaError:boolean = err.find(d => d.code === 'credit.POA') !== undefined;
+
+      expect(isApproveStoreError).to.be.false;
+      expect(isCertificateCreditError).to.be.true;
+      expect(isCreditPoaError).to.be.false;
+    }
+  }
+);
+
+When(
   'user{int} createsAndStores certificate{int}',
   { timeout: 45000 },
   async function (userIndex, tokenIndex) {

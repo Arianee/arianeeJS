@@ -1,24 +1,20 @@
+import { get } from 'lodash';
 import { injectable } from 'tsyringe';
-import { identity } from '../../../../configurations';
+import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
+import { BlockchainEvent, EventContent } from '../../../../models/blockchainEvent';
+import { blockchainEventsName } from '../../../../models/blockchainEventsName';
+import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { isCertificateI18n } from '../../../libs/certificateVersion';
 import { replaceLanguage } from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
 import { isNullOrUndefined } from '../../../libs/isNullOrUndefined';
-import { blockchainEventsName } from '../../../../models/blockchainEventsName';
-import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
-import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { sortEvents } from '../../../libs/sortEvents';
-import {
-  ArianeeEvent,
-  CertificateContentContainer,
-  ConsolidatedCertificateRequest
-} from '../../certificateSummary/certificateSummary';
+import { ArianeeEvent, ConsolidatedCertificateRequest } from '../../certificateSummary/certificateSummary';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
+import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
-import { ArianeeEventContent, BlockchainEvent, EventContent } from '../../../../models/blockchainEvent';
-import { get } from 'lodash';
 
 @injectable()
 export class EventService {
@@ -28,7 +24,8 @@ export class EventService {
     private walletService: WalletService,
     private configurationService: ConfigurationService,
     private httpClient: ArianeeHttpClient,
-    private utils: UtilsService
+    private utils: UtilsService,
+    private diagnosisService:DiagnosisService
   ) {
   }
 
@@ -324,13 +321,21 @@ export class EventService {
       contentImprint = await this.utils.cert(certificateSchema, content);
     }
 
-    const result = await this.contractService.storeContract.methods.createEvent(arianeeEventId, certificateId, contentImprint, uri, brandReward).send();
+    try {
+      const result = await this.contractService.storeContract.methods.createEvent(arianeeEventId, certificateId, contentImprint, uri, brandReward).send();
 
-    return {
-      store: this.storeArianeeEventContentInRPCServer,
-      ...result,
-      contentImprint: contentImprint,
-      arianeeEventId: arianeeEventId
-    };
+      return {
+        store: this.storeArianeeEventContentInRPCServer,
+        ...result,
+        contentImprint: contentImprint,
+        arianeeEventId: arianeeEventId
+      };
+    } catch (e) {
+      const diagnosis = await this.diagnosisService.diagnosis([
+        this.diagnosisService.isStoreApprove(),
+        this.diagnosisService.isEventCredit()
+      ]);
+      return Promise.reject(diagnosis);
+    }
   }
 }

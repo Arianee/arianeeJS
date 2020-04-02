@@ -1,4 +1,3 @@
-@dev
 Feature: Create events
   Background: User has a valid wallet
     Given user1 is a brand

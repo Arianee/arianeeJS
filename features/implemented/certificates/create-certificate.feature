@@ -13,3 +13,7 @@ Feature: Certificate creation
     When user1 createsAndStores certificate0
     Then user1 is the owner of the certificate0
     Given user1 want to see certificate0 details
+
+  Scenario: User wants to create a certificate but has no credit,not approved store. He has proper error logs
+    Given user2 is a brand
+    When user2 creates a new certificate0 with expected errors

@@ -18,6 +18,33 @@ Given('user{int} creates an event{int} with title {string} on certificate{int}',
   this.store.storeEvent(eventIndex, arianeeEventId);
 });
 
+Given('user{int} creates an event{int} with title {string} on certificate{int} with proper errors', async function (
+  userIndex, eventIndex, title, certificateIndex
+) {
+  const wallet = this.store.getUserWallet(userIndex);
+  const certificateId = this.store.getToken(certificateIndex);
+
+  try {
+    const { arianeeEventId } = await wallet.methods.createArianeeEvent({
+      certificateId,
+      content: {
+        title,
+        $schema: 'https://cert.arianee.org/version1/ArianeeEvent-i18n.json'
+      }
+    });
+
+    expect(false).to.be.true;
+  } catch (err) {
+    const isCertificateCreditError:boolean = err.find(d => d.code === 'credit.event') !== undefined;
+    const isApproveStoreError:boolean = err.find(d => d.code === 'approve.store') !== undefined;
+    const isCreditPoaError:boolean = err.find(d => d.code === 'credit.POA') !== undefined;
+
+    expect(isApproveStoreError).to.be.false;
+    expect(isCertificateCreditError).to.be.true;
+    expect(isCreditPoaError).to.be.false;
+  }
+});
+
 Given('user{int} createsAndStores an event{int} with title {string} on certificate{int}', async function (
   userIndex, eventIndex, title, certificateIndex
 ) {
