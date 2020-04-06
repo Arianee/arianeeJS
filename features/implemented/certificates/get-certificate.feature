@@ -8,6 +8,11 @@ Feature: Certificate creation
     Given user1 creates a new certificate0 with uri "https://jsonplaceholder.typicode.com/todos/1" and passphrase MyPassPhrase
     Given user1 want to see certificate0 details with passphrase MyPassPhrase
 
+  Scenario: User wants to read certificate from Link
+    Given user1 buys 1 credit of type certificate
+    Given user1 creates a new certificate0 with uri "https://jsonplaceholder.typicode.com/todos/1" and passphrase MyPassPhrase
+    Given user1 want to see certificate0 details from link with passphrase MyPassPhrase
+
   Scenario: User wants to read all its certificates
     Given user1 buys 4 credit of type certificate
     Given user1 creates a new certificate0 with uri "https://jsonplaceholder.typicode.com/todos/1"

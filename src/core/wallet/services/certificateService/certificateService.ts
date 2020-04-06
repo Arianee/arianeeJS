@@ -430,10 +430,10 @@ export class CertificateService {
   // Ajouter une passphrase à un token
   //  this.smartAssetContract.methods.addTokenAccess()
 
-  public getCertificateFromLink (link: string) {
+  public getCertificateFromLink = (link: string, query?: ConsolidatedCertificateRequest) => {
     const { certificateId, passphrase } = this.utils.readLink(link);
 
-    return this.getCertificate(certificateId, passphrase);
+    return this.getCertificate(certificateId, passphrase, query);
   }
 
   public isCertificateProofValid = async (

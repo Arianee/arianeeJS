@@ -355,6 +355,18 @@ Given('user{int} want to see certificate{int} details with passphrase {word}',
     expect(certficiateDetails.owner).to.be.not.undefined;
   });
 
+Given('user{int} want to see certificate{int} details from link with passphrase {word}',
+  async function (userIndex, tokenIndex, passphrase) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const certificateId = this.store.getToken(tokenIndex);
+
+    const deepLink = wallet.utils.createLink(certificateId, passphrase);
+    const certficiateDetails = await wallet.methods.getCertificateFromLink(deepLink.link, { owner: true });
+
+    expect(certficiateDetails).to.be.not.undefined;
+    expect(certficiateDetails.owner).to.be.not.undefined;
+  });
+
 Given('user{int} can see its {int} certificates from getMyCertificates',
   async function (userIndex, numberOfCertificates) {
     const wallet = this.store.getUserWallet(userIndex);
