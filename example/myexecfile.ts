@@ -3,7 +3,7 @@ declare var ArianeeLib;
 (async function () {
   const arianee = await new ArianeeLib
     .Arianee()
-    .init('testnet');
+    .init('arianeetestnet');
 
   const wallet = arianee.fromRandomKey();
 

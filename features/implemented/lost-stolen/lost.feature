@@ -9,7 +9,7 @@ Feature: User can set or unset its certificate as lost and
 
 
   Scenario: User set its certificate as lost then retrieves it
-    Given user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph"
+    Given user1 creates a new certificate0 with uri "https://jsonplaceholder.typicode.com/todos/1"
     Then user2 can see certificate0 lost status is false
     When user1 looses certificate0
     Then user2 can see certificate0 lost status is true

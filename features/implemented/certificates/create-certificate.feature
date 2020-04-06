@@ -5,9 +5,9 @@ Feature: Certificate creation
     Given user1 has credit of type certificate balance of 1
 
   Scenario: User wants to create a certificate
-    When user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph"
+    When user1 creates a new certificate0 with uri "https://jsonplaceholder.typicode.com/todos/1"
     Then user1 is the owner of the certificate0
-    And user1 is the owner of the certificate0 with uri "https://api.myjson.com/bins/cf4ph"
+    And user1 is the owner of the certificate0 with uri "https://jsonplaceholder.typicode.com/todos/1"
 
   Scenario: User wants to create and store a certificate
     When user1 createsAndStores certificate0
