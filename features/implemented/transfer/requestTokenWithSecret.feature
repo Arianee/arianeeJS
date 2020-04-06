@@ -10,32 +10,32 @@ Feature: Request token with Secret
     Given user3 requests credits of POA and ARIA
 
   Scenario: User can request token with Secret
-    When user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase
+    When user1 creates a new certificate0 with uri "https://jsonplaceholder.typicode.com/todos/1" and passphrase MyPassPhrase
     When user2 requests certificate0 with passprase MyPassPhrase
-    Then user2 is the owner of the certificate0 with uri "https://api.myjson.com/bins/cf4ph"
+    Then user2 is the owner of the certificate0 with uri "https://jsonplaceholder.typicode.com/todos/1"
 
   Scenario: A brand creates a certificate, user1 is the owner and transfert its certificate to user2
-    Given user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph"
+    Given user1 creates a new certificate0 with uri "https://jsonplaceholder.typicode.com/todos/1"
     Given user1 makes certificate0 transferable with passphrase MyPassPhrase
     Given user2 requests certificate0 with passprase MyPassPhrase
     Then user2 is the owner of the certificate0
 
   Scenario: A brand creates a certificate, user1 is the owner and transfert its certificate to user2
-    Given user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph"
+    Given user1 creates a new certificate0 with uri "https://jsonplaceholder.typicode.com/todos/1"
     Given user1 makes certificate0 transferable without passphrase
     Given user2 requests certificate0 with the link
     Then user2 is the owner of the certificate0
 
   Scenario: A brand creates a certificate, user1 can check if it can be requestable with passphrase
-    Given user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase
+    Given user1 creates a new certificate0 with uri "https://jsonplaceholder.typicode.com/todos/1" and passphrase MyPassPhrase
     Then user1 checks if certificate0 can be requested with passphrase MyPassPhrase
 
   Scenario: A brand creates a certificate, user1 can check if it can be requestable with wrong passphrase
-    Given user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase
+    Given user1 creates a new certificate0 with uri "https://jsonplaceholder.typicode.com/todos/1" and passphrase MyPassPhrase
     Then user1 checks if certificate0 can not be requested with passphrase WRONGPASSPHRASE
 
   Scenario:A certificate can not be transfer twice with same passphrase
-    Given user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph" and passphrase MyPassPhrase
+    Given user1 creates a new certificate0 with uri "https://jsonplaceholder.typicode.com/todos/1" and passphrase MyPassPhrase
     Given user2 requests certificate0 with passprase MyPassPhrase
     Then user3 checks if certificate0 can not be requested with passphrase WRONGPASSPHRASE
     Then user2 is the owner of the certificate0

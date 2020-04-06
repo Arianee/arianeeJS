@@ -3,18 +3,18 @@ import { Arianee, NETWORK } from '../src';
 import { blockchainEventsName } from '../src/models/blockchainEventsName';
 
 (async function () {
-  const arianee = await new Arianee().init(NETWORK.testnet);
+  const arianee = await new Arianee().init(NETWORK.arianeeTestnet);
 
-  const wallet = arianee.fromMnemonic('autumn balcony range return enact educate firm glare then pool round message');
+  const wallet = arianee.fromRandomKey();
 
-  const i = await wallet.methods.getCertificate(49400, 'y9a2obb58tgo',
-    {
-      arianeeEvents: true,
-      content: true,
-      issuer: true,
-      advanced: {
-        languages: ['zh-TW']
-      }
-    });
-  console.log(i.events.arianeeEvents[0].content.data);
+  await wallet.methods.approveStore();
+
+  wallet.methods.createCertificate({
+    content: {
+      $schema: 'https://cert.arianee.org/version1/ArianeeAsset.json',
+      name: 'Arianee'
+    }
+  })
+    .then(i => console.log('sucess', i))
+    .catch(d => console.log('errror', d));
 })();

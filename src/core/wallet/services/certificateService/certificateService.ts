@@ -1,30 +1,31 @@
+import { TransactionObject } from '@arianee/arianee-abi/types/types';
 import { get } from 'lodash';
 import { injectable } from 'tsyringe';
-import { isNullOrUndefined } from '../../../libs/isNullOrUndefined';
+import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
 import { BlockchainEvent, EventContent } from '../../../../models/blockchainEvent';
 import { blockchainEventsName } from '../../../../models/blockchainEventsName';
-import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
 import { ExtendedBoolean } from '../../../../models/extendedBoolean';
 import { StoreNamespace } from '../../../../models/storeNamespace';
+import { hydrateTokenParameters } from '../../../../models/transaction-parameters';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
-import { replaceLanguage } from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
 import { isCertificateI18n } from '../../../libs/certificateVersion';
+import { replaceLanguage } from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
+import { isNullOrUndefined } from '../../../libs/isNullOrUndefined';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { sortEvents } from '../../../libs/sortEvents';
 import { CertificateSummaryBuilder } from '../../certificateSummary';
 import { CertificateSummary, ConsolidatedCertificateRequest } from '../../certificateSummary/certificateSummary';
+import { BatchService } from '../batchService/batchService';
 import { CertificateAuthorizationService } from '../certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateDetails } from '../certificateDetailsService/certificatesDetailsService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
+import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { EventService } from '../eventService/eventsService';
 import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
-import { TransactionObject } from '@arianee/arianee-abi/types/types';
-import { hydrateTokenParameters } from '../../../../models/transaction-parameters';
-import { BatchService } from '../batchService/batchService';
 
 @injectable()
 export class CertificateService {
@@ -40,7 +41,8 @@ export class CertificateService {
     private certificateAuthorizationService:CertificateAuthorizationService,
     private globalConfiguration: GlobalConfigurationService,
     private store:SimpleStore,
-    private batchService:BatchService
+    private batchService:BatchService,
+    private diagnosisService:DiagnosisService
   ) {
   }
 
@@ -147,14 +149,25 @@ export class CertificateService {
 
     const preparedData = await this.prepareHydrateToken(data);
     const transcationObject = this.hydrateTokenTranscation(preparedData);
+    try {
+      var result = await transcationObject.send()
+        .then(i => ({
+          ...(<any>i),
+          passphrase: preparedData.passphrase,
+          certificateId: preparedData.certificateId,
+          deepLink: this.utils.createLink(preparedData.certificateId, preparedData.passphrase)
+        }));
 
-    return transcationObject.send()
-      .then(i => ({
-        ...(<any>i),
-        passphrase: preparedData.passphrase,
-        certificateId: preparedData.certificateId,
-        deepLink: this.utils.createLink(preparedData.certificateId, preparedData.passphrase)
-      }));
+      return result;
+    } catch (e) {
+      const diagnosis = await this.diagnosisService.diagnosis([
+        this.diagnosisService.isStoreApprove(),
+        this.diagnosisService.isPOACredit(),
+        this.diagnosisService.isCertificateCredit(),
+        this.diagnosisService.isCertificateIdExist(preparedData.certificateId)
+      ], e);
+      return Promise.reject(diagnosis);
+    }
   }
 
   public customHydrateTokenBatch = async (datas:hydrateTokenParameters[]) => {

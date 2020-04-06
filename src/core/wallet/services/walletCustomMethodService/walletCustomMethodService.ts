@@ -1,10 +1,12 @@
 import { injectable, singleton } from 'tsyringe';
 import { creditTypeEnum } from '../../../../models/creditTypesEnum';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
+import { BalanceService } from '../balanceService/balanceService';
 import { CertificateAuthorizationService } from '../certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateService } from '../certificateService/certificateService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
+import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { EventService } from '../eventService/eventsService';
 import { IdentityService } from '../identityService/identityService';
 import { POAAndAriaService } from '../POAAndAriaFaucet/POAAndAriaService';
@@ -22,13 +24,18 @@ export class WalletCustomMethodService {
               private certificateService: CertificateService,
                private poaAndAriaService:POAAndAriaService,
                private identityService:IdentityService,
-               private certificateAuthorizationService:CertificateAuthorizationService
+               private certificateAuthorizationService:CertificateAuthorizationService,
+               private balanceService:BalanceService,
+               private diagnosisService:DiagnosisService
   ) {
 
   }
 
   public getMethods () {
     return {
+      requestAria: this.poaAndAriaService.requestAria,
+      requestPoa: this.poaAndAriaService.requestPoa,
+
       createCertificate: this.certificateService.customHydrateToken,
       createCertificatesBatch: this.certificateService.customHydrateTokenBatch,
       createAndStoreCertificate: this.certificateService.createAndStoreCertificate,
@@ -49,11 +56,12 @@ export class WalletCustomMethodService {
 
       isCertificateOwnershipRequestable: this.certificateService.isCertificateOwnershipRequestable,
       requestCertificateOwnership: this.certificateService.customRequestToken,
-      balanceOfAria: this.balanceOfAria,
-      balanceOfPoa: this.balanceOfPoa,
+      balanceOfAria: this.balanceService.balanceOfAria,
+      balanceOfPoa: this.balanceService.balanceOfPoa,
+
       approveStore: this.approveStore,
       buyCredits: this.buyCredits,
-      balanceOfCredit: this.balanceOfCredit,
+      balanceOfCredit: this.balanceService.balanceOfCredit,
 
       acceptArianeeEvent: this.eventService.acceptArianeeEvent,
       refuseArianeeEvent: this.eventService.refuseArianeeEvent,
@@ -62,36 +70,10 @@ export class WalletCustomMethodService {
       storeContentInRPCServer: this.certificateService.storeContentInRPCServer,
       createArianeeEvent: this.eventService.createArianeeEvent,
       storeArianeeEvent: this.eventService.storeArianeeEventContentInRPCServer,
-      createAndStoreArianeeEvent: this.eventService.createAndStoreArianeeEvent
+      createAndStoreArianeeEvent: this.eventService.createAndStoreArianeeEvent,
+      diagnosis: this.diagnosisService.diagnosis
     };
   }
-
-  public balanceOfCredit = async (creditType:string, address = this.walletService.account.address): Promise<string> => {
-    if (!Object.prototype.hasOwnProperty.call(creditTypeEnum, creditType)) {
-      throw new Error('this credit type does not exist !!! ' + creditType);
-    }
-    const balance = await this.contractService.creditHistoryContract.methods.balanceOf(address, creditTypeEnum[creditType]).call();
-    return balance.toString();
-  }
-
-  public balanceOfAria = async (address = this.walletService.account.address): Promise<string> => {
-    const balance = await this.contractService.ariaContract.methods
-      .balanceOf(address)
-      .call();
-
-    return balance.toString();
-  }
-
-  public balanceOfPoa = async (address = this.walletService.account.address): Promise<string> => {
-    const balance = await this.web3Service.web3.eth
-      .getBalance(address);
-
-    return balance;
-  }
-
-  public requestPoa = this.poaAndAriaService.requestPoa;
-
-  public requestAria = this.poaAndAriaService.requestAria;
 
   private approveStore = () => {
     return this.contractService.ariaContract.methods
@@ -102,15 +84,25 @@ export class WalletCustomMethodService {
       .send();
   }
 
-  public buyCredits = (creditType: string, quantity: number, receiver?: string) => {
+  public buyCredits = async (creditType: string, quantity: number, receiver?: string) => {
     if (!Object.prototype.hasOwnProperty.call(creditTypeEnum, creditType)) {
       throw new Error('this credit type does not exist !!! ' + creditType);
     }
 
     receiver = receiver || this.walletService.publicKey;
 
-    return this.contractService.storeContract.methods
-      .buyCredit(creditTypeEnum[creditType], quantity, receiver)
-      .send();
+    try {
+      var result = await this.contractService.storeContract.methods
+        .buyCredit(creditTypeEnum[creditType], quantity, receiver)
+        .send();
+
+      return result;
+    } catch (e) {
+      const diagnosis = await this.diagnosisService.diagnosis([
+        this.diagnosisService.isStoreApprove(),
+        this.diagnosisService.isAriaCredit()
+      ], e);
+      return Promise.reject(diagnosis);
+    }
   }
 }

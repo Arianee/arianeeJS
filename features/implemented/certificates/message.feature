@@ -5,7 +5,7 @@ Feature: Message authorization
     Given user2 with account from randomKey
 
   Scenario: A brand creates a certificate, user1 is the owner and transfert its certificate to user2
-    Given user1 creates a new certificate0 with uri "https://api.myjson.com/bins/cf4ph"
+    Given user1 creates a new certificate0 with uri "https://jsonplaceholder.typicode.com/todos/1"
     Given user1 makes certificate0 transferable with passphrase MyPassPhrase
     Given user2 requests certificate0 with passprase MyPassPhrase
 
