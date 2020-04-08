@@ -41,6 +41,11 @@ import { Arianee } from '@arianee/arianeejs'
 });
 ```  
 
+## Issues
+
+If you have an issue or you found a bug, please open an issue on our github repo: https://github.com/Arianee/arianeeJS/issues
+Try to give us piece of code and the most details you can so we can reproduce your issue easily, and the help you faster.
+
 ## Contributing
 
 Your contribution are welcome if they comply to the following requirements:
