@@ -98,7 +98,7 @@ export class CertificateService {
       uri,
       hash,
       certificateId,
-      encryptedInitialKey: temporaryWallet.publicKey,
+      encryptedInitialKey: temporaryWallet.address,
       passphrase,
       tokenRecoveryTimestamp,
       sameRequestOwnershipPassphrase,
@@ -195,7 +195,7 @@ export class CertificateService {
 
     const proof = this.utils.signProofForRequestToken(
       certificateId,
-      this.walletService.publicKey,
+      this.walletService.address,
       temporaryWallet.privateKey
     );
 
@@ -264,7 +264,7 @@ export class CertificateService {
     if (query.owner) {
       requestQueue.push(
         this.certificateDetails.getCertificateOwner(certificateId)
-          .then(owner => response.setOwner(owner, this.walletService.publicKey)));
+          .then(owner => response.setOwner(owner, this.walletService.address)));
     }
 
     if (query.issuer) {
@@ -335,7 +335,7 @@ export class CertificateService {
    */
   public getMyCertificateIds =async ():Promise<ArianeeTokenId[]> => {
     const numberOfCertificates = await this.contractService.smartAssetContract.methods
-      .balanceOf(this.walletService.publicKey)
+      .balanceOf(this.walletService.address)
       .call();
 
     const rangeOfIndex = [];
@@ -348,7 +348,7 @@ export class CertificateService {
     return Promise.all(
       rangeOfIndex.map(index =>
         this.contractService.smartAssetContract.methods
-          .tokenOfOwnerByIndex(this.walletService.publicKey, index)
+          .tokenOfOwnerByIndex(this.walletService.address, index)
           .call()
       )
     );
@@ -359,7 +359,7 @@ export class CertificateService {
     verifyOwnership?:boolean
   ): Promise<CertificateSummary[]> => {
     // Fetch number of certificates this user owns
-    const certificateIds = await this.store.get<ArianeeTokenId[]>(StoreNamespace.certificateIds, this.walletService.publicKey, () => this.getMyCertificateIds(), verifyOwnership);
+    const certificateIds = await this.store.get<ArianeeTokenId[]>(StoreNamespace.certificateIds, this.walletService.address, () => this.getMyCertificateIds(), verifyOwnership);
 
     // Fetch details of each certificate
     const results = await Promise.all(
@@ -411,7 +411,7 @@ export class CertificateService {
       .fromPassPhrase(passphrase);
 
     return this.contractService.smartAssetContract.methods
-      .addTokenAccess(certificateId, temporaryWallet.publicKey, true, type)
+      .addTokenAccess(certificateId, temporaryWallet.address, true, type)
       .send();
   }
 
@@ -453,7 +453,7 @@ export class CertificateService {
       .call();
 
     const proof = this.configurationService.walletFactory().fromPassPhrase(passphrase)
-      .publicKey;
+      .address;
     if (/^0x0+$/.test(tokenHashedAccess)) {
       return false;
     } else {
@@ -548,7 +548,7 @@ export class CertificateService {
   public destroyCertificate =(certificateId:ArianeeTokenId):Promise<any> => {
     return this.contractService.smartAssetContract.methods
       .transferFrom(
-        this.walletService.publicKey,
+        this.walletService.address,
         '0x000000000000000000000000000000000000dead',
         certificateId)
       .send();

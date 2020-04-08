@@ -68,7 +68,15 @@ export class ArianeeWallet {
       return this;
     }
 
+    /**
+     * @deprecated use address instead
+     */
     public get publicKey (): string {
+      console.warn('publicKey is deprecated use address instead. It will be removed in a next version');
+      return this.account.address;
+    }
+
+    public get address (): string {
       return this.account.address;
     }
 

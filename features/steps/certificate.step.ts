@@ -14,7 +14,7 @@ Given('user{int} has positive credit certificate balance', async function (
   const wallet = this.store.getUserWallet(userIndex);
   const address = wallet.account.address;
   const balance = await wallet.contracts.creditHistoryContract.methods
-    .balanceOf(wallet.publicKey, 0)
+    .balanceOf(wallet.address, 0)
     .send();
 
   expect(balance.toNumber() > 0).equals(true);
@@ -58,7 +58,7 @@ Then(
   'user{int} certificates balance is {int}',
   async function (userIndex, expectedBalance) {
     const wallet = this.store.getUserWallet(userIndex);
-    const balance = await wallet.contracts.smartAssetContract.methods.balanceOf(wallet.publicKey).call() as any;
+    const balance = await wallet.contracts.smartAssetContract.methods.balanceOf(wallet.address).call() as any;
 
     expect(parseInt(balance)).equals(expectedBalance);
   }
@@ -235,7 +235,7 @@ Then('user{int} is the owner of the certificate{int}', async function (
   const wallet = this.store.getUserWallet(userIndex);
 
   const owner = await wallet.contracts.smartAssetContract.methods.ownerOf(token).call();
-  expect(wallet.publicKey).equals(owner);
+  expect(wallet.address).equals(owner);
 });
 
 Then('user{int} destroys certificate{int}', async function (
@@ -266,7 +266,7 @@ Then('user{int} is not the owner of the certificate{int}', async function (
   const wallet = this.store.getUserWallet(userIndex);
 
   const owner = await wallet.contracts.smartAssetContract.methods.ownerOf(token).call();
-  expect(wallet.publicKey !== owner).to.be.true;
+  expect(wallet.address !== owner).to.be.true;
 });
 
 Then(
@@ -277,7 +277,7 @@ Then(
 
     const owner = await wallet.contracts.smartAssetContract.methods.ownerOf(token).call();
 
-    expect(wallet.publicKey).equals(owner);
+    expect(wallet.address).equals(owner);
 
     const uriKey = await wallet.contracts.smartAssetContract.methods
       .tokenURI(token)

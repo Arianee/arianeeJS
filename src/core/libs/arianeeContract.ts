@@ -72,7 +72,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
     data: TransactionObject<any>
   ) => {
     const defaultTransaction = {
-      from: this.walletService.publicKey
+      from: this.walletService.address
     };
     const mergedTransaction = { ...defaultTransaction, ...transaction };
 

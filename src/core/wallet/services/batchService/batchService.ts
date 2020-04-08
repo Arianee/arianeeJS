@@ -22,7 +22,7 @@ export class BatchService {
 
   public async executeBatch () {
     const initialNonce = await this.web3Service.web3.eth.getTransactionCount(
-      this.walletService.publicKey,
+      this.walletService.address,
       'pending'
     );
 

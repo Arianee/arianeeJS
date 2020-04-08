@@ -16,7 +16,7 @@ export class SimpleStore {
   private cache = {};
 
   keyBuilder = (namespace:string, key):string => {
-    return `${this.walletService.publicKey}/${this.arianeeConfig.arianeeConfiguration.chainId}/${namespace}/${key}`;
+    return `${this.walletService.address}/${this.arianeeConfig.arianeeConfiguration.chainId}/${namespace}/${key}`;
   };
 
   public get = async <T>(namespace:string, key: string, getter: ()=> Promise<any>, force = false):Promise<T> => {

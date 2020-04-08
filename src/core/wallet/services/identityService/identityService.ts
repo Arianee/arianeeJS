@@ -1,7 +1,8 @@
 import { injectable } from 'tsyringe';
 import { IdentitySummary } from '../../../../models/arianee-identity';
-import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
+import { StoreNamespace } from '../../../../models/storeNamespace';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
+import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import {
   ConsolidatedCertificateRequest,
   ConsolidatedIssuerRequest,
@@ -10,8 +11,6 @@ import {
 import { ContractService } from '../contractService/contractsService';
 import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 import { UtilsService } from '../utilService/utilsService';
-import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
-import { StoreNamespace } from '../../../../models/storeNamespace';
 
 @injectable()
 export class IdentityService {

@@ -23,13 +23,13 @@ When('user{int} claims Aria', async function (userIndex) {
 When('user{int} buys {int} credit of type {word}', async function (userIndex, quantity, creditType) {
   const wallet = this.store.getUserWallet(userIndex);
 
-  await wallet.methods.buyCredits(creditType, quantity, wallet.publicKey);
+  await wallet.methods.buyCredits(creditType, quantity, wallet.address);
 });
 
 When('user{int} has credit of type {word} balance of {int}', async function (userIndex, creditType, quantity) {
   const wallet = this.store.getUserWallet(userIndex);
 
-  const balance = await wallet.methods.balanceOfCredit(creditType, wallet.publicKey);
+  const balance = await wallet.methods.balanceOfCredit(creditType, wallet.address);
   expect(balance).equals(quantity.toString());
 });
 

@@ -11,7 +11,7 @@ export const createAndTransfertCertificates = async () => {
 
   await makeWalletReady(nextOwnerWallet);
 
-  await wallet1.contracts.storeContract.methods.buyCredit(0, 5, wallet1.publicKey).send();
+  await wallet1.contracts.storeContract.methods.buyCredit(0, 5, wallet1.address).send();
 
   console.log('hydrate starting');
   const hash = wallet1.web3.utils.keccak256(`ezofnzefon${Date.now()}`);
