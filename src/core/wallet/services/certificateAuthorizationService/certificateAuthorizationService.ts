@@ -23,9 +23,9 @@ export class CertificateAuthorizationService {
     const { address } = await this.certificateDetailsService.fetchCertificateIssuer(parameters);
     const { certificateId } = parameters;
 
-    const publicKey = this.walletService.publicKey;
+    const currentAddress = this.walletService.address;
     const isIssuerAuthorized = await this.contractService.whitelistContract.methods
-      .isAuthorized(certificateId, address, publicKey)
+      .isAuthorized(certificateId, address, currentAddress)
       .call();
 
     return {

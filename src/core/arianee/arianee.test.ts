@@ -142,32 +142,32 @@ describe('Arianee', () => {
     describe('with a same mnemonic', () => {
       const mnemonic = 'hire super odor text avocado detail remain air end live sauce wife';
       const privateKey = '0x048f9038e7c38c225d8e98078bd8a28923a13a9c255190975258afebd56506d3';
-      const publicKey = '0x640D422Af7a6e9A21adC919b59609ED745ABED58';
+      const address = '0x640D422Af7a6e9A21adC919b59609ED745ABED58';
 
       test('should be same public key fromMnemonic', async () => {
         const arianee = await new Arianee().init(NETWORK.testnet);
         const wallet = arianee.fromMnemonic(mnemonic);
         expect(wallet.privateKey).toBe(privateKey);
-        expect(wallet.publicKey).toBe(publicKey);
+        expect(wallet.address).toBe(address);
       });
 
       test('should be same public key fromPrivateKey', async () => {
         const arianee = await new Arianee().init(NETWORK.testnet);
         const wallet = arianee.fromPrivateKey(privateKey);
-        expect(wallet.publicKey).toBe(publicKey);
+        expect(wallet.address).toBe(address);
         expect(wallet.privateKey).toBe(privateKey);
       });
     });
 
     describe('from passphrase', () => {
       const passphrase = 'passphrase';
-      const publicKey = '0x8E7a86D892d88BA42C780ce7E557B0EbbcFDC650';
+      const address = '0x8E7a86D892d88BA42C780ce7E557B0EbbcFDC650';
       const privateKey = '0x0000000000000000000000000000000000000000000070617373706872617365';
 
       test('should be same public key fromPrivateKey', async () => {
         const arianee = await new Arianee().init(NETWORK.testnet);
         const wallet = arianee.fromPassPhrase(passphrase);
-        expect(wallet.publicKey).toBe(publicKey);
+        expect(wallet.address).toBe(address);
         expect(wallet.privateKey).toBe(privateKey);
       });
     });

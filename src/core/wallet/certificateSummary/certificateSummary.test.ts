@@ -27,7 +27,7 @@ describe('certificateSummaryBuilder', () => {
 
     it('should be not the owner', () => {
       const arianeeCertificate = new CertificateSummaryBuilder()
-        .setOwner('notTheOwner', 'anotherPublicKey')
+        .setOwner('notTheOwner', 'anotherAddress')
         .build();
 
       expect(arianeeCertificate.owner.isOwner).toBeFalsy();
@@ -40,7 +40,7 @@ describe('certificateSummaryBuilder', () => {
 
       const arianeeCertificate = new CertificateSummaryBuilder()
         .setCertificateId(certificateId)
-        .setOwner('OWNERKEY', 'anotherPublicKey')
+        .setOwner('OWNERKEY', 'anotherAddress')
         .build();
 
       expect(arianeeCertificate.certificateId).toBe(certificateId);

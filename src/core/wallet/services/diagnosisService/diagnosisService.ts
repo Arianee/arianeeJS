@@ -44,7 +44,7 @@ export class DiagnosisService {
     public isStoreApprove=async ():Promise<ExtendedBoolean> => {
       const smartAssetContractAddress = this.configurationService.arianeeConfiguration.store.address;
       const isApproved = await this.contractService.ariaContract.methods
-        .allowance(this.walletService.publicKey, smartAssetContractAddress)
+        .allowance(this.walletService.address, smartAssetContractAddress)
         .call();
 
       return {

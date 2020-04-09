@@ -68,7 +68,7 @@ const createCertificateInBatch = async (datamapped) => {
 
   await wallet.requestAria();
   await wallet.methods.approveStore();
-  await wallet.methods.buyCredits('certificate', nbtx, wallet.publicKey);
+  await wallet.methods.buyCredits('certificate', nbtx, wallet.address);
 
   for (let i = 0; i < batchParam.length; i++) {
     const batch = await wallet.methods.createCertificatesBatch(batchParam[i])

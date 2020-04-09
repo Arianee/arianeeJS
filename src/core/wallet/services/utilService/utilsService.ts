@@ -24,13 +24,13 @@ export class UtilsService {
 
   public signProofForRequestToken (
     certificateId: number,
-    publicKeyNextOwner: string,
+    addressNextOwner: string,
     privateKeyPreviousOwner: string
   ) {
     const data = this.web3.utils.keccak256(
       this.web3.eth.abi.encodeParameters(
         ['uint', 'address'],
-        [certificateId, publicKeyNextOwner]
+        [certificateId, addressNextOwner]
       )
     );
 
@@ -190,14 +190,14 @@ export class UtilsService {
 
   public async signTransaction (encodeABI, contractAddress, overrideNonce?, transaction?):Promise<SignedTransaction> {
     const nonce = overrideNonce || await this.web3.eth.getTransactionCount(
-      this.walletService.publicKey,
+      this.walletService.address,
       'pending'
     );
 
     const defaultTransaction = {
       nonce,
       chainId: this.configurationService.arianeeConfiguration.chainId,
-      from: this.walletService.publicKey,
+      from: this.walletService.address,
       data: encodeABI,
       to: contractAddress,
       gas: this.configurationService.arianeeConfiguration.transactionOptions.gas,

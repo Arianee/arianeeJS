@@ -36,13 +36,13 @@ export class BlockchainEventWatcherService {
   public watcherParameters:watchParameter[]=[
     {
       contract: this.contractService.smartAssetContract,
-      filter: { _from: this.walletService.publicKey },
+      filter: { _from: this.walletService.address },
       blockchainEvent: blockchainEventsName.smartAsset.transfer,
       eventNames: [BlockchainEventWatcherEnum.Transfer, BlockchainEventWatcherEnum.TransferFrom]
     },
     {
       contract: this.contractService.smartAssetContract,
-      filter: { _to: this.walletService.publicKey },
+      filter: { _to: this.walletService.address },
       blockchainEvent: blockchainEventsName.smartAsset.transfer,
       eventNames: [BlockchainEventWatcherEnum.Transfer, BlockchainEventWatcherEnum.TransferTo]
     },

@@ -89,7 +89,7 @@ export class WalletCustomMethodService {
       throw new Error('this credit type does not exist !!! ' + creditType);
     }
 
-    receiver = receiver || this.walletService.publicKey;
+    receiver = receiver || this.walletService.address;
 
     try {
       var result = await this.contractService.storeContract.methods

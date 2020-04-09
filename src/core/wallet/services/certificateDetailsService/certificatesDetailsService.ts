@@ -56,7 +56,7 @@ export class CertificateDetails {
       .ownerOf(certificateId.toString())
       .call();
 
-    if (certificateBuilder) certificateBuilder.setOwner(owner, this.walletService.publicKey);
+    if (certificateBuilder) certificateBuilder.setOwner(owner, this.walletService.address);
 
     return owner;
   }

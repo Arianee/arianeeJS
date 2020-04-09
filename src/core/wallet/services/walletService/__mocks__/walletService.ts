@@ -4,6 +4,10 @@ export class WalletService {
     privateKey: 'azokdnazoidfjn'
   }
 
+  public get address (): string {
+    return this.account.address;
+  }
+
   public get publicKey (): string {
     return this.account.address;
   }

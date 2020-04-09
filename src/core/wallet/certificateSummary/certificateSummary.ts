@@ -59,6 +59,7 @@ export interface CertificateIssuer<IdentityType=any> {
 export interface CertificateOwner {
   isOwner: boolean;
   publicKey: string;
+  address: string;
   identity?: IdentitySummary;
 }
 

@@ -92,10 +92,17 @@ export class CertificateSummaryBuilder {
       return this;
     }
 
-    public setOwner (ownerPublicKey: string, currentWallet:string) {
+    public setOwner (ownerAddress: string, currentWallet:string) {
       this._owner = {
-        publicKey: ownerPublicKey,
-        isOwner: ownerPublicKey === currentWallet
+        /**
+           * @deprecated use address instead
+           */
+        get publicKey () {
+          console.warn('publicKey is deprecated use address instead. It will be removed in a next version');
+          return ownerAddress;
+        },
+        address: ownerAddress,
+        isOwner: ownerAddress === currentWallet
       };
 
       return this;

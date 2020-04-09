@@ -90,7 +90,7 @@ Given('user{int} can approve storeContract', async function (userIndex) {
 Then('storeContract is approved for user{int}', async function (userIndex) {
   const wallet = this.store.getUserWallet(userIndex);
 
-  const allowance = await wallet.contracts.ariaContract.methods.allowance(wallet.publicKey, wallet.configuration.store.address)
+  const allowance = await wallet.contracts.ariaContract.methods.allowance(wallet.address, wallet.configuration.store.address)
     .call();
 
   expect(allowance).equal('10000000000000000000000000000');

@@ -4,7 +4,7 @@ import { injectable, singleton } from 'tsyringe';
 export class WalletService {
   public account;
 
-  public get publicKey (): string {
+  public get address (): string {
     return this.account.address;
   }
 
