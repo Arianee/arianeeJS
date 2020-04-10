@@ -1,5 +1,6 @@
 import { container } from 'tsyringe';
 import { ArianeeConfig } from '../../models/arianeeConfiguration';
+import { SimpleStore } from '../libs/simpleStore/simpleStore';
 import { ArianeeEventEmitter } from './services/arianeeEventEmitterService/ArianeeEventEmitter';
 import { BlockchainEventWatcherService } from './services/blockchainEventWatcherService/blochainEventWatcherService';
 import { CertificateAuthorizationService } from './services/certificateAuthorizationService/certificateAuthorizationService';
@@ -39,7 +40,8 @@ export class ArianeeWallet {
         CertificateAuthorizationService,
         UtilsService,
         BatchService,
-        DiagnosisService
+        DiagnosisService,
+        SimpleStore
       );
 
       const walletService:WalletService = this.container.resolve(WalletService);
