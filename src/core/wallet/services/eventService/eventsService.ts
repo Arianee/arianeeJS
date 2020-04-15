@@ -94,6 +94,8 @@ export class EventService {
         .map(arianeeEvent => {
           if (isCertificateI18n(arianeeEvent.content.data)) {
             return replaceLanguage(arianeeEvent, query.advanced.languages) as any;
+          } else {
+            return arianeeEvent;
           }
         });
     } else {
