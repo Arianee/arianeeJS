@@ -1,22 +1,5 @@
 import { expect } from 'chai';
-import { Given } from 'cucumber';
-
-Given('user{int} creates an event{int} with title {string} on certificate{int}', async function (
-  userIndex, eventIndex, title, certificateIndex
-) {
-  const wallet = this.store.getUserWallet(userIndex);
-  const certificateId = this.store.getToken(certificateIndex);
-
-  const { arianeeEventId } = await wallet.methods.createArianeeEvent({
-    certificateId,
-    content: {
-      title,
-      $schema: 'https://cert.arianee.org/version1/ArianeeEvent-i18n.json'
-    }
-  });
-
-  this.store.storeEvent(eventIndex, arianeeEventId);
-});
+import { When, Given } from 'cucumber';
 
 Given('user{int} creates an event{int} with title {string} on certificate{int} with proper errors', async function (
   userIndex, eventIndex, title, certificateIndex
@@ -43,6 +26,40 @@ Given('user{int} creates an event{int} with title {string} on certificate{int} w
     expect(isCertificateCreditError).to.be.true;
     expect(isCreditPoaError).to.be.false;
   }
+});
+
+Given('user{int} creates an event{int} on certificate{int} as:', async function (
+  userIndex, eventIndex, certificateIndex, eventContentSTR
+) {
+  const wallet = this.store.getUserWallet(userIndex);
+  const certificateId = this.store.getToken(certificateIndex);
+
+  const eventContent = JSON.parse(eventContentSTR);
+
+  const { arianeeEventId } = await wallet.methods.createAndStoreArianeeEvent({
+    certificateId,
+    content: eventContent
+  }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`
+  );
+
+  this.store.storeEvent(eventIndex, arianeeEventId);
+});
+
+Given('user{int} createsAndStores an event{int} on certificate{int} as:', async function (
+  userIndex, eventIndex, certificateIndex, eventContentSTR
+) {
+  const wallet = this.store.getUserWallet(userIndex);
+  const certificateId = this.store.getToken(certificateIndex);
+
+  const eventContent = JSON.parse(eventContentSTR);
+
+  const { arianeeEventId } = await wallet.methods.createAndStoreArianeeEvent({
+    certificateId,
+    content: eventContent
+  }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`
+  );
+
+  this.store.storeEvent(eventIndex, arianeeEventId);
 });
 
 Given('user{int} createsAndStores an event{int} with title {string} on certificate{int}', async function (

@@ -7,6 +7,7 @@ import {
   ConsolidatedIssuerRequest
 } from '../../src/core/wallet/certificateSummary/certificateSummary';
 import { waitFor } from './helpers/waitFor';
+import { get } from 'lodash';
 
 Given('user{int} has positive credit certificate balance', async function (
   userIndex
@@ -153,6 +154,31 @@ When(
     } catch (err) {
       console.error('ERROR', err);
       expect(true).equals(false);
+    }
+  }
+);
+
+When(
+  'user{int} creates certificate{int} as:',
+  { timeout: 45000 },
+
+  async function (userIndex, tokenIndex, certificateContent) {
+    const wallet = this.store.getUserWallet(userIndex);
+
+    const content = JSON.parse(certificateContent);
+
+    try {
+      const result = await wallet.methods.createCertificate({
+        content
+      });
+
+      const { certificateId } = result;
+      this.store.storeToken(tokenIndex, certificateId);
+      this.store.storeCustom('result', result);
+    } catch (err) {
+      console.error('ERROR');
+      console.log(err);
+      this.store.storeCustom('result', err);
     }
   }
 );
@@ -342,6 +368,28 @@ Given('user{int} want to see certificate{int} details',
     expect(certficiateDetails).to.be.not.undefined;
 
     expect(certficiateDetails.owner).to.be.not.undefined;
+  });
+
+Given('user{int} sees certificate{int} details with passphrase {word} with params:',
+  async function (userIndex, tokenIndex, passphrase, queryParameters) {
+    const params = JSON.parse(queryParameters);
+    const wallet = this.store.getUserWallet(userIndex);
+    const certificateId = this.store.getToken(tokenIndex);
+
+    const certficiateDetails = await wallet.methods.getCertificate(certificateId, passphrase, params);
+
+    this.store.storeCustom('result', certficiateDetails);
+  });
+
+Then('result should have property',
+  async function (table) {
+    const properties = table.raw();
+    const certficiateDetails = this.store.getCustom('result');
+    properties.forEach(prop => {
+      const [name, value] = prop;
+      const hasProperty = get(certficiateDetails, name) !== undefined;
+      expect(hasProperty.toString() === value.toString()).to.be.true;
+    });
   });
 
 Given('user{int} want to see certificate{int} details with passphrase {word}',
