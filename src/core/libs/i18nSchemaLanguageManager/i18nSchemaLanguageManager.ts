@@ -14,7 +14,10 @@ export const replaceLanguage = (certificateSummary :CertificateSummary<ArianeeCe
 };
 
 export const availableLanguages = (certificateId18n: ArianeeCertificatei18n, language: string): string[] => {
-  return certificateId18n.i18n.map(i => i.language);
+  const defaultLanguage = certificateId18n.language;
+  const availableTranslation = certificateId18n.i18n.map(i => i.language);
+
+  return [defaultLanguage, ...availableTranslation];
 };
 
 export const replaceLanguageContent = (certificateId18n :ArianeeCertificatei18n, language:string):ArianeeCertificatei18n => {

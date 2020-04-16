@@ -29,46 +29,46 @@ export type Category = Apparel | Accessory;
 /**
  * Apparel
  */
-export type Apparel = "apparel";
+export type Apparel = 'apparel';
 /**
  * Accessory
  */
-export type Accessory = "accessory";
+export type Accessory = 'accessory';
 export type SubCategory = Shirt | Dress;
 /**
  * Shirt
  */
-export type Shirt = "shirt";
+export type Shirt = 'shirt';
 /**
  * Dress
  */
-export type Dress = "dress";
+export type Dress = 'dress';
 export type Intended = WomenS | MenS | AdultGenderNeutral;
 /**
  * Women's
  */
-export type WomenS = "womens";
+export type WomenS = 'womens';
 /**
  * Men's
  */
-export type MenS = "mens";
+export type MenS = 'mens';
 /**
  * Adult Gender Neutral
  */
-export type AdultGenderNeutral = "neutral";
+export type AdultGenderNeutral = 'neutral';
 export type Type = SerialNumber | CaseNumber | MovementNumber;
 /**
  * Serial Number
  */
-export type SerialNumber = "serialnumber";
+export type SerialNumber = 'serialnumber';
 /**
  * Case Number
  */
-export type CaseNumber = "casenumber";
+export type CaseNumber = 'casenumber';
 /**
  * Movement Number
  */
-export type MovementNumber = "movementnumber";
+export type MovementNumber = 'movementnumber';
 export type Value = string;
 export type SerialNumber1 = {
     type?: Type;
@@ -87,19 +87,19 @@ export type Language = French | EnglishUS | ChineseTraditional | ChineseSimplifi
 /**
  * French
  */
-export type French = "fr-FR";
+export type French = 'fr-FR';
 /**
  * English (US)
  */
-export type EnglishUS = "en-US";
+export type EnglishUS = 'en-US';
 /**
  * Chinese (traditional)
  */
-export type ChineseTraditional = "zh-TW";
+export type ChineseTraditional = 'zh-TW';
 /**
  * Chinese (simplified)
  */
-export type ChineseSimplified = "zh-CN";
+export type ChineseSimplified = 'zh-CN';
 /**
  * Product Description
  */
@@ -108,15 +108,15 @@ export type Type1 = Servicing | Recycling | Other;
 /**
  * Servicing
  */
-export type Servicing = "service";
+export type Servicing = 'service';
 /**
  * Recycling
  */
-export type Recycling = "recycling";
+export type Recycling = 'recycling';
 /**
  * other
  */
-export type Other = "other";
+export type Other = 'other';
 export type Title = string;
 export type Content = string;
 export type OrderNumber = number;
@@ -127,19 +127,24 @@ export type DescriptionMore = {
     order?: OrderNumber;
     [k: string]: any;
 }[];
-export type Type2 = WebsiteMain | Eshop | Other1;
+export type Type2 = WebsiteMain | Eshop | Other1 | Transparency;
+
 /**
  * Website (main)
  */
-export type WebsiteMain = "website";
+export type WebsiteMain = 'website';
 /**
  * Eshop
  */
-export type Eshop = "eshop";
+export type Eshop = 'eshop';
 /**
  * other
  */
-export type Other1 = "other";
+/**
+ * Transparency
+ */
+export type Transparency = 'transparency';
+export type Other1 = 'other';
 export type Title1 = string;
 export type Url = string;
 export type OrderNumber1 = number;
@@ -154,33 +159,33 @@ export type Language1 = French1 | EnglishUS1 | ChineseTraditional1 | ChineseSimp
 /**
  * French
  */
-export type French1 = "fr-FR";
+export type French1 = 'fr-FR';
 /**
  * English (US)
  */
-export type EnglishUS1 = "en-US";
+export type EnglishUS1 = 'en-US';
 /**
  * Chinese (traditional)
  */
-export type ChineseTraditional1 = "zh-TW";
+export type ChineseTraditional1 = 'zh-TW';
 /**
  * Chinese (simplified)
  */
-export type ChineseSimplified1 = "zh-CN";
+export type ChineseSimplified1 = 'zh-CN';
 export type Description1 = string;
 export type Type3 = Servicing1 | Recycling1 | Other2;
 /**
  * Servicing
  */
-export type Servicing1 = "service";
+export type Servicing1 = 'service';
 /**
  * Recycling
  */
-export type Recycling1 = "recycling";
+export type Recycling1 = 'recycling';
 /**
  * other
  */
-export type Other2 = "other";
+export type Other2 = 'other';
 export type Title2 = string;
 export type Content1 = string;
 export type OrderNumber2 = number;
@@ -195,15 +200,15 @@ export type Type4 = WebsiteMain1 | Eshop1 | Other3;
 /**
  * Website (main)
  */
-export type WebsiteMain1 = "website";
+export type WebsiteMain1 = 'website';
 /**
  * Eshop
  */
-export type Eshop1 = "eshop";
+export type Eshop1 = 'eshop';
 /**
  * other
  */
-export type Other3 = "other";
+export type Other3 = 'other';
 export type Title3 = string;
 export type Url1 = string;
 export type OrderNumber3 = number;
@@ -232,15 +237,15 @@ export type Currency = USDollar | Euro | Pound;
 /**
  * US Dollar
  */
-export type USDollar = "USD";
+export type USDollar = 'USD';
 /**
  * Euro
  */
-export type Euro = "EUR";
+export type Euro = 'EUR';
 /**
  * Pound
  */
-export type Pound = "GBP";
+export type Pound = 'GBP';
 /**
  * Country of Intended Original Sale (ISO 3166 alpha-3)
  */
@@ -255,11 +260,11 @@ export type MediaType = PicturePngJpg | YoutubeVideo;
 /**
  * Picture (png / jpg)
  */
-export type PicturePngJpg = "picture";
+export type PicturePngJpg = 'picture';
 /**
  * Youtube video
  */
-export type YoutubeVideo = "youtube";
+export type YoutubeVideo = 'youtube';
 export type Type5 =
     | ProductMediaPicture
     | BrandItemBackgroundPicture3200X1900Ratioed
@@ -268,19 +273,19 @@ export type Type5 =
 /**
  * Product media / picture
  */
-export type ProductMediaPicture = "product";
+export type ProductMediaPicture = 'product';
 /**
  * Brand Item Background Picture (3200x1900) ratioed
  */
-export type BrandItemBackgroundPicture3200X1900Ratioed = "brandItemBackgroundPicture";
+export type BrandItemBackgroundPicture3200X1900Ratioed = 'brandItemBackgroundPicture';
 /**
  * Item Background Picture (3000x3000) ratioed
  */
-export type ItemBackgroundPicture3000X3000Ratioed = "itemBackgroundPicture";
+export type ItemBackgroundPicture3000X3000Ratioed = 'itemBackgroundPicture';
 /**
  * Certificate Background Picture (1900x3200 TBD) preferably dark - with logo on top
  */
-export type CertificateBackgroundPicture1900X3200TBDPreferablyDarkWithLogoOnTop = "certificateBackgroundPicture";
+export type CertificateBackgroundPicture1900X3200TBDPreferablyDarkWithLogoOnTop = 'certificateBackgroundPicture';
 export type URL = string;
 export type MediaHash = string;
 export type MediaOrderNumber = number;
@@ -299,15 +304,15 @@ export type Type6 = Color | Material | Printed;
 /**
  * Color
  */
-export type Color = "color";
+export type Color = 'color';
 /**
  * Material
  */
-export type Material = "material";
+export type Material = 'material';
 /**
  * Printed
  */
-export type Printed = "printed";
+export type Printed = 'printed';
 export type Value1 = string;
 export type Attributes = {
     type?: Type6;
@@ -318,15 +323,15 @@ export type Material1 = Cashmere | Cotton | DenimJeans;
 /**
  * Cashmere
  */
-export type Cashmere = "cashmere";
+export type Cashmere = 'cashmere';
 /**
  * Cotton
  */
-export type Cotton = "cotton";
+export type Cotton = 'cotton';
 /**
  * Denim - Jeans
  */
-export type DenimJeans = "denim-jeans";
+export type DenimJeans = 'denim-jeans';
 export type Value2 = string;
 /**
  * Pourcentage without % (numeric)
@@ -342,41 +347,41 @@ export type Type7 = Height | Width | Depth | Size;
 /**
  * Height
  */
-export type Height = "height";
+export type Height = 'height';
 /**
  * Width
  */
-export type Width = "width";
+export type Width = 'width';
 /**
  * Depth
  */
-export type Depth = "depth";
+export type Depth = 'depth';
 /**
  * Size
  */
-export type Size = "depth";
+export type Size = 'depth';
 export type Value3 = string;
 export type Unit = Inch | Centimer | EU | UK | US;
 /**
  * Inch
  */
-export type Inch = "in";
+export type Inch = 'in';
 /**
  * Centimer
  */
-export type Centimer = "cm";
+export type Centimer = 'cm';
 /**
  * EU
  */
-export type EU = "eu";
+export type EU = 'eu';
 /**
  * UK
  */
-export type UK = "uk";
+export type UK = 'uk';
 /**
  * US
  */
-export type US = "us";
+export type US = 'us';
 export type Sizes = {
     type?: Type7;
     value?: Value3;
@@ -395,11 +400,11 @@ export type Name1 = FairTrade | WWF;
 /**
  * Fair Trade
  */
-export type FairTrade = "fairtrade";
+export type FairTrade = 'fairtrade';
 /**
  * WWF
  */
-export type WWF = "wwf";
+export type WWF = 'wwf';
 /**
  * List any certifications that the product has received.
  */
