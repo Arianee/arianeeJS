@@ -103,12 +103,6 @@ export class EventService {
     }
   }
 
-  /*
-
-  Reste à faire:
-  LES eveneents sont classés dans quel ordre?
-  les events transfert doivent ils avoir la meme tete?
-   */
   static orderArianeeEvents= (leftEvent:ArianeeEvent, rightEvent:ArianeeEvent) => leftEvent.timestamp - leftEvent.timestamp
 
   private getValidateEvents = async (certificateId, rpcEndpoint, passphrase?) => {
