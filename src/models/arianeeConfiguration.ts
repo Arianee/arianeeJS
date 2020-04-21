@@ -1,4 +1,5 @@
 import { provider } from 'web3-core';
+import { NETWORK } from './networkConfiguration';
 
 interface ContractConfiguration {
   abi: string;
@@ -22,11 +23,13 @@ export interface ArianeeConfig {
   whitelist: ContractConfiguration;
   lost:ContractConfiguration;
 
+  networkName:NETWORK;
   web3Provider: provider;
   chainId: number;
   faucetUrl: string;
   walletReward: { address: string };
   brandDataHubReward: { address: string };
   deepLink: string;
+  alternativeDeeplink: string[];
   transactionOptions?:TransactionOptions
 }

@@ -1,6 +1,7 @@
 import { Cert } from '@0xcert/cert';
 import { singleton } from 'tsyringe';
 import { Sign, SignedTransaction } from 'web3-core';
+import { NETWORK } from '../../../..';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { Web3Service } from '../web3Service/web3Service';
 
@@ -109,24 +110,47 @@ export class UtilsService {
     return obj;
   }
 
-  public findChainFromHostname (hostname) {
+  /**
+   * Function. Pass a deeplink hostname, and find the right network according to configuration
+   * @param hostname
+   * @returns {NETWORK} network name of this deeplink hostname. If no network associated with this hostname, it returns
+   * undefined
+   */
+  public findChainFromHostname (hostname):NETWORK {
     const networkConfigurations = this.configurationService.supportedConfigurations;
+    const networks = Object.keys(this.configurationService.supportedConfigurations) as Array<NETWORK>;
 
-    const networks = Object.keys(this.configurationService.supportedConfigurations);
-    return networks.find(key => networkConfigurations[key].deepLink === hostname);
+    return networks.find(key => {
+      if (networkConfigurations[key].deepLink === hostname) {
+        return true;
+      } else if (networkConfigurations[key].alternativeDeeplink &&
+          networkConfigurations[key].alternativeDeeplink.length > 0) {
+        return networkConfigurations[key].alternativeDeeplink.includes(hostname);
+      } else {
+        return false;
+      }
+    });
   }
 
-  public isRightChain (hostname: string) {
-    if (hostname === this.configurationService.arianeeConfiguration.deepLink) {
-      return true;
-    } else {
-      const mostLikelychain = this.findChainFromHostname(hostname);
-
-      const error = new Error('You are not in the right chain');
-      error.message = 'You are not in the right chain';
-      (error as any).chain = mostLikelychain;
-      throw error;
+  /**
+   * Function. Pass a deeplink hostname.
+   * @param hostname
+   * @returns {true} it return true if arianeejs is initiated on the right network otherwise it thrown an error
+   * with the most likely chainName
+   */
+  public isRightChain (hostname: string):boolean {
+    const rightChain = this.findChainFromHostname(hostname);
+    if (rightChain) {
+      const currentNetworkName = this.configurationService.arianeeConfiguration.networkName;
+      if (rightChain === currentNetworkName) {
+        return true;
+      }
     }
+
+    const error = new Error('You are not in the right chain');
+    error.message = 'You are not in the right chain';
+    (error as any).chain = rightChain;
+    throw error;
   }
 
   public createLink (
