@@ -24,7 +24,8 @@ export class Arianee {
       walletReward?: { address: string },
       brandDataHubReward?: { address: string },
       httpProvider?:provider,
-      transactionOptions?: TransactionOptions
+      transactionOptions?: TransactionOptions,
+      deepLink?:string
     } = {}
   ): Promise<ArianeeWalletBuilder> {
     const url = networkURL[networkName];
@@ -45,7 +46,6 @@ export class Arianee {
 
     const { deepLink, faucetUrl } = conf.appConfig[networkName];
 
-    arianeeConfiguration.deepLink = deepLink;
     arianeeConfiguration.faucetUrl = faucetUrl;
 
     arianeeConfiguration.web3Provider = (function () {
@@ -61,10 +61,16 @@ export class Arianee {
       }
     })();
 
-    arianeeConfiguration.chainId = addressesResult.chainId;
-
     if (get(arianeeCustomConfiguration, 'transactionOptions')) {
       arianeeConfiguration.transactionOptions = get(arianeeCustomConfiguration, 'transactionOptions');
+    }
+
+    arianeeConfiguration.chainId = addressesResult.chainId;
+
+    if (get(arianeeCustomConfiguration, 'deepLink')) {
+      arianeeConfiguration.deepLink = get(arianeeCustomConfiguration, 'deepLink');
+    } else {
+      arianeeConfiguration.deepLink = deepLink;
     }
 
     if (get(arianeeCustomConfiguration, 'walletReward.address')) {

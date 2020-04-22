@@ -76,65 +76,80 @@ describe('Arianee', () => {
       });
     });
   });
-  describe('brandDataHubReward walletReward', () => {
-    test('should have a default setting', async () => {
-      const arianee = await new Arianee()
-        .init(NETWORK.testnet);
 
-      const wallet = arianee.fromRandomKey();
-      expect(wallet.configuration.brandDataHubReward.address).toBeDefined();
-      expect(wallet.configuration.walletReward.address).toBeDefined();
+  describe('arianeeCustomConfiguration', () => {
+    describe('brandDataHubReward walletReward', () => {
+      test('should have a default setting', async () => {
+        const arianee = await new Arianee()
+          .init(NETWORK.testnet);
+
+        const wallet = arianee.fromRandomKey();
+        expect(wallet.configuration.brandDataHubReward.address).toBeDefined();
+        expect(wallet.configuration.walletReward.address).toBeDefined();
+      });
+
+      test('should be setting custom brandDataHubReward', async () => {
+        const brandDataHubReward = { address: '0x640D422Af7a6e9A21adC919b5909ED745ABED58' };
+        const arianee = await new Arianee()
+          .init(NETWORK.testnet, { brandDataHubReward });
+
+        const wallet = arianee.fromRandomKey();
+        expect(wallet.configuration.brandDataHubReward).toEqual(brandDataHubReward);
+      });
+
+      test('should be setting custom walletReward', async () => {
+        const walletReward = { address: '0x640D422Af7a6e9A21adC919b59609ED745ABED58' };
+        const arianee = await new Arianee()
+          .init(NETWORK.testnet, { walletReward });
+
+        const wallet = arianee.fromRandomKey();
+        expect(wallet.configuration.walletReward).toEqual(walletReward);
+      });
     });
 
-    test('should be setting custom brandDataHubReward', async () => {
-      const brandDataHubReward = { address: '0x640D422Af7a6e9A21adC919b5909ED745ABED58' };
-      const arianee = await new Arianee()
-        .init(NETWORK.testnet, { brandDataHubReward });
+    describe('transactionOptions', () => {
+      test('should have a default setting 1111', async () => {
+        const arianee = await new Arianee()
+          .init(NETWORK.testnet);
 
-      const wallet = arianee.fromRandomKey();
-      expect(wallet.configuration.brandDataHubReward).toEqual(brandDataHubReward);
+        const wallet = arianee.fromRandomKey();
+        expect(wallet.configuration.transactionOptions).toBeDefined();
+        expect(wallet.configuration.transactionOptions.gas).toBeDefined();
+        expect(wallet.configuration.transactionOptions.gasPrice).toBeDefined();
+      });
+
+      test('should be setting custom transactionOptions', async () => {
+        const transactionOptions:TransactionOptions = { gasPrice: 2, gas: 1 };
+        const arianee = await new Arianee()
+          .init(NETWORK.testnet, { transactionOptions });
+
+        const wallet = arianee.fromRandomKey();
+        expect(wallet.configuration.transactionOptions).toEqual(transactionOptions);
+      });
     });
 
-    test('should be setting custom walletReward', async () => {
-      const walletReward = { address: '0x640D422Af7a6e9A21adC919b59609ED745ABED58' };
-      const arianee = await new Arianee()
-        .init(NETWORK.testnet, { walletReward });
+    describe('Custom web3Provider', () => {
+      test('should have a default setting', async () => {
+        const myCustomHttpProvider = 'https://monhttpProvider.com';
 
-      const wallet = arianee.fromRandomKey();
-      expect(wallet.configuration.walletReward).toEqual(walletReward);
-    });
-  });
+        const arianee = await new Arianee()
+          .init(NETWORK.testnet, { httpProvider: myCustomHttpProvider });
 
-  describe('transactionOptions', () => {
-    test('should have a default setting 1111', async () => {
-      const arianee = await new Arianee()
-        .init(NETWORK.testnet);
-
-      const wallet = arianee.fromRandomKey();
-      expect(wallet.configuration.transactionOptions).toBeDefined();
-      expect(wallet.configuration.transactionOptions.gas).toBeDefined();
-      expect(wallet.configuration.transactionOptions.gasPrice).toBeDefined();
+        const wallet = arianee.fromRandomKey();
+        expect(wallet.configuration.web3Provider).toBe(myCustomHttpProvider);
+      });
     });
 
-    test('should be setting custom transactionOptions', async () => {
-      const transactionOptions:TransactionOptions = { gasPrice: 2, gas: 1 };
-      const arianee = await new Arianee()
-        .init(NETWORK.testnet, { transactionOptions });
+    describe('custom deeplink', () => {
+      test('should have a default setting', async () => {
+        const customDeeplink = 'https://monhttpProvider.com';
 
-      const wallet = arianee.fromRandomKey();
-      expect(wallet.configuration.transactionOptions).toEqual(transactionOptions);
-    });
-  });
+        const arianee = await new Arianee()
+          .init(NETWORK.testnet, { deepLink: customDeeplink });
 
-  describe('Custom web3Provider', () => {
-    test('should have a default setting', async () => {
-      const myCustomHttpProvider = 'https://monhttpProvider.com';
-
-      const arianee = await new Arianee()
-        .init(NETWORK.testnet, { httpProvider: myCustomHttpProvider });
-
-      const wallet = arianee.fromRandomKey();
-      expect(wallet.configuration.web3Provider).toBe(myCustomHttpProvider);
+        const wallet = arianee.fromRandomKey();
+        expect(wallet.configuration.deepLink).toBe(customDeeplink);
+      });
     });
   });
 
