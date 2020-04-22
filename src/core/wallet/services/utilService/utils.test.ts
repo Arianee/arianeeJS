@@ -7,7 +7,13 @@ describe('UTILS', () => {
     test('it should return passphrase and certificateId from link', () => {
       const configurationServiceStub: ConfigurationService = <ConfigurationService>{
         arianeeConfiguration: {
-          deepLink: 'test.arian.ee'
+          deepLink: 'test.arian.ee',
+          networkName: 'arianeetestnet'
+        },
+        supportedConfigurations: {
+          arianeetestnet: {
+            deepLink: 'test.arian.ee'
+          }
         }
       };
 
@@ -28,7 +34,13 @@ describe('UTILS', () => {
     test('it should return passphrase and certificateId from link and proof method', () => {
       const configurationServiceStub: ConfigurationService = <ConfigurationService>{
         arianeeConfiguration: {
-          deepLink: 'test.arian.ee'
+          deepLink: 'test.arian.ee',
+          networkName: 'arianeetestnet'
+        },
+        supportedConfigurations: {
+          arianeetestnet: {
+            deepLink: 'test.arian.ee'
+          }
         }
       };
       const utils = new UtilsService(undefined, configurationServiceStub, undefined);
@@ -48,7 +60,13 @@ describe('UTILS', () => {
     test('readlink should be linked with createLink', () => {
       const configurationServiceStub: ConfigurationService = <ConfigurationService>{
         arianeeConfiguration: {
-          deepLink: 'test.arian.ee'
+          deepLink: 'test.arian.ee',
+          networkName: 'arianeetestnet'
+        },
+        supportedConfigurations: {
+          arianeetestnet: {
+            deepLink: 'test.arian.ee'
+          }
         }
       };
       const utils = new UtilsService(undefined, configurationServiceStub, undefined);
@@ -158,13 +176,34 @@ describe('UTILS', () => {
     const configurationService = new ConfigurationService();
     const utils = new UtilsService(undefined, configurationService, undefined);
 
-    test('it find for existing network', () => {
+    test('it find for existing main network', () => {
       Object.keys(configurationService.supportedConfigurations)
         .forEach(network => {
           const deepLinkValue = configurationService.supportedConfigurations[network].deepLink;
           const chain = utils.findChainFromHostname(deepLinkValue);
           expect(chain).toBe(network);
         });
+    });
+
+    test('it find for existing alternative network', () => {
+      const configurationService = new ConfigurationService();
+      const utils = new UtilsService(undefined, configurationService, undefined);
+      configurationService.supportedConfigurations = {
+        [NETWORK.arianeeTestnet]: {
+          faucetUrl: '',
+          alternativeDeeplink: ['firstDeeplink'],
+          deepLink: 'adeeplink'
+        },
+        [NETWORK.mainnet]: {
+          faucetUrl: '',
+          alternativeDeeplink: ['mainnetfirstDeeplink'],
+          deepLink: 'mainnetdeeplink'
+        }
+      } as any;
+
+      const deepLinkValue = configurationService.supportedConfigurations[NETWORK.arianeeTestnet].alternativeDeeplink[0];
+      const chain = utils.findChainFromHostname(deepLinkValue);
+      expect(chain).toBe(NETWORK.arianeeTestnet);
     });
 
     test('it should return undefined for non existing network in configuration', () => {

@@ -44,9 +44,11 @@ export class Arianee {
       }
     });
 
-    const { deepLink, faucetUrl } = conf.appConfig[networkName];
+    const { deepLink, faucetUrl, alternativeDeeplink, networkName: currentNetworkName } = conf.appConfig[networkName];
 
     arianeeConfiguration.faucetUrl = faucetUrl;
+    arianeeConfiguration.alternativeDeeplink = alternativeDeeplink;
+    arianeeConfiguration.networkName = currentNetworkName;
 
     arianeeConfiguration.web3Provider = (function () {
       if (arianeeCustomConfiguration.httpProvider) {
