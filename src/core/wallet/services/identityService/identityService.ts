@@ -22,6 +22,11 @@ export class IdentityService {
     private store: SimpleStore) {
   }
 
+  public getIdentityByShortId = async (shortId:string) => {
+    const address = await this.contractService.identityContract.methods.addressFromId(shortId).call();
+    return this.getSimpleIdentity(address);
+  }
+
   public getSimpleIdentity = async (address: string, issuerQuery?:ConsolidatedIssuerRequest): Promise<IdentitySummary> => {
     let query;
     if (issuerQuery) {

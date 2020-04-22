@@ -46,6 +46,7 @@ export class WalletCustomMethodService {
       getMyCertificates: this.certificateService.getMyCertificates,
       getMyCertificatesGroupByIssuer: this.certificateService.getMyCertificatesGroupByIssuer,
       getIdentity: this.identityService.getSimpleIdentity,
+      getIdentityByShortId: this.identityService.getIdentityByShortId,
       createCertificateRequestOwnershipLink: this.certificateService
         .createCertificateRequestOwnershipLink,
       createCertificateProofLink: this.certificateService.createCertificateProofLink,
