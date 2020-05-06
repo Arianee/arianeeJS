@@ -159,6 +159,30 @@ When(
 );
 
 When(
+  'user{int} can call wallet method {string}',
+  { timeout: 45000 },
+
+  async function (userIndex, methodName, tableOfArg) {
+    const wallet = this.store.getUserWallet(userIndex);
+
+    const args = tableOfArg.rawTable
+      .map(([key, value]) => {
+        if (value.includes('certificate')) {
+          const certificateIndex = value.split('certificate')[1];
+          const certificateId = this.store.getToken(certificateIndex);
+          return certificateId;
+        } else {
+          return value;
+        }
+      });
+
+    const result = await wallet.methods[methodName](...args);
+
+    this.store.storeCustom('result', result);
+  }
+);
+
+When(
   'user{int} creates certificate{int} as:',
   { timeout: 45000 },
 

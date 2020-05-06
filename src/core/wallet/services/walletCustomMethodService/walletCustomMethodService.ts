@@ -50,6 +50,7 @@ export class WalletCustomMethodService {
       createCertificateRequestOwnershipLink: this.certificateService
         .createCertificateRequestOwnershipLink,
       createCertificateProofLink: this.certificateService.createCertificateProofLink,
+      createActionProofLink: this.certificateService.createActionProofLink,
 
       getCertificateFromLink: this.certificateService.getCertificateFromLink,
 
