@@ -59,7 +59,7 @@ describe('Certificate Language', () => {
     // Preparing data
     clonedCertificate.content.data.i18n.push(<any>expectedTranslations);
 
-    const value = replaceLanguage(clonedCertificate, ['en', 'fr-FR']);
+    const value = replaceLanguage(clonedCertificate, ['fr-FR', 'de']);
 
     expect(value.content.data.description).toBe(expectedTranslations.description);
     expect(value.content.data.externalContents).toEqual(expectedTranslations.externalContents);
@@ -112,21 +112,5 @@ describe('Event Language', () => {
     const value = replaceLanguageContent(clonedCertificate.content.data, 'zh-CN');
 
     expect(value.title).toBe(expectedTranslations.title);
-  });
-
-  test('should replace by prefered languages', () => {
-    const clonedCertificate:CertificateSummary<ArianeeCertificatei18n, any> = lodash.cloneDeep(eventI18n as any);
-
-    const expectedTranslations = {
-      language: 'zh-CN',
-      title: '原始销售'
-    };
-
-    // Preparing data
-    clonedCertificate.content.data.i18n.push(<any>expectedTranslations);
-
-    const value = replaceLanguage(clonedCertificate, ['en', 'zh-CN']);
-
-    expect(value.content.data.title).toBe(expectedTranslations.title);
   });
 });

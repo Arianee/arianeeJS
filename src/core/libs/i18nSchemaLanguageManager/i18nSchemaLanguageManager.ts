@@ -1,10 +1,14 @@
 import { ArianeeCertificatei18n } from '../../../models/jsonSchema/certificates/ArianeeProducti18n';
 import { CertificateSummary } from '../../wallet/certificateSummary';
-import { pickLanguageAccordingToUserLanguages } from 'iso-language-picker';
+import { pickLanguageAccordingToUserLanguagesWithMacrosFallback } from '@arianee/iso-language-picker';
+
+const macros = ['fr-FR', 'en-US', 'ko-KR', 'ja-JP', 'de-DE'];
 
 export const replaceLanguage = (certificateSummary :CertificateSummary<ArianeeCertificatei18n, any>, languages:string[]):CertificateSummary<ArianeeCertificatei18n, any> => {
   const availableLanguages = this.availableLanguages(certificateSummary.content.data);
-  const language = pickLanguageAccordingToUserLanguages(languages, availableLanguages);
+  const defaultLanguage = certificateSummary.content.data.language;
+
+  const language = pickLanguageAccordingToUserLanguagesWithMacrosFallback(macros, languages, availableLanguages, defaultLanguage);
 
   if (language) {
     certificateSummary.content.data = replaceLanguageContent(certificateSummary.content.data, language);
