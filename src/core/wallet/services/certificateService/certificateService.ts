@@ -26,6 +26,7 @@ import { GlobalConfigurationService } from '../globalConfigurationService/global
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
+import appendQuery from 'append-query';
 
 @injectable()
 export class CertificateService {
@@ -413,6 +414,23 @@ export class CertificateService {
     return this.contractService.smartAssetContract.methods
       .addTokenAccess(certificateId, temporaryWallet.address, true, type)
       .send();
+  }
+
+  /**
+   * Create an actionProofLink. It appends encode RFC 3986 query param proof link to provided url
+   * @param url
+   * @param certificateId
+   * @param passphrase
+   * @return url
+   */
+  public createActionProofLink=async (url:string, certificateId: number, passphrase?: string) => {
+    if (!passphrase) {
+      passphrase = this.utils.createPassphrase();
+    }
+
+    const { link } = await this.createCertificateProofLink(certificateId, passphrase);
+
+    return appendQuery(url, { proofLink: link });
   }
 
   public createCertificateProofLink = async (

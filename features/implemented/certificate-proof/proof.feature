@@ -36,3 +36,18 @@ Feature: Create and read certificate proof
       When user1 create a proof in certificate0 with passphrase MyPassPhrase1
       When user3 create a proof in certificate1 with passphrase MyPassPhrase2
       Then user2 can check the proof in certificate0 with passphrase MyPassPhrase1
+
+      @dev
+  Scenario: Owner can create actionProofLink
+        Given user1 creates certificate0 as:
+      """
+       {
+         "$schema": "https://cert.arianee.org/version1/ArianeeAsset.json",
+          "name": "Arianee",
+        "description":"a description"
+        }
+      """
+    Given  user1 can call wallet method 'createActionProofLink'
+      | url             | http://myurl.com |
+      | certificateId   | certificate0     |
+      | passphrase      | myPassphrase     |
