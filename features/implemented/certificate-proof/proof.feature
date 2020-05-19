@@ -37,7 +37,6 @@ Feature: Create and read certificate proof
       When user3 create a proof in certificate1 with passphrase MyPassPhrase2
       Then user2 can check the proof in certificate0 with passphrase MyPassPhrase1
 
-      @dev
   Scenario: Owner can create actionProofLink
         Given user1 creates certificate0 as:
       """

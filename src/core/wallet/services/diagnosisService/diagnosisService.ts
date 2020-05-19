@@ -81,6 +81,19 @@ export class DiagnosisService {
       };
     }
 
+    public isMessageCredit=async ():Promise<ExtendedBoolean> => {
+      const balance = await this.balanceService.balanceOfCredit('message');
+
+      const isTrue = parseInt(balance.toString()) > 0;
+
+      return {
+        isTrue,
+        rawValue: balance,
+        message: 'message credit should be higher than 0',
+        code: 'credit.message'
+      };
+    }    
+
     public isAriaCredit=async ():Promise<ExtendedBoolean> => {
       const balance = await this.balanceService.balanceOfAria();
 

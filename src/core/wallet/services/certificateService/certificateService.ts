@@ -23,6 +23,7 @@ import { ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { EventService } from '../eventService/eventsService';
 import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
+import { MessageService } from '../messageService/messageService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
@@ -43,7 +44,8 @@ export class CertificateService {
     private globalConfiguration: GlobalConfigurationService,
     private store:SimpleStore,
     private batchService:BatchService,
-    private diagnosisService:DiagnosisService
+    private diagnosisService:DiagnosisService,
+    private messageService:MessageService
   ) {
   }
 
@@ -161,6 +163,9 @@ export class CertificateService {
 
       return result;
     } catch (e) {
+      console.log('noooo');
+      return Promise.reject('plop');
+      /*
       const diagnosis = await this.diagnosisService.diagnosis([
         this.diagnosisService.isStoreApprove(),
         this.diagnosisService.isPOACredit(),
@@ -168,6 +173,7 @@ export class CertificateService {
         this.diagnosisService.isCertificateIdExist(preparedData.certificateId)
       ], e);
       return Promise.reject(diagnosis);
+      */
     }
   }
 
@@ -312,6 +318,15 @@ export class CertificateService {
         response.setArianeeEvents(events);
       });
       requestQueue.push(arianeeEvents);
+    }
+
+    if (query.messages) {
+      const messages = await this.messageService.getMessage({
+        messageId: 5270784,
+        query
+      });
+      console.log('messages');
+      console.log(messages);
     }
 
     try {
