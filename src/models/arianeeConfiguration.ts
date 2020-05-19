@@ -22,6 +22,8 @@ export interface ArianeeConfig {
   store: ContractConfiguration;
   whitelist: ContractConfiguration;
   lost:ContractConfiguration;
+  message:ContractConfiguration;
+
 
   networkName:NETWORK;
   web3Provider: provider;
