@@ -9,6 +9,8 @@ import staking from '@arianee/arianee-abi/abi/js/ArianeeStaking';
 import store from '@arianee/arianee-abi/abi/js/ArianeeStore';
 import whitelist from '@arianee/arianee-abi/abi/js/ArianeeWhitelist';
 import lost from '@arianee/arianee-abi/abi/js/ArianeeLost';
+import message from '@arianee/arianee-abi/abi/js/ArianeeMessage';
+
 
 export {
   appConfig,
@@ -20,5 +22,6 @@ export {
   creditHistory,
   whitelist,
   staking,
-  lost
+  lost,
+  message
 };

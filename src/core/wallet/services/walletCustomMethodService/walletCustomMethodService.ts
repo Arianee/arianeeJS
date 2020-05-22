@@ -8,6 +8,8 @@ import { ConfigurationService } from '../configurationService/configurationServi
 import { ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { EventService } from '../eventService/eventsService';
+import { MessageService } from '../messageService/messageService';
+
 import { IdentityService } from '../identityService/identityService';
 import { POAAndAriaService } from '../POAAndAriaFaucet/POAAndAriaService';
 import { WalletService } from '../walletService/walletService';
@@ -20,6 +22,7 @@ export class WalletCustomMethodService {
               private web3Service: Web3Service,
               private contractService: ContractService,
               private eventService: EventService,
+              private messageService: MessageService,
               private walletService: WalletService,
               private certificateService: CertificateService,
                private poaAndAriaService:POAAndAriaService,
@@ -73,6 +76,16 @@ export class WalletCustomMethodService {
       createArianeeEvent: this.eventService.createArianeeEvent,
       storeArianeeEvent: this.eventService.storeArianeeEventContentInRPCServer,
       createAndStoreArianeeEvent: this.eventService.createAndStoreArianeeEvent,
+
+      getMyMessages: this.messageService.getMyMessages,
+      sendMessage: this.messageService.sendMessage,
+      markAsRead: this.messageService.markAsRead,
+      
+
+
+
+
+
       diagnosis: this.diagnosisService.diagnosis
     };
   }

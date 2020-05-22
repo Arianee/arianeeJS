@@ -77,7 +77,7 @@
   "dependencies": {
     "@0xcert/cert": "1.5.2",
     "@0xcert/conventions": "^2.0.0-alpha3",
-    "@arianee/arianee-abi": "0.7.0",
+    "@arianee/arianee-abi": "0.8.0",
     "@arianee/iso-language-picker": "^0.2.0",
     "append-query": "^2.1.0",
     "axios": "^0.18.1",
