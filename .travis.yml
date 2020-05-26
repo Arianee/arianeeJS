@@ -3,8 +3,10 @@ cache:
   bundler: true
   npm: true
 node_js:
-  - 10.16.0
-  - 8.16.2
+  - 10
+  - 8
+  - 12
+
 install:
   - npm ci
 
