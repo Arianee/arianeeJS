@@ -130,5 +130,4 @@ export interface ConsolidatedCertificateRequest {
   arianeeEvents?: boolean;
   advanced?: CertificateAdvanced;
   messageSenders?:boolean
-  messages?:boolean
 }

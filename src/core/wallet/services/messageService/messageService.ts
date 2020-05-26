@@ -36,17 +36,14 @@ export class MessageService {
     let content;
     const rpcURL = get(issuer, 'data.rpcEndpoint') || parameters.url;
     if (rpcURL) {
-      const generateProof = () => {
-        return this.utils.signProof(
-          JSON.stringify({
-            messageId,
-            timestamp: new Date()
-          }),
-          this.walletService.privateKey
-        );
-      };
+      const proof = this.utils.signProof(
+        JSON.stringify({
+          messageId,
+          timestamp: new Date()
+        }),
+        this.walletService.privateKey
+      );
 
-      const proof = generateProof();
       const messageRPCResult = await this.httpClient.RPCCall(
         rpcURL,
         'message.read',

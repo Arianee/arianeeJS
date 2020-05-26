@@ -9,7 +9,6 @@ import { ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { EventService } from '../eventService/eventsService';
 import { MessageService } from '../messageService/messageService';
-
 import { IdentityService } from '../identityService/identityService';
 import { POAAndAriaService } from '../POAAndAriaFaucet/POAAndAriaService';
 import { WalletService } from '../walletService/walletService';
