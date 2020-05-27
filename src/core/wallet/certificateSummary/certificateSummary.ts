@@ -72,6 +72,14 @@ export interface ArianeeEvent<EventType=any, IdentityType=any>{
   pending:boolean;
 }
 
+export interface Message<MessageType=any, IdentityType=any>{
+  certificateId: ArianeeTokenId;
+  messageId:ArianeeTokenId;
+  content: CertificateContentContainer<MessageType>;
+  issuer: CertificateIssuer<IdentityType>;
+  to:string;
+}
+
 export interface CertificateEvents {
   transfer?: any[];
   arianeeEvents?: ArianeeEvent[];

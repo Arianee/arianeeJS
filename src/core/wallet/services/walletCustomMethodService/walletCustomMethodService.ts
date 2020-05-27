@@ -9,7 +9,6 @@ import { ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { EventService } from '../eventService/eventsService';
 import { MessageService } from '../messageService/messageService';
-
 import { IdentityService } from '../identityService/identityService';
 import { POAAndAriaService } from '../POAAndAriaFaucet/POAAndAriaService';
 import { WalletService } from '../walletService/walletService';
@@ -78,13 +77,13 @@ export class WalletCustomMethodService {
       createAndStoreArianeeEvent: this.eventService.createAndStoreArianeeEvent,
 
       getMyMessages: this.messageService.getMyMessages,
-      sendMessage: this.messageService.sendMessage,
+      getMessage: this.messageService.getMessage,
+
+      createMessage: this.messageService.createMessage,
+      storeMessage: this.messageService.storeMessageContentInRPCServer,
+      createAndStoreMessage: this.messageService.createAndStoreMessage,
+
       markAsRead: this.messageService.markAsRead,
-      
-
-
-
-
 
       diagnosis: this.diagnosisService.diagnosis
     };

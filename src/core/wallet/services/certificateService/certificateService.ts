@@ -23,6 +23,7 @@ import { ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { EventService } from '../eventService/eventsService';
 import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
+import { MessageService } from '../messageService/messageService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';

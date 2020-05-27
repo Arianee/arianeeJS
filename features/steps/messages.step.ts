@@ -9,10 +9,14 @@ Given('user{int} send a message{int} on certificate{int} as:', async function (
 
   const messageContent = JSON.parse(messageContentSTR);
 
-  const { messageId } = await wallet.methods.sendMessage({
-    certificateId,
-    content: messageContent
-  });
+  try {
+    const result = await wallet.methods.createMessage({
+      certificateId,
+      content: messageContent
+    });
 
-  
+    this.store.storeCustom('result', result);
+  } catch (err) {
+    this.store.storeCustom('result', err);
+  }
 });
