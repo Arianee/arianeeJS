@@ -27,7 +27,8 @@ export class BatchService {
     );
 
     const transactionsPromise = this.batchTransactions.map(async (value, index) => {
-      const transaction = await this.utilsService.signTransaction(value[1], value[0], initialNonce + index);
+      const prepareTransaction = await this.utilsService.prepareTransaction(value[1], value[0], initialNonce + index);
+      const transaction = await this.utilsService.signTransaction(prepareTransaction);
       this.web3Service.web3.eth.sendSignedTransaction(transaction.rawTransaction);
       return {
         txHash: transaction.transactionHash,

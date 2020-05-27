@@ -1,3 +1,4 @@
+import { Transaction } from 'web3-core';
 import { container } from 'tsyringe';
 import { ArianeeConfig } from '../../models/arianeeConfiguration';
 import { SimpleStore } from '../libs/simpleStore/simpleStore';
@@ -67,6 +68,13 @@ export class ArianeeWallet {
     public useBDHVault (url:string):ArianeeWallet {
       const walletService:WalletService = this.container.resolve(WalletService);
       walletService.bdhVaultURL = url;
+      return this;
+    }
+
+    public setCustomSendTransaction (send:(transaction:Transaction)=>Promise<any>):ArianeeWallet {
+      const walletService:WalletService = this.container.resolve(WalletService);
+      walletService.userCustomSendTransaction = send;
+
       return this;
     }
 

@@ -85,28 +85,34 @@ export class ArianeeContract<ContractImplementation extends Contract> {
   ): Promise<any> => {
     const encodeABI = data.encodeABI();
 
-    const signTransaction = await this.utilsService.signTransaction(encodeABI, this.contract.options.address, false, transaction);
+    const preparedTransaction = await this.utilsService.prepareTransaction(encodeABI, this.contract.options.address, false, transaction);
 
-    const [result] = await Promise.all([
-      signTransaction,
-      this.poaAndAriaService.requestPoa().catch()
-    ]);
+    if (this.walletService.isCustomSendTransaction()) {
+      return this.walletService
+        .customSendTransaction(preparedTransaction);
+    } else {
+      const signTransaction = this.utilsService.signTransaction(preparedTransaction);
+      const [result] = await Promise.all([
+        signTransaction,
+        this.poaAndAriaService.requestPoa().catch()
+      ]);
 
-    return new Promise((resolve, reject) => {
-      this.web3Service.web3.eth
-        .sendSignedTransaction(result.rawTransaction)
-        .once('error', async (error, receipt) => {
-          reject({
-            receipt,
-            error
+      return new Promise((resolve, reject) => {
+        this.web3Service.web3.eth
+          .sendSignedTransaction(result.rawTransaction)
+          .once('error', async (error, receipt) => {
+            reject({
+              receipt,
+              error
+            });
+          })
+          .once('receipt', (receipt) => {
+            resolve({
+              result,
+              receipt
+            });
           });
-        })
-        .once('receipt', (receipt) => {
-          resolve({
-            result,
-            receipt
-          });
-        });
-    });
+      });
+    }
   };
 }
