@@ -92,7 +92,7 @@ export class DiagnosisService {
         message: 'message credit should be higher than 0',
         code: 'credit.message'
       };
-    }    
+    }
 
     public isAriaCredit=async ():Promise<ExtendedBoolean> => {
       const balance = await this.balanceService.balanceOfAria();
