@@ -1,6 +1,7 @@
 import { Cert } from '@0xcert/cert';
+import { Transaction, Sign, SignedTransaction } from 'web3-core';
 import { singleton } from 'tsyringe';
-import { Sign, SignedTransaction } from 'web3-core';
+
 import { NETWORK } from '../../../..';
 import { ArianeeConfig } from '../../../../models/arianeeConfiguration';
 import { ConfigurationService } from '../configurationService/configurationService';
@@ -242,7 +243,15 @@ export class UtilsService {
     return block.timestamp;
   }
 
-  public async signTransaction (encodeABI, contractAddress, overrideNonce?, transaction?):Promise<SignedTransaction> {
+  public signTransaction=(transaction:Transaction):Promise<SignedTransaction> => {
+    const signTransaction:Promise<any> = this.walletService.isBdhVault()
+      ? this.bdhVaultService.signTransaction(transaction)
+      : this.walletService.account.signTransaction(transaction);
+
+    return signTransaction;
+  }
+
+  public async prepareTransaction (encodeABI, contractAddress, overrideNonce?, transaction?):Promise<Transaction> {
     const nonce = overrideNonce || await this.web3.eth.getTransactionCount(
       this.walletService.address,
       'pending'
@@ -260,10 +269,6 @@ export class UtilsService {
 
     const mergedTransaction = { ...defaultTransaction, ...transaction };
 
-    const signTransaction:Promise<any> = this.walletService.isBdhVault()
-      ? this.bdhVaultService.signTransaction(mergedTransaction)
-      : this.walletService.account.signTransaction(mergedTransaction);
-
-    return signTransaction;
+    return mergedTransaction;
   }
 }
