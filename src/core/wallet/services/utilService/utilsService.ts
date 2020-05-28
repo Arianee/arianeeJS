@@ -2,6 +2,7 @@ import { Cert } from '@0xcert/cert';
 import { singleton } from 'tsyringe';
 import { Sign, SignedTransaction } from 'web3-core';
 import { NETWORK } from '../../../..';
+import { ArianeeConfig } from '../../../../models/arianeeConfiguration';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { Web3Service } from '../web3Service/web3Service';
 
@@ -111,6 +112,25 @@ export class UtilsService {
   }
 
   /**
+   * Function to find if hostname match deeplink or alternative deeplink of an ArianeeConfiguration
+   * @param hostname
+   * @param arianeeConfig
+   */
+  private findHostNameInConfig (hostname:string, arianeeConfig:ArianeeConfig) {
+    const isCurrentConfigDeeplink = arianeeConfig.deepLink === hostname;
+
+    const isCurrentConfigAlternativeDeeplinks = arianeeConfig
+      .alternativeDeeplink
+      .find(theDeepLink => theDeepLink === hostname);
+
+    const isCurrentConfig = isCurrentConfigDeeplink || isCurrentConfigAlternativeDeeplinks;
+
+    if (isCurrentConfig) {
+      return arianeeConfig.networkName;
+    }
+  }
+
+  /**
    * Function. Pass a deeplink hostname, and find the right network according to configuration
    * @param hostname
    * @returns {NETWORK} network name of this deeplink hostname. If no network associated with this hostname, it returns
@@ -120,12 +140,22 @@ export class UtilsService {
     const networkConfigurations = this.configurationService.supportedConfigurations;
     const networks = Object.keys(this.configurationService.supportedConfigurations) as Array<NETWORK>;
 
+    // check if it matches any of current configuration
+    const isCurrentConfigurationNetwork = this.findHostNameInConfig(hostname, this
+      .configurationService
+      .arianeeConfiguration);
+
+    if (isCurrentConfigurationNetwork) {
+      return this.configurationService.arianeeConfiguration.networkName;
+    }
+
+    // check if it match any of supported configuration
     return networks.find(key => {
-      if (networkConfigurations[key].deepLink === hostname) {
+      const config = networkConfigurations[key];
+      const network = this.findHostNameInConfig(hostname, config);
+
+      if (network) {
         return true;
-      } else if (networkConfigurations[key].alternativeDeeplink &&
-          networkConfigurations[key].alternativeDeeplink.length > 0) {
-        return networkConfigurations[key].alternativeDeeplink.includes(hostname);
       } else {
         return false;
       }
@@ -140,6 +170,7 @@ export class UtilsService {
    */
   public isRightChain (hostname: string):boolean {
     const rightChain = this.findChainFromHostname(hostname);
+
     if (rightChain) {
       const currentNetworkName = this.configurationService.arianeeConfiguration.networkName;
       if (rightChain === currentNetworkName) {
@@ -175,7 +206,6 @@ export class UtilsService {
 
   public readLink (link) {
     const url = this.simplifiedParsedURL(link);
-
     this.isRightChain(url.hostname);
 
     const methodUrl = url.pathname.split('/');

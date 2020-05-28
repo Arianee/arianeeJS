@@ -1,6 +1,7 @@
+import { deepFreeze } from '../core/libs/deepFreeze';
 import { NETWORK } from '../models/networkConfiguration';
 
-export default {
+export default deepFreeze({
   [NETWORK.testnet]: {
     networkName: NETWORK.testnet,
     faucetUrl: `https://faucet.arianee.org/faucet?network=${NETWORK.testnet}`,
@@ -19,4 +20,4 @@ export default {
     deepLink: 'test.testnet.arian.ee',
     alternativeDeeplink: []
   }
-};
+});
