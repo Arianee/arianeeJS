@@ -33,7 +33,6 @@ export class ContractService {
   public lostContract: ArianeeLost;
   public messageContract: ArianeeMessage;
 
-
   constructor (private walletService: WalletService,
               private web3Service: Web3Service,
               private poaAndAriaService:POAAndAriaService,
@@ -71,7 +70,7 @@ export class ContractService {
 
     if (isMessageArianee) {
       this.messageContract = this.create<ArianeeMessage>('message');
-    }    
+    }
   }
 
   create<T extends Contract> (name: string): T {
