@@ -19,7 +19,7 @@ export class SimpleStore {
     return `${this.walletService.address}/${this.arianeeConfig.arianeeConfiguration.chainId}/${namespace}/${key}`;
   };
 
-  public get = async <T>(namespace:string, key: string, getter: ()=> Promise<any>, force = false):Promise<T> => {
+  public get = async <T>(namespace:string, key: string|number, getter: ()=> Promise<any>, force = false):Promise<T> => {
     const storeKey = this.keyBuilder(namespace, key);
     if (!(await this.store.hasItem(storeKey)) || force) {
       if (!Object.prototype.hasOwnProperty.call(this.cache, storeKey)) {
@@ -38,7 +38,7 @@ export class SimpleStore {
     }
   };
 
-  public set = async (namespace:string, key: string, value: any):Promise<Store> => {
+  public set = async (namespace:string, key: string|number, value: any):Promise<Store> => {
     const storeKey = this.keyBuilder(namespace, key);
 
     const store = await this.store.setStoreItem(storeKey, value);

@@ -78,6 +78,8 @@ export interface Message<MessageType=any, IdentityType=any>{
   content: CertificateContentContainer<MessageType>;
   issuer: CertificateIssuer<IdentityType>;
   to:string;
+  timestamp:number;
+  isRead:boolean;
 }
 
 export interface CertificateEvents {
