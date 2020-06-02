@@ -10,6 +10,9 @@ import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
+import { IdentitySummary } from '../../../../models/arianee-identity';
+import { StoreNamespace } from '../../../../models/storeNamespace';
+import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 
 @injectable()
 export class MessageService {
@@ -20,11 +23,24 @@ export class MessageService {
     private configurationService: ConfigurationService,
     private httpClient: ArianeeHttpClient,
     private utils: UtilsService,
-    private diagnosisService:DiagnosisService
+    private diagnosisService:DiagnosisService,
+    private store: SimpleStore
   ) {
   }
 
   public getMessage=async (parameters:{
+    messageId: number,
+    query?:ConsolidatedCertificateRequest,
+    url?:string,
+    forceRefresh?:boolean
+  }):Promise<Message> => {
+    const forceRefresh = parameters.forceRefresh || false;
+
+    return this.store.get<Message>(StoreNamespace.messages, parameters.messageId, () => this.fetchMessage(parameters), forceRefresh)
+      .catch(d => d);
+  }
+
+  public fetchMessage=async (parameters:{
         messageId: number,
         query?:ConsolidatedCertificateRequest,
         url?:string
@@ -75,6 +91,22 @@ export class MessageService {
       }
     }
 
+    const messageSentEvents = await this.contractService.messageContract.getPastEvents(
+      'MessageSent',
+      { fromBlock: 0, toBlock: 'latest', filter: { _tokenId: result.tokenId } }
+    );
+
+    const messageCreationEvent = messageSentEvents.find(event => event.returnValues._messageId === messageId.toString());
+    let creationDate = await this.utils.getTimestampFromBlock(messageCreationEvent.blockNumber);
+    creationDate = parseInt(creationDate) * 1000;
+
+    const messageReadEvents = await this.contractService.messageContract.getPastEvents(
+      'MessageRead',
+      { fromBlock: 0, toBlock: 'latest', filter: { _messageId: messageId } }
+    );
+
+    const isRead = messageReadEvents.length > 0;
+
     return {
       certificateId: result.tokenId,
       issuer: {
@@ -85,7 +117,9 @@ export class MessageService {
       },
       content,
       to: result.to,
-      messageId
+      messageId,
+      timestamp: creationDate,
+      isRead: isRead
 
     };
   }
@@ -110,7 +144,7 @@ export class MessageService {
   }
 
   public markAsRead=async (
-    messageId?: number
+    messageId: number
   ):Promise<ExtendedBoolean> => {
     const walletReward = this.configurationService.arianeeConfiguration.walletReward.address;
 
@@ -118,6 +152,7 @@ export class MessageService {
       // Not necessary. It never throws. To update when reward getter become public
       await this.contractService.storeContract.methods.readMessage(messageId, walletReward).call();
       await this.contractService.storeContract.methods.readMessage(messageId, walletReward).send();
+      await this.getMessage({ messageId: messageId, forceRefresh: true });
 
       return {
         isTrue: true,
