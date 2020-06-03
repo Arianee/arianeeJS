@@ -18,6 +18,10 @@ export class Arianee {
     this.globalConfigurationService = container.resolve(GlobalConfigurationService);
   }
 
+  public fromCustomConfiguration () {
+
+  }
+
   public async init (
     networkName: NETWORK = NETWORK.testnet,
     arianeeCustomConfiguration:{
@@ -25,15 +29,20 @@ export class Arianee {
       brandDataHubReward?: { address: string },
       httpProvider?:provider,
       transactionOptions?: TransactionOptions,
-      deepLink?:string
+      deepLink?:string,
+      protocolConfiguration?:any
     } = {}
   ): Promise<ArianeeWalletBuilder> {
-    const url = networkURL[networkName];
-
     const arianeeConfiguration: ArianeeConfig = {
     } as ArianeeConfig;
 
-    const addressesResult = await ArianeeHttpClient.fetch(url).catch(err => console.error(`${url} not working`));
+    let addressesResult;
+    if (get(arianeeCustomConfiguration, 'protocolConfiguration')) {
+      addressesResult = get(arianeeCustomConfiguration, 'protocolConfiguration');
+    } else {
+      const url = networkURL[networkName];
+      addressesResult = await ArianeeHttpClient.fetch(url).catch(err => console.error(`${url} not working`));
+    }
 
     Object.keys(addressesResult.contractAdresses).forEach(contractName => {
       const contractAddress = addressesResult.contractAdresses[contractName];
