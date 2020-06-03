@@ -511,7 +511,6 @@ export class CertificateService {
       {
         fromBlock: currentBlock - Math.round(validity / 5 + 30),
         toBlock: currentBlock
-
       }
     );
 
@@ -523,7 +522,11 @@ export class CertificateService {
     }).sort(sortEvents).reverse();
 
     const lastEvent = events[0];
-    const blockTimestamp = await this.utils.getTimestampFromBlock(lastEvent.blockNumber);
+    let blockTimestamp = 0;
+
+    if (lastEvent) {
+      blockTimestamp = await this.utils.getTimestampFromBlock(lastEvent.blockNumber);
+    }
 
     if (
       !this.utils.timestampIsMoreRecentThan(blockTimestamp, validity)
@@ -535,6 +538,7 @@ export class CertificateService {
         timestamp: blockTimestamp * 1000
       };
     }
+
     const lastEventTransaction = await this.web3Service.web3.eth.getTransaction(
       lastEvent.transactionHash
     );

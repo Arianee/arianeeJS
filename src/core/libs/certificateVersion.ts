@@ -1,5 +1,6 @@
 import { ArianeeCertificatei18n } from '../../models/jsonSchema/certificates/ArianeeProducti18n';
-
+import { get } from 'lodash';
+import { isNullOrUndefined } from './isNullOrUndefined';
 export function isCertificateI18n (x: any): x is ArianeeCertificatei18n {
-  return x.i18n !== undefined;
+  return !isNullOrUndefined(get(x, 'i18n'));
 }
