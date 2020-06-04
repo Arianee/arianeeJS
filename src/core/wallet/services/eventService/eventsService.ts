@@ -79,11 +79,15 @@ export class EventService {
       .issuerOf(certificateId)
       .call();
 
-    const issuerIdentity = await this.identityService.getIdentity({ address: issuer, query });
+    let rpcEndPoint = get(query, 'issuer.rpcURI');
+    if (!rpcEndPoint) {
+      const issuerIdentity = await this.identityService.getIdentity({ address: issuer, query });
+      rpcEndPoint = issuerIdentity.data.rpcEndpoint;
+    }
 
     const [validateEvents, pendingEvents] = await Promise.all([
-      this.getValidateEvents(certificateId, issuerIdentity.data.rpcEndpoint, passphrase),
-      this.getPendingEvents(certificateId, issuerIdentity.data.rpcEndpoint, passphrase)
+      this.getValidateEvents(certificateId, rpcEndPoint, passphrase),
+      this.getPendingEvents(certificateId, rpcEndPoint, passphrase)
     ]);
     const allEvents = [...validateEvents, ...pendingEvents];
 

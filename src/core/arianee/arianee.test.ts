@@ -20,7 +20,7 @@ const httpMock = {
   chainId: 77
 };
 jest.mock('../libs/arianeeHttpClient/arianeeHttpClient', () => ({
-  ArianeeHttpClient: class ArianeeHttpClientStub {
+  storeArianeeCertifciate: class ArianeeHttpClientStub {
         public fetch = ArianeeHttpClientStub.fetch;
 
         public static fetch = url => {
