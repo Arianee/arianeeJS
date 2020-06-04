@@ -1,7 +1,7 @@
 import { injectable, singleton } from 'tsyringe';
 import { ConsolidatedCertificateRequest } from '../../certificateSummary/certificateSummary';
 
-@singleton()
+@injectable()
 export class GlobalConfigurationService {
     public defaultQuery: ConsolidatedCertificateRequest = {
       isRequestable: true,
@@ -48,7 +48,7 @@ export class GlobalConfigurationService {
       }
     }
 
-    setDefaultQuery (defaultQuery: ConsolidatedCertificateRequest): GlobalConfigurationService {
+    public setDefaultQuery (defaultQuery: ConsolidatedCertificateRequest): GlobalConfigurationService {
       this.defaultQuery =
           {
             ...defaultQuery

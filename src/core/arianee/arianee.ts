@@ -105,9 +105,11 @@ export class Arianee {
     return this;
   }
 
+  /**
+     * @deprecated this method is available in ArianeeWallet class
+     */
   public setDefaultQuery (value: ConsolidatedCertificateRequest) {
-    this.globalConfigurationService.setDefaultQuery(value);
-    return this;
+    throw new Error('this method has been deprecated: this method is available in ArianeeWallet class (wallet.setDefaultQuery)');
   }
 
   public setStore (storageObject: { getStoreItem: (storeKey: string) => Promise<any>, hasItem: (storeKey: string) => Promise<boolean>, setStoreItem: (keyl: string, value: any) => Promise<any> }) {

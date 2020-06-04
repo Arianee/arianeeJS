@@ -1,4 +1,4 @@
-import { singleton } from 'tsyringe';
+import { injectable, singleton } from 'tsyringe';
 import EventEmitter from 'eventemitter3';
 
 export const enum ArianeListenerEvent {
@@ -17,7 +17,7 @@ export class CustomEventEmitter extends EventEmitter {
   addListener=this.on;
 }
 
-@singleton()
+@injectable()
 export class ArianeeEventEmitter {
   public EE = new CustomEventEmitter();
 }

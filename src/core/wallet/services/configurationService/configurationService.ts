@@ -1,10 +1,11 @@
-import { singleton } from 'tsyringe';
+import { assignIn } from 'lodash';
+import { injectable } from 'tsyringe';
 import Web3 from 'web3';
 import configurations from '../../../../configurations/appConfigurations';
 import { ArianeeConfig } from '../../../../models/arianeeConfiguration';
 import { ArianeeWalletBuilder } from '../../walletBuilder';
-import { assignIn } from 'lodash';
-@singleton()
+
+@injectable()
 export class ConfigurationService {
   private defaultArianeeConfiguration:ArianeeConfig={
     walletReward: { address: '0x39da7e30d2D5F2168AE3B8599066ab122680e1ef' },

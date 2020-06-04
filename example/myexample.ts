@@ -3,11 +3,16 @@ import { Arianee, NETWORK } from '../src';
 import { blockchainEventsName } from '../src/models/blockchainEventsName';
 
 (async function () {
-  const arianee = await new Arianee().init(NETWORK.testnet);
+  (async function () {
+    const arianee = await new Arianee().init(NETWORK.testnet);
+    const wallet = arianee.fromRandomKey();
+    wallet.setDefaultQuery({ content: false });
+      const wallet2 = arianee.fromRandomMnemonic();
+     wallet2.globalConfiguration.setDefaultQuery({content: true});
 
-  const wallet = arianee.fromPrivateKey('0xe6062a7e5a511a119ca3c9a4dabf6f5eec92e31642123133a3920e0c92aaac9e');
-  console.log('pub', wallet.address);
+    await new Arianee().init(NETWORK.mainnet);
 
-  // await wallet.methods.requestPoa();
-  // await wallet.methods.requestCertificateOwnership(966010, 'jeoapndigorndi');
+    // should be 77 and it is 99
+    console.log('is working==', wallet.configuration.chainId === 77);
+  })();
 })();

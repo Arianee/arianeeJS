@@ -1,15 +1,16 @@
 import { Cert } from '@0xcert/cert';
-import { Transaction, Sign, SignedTransaction } from 'web3-core';
-import { singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
+import { Sign, SignedTransaction, Transaction } from 'web3-core';
 
 import { NETWORK } from '../../../..';
 import { ArianeeConfig } from '../../../../models/arianeeConfiguration';
+import { BDHAPIService } from '../BDHAPIService/BDHAPIService';
 import { ConfigurationService } from '../configurationService/configurationService';
-import { Web3Service } from '../web3Service/web3Service';
 
 import { WalletService } from '../walletService/walletService';
-import { BDHAPIService } from '../BDHAPIService/BDHAPIService';
-@singleton()
+import { Web3Service } from '../web3Service/web3Service';
+
+@injectable()
 export class UtilsService {
   constructor (
     private web3Service: Web3Service,

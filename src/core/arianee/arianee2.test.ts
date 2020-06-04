@@ -1,6 +1,4 @@
-import appConfigurations from '../../configurations/appConfigurations';
-import { TransactionOptions } from '../../models/arianeeConfiguration';
-import { NETWORK, networkURL } from '../../models/networkConfiguration';
+import { NETWORK } from '../../models/networkConfiguration';
 import { Arianee } from './arianee';
 
 const myFetchMock = jest.fn();
@@ -31,9 +29,31 @@ jest.mock('../libs/arianeeHttpClient/arianeeHttpClient', () => ({
 }));
 
 describe('Arianee', () => {
+  describe('multiple instances', () => {
+    test('should handle different global configuration', async () => {
+      const arianee = await new Arianee().init();
+      const queryWallet1 = { content: true };
+      const wallet1 = arianee.fromRandomMnemonic().setDefaultQuery(queryWallet1);
+      const queryWallet2 = { content: false };
+      const wallet2 = arianee.fromRandomMnemonic().setDefaultQuery(queryWallet2);
+
+      expect(wallet2.globalConfiguration.defaultQuery).toEqual(queryWallet2);
+      expect(wallet1.globalConfiguration.defaultQuery).toEqual(queryWallet1);
+    });
+    test('should handle different network init', async () => {
+      const arianee = await new Arianee().init(NETWORK.testnet);
+      const arianee2 = await new Arianee().init(NETWORK.mainnet);
+
+      const chain1 = arianee.fromRandomMnemonic().configuration.networkName;
+      const chain2 = arianee2.fromRandomMnemonic().configuration.networkName;
+
+      expect(chain1).toBe(NETWORK.testnet);
+      expect(chain2).toBe(NETWORK.mainnet);
+    });
+  });
+
   describe('override send', () => {
     test('should use override send', async () => {
-      const requestConfig = { content: true };
       const arianee = await new Arianee().init();
 
       const wallet = arianee.fromRandomMnemonic();

@@ -1,20 +1,28 @@
-import { Transaction } from 'web3-core';
 import { container } from 'tsyringe';
+import { Transaction } from 'web3-core';
 import { ArianeeConfig } from '../../models/arianeeConfiguration';
 import { SimpleStore } from '../libs/simpleStore/simpleStore';
+import { ConsolidatedCertificateRequest } from './certificateSummary/certificateSummary';
 import { ArianeeEventEmitter } from './services/arianeeEventEmitterService/ArianeeEventEmitter';
+import { BalanceService } from './services/balanceService/balanceService';
+import { BatchService } from './services/batchService/batchService';
+import { BDHAPIService } from './services/BDHAPIService/BDHAPIService';
 import { BlockchainEventWatcherService } from './services/blockchainEventWatcherService/blochainEventWatcherService';
 import { CertificateAuthorizationService } from './services/certificateAuthorizationService/certificateAuthorizationService';
+import { CertificateDetails } from './services/certificateDetailsService/certificatesDetailsService';
+import { CertificateService } from './services/certificateService/certificateService';
 import { ConfigurationService } from './services/configurationService/configurationService';
 import { ContractService } from './services/contractService/contractsService';
 import { DiagnosisService } from './services/diagnosisService/diagnosisService';
+import { EventService } from './services/eventService/eventsService';
 import { GlobalConfigurationService } from './services/globalConfigurationService/globalConfigurationService';
+import { IdentityService } from './services/identityService/identityService';
+import { MessageService } from './services/messageService/messageService';
 import { POAAndAriaService } from './services/POAAndAriaFaucet/POAAndAriaService';
 import { UtilsService } from './services/utilService/utilsService';
 import { WalletCustomMethodService } from './services/walletCustomMethodService/walletCustomMethodService';
 import { WalletService } from './services/walletService/walletService';
 import { Web3Service } from './services/web3Service/web3Service';
-import { BatchService } from './services/batchService/batchService';
 import EventEmitter = require('eventemitter3');
 
 export interface ClassicConfiguration{
@@ -27,26 +35,35 @@ export class ArianeeWallet {
     private _account;
     private _mnemonic;
 
-    public constructor (configuration:ClassicConfiguration) {
+    public constructor (configuration: ClassicConfiguration, arianeeConfig: ArianeeConfig) {
       this.container = container.createChildContainer();
 
       this.registerSingletons(
-        ContractService,
-        WalletService,
-        Web3Service,
-        POAAndAriaService,
-        WalletService,
         ArianeeEventEmitter,
+        BatchService,
+        BalanceService,
+        BDHAPIService,
         BlockchainEventWatcherService,
         CertificateAuthorizationService,
-        UtilsService,
-        BatchService,
+        CertificateDetails,
+        CertificateService,
+        ConfigurationService,
+        ContractService,
         DiagnosisService,
-        SimpleStore
+        EventService,
+        IdentityService,
+        MessageService,
+        GlobalConfigurationService,
+        POAAndAriaService,
+        SimpleStore,
+        UtilsService,
+        WalletService,
+        Web3Service
       );
 
-      const walletService:WalletService = this.container.resolve(WalletService);
-      const configService:ConfigurationService = this.container.resolve(ConfigurationService);
+      this.container.resolve(ConfigurationService).arianeeConfiguration = arianeeConfig;
+
+      const walletService: WalletService = this.container.resolve(WalletService);
 
       walletService.account = configuration.account;
       this._account = configuration.account;
@@ -69,6 +86,10 @@ export class ArianeeWallet {
       const walletService:WalletService = this.container.resolve(WalletService);
       walletService.bdhVaultURL = url;
       return this;
+    }
+
+    public get globalConfiguration () {
+      return this.container.resolve(GlobalConfigurationService);
     }
 
     public setCustomSendTransaction (send:(transaction:Transaction)=>Promise<any>):ArianeeWallet {
@@ -140,7 +161,8 @@ export class ArianeeWallet {
       return this.container.resolve(ArianeeEventEmitter).EE;
     }
 
-    public get globalConfiguration () {
-      return container.resolve(GlobalConfigurationService);
+    public setDefaultQuery (value: ConsolidatedCertificateRequest) {
+      this.container.resolve(GlobalConfigurationService).setDefaultQuery(value);
+      return this;
     }
 }

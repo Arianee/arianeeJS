@@ -1,9 +1,9 @@
-import { singleton } from 'tsyringe';
+import { injectable, singleton } from 'tsyringe';
 import { Web3Service } from '../web3Service/web3Service';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 
-@singleton()
+@injectable()
 export class BatchService {
   constructor (
     private web3Service: Web3Service,
