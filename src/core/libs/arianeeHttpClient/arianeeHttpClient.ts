@@ -1,10 +1,8 @@
 import axios from 'axios';
-import { singleton } from 'tsyringe';
+import { injectable, singleton } from 'tsyringe';
 
-@singleton()
+@injectable()
 export class ArianeeHttpClient {
-    private fetchingCache = {};
-
     /**
      * Calculate hash key from url and headers of a request
      * @param url

@@ -9,16 +9,15 @@ import { ArianeeWallet, ClassicConfiguration } from './wallet';
 const Web3 = require('web3');
 
 export class ArianeeWalletBuilder {
-  private web3 = Web3;
+  private container;
+  private web3=new Web3();
 
   constructor (private arianeeConfig: ArianeeConfig) {
-    container.resolve(ConfigurationService).arianeeConfiguration = arianeeConfig;
-    this.web3 = container.resolve(Web3Service).web3;
   }
 
   private buildAriaWalletFrom (configuration:ClassicConfiguration): ArianeeWallet {
     if (this.web3.utils.isAddress(configuration.account.address)) {
-      return new ArianeeWallet(configuration);
+      return new ArianeeWallet(configuration, this.arianeeConfig);
     }
     throw new Error('invalid address');
   }

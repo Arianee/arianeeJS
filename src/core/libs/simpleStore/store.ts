@@ -1,6 +1,6 @@
-import { singleton } from 'tsyringe';
+import { injectable, singleton } from 'tsyringe';
 
-@singleton()
+@injectable()
 export class Store {
   private store = {};
 

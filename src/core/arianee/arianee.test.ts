@@ -35,10 +35,11 @@ describe('Arianee', () => {
     test('should be set configuration', async () => {
       const requestConfig = { content: true };
       const arianee = await new Arianee()
-        .setDefaultQuery(requestConfig)
         .init();
 
-      expect(arianee.fromRandomKey().globalConfiguration.defaultQuery).toEqual(requestConfig);
+      const wallet = arianee.fromRandomMnemonic().setDefaultQuery(requestConfig);
+
+      expect(wallet.globalConfiguration.defaultQuery).toEqual(requestConfig);
     });
   });
   describe('Network Configuration', () => {
