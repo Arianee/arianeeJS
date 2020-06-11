@@ -50,7 +50,7 @@ export class MessageService {
 
     const issuer = await this.identityService.getIdentity({ address: result.sender, query });
     let content;
-    const rpcURL = get(issuer, 'data.rpcEndpoint') || parameters.url;
+    const rpcURL = get(issuer, 'data.rpcURI') || parameters.url;
     if (rpcURL) {
       const proof = this.utils.signProof(
         JSON.stringify({
