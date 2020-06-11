@@ -36,8 +36,7 @@ export class MessageService {
   }):Promise<Message> => {
     const forceRefresh = parameters.forceRefresh || false;
 
-    return this.store.get<Message>(StoreNamespace.messages, parameters.messageId, () => this.fetchMessage(parameters), forceRefresh)
-      .catch(d => d);
+    return this.store.get<Message>(StoreNamespace.messages, parameters.messageId, () => this.fetchMessage(parameters), forceRefresh);
   }
 
   public fetchMessage=async (parameters:{
