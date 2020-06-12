@@ -57,6 +57,8 @@ export class WalletCustomMethodService {
       getCertificateFromLink: this.certificateService.getCertificateFromLink,
 
       isCertificateProofValid: this.certificateService.isCertificateProofValid,
+      isCertificateProofValidFromLink: this.certificateService.isCertificateProofValidFromLink,
+      isCertificateProofValidFromActionProofLink: this.certificateService.isCertificateProofValidFromActionProofLink,
 
       isCertificateOwnershipRequestable: this.certificateService.isCertificateOwnershipRequestable,
       requestCertificateOwnership: this.certificateService.customRequestToken,
