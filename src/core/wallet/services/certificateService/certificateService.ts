@@ -455,6 +455,23 @@ export class CertificateService {
     return this.getCertificate(certificateId, passphrase, query);
   }
 
+  public isCertificateProofValidFromActionProofLink = async (actionProofLink: string) => {
+    const d = this.utils.simplifiedParsedURL(actionProofLink);
+    var matches = d.search.match(/proofLink=([^&]*)/);
+
+    if (matches) {
+      const link = matches[1];
+      return this.isCertificateProofValidFromLink(link);
+    }
+  };
+
+  public isCertificateProofValidFromLink = async (proofLink: string) => {
+    const decodedURI = decodeURIComponent(proofLink);
+    const { passphrase, certificateId } = this.utils.readLink(decodedURI);
+
+    return this.isCertificateProofValid(certificateId, passphrase);
+  };
+
   public isCertificateProofValid = async (
     certificateId: number,
     passphrase: string
