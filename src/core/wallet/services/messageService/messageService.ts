@@ -241,8 +241,9 @@ export class MessageService {
     } catch (e) {
       const diagnosis = await this.diagnosisService.diagnosis([
         this.diagnosisService.isStoreApprove(),
-        this.diagnosisService.isMessageCredit()
-      ]);
+        this.diagnosisService.isMessageCredit(),
+        this.diagnosisService.isWhiteListed(certificateId)
+      ], e);
       return Promise.reject(diagnosis);
     }
   }

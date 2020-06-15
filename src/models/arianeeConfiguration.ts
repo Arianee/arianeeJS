@@ -23,6 +23,7 @@ export interface ArianeeConfig {
   whitelist: ContractConfiguration;
   lost:ContractConfiguration;
   message:ContractConfiguration;
+  userAction:ContractConfiguration;
 
 
   networkName:NETWORK;

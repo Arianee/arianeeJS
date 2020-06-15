@@ -10,6 +10,7 @@ import store from '@arianee/arianee-abi/abi/js/ArianeeStore';
 import whitelist from '@arianee/arianee-abi/abi/js/ArianeeWhitelist';
 import lost from '@arianee/arianee-abi/abi/js/ArianeeLost';
 import message from '@arianee/arianee-abi/abi/js/ArianeeMessage';
+import userAction from '@arianee/arianee-abi/abi/js/ArianeeUserAction';
 
 
 export {
@@ -23,5 +24,6 @@ export {
   whitelist,
   staking,
   lost,
-  message
+  message,
+  userAction
 };
