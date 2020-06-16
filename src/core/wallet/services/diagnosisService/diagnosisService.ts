@@ -136,4 +136,21 @@ export class DiagnosisService {
         code: 'certificate.id'
       };
     }
+
+    public isWhiteListed=async (tokenId:ArianeeTokenId):Promise<ExtendedBoolean> => {
+      var isWhitelisted:boolean;
+      try {
+        await this.contractService.whitelistContract.methods.isWhitelisted(tokenId, this.walletService.address).call();
+        isWhitelisted = false;
+      } catch (e) {
+        isWhitelisted = true;
+      }
+
+      return {
+        isTrue: isWhitelisted,
+        rawValue: isWhitelisted,
+        message: 'This address is not whitelisted',
+        code: 'message.whitelist'
+      };
+    }
 }

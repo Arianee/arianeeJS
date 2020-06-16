@@ -59,7 +59,7 @@ export class CertificateService {
       content
     } = data;
 
-    certificateId = certificateId || Math.ceil(Math.random() * 10000000);
+    certificateId = certificateId || Math.ceil(Math.random() * 1000000000);
 
     const fiveYears = 60 * 60 * 24 * 365 * 5;
     const now = new Date();
@@ -108,7 +108,7 @@ export class CertificateService {
     };
   };
 
-  private hydrateTokenTranscation = (data:hydrateTokenParameters):TransactionObject<any> => {
+  private hydrateTokenTransaction = (data:hydrateTokenParameters):TransactionObject<any> => {
     const {
       uri,
       hash,
@@ -150,7 +150,7 @@ export class CertificateService {
     data.uri = data.uri || '';
 
     const preparedData = await this.prepareHydrateToken(data);
-    const transcationObject = this.hydrateTokenTranscation(preparedData);
+    const transcationObject = this.hydrateTokenTransaction(preparedData);
     try {
       var result = await transcationObject.send()
         .then(i => ({
@@ -176,8 +176,8 @@ export class CertificateService {
     datas.forEach(async (data) => {
       if (data) {
         const preparedData = await this.prepareHydrateToken(data);
-        const transcationObject = await this.hydrateTokenTranscation(preparedData);
-        this.batchService.addToBatch(transcationObject);
+        const transactionObject = await this.hydrateTokenTransaction(preparedData);
+        this.batchService.addToBatch(transactionObject);
       }
     });
 

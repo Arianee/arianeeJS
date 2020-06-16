@@ -7,7 +7,8 @@ import {
   ArianeeStaking,
   ArianeeStore,
   ArianeeWhitelist,
-  ArianeeMessage
+  ArianeeMessage,
+  ArianeeUserAction
 } from '@arianee/arianee-abi';
 import { ArianeeLost } from '@arianee/arianee-abi/types/ArianeeLost';
 import { container, injectable } from 'tsyringe';
@@ -32,6 +33,7 @@ export class ContractService {
   public eventContract: ArianeeEvent;
   public lostContract: ArianeeLost;
   public messageContract: ArianeeMessage;
+  public userActionContract: ArianeeUserAction;
 
   constructor (private walletService: WalletService,
               private web3Service: Web3Service,
@@ -70,6 +72,14 @@ export class ContractService {
 
     if (isMessageArianee) {
       this.messageContract = this.create<ArianeeMessage>('message');
+    }
+
+    const isUserAction =
+        get(this.configurationService, 'arianeeConfiguration.userAction.abi') &&
+        get(this.configurationService, 'arianeeConfiguration.userAction.address');
+
+    if (isUserAction) {
+      this.userActionContract = this.create<ArianeeUserAction>('userAction');
     }
   }
 

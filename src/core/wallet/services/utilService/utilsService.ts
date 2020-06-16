@@ -69,7 +69,7 @@ export class UtilsService {
   }
 
   public createUID ():number {
-    return Math.ceil(Math.random() * 10000000);
+    return Math.ceil(Math.random() * 1000000000);
   }
 
   public createPassphrase () {
