@@ -13,6 +13,8 @@ import { WalletService } from '../walletService/walletService';
 import { IdentitySummary } from '../../../../models/arianee-identity';
 import { StoreNamespace } from '../../../../models/storeNamespace';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
+import { WalletCustomMethodService } from '../walletCustomMethodService/walletCustomMethodService';
+import { CertificateService } from '../certificateService/certificateService';
 
 @injectable()
 export class MessageService {
@@ -24,7 +26,8 @@ export class MessageService {
     private httpClient: ArianeeHttpClient,
     private utils: UtilsService,
     private diagnosisService:DiagnosisService,
-    private store: SimpleStore
+    private store: SimpleStore,
+    private certificateService: CertificateService
   ) {
   }
 
@@ -46,8 +49,12 @@ export class MessageService {
       }):Promise<Message> => {
     const { messageId, query } = parameters;
     const result = await this.contractService.messageContract.methods.messages(messageId).call();
+    const certificateIdentityIssuer = await this.certificateService.getCertificate(result.tokenId, '', {
+      issuer: true,
+      content: false
+    });
 
-    const issuer = await this.identityService.getIdentity({ address: result.sender, query });
+    const issuer = certificateIdentityIssuer.issuer.identity;
     let content;
     const rpcURL = get(issuer, 'data.rpcEndpoint') || parameters.url;
     if (rpcURL) {
