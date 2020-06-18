@@ -549,3 +549,49 @@ Then('certificateId {string} {string} imprint should be {string}',
 
     expect(contentToBeVerified === expectedImprint).to.be.true;
   });
+
+Then('user{int} tries to create 2 certificates with the same certificateId',
+  async function (userIndex) {
+    const wallet = this.store.getUserWallet(userIndex);
+
+    const hash = wallet.web3.utils.keccak256('ezofnzefon');
+    const { certificateId } = await wallet.methods.createCertificate({
+      uri: '',
+      hash
+    });
+    try {
+      await wallet.methods.createCertificate({
+        certificateId: certificateId,
+        uri: '',
+        hash
+      });
+      expect(true).equals(false);
+    } catch {
+      expect(true).equals(true);
+    }
+  });
+
+Given('user{int} reserve a certificateId{int}',
+  async function (userIndex, certificateIndex) {
+    const wallet = this.store.getUserWallet(userIndex);
+
+    const { certificateId } = await wallet.methods.reserveCertificateId();
+    this.store.storeCustom(`Certificate_${certificateIndex}`, certificateId);
+  });
+
+Then('user{int} create a certificate with certificateId{int}',
+  async function (userIndex, certificateIndex) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const certificateId = this.store.getCustom(`Certificate_${certificateIndex}`);
+    const hash = wallet.web3.utils.keccak256('ezofnzefon');
+    try {
+      await wallet.methods.createCertificate({
+        certificateId: certificateId,
+        uri: '',
+        hash
+      });
+      expect(true).equals(true);
+    } catch {
+      expect(true).equals(false);
+    }
+  });

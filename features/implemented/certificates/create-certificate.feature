@@ -32,3 +32,11 @@ Feature: Certificate creation
   Scenario: User wants to create a certificate but has no credit,not approved store. He has proper error logs
     Given user2 is a brand
     When user2 creates a new certificate0 with expected errors
+
+
+  Scenario: User wants to create a certificate with a token already used
+    Then user1 tries to create 2 certificates with the same certificateId
+
+  Scenario: User wnat to create a certificate with a reserved certificateId
+    Given user1 reserve a certificateId1
+    Then user1 create a certificate with certificateId1
