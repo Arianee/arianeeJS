@@ -83,8 +83,12 @@ export class UtilsService {
     );
   }
 
-  public signProof (data: string | Array<any>, privateKey: string):Sign {
+  public signProof (data: string | Array<any>, privateKey = this.walletService.privateKey):Sign {
     return this.web3.eth.accounts.sign(<string>data, privateKey);
+  }
+
+  public recover (data: string | Array<any>, signature: string):string {
+    return this.web3.eth.accounts.recover(<string>data, signature);
   }
 
   public async cert (schema, data): Promise<string> {

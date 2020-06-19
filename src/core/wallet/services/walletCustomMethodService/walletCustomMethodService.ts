@@ -1,4 +1,4 @@
-import { injectable, singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 import { creditTypeEnum } from '../../../../models/creditTypesEnum';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { BalanceService } from '../balanceService/balanceService';
@@ -8,8 +8,9 @@ import { ConfigurationService } from '../configurationService/configurationServi
 import { ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { EventService } from '../eventService/eventsService';
-import { MessageService } from '../messageService/messageService';
 import { IdentityService } from '../identityService/identityService';
+import { JWTProofService } from '../JWTService/JWTProofService';
+import { MessageService } from '../messageService/messageService';
 import { POAAndAriaService } from '../POAAndAriaFaucet/POAAndAriaService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
@@ -28,7 +29,8 @@ export class WalletCustomMethodService {
                private identityService:IdentityService,
                private certificateAuthorizationService:CertificateAuthorizationService,
                private balanceService:BalanceService,
-               private diagnosisService:DiagnosisService
+               private diagnosisService:DiagnosisService,
+               private jwtProofService:JWTProofService
   ) {
 
   }
@@ -87,7 +89,12 @@ export class WalletCustomMethodService {
 
       markAsRead: this.messageService.markAsRead,
 
-      diagnosis: this.diagnosisService.diagnosis
+      diagnosis: this.diagnosisService.diagnosis,
+
+      createActionJWTProofLink: this.jwtProofService.createActionJWTProofLink,
+      decodeJWTProof: this.jwtProofService.decodeJWTProof,
+      createCertificateJWTProof: this.jwtProofService.createCertificateJWTProof,
+      isJWTProofValid: this.jwtProofService.isCertificateJWTProofValid
     };
   }
 
