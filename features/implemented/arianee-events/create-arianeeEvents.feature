@@ -14,3 +14,6 @@ Feature: Create events
           "$schema": "https://cert.arianee.org/version1/ArianeeEvent-i18n.json"
         }
       """
+
+  Scenario: User wants to create an event with an arianeeEventID already used
+    Then user1 try to create 2 events with the same eventId on certficate0

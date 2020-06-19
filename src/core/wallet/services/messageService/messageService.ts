@@ -203,20 +203,46 @@ export class MessageService {
     return result;
   }
 
+  generateAvailableMessageId= async ():Promise<number> => {
+    const messageId = this.utils.createUID();
+
+    const isFree = this.isMessageIdFree(messageId);
+
+    if (isFree) {
+      return messageId;
+    } else {
+      return this.generateAvailableMessageId();
+    }
+  }
+
+  private isMessageIdFree = async (arianeeEventId:number):Promise<boolean> => {
+    const message = await this.contractService.messageContract.methods.messages(arianeeEventId).call();
+
+    return message.sender === '0x0000000000000000000000000000000000000000';
+  }
+
   public createMessage=async (data: {
     contentImprint?: string;
     certificateId: number,
     content?: { $schema: string;[key: string]: any };
-      messageId?: number;
+    messageId?: number;
 
   }):Promise<
       { contentImprint: string,
        messageId: number}
     > => {
-    let { certificateId, contentImprint, content } = data;
+    let { messageId, certificateId, contentImprint, content } = data;
     const brandReward = this.configurationService.arianeeConfiguration.brandDataHubReward.address;
 
-    const messageId = data.messageId || this.utils.createUID();
+    if (data.messageId) {
+      const arianeeEventIdIsAvailable = await this.isMessageIdFree(messageId);
+
+      if (!arianeeEventIdIsAvailable) {
+        throw new Error(`Message id (${messageId}) is not available`);
+      }
+    } else {
+      messageId = await this.generateAvailableMessageId();
+    }
 
     console.assert(
       !(contentImprint && content),
