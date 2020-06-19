@@ -27,9 +27,9 @@ export class JWTProofService {
    * @param certificateId
    */
     public createActionJWTProofLink= (url:string, certificateId: number) => {
-      const token = this.createCertificateJWTProof(certificateId);
+      const arianeeJWT = this.createCertificateJWTProof(certificateId);
 
-      return appendQuery(url, { token });
+      return appendQuery(url, { arianeeJWT });
     }
 
   /**
@@ -45,8 +45,8 @@ export class JWTProofService {
    * @param token
    */
   public isCertificateJWTProofValid = async (token): Promise<boolean> => {
-    const { certificateId } = this.jwtService.decode(token);
-    const owner = await this.contractService.smartAssetContract.methods.ownerOf(certificateId).call().catch(e => '');
+    const { payload } = this.jwtService.decode(token);
+    const owner = await this.contractService.smartAssetContract.methods.ownerOf(payload.subId).call().catch(e => '');
 
     return this.jwtService.isValidJWT(token, owner);
   };

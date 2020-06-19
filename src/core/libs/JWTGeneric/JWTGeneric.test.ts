@@ -76,7 +76,7 @@ describe('JWTGeneric', function () {
 
         const isAuthentic = jwt
           .setToken(token)
-          .verify();
+          .verify(pubKey);
 
         expect(isAuthentic).toBeFalsy();
       });
@@ -95,7 +95,7 @@ describe('JWTGeneric', function () {
           .sign();
         const isAuthentic = jwt
           .setToken(token)
-          .verify();
+          .verify(pubKey);
 
         expect(isAuthentic).toBeTruthy();
       });
@@ -117,7 +117,7 @@ describe('JWTGeneric', function () {
 
         const isAuthentic = jwt
           .setToken(token)
-          .verify();
+          .verify(pubKey);
 
         expect(isAuthentic).toBeFalsy();
       });
@@ -136,7 +136,7 @@ describe('JWTGeneric', function () {
           .sign();
         const isAuthentic = jwt
           .setToken(token)
-          .verify();
+          .verify(pubKey);
 
         expect(isAuthentic).toBeTruthy();
       });

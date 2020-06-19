@@ -34,7 +34,7 @@ export class JWTService {
   public isValidJWT (JWT: string, address: string): boolean {
     return this.JWTGenericFactory()
       .setToken(JWT)
-      .verify(JWT, address);
+      .verify(address);
   }
 
     private JWTGenericFactory = () => {

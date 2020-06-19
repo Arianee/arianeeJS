@@ -65,7 +65,7 @@ export class JWTGeneric {
      * Verify if signature was signed by pubKey and return true/false
      * @param pubKey
      */
-    private verify (pubKey?: string): boolean {
+    private verify (pubKey: string): boolean {
       const { header, signature, payload } = this.decode();
       const joinedHeaderPayload = JWTGeneric.base64Stringified(header) + '.' + JWTGeneric.base64Stringified(payload);
       const decode = this.decoder(joinedHeaderPayload, signature);
@@ -74,11 +74,9 @@ export class JWTGeneric {
 
       if (!arePropertyValid) {
         return false;
-      } else if (pubKey) {
-        return pubKey === decode;
-      } else {
-        return true;
       }
+
+      return pubKey === decode;
     }
 
     private arePropertiesValid=(payload) => {
