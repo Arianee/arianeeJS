@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { When, Given } from 'cucumber';
+import { When, Given, Then } from 'cucumber';
 
 Given('user{int} creates an event{int} with title {string} on certificate{int} with proper errors', async function (
   userIndex, eventIndex, title, certificateIndex
@@ -145,3 +145,31 @@ Given('user{int} checks event{int} status is {string} on certificate{int}', asyn
     throw new Error('status is undefined or not known');
   }
 });
+
+Then('user{int} try to create 2 events with the same eventId on certficate{int}',
+  async function (userIndex, certificateIndex) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const certificateId = this.store.getToken(certificateIndex);
+
+    const { arianeeEventId } = await wallet.methods.createArianeeEvent({
+      certificateId,
+      content: {
+        title: 'title',
+        $schema: 'https://cert.arianee.org/version1/ArianeeEvent-i18n.json'
+      }
+    });
+
+    try {
+      await wallet.methods.createArianeeEvent({
+        certificateId,
+        arianeeEventId,
+        content: {
+          title: 'title',
+          $schema: 'https://cert.arianee.org/version1/ArianeeEvent-i18n.json'
+        }
+      });
+      expect(true).equals(false);
+    } catch {
+      expect(true).equals(true);
+    }
+  });

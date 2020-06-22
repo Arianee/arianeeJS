@@ -287,6 +287,27 @@ export class EventService {
     return result;
   }
 
+  generateAvailableArianeeEventId= async ():Promise<number> => {
+    const arianeeEventId = this.utils.createUID();
+
+    const isFree = this.isArianeeEventIdFree(arianeeEventId);
+
+    if (isFree) {
+      return arianeeEventId;
+    } else {
+      return this.generateAvailableArianeeEventId();
+    }
+  }
+
+  private isArianeeEventIdFree = async (arianeeEventId:number):Promise<boolean> => {
+    try {
+      await this.contractService.eventContract.methods.getEvent(arianeeEventId).call();
+      return false;
+    } catch {
+      return true;
+    }
+  }
+
   public createArianeeEvent=async (data: {
     uri?: string;
     contentImprint?: string;
@@ -297,7 +318,16 @@ export class EventService {
       { contentImprint: string,
        arianeeEventId: number}
     > => {
-    data.arianeeEventId = data.arianeeEventId || this.utils.createUID();
+    if (data.arianeeEventId) {
+      const arianeeEventIdIsAvailable = await this.isArianeeEventIdFree(data.arianeeEventId);
+
+      if (!arianeeEventIdIsAvailable) {
+        throw new Error(`Arianee Event id (${data.arianeeEventId}) is not available`);
+      }
+    } else {
+      data.arianeeEventId = await this.generateAvailableArianeeEventId();
+    }
+
     data.uri = data.uri || '';
 
     let { arianeeEventId, certificateId, contentImprint, uri, content } = data;

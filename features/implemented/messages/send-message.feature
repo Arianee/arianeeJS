@@ -27,7 +27,7 @@ Feature: Send message
       | result         | true |
     Then user1 is the owner of the certificate0
 
-@dev
+
   Scenario: Brand2 can send a message after whitelist
     Given user2 is a brand
     When user1 whitelist user2 for certificate0
@@ -42,3 +42,6 @@ Feature: Send message
     Then result should have property
       | messageId      | true |
       | result         | true |
+
+  Scenario: User wants to create a message with an message Id already used
+    Then user1 try to create 2 message with the same message id on certficate0
