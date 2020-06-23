@@ -48,6 +48,70 @@ export class CertificateService {
   ) {
   }
 
+  public reserveCertificateId = async (certificateId?:number) => {
+    if (certificateId) {
+      const certificateIdIsAvailable = await this.isCertificateIdFree(certificateId);
+      if (!certificateIdIsAvailable) {
+        throw new Error(`Certificate id (${certificateId}) is not available`);
+      }
+    } else {
+      certificateId = await this.getAvailableCertificateId();
+    }
+
+    const transcationObject = this.contractService.storeContract.methods.reserveToken(certificateId, this.walletService.address);
+
+    try {
+      var result = await transcationObject.send()
+        .then(i => ({
+          ...(<any>i),
+          certificateId
+        }));
+
+      return result;
+    } catch (e) {
+      const diagnosis = await this.diagnosisService.diagnosis([
+        this.diagnosisService.isStoreApprove(),
+        this.diagnosisService.isPOACredit(),
+        this.diagnosisService.isCertificateCredit()
+      ], e);
+      return Promise.reject(diagnosis);
+    }
+  }
+
+  private getAvailableCertificateId = async ():Promise<number> => {
+    const certificateId = this.utils.createUID();
+
+    const isFree = await this.isCertificateIdFree(certificateId);
+
+    if (isFree) {
+      return certificateId;
+    } else {
+      return this.getAvailableCertificateId();
+    }
+  }
+
+  private isCertificateIdFree = async (certificateId:number):Promise<boolean> => {
+    try {
+      await this.contractService.smartAssetContract.methods.ownerOf(certificateId).call();
+      return false;
+    } catch {
+      return true;
+    }
+  }
+
+  private canCreateCertificateWithCertificateId = async (certificateId:number):Promise<boolean> => {
+    try {
+      const owner = await this.contractService.smartAssetContract.methods.ownerOf(certificateId).call();
+      const imprint = await this.contractService.smartAssetContract.methods.tokenImprint(certificateId).call();
+      const imprintIsEmpty = !imprint || imprint === '0x0000000000000000000000000000000000000000000000000000000000000000';
+      const isOwner = owner === this.walletService.address;
+
+      return imprintIsEmpty && isOwner;
+    } catch {
+      return true;
+    }
+  }
+
   private prepareHydrateToken = async (data: hydrateTokenParameters):Promise<hydrateTokenParameters> => {
     let {
       uri,
@@ -59,7 +123,15 @@ export class CertificateService {
       content
     } = data;
 
-    certificateId = certificateId || Math.ceil(Math.random() * 1000000000);
+    if (certificateId) {
+      const certificateIdIsAvailable = await this.canCreateCertificateWithCertificateId(certificateId);
+
+      if (!certificateIdIsAvailable) {
+        throw new Error(`Certificate id (${certificateId}) is not available`);
+      }
+    } else {
+      certificateId = await this.getAvailableCertificateId();
+    }
 
     const fiveYears = 60 * 60 * 24 * 365 * 5;
     const now = new Date();

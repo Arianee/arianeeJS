@@ -40,6 +40,7 @@ export class WalletCustomMethodService {
       requestAria: this.poaAndAriaService.requestAria,
       requestPoa: this.poaAndAriaService.requestPoa,
 
+      reserveCertificateId: this.certificateService.reserveCertificateId,
       createCertificate: this.certificateService.customHydrateToken,
       createCertificatesBatch: this.certificateService.customHydrateTokenBatch,
       createAndStoreCertificate: this.certificateService.createAndStoreCertificate,
