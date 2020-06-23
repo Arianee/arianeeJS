@@ -254,6 +254,29 @@ When(
   }
 );
 
+Given(
+  'user{int} create arianeeJWT{int} on certficate{int}',
+  function (userIndex, arianeeJwtIndex, tokenIndex) {
+    const certificateId = this.store.getToken(tokenIndex);
+    const wallet = this.store.getUserWallet(userIndex);
+
+    const arianeejwt = wallet.methods.createCertificateJWTProof(certificateId);
+
+    this.store.storeCustom(`arianeeJwtIndex_${arianeeJwtIndex}`, arianeejwt);
+  }
+);
+
+Then(
+  'user{int} check that arianeeJwt{int} is valid',
+  async function (userIndex, arianeeJwtIndex) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const arianeejwt = this.store.getCustom(`arianeeJwtIndex_${arianeeJwtIndex}`);
+
+    const isValid = await wallet.methods.isJWTProofValid(arianeejwt);
+    expect(isValid).equals(true);
+  }
+);
+
 Then(
   'user{int} can check the proof in certificate{int} with passphrase {word}',
   async function (userIndex, certificateIndex, password) {
