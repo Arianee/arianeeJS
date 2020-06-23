@@ -54,9 +54,12 @@ export class MessageService {
       content: false
     });
 
-    const issuer = certificateIdentityIssuer.issuer.identity;
+    const certificateIssuer = certificateIdentityIssuer.issuer.identity;
+
+    const messageIdentityIssuer = await this.identityService.getIdentity({ address: result.sender });
+
     let content;
-    const rpcURL = get(issuer, 'data.rpcEndpoint') || parameters.url;
+    const rpcURL = get(certificateIssuer, 'data.rpcEndpoint') || parameters.url;
     if (rpcURL) {
       const proof = this.utils.signProof(
         JSON.stringify({
@@ -116,13 +119,14 @@ export class MessageService {
     return {
       certificateId: result.tokenId,
       issuer: {
-        isIdentityVerified: issuer.isApproved,
-        isIdentityAuthentic: issuer.isAuthentic,
-        imprint: issuer.imprint,
-        identity: issuer.data
+        isIdentityVerified: messageIdentityIssuer.isApproved,
+        isIdentityAuthentic: messageIdentityIssuer.isAuthentic,
+        imprint: messageIdentityIssuer.imprint,
+        identity: messageIdentityIssuer
       },
       content,
       to: result.to,
+      from: result.sender,
       messageId,
       timestamp: creationDate,
       isRead: isRead
