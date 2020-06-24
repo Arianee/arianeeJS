@@ -78,6 +78,7 @@ export interface Message<MessageType=any, IdentityType=any>{
   content: CertificateContentContainer<MessageType>;
   issuer: CertificateIssuer<IdentityType>;
   to:string;
+  from:string;
   timestamp:number;
   isRead:boolean;
 }
