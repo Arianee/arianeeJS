@@ -50,3 +50,16 @@ Feature: Create and read certificate proof
       | url             | http://myurl.com |
       | certificateId   | certificate0     |
       | passphrase      | myPassphrase     |
+
+
+    Scenario: Owner can create a JWT token
+      Given user1 creates certificate0 as:
+      """
+       {
+         "$schema": "https://cert.arianee.org/version1/ArianeeAsset.json",
+          "name": "Arianee",
+        "description":"a description"
+        }
+      """
+      Given user1 create arianeeJWT0 on certficate0
+      Then user2 check that arianeeJwt0 is valid

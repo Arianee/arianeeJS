@@ -23,11 +23,11 @@ import { ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { EventService } from '../eventService/eventsService';
 import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
-import { MessageService } from '../messageService/messageService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
 import appendQuery from 'append-query';
+import { JWTProofService } from '../JWTService/JWTProofService';
 
 @injectable()
 export class CertificateService {
@@ -44,7 +44,8 @@ export class CertificateService {
     private globalConfiguration: GlobalConfigurationService,
     private store:SimpleStore,
     private batchService:BatchService,
-    private diagnosisService:DiagnosisService
+    private diagnosisService:DiagnosisService,
+    private jwtProofService: JWTProofService
   ) {
   }
 
@@ -529,12 +530,19 @@ export class CertificateService {
 
   public isCertificateProofValidFromActionProofLink = async (actionProofLink: string) => {
     const d = this.utils.simplifiedParsedURL(actionProofLink);
-    var matches = d.search.match(/proofLink=([^&]*)/);
+    const matches = d.search.match(/proofLink=([^&]*)/);
+    const arianeeJWT = new URL(actionProofLink).searchParams.get('arianeeJWT');
 
     if (matches) {
       const link = matches[1];
       return this.isCertificateProofValidFromLink(link);
     }
+
+    if (arianeeJWT) {
+      return this.jwtProofService.isCertificateJWTProofValid(arianeeJWT);
+    }
+
+    return false;
   };
 
   public isCertificateProofValidFromLink = async (proofLink: string) => {
@@ -546,9 +554,36 @@ export class CertificateService {
 
   public isCertificateProofValid = async (
     certificateId: number,
-    passphrase: string
+    passphrase?: string,
+    jwt?:string
   ): Promise<ExtendedBoolean<{timestamp?:number}>> => {
-    return this.isProofValidSince(certificateId, passphrase, 2, 300);
+    if (passphrase) {
+      return this.isProofValidSince(certificateId, passphrase, 2, 300);
+    }
+
+    if (jwt) {
+      return this.isJwtProofValid(certificateId, jwt);
+    }
+  }
+
+  private isJwtProofValid = async (certificateId, jwt):Promise<ExtendedBoolean<{timestamp?:number}>> => {
+    const isJWTValid = await this.jwtProofService.isCertificateJWTProofValid(jwt);
+    const { payload } = this.jwtProofService.decodeJWTProof(jwt);
+    if (isJWTValid && (payload.subId === certificateId)) {
+      return {
+        isTrue: true,
+        code: 'proof.token.valid',
+        message: 'proof is valid',
+        timestamp: payload.iat
+      };
+    } else {
+      return {
+        isTrue: false,
+        code: 'proof.token.dontmatch',
+        message: 'token proof does not match',
+        timestamp: payload.iat
+      };
+    }
   }
 
   private isProofValid = async (
