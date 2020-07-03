@@ -10,12 +10,28 @@ import { blockchainEventsName } from '../src/models/blockchainEventsName';
 
   // await wallet.methods.requestCertificateOwnership(31136419, 'hdj7i2m9q4ey');
 
-  const ActionJWTProofLink = wallet.methods.createActionJWTProofLink('http://lemonde.fr', 31136419);
-  // console.log(ActionJWTProofLink);
-  const url = new URL(ActionJWTProofLink);
-  console.log(url.searchParams.get('arianeeJWT'));
+  await wallet.methods.approveStore();
+  await wallet.methods.createAndStoreCertificate({
+    content: {
+      $schema: 'https://cert.arianee.org/version1/ArianeeProductCertificate-i18n.json',
+      name: 'Top Time Limited Edition'
+    }
+  }, 'https://arianee.cleverapps.io/testnet/rpc')
+    .catch(e => console.log(e))
 
-  // const d = wallet.methods.createCertificateJWTProof(45678745678765456);
+  /*
+  const certificate = await wallet.methods.getCertificate(31136419, undefined, { content: true });
+
+  await wallet.methods.storeContentInRPCServer(31136419, certificate.content.data, 'http://localhost:3000/rpc');
+
+  const jwt = wallet.methods.createCertificateJWTProof(31136419);
+
+  const otherWallet = arianee.fromRandomMnemonic();
+
+  const d = await otherWallet.methods.getCertificateFromJWT(jwt, { content: true, issuer: { rpcURI: 'http://localhost:3000/rpc' } });
+
+  console.log(d);
+  // const ActionJWTProofLink = wallet.methods.createActionJWTProofLink('http://lemonde.fr', 31136419);
 
   //  console.log(d);
 
@@ -24,4 +40,5 @@ import { blockchainEventsName } from '../src/models/blockchainEventsName';
 
   // const l = wallet.methods.decodeJWTProof(d);
   // console.log(l);
+   */
 })();

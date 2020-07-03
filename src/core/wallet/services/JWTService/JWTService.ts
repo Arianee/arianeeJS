@@ -25,7 +25,7 @@ export class JWTService {
     return this.JWTGenericFactory().setPayload(enrichedPayload).sign();
   }
 
-  public decode<T = any> (JWT): T {
+  public decode<T = any> (JWT): {header:any;payload:T, signature:string} {
     return this.JWTGenericFactory()
       .setToken(JWT)
       .decode();

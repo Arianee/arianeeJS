@@ -100,7 +100,8 @@ export class CertificateEventsSummary implements CertificateEvents {
 
 export interface CertificateAdvanced {
   tokenRecoveryDate?: string;
-  languages?:string[]
+  languages?:string[],
+  arianeeProofToken?:string
 }
 
 export interface CertificateSummary<CertificateType=any, IdentityType=any> {
