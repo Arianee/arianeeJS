@@ -9,7 +9,7 @@ import { ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { EventService } from '../eventService/eventsService';
 import { IdentityService } from '../identityService/identityService';
-import { JWTProofService } from '../JWTService/JWTProofService';
+import { ArianeeProofTokenService } from '../JWTService/ArianeeProofTokenService';
 import { MessageService } from '../messageService/messageService';
 import { POAAndAriaService } from '../POAAndAriaFaucet/POAAndAriaService';
 import { WalletService } from '../walletService/walletService';
@@ -30,7 +30,7 @@ export class WalletCustomMethodService {
                private certificateAuthorizationService:CertificateAuthorizationService,
                private balanceService:BalanceService,
                private diagnosisService:DiagnosisService,
-               private jwtProofService:JWTProofService
+               private arianeeProofTokenService:ArianeeProofTokenService
   ) {
 
   }
@@ -46,6 +46,8 @@ export class WalletCustomMethodService {
       createAndStoreCertificate: this.certificateService.createAndStoreCertificate,
 
       getCertificate: this.certificateService.getCertificate,
+      getCertificateFromArianeeProofToken: this.certificateService.getCertificateFromArianeeProofToken,
+
       destroyCertificate: this.certificateService.destroyCertificate,
       recoverCertificate: this.certificateService.recoverCertificate,
       getMyCertificates: this.certificateService.getMyCertificates,
@@ -92,10 +94,10 @@ export class WalletCustomMethodService {
 
       diagnosis: this.diagnosisService.diagnosis,
 
-      createActionJWTProofLink: this.jwtProofService.createActionJWTProofLink,
-      decodeJWTProof: this.jwtProofService.decodeJWTProof,
-      createCertificateJWTProof: this.jwtProofService.createCertificateJWTProof,
-      isJWTProofValid: this.jwtProofService.isCertificateJWTProofValid
+      createActionJWTProofLink: this.arianeeProofTokenService.createActionArianeeProofTokenLink,
+      decodeArianeeProofToken: this.arianeeProofTokenService.decodeArianeeProofToken,
+      createCertificateArianeeProofToken: this.arianeeProofTokenService.createCertificateArianeeProofToken,
+      isCertificateArianeeProofTokenValid: this.arianeeProofTokenService.isCertificateArianeeProofTokenValid
     };
   }
 

@@ -1,9 +1,11 @@
+import { get } from 'lodash';
 import { injectable } from 'tsyringe';
+import { ArianeeGateWayAuthentification } from '../../../../models/ArianeeGateWayAuthentification';
 import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
 import { StoreNamespace } from '../../../../models/storeNamespace';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
-import { CertificateSummary, CertificateSummaryBuilder } from '../../certificateSummary';
+import { CertificateSummaryBuilder } from '../../certificateSummary';
 import {
   CertificateContentContainer,
   ConsolidatedCertificateRequest,
@@ -69,10 +71,10 @@ export class CertificateDetails {
 
   private getCertificateContentFromRPC = async (
     parameters:{
-      certificateURI: string, certificateId: string, proof: any, query: ConsolidatedCertificateRequest
+      certificateURI: string, certificateId: string, arianeeRPCAuthentification: ArianeeGateWayAuthentification, query: ConsolidatedCertificateRequest
     }
   ) => {
-    const { certificateId, query, proof } = parameters;
+    const { certificateId, query, arianeeRPCAuthentification } = parameters;
     const issuer = query.issuer as ConsolidatedIssuerRequestInterface;
 
     let rpcEndPoint;
@@ -102,11 +104,7 @@ export class CertificateDetails {
       'certificate.read',
       {
         certificateId: certificateId,
-        authentification: {
-          hash: proof.messageHash,
-          signature: proof.signature,
-          message: proof.message
-        }
+        authentification: arianeeRPCAuthentification
       }
     );
 
@@ -114,7 +112,7 @@ export class CertificateDetails {
   }
 
   private getContent = (parameters:{
-    certificateURI:string, certificateId:string, proof:any, query:ConsolidatedCertificateRequest
+    certificateURI:string, certificateId:string, arianeeRPCAuthentification:any, query:ConsolidatedCertificateRequest
   }) => {
     const { certificateURI, certificateId } = parameters;
     return this.getCertificateContentFromRPC(parameters)
@@ -145,10 +143,16 @@ export class CertificateDetails {
   ) => {
     const { certificateId, passphrase } = parameters;
 
-    const generateProof = () => {
-      if (passphrase) {
+    const generateProof = ():ArianeeGateWayAuthentification => {
+      if (get(parameters, 'query.advanced.arianeeProofToken')) {
+        return {
+          bearer: parameters.query.advanced.arianeeProofToken,
+          jwt: parameters.query.advanced.arianeeProofToken
+        };
+      } else if (passphrase) {
         const temporaryWallet = this.configurationService.walletFactory()
           .fromPassPhrase(passphrase);
+
         return this.utils.signProof(
           JSON.stringify({
             certificateId: certificateId,
@@ -174,7 +178,7 @@ export class CertificateDetails {
     const certificateContentData: any = await this.getContent(
       {
         ...parameters,
-        proof: generateProof(),
+        arianeeRPCAuthentification: generateProof(),
         certificateURI: tokenURI
       }
     );

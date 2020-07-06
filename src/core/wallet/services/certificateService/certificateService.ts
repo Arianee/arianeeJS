@@ -1,4 +1,5 @@
 import { TransactionObject } from '@arianee/arianee-abi/types/types';
+import appendQuery from 'append-query';
 import { get } from 'lodash';
 import { injectable } from 'tsyringe';
 import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
@@ -23,11 +24,10 @@ import { ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { EventService } from '../eventService/eventsService';
 import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
+import { ArianeeProofTokenService } from '../JWTService/ArianeeProofTokenService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
-import appendQuery from 'append-query';
-import { JWTProofService } from '../JWTService/JWTProofService';
 
 @injectable()
 export class CertificateService {
@@ -45,7 +45,7 @@ export class CertificateService {
     private store:SimpleStore,
     private batchService:BatchService,
     private diagnosisService:DiagnosisService,
-    private jwtProofService: JWTProofService
+    private jwtProofService: ArianeeProofTokenService
   ) {
   }
 
@@ -304,6 +304,32 @@ export class CertificateService {
     }
   }
 
+  /**
+   * Get certificate from arianeeJWT
+   * example: getCertificateFromJWT(eyJ0eXAiOiJK...restOfYourJWT)
+   * @param arianeeJWT
+   * @param query
+   */
+  public getCertificateFromArianeeProofToken = (arianeeJWT: string, query?: ConsolidatedCertificateRequest) => {
+    const { payload: { subId } } = this.jwtProofService.decodeArianeeProofToken(arianeeJWT);
+
+    const queryWithJWT = {
+      ...query
+    };
+    queryWithJWT.advanced = {
+      ...queryWithJWT.advanced,
+      arianeeProofToken: arianeeJWT
+    };
+
+    return this.getCertificate(subId, undefined, queryWithJWT);
+  };
+
+  /**
+   * Get certificate from certificateId and passphrase.
+   * @param certificateId
+   * @param passphrase
+   * @param query
+   */
   public getCertificate = async <CertificateType=any, IdentityType=any>(
     certificateId: ArianeeTokenId,
     passphrase?: string,
@@ -539,7 +565,7 @@ export class CertificateService {
     }
 
     if (arianeeJWT) {
-      return this.jwtProofService.isCertificateJWTProofValid(arianeeJWT);
+      return this.jwtProofService.isCertificateArianeeProofTokenValid(arianeeJWT);
     }
 
     return false;
@@ -567,8 +593,8 @@ export class CertificateService {
   }
 
   private isJwtProofValid = async (certificateId, jwt):Promise<ExtendedBoolean<{timestamp?:number}>> => {
-    const isJWTValid = await this.jwtProofService.isCertificateJWTProofValid(jwt);
-    const { payload } = this.jwtProofService.decodeJWTProof(jwt);
+    const isJWTValid = await this.jwtProofService.isCertificateArianeeProofTokenValid(jwt);
+    const { payload } = this.jwtProofService.decodeArianeeProofToken(jwt);
     if (isJWTValid && (payload.subId === certificateId)) {
       return {
         isTrue: true,

@@ -1,11 +1,12 @@
 import appendQuery from 'append-query';
 import { injectable } from 'tsyringe';
+import { CertificateJwt } from '../../../../models/JWT/certificate-jwt';
 import { ContractService } from '../contractService/contractsService';
 import { WalletService } from '../walletService/walletService';
 import { JWTService } from './JWTService';
 
 @injectable()
-export class JWTProofService {
+export class ArianeeProofTokenService {
   constructor (private jwtService: JWTService, private walletService: WalletService, private contractService: ContractService) {
 
   }
@@ -14,7 +15,7 @@ export class JWTProofService {
    * Create a certificate JWTProof
    * @param certificateId
    */
-  public createCertificateJWTProof =(certificateId: number) => {
+  public createCertificateArianeeProofToken =(certificateId: number) => {
     return this.jwtService.sign({
       sub: 'certificate',
       subId: certificateId
@@ -26,8 +27,8 @@ export class JWTProofService {
    * @param url
    * @param certificateId
    */
-    public createActionJWTProofLink= (url:string, certificateId: number) => {
-      const arianeeJWT = this.createCertificateJWTProof(certificateId);
+    public createActionArianeeProofTokenLink= (url:string, certificateId: number) => {
+      const arianeeJWT = this.createCertificateArianeeProofToken(certificateId);
 
       return appendQuery(url, { arianeeJWT });
     }
@@ -36,15 +37,15 @@ export class JWTProofService {
    * Decode proof and return it
    * @param token
    */
-  public decodeJWTProof = (token) => {
-    return this.jwtService.decode(token);
+  public decodeArianeeProofToken = (token) => {
+    return this.jwtService.decode<CertificateJwt>(token);
   };
 
   /**
    * Method to check if token is valid and if certificateId is own by current wallet
    * @param token
    */
-  public isCertificateJWTProofValid = async (token): Promise<boolean> => {
+  public isCertificateArianeeProofTokenValid = async (token): Promise<boolean> => {
     const { payload } = this.jwtService.decode(token);
     const owner = await this.contractService.smartAssetContract.methods.ownerOf(payload.subId).call().catch(e => '');
 
