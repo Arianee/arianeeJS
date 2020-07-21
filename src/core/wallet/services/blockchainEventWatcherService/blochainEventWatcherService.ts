@@ -57,6 +57,12 @@ export class BlockchainEventWatcherService {
       filter: {},
       blockchainEvent: blockchainEventsName.identity.IdentityValidate,
       eventNames: [BlockchainEventWatcherEnum.IdentityValidate]
+    },
+    {
+      contract: this.contractService.messageContract,
+      filter: { _receiver: this.walletService.address },
+      blockchainEvent: blockchainEventsName.message.MessageSent,
+      eventNames: [BlockchainEventWatcherEnum.MessageReceive]
     }
   ]
 
