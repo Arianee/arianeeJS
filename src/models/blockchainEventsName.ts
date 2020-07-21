@@ -19,5 +19,8 @@ export const blockchainEventsName = {
   identity: {
     IdentityValidate: 'URIValidate',
     IdentityUpdate: 'URIUpdated'
+  },
+  message: {
+    MessageSent: 'MessageSent'
   }
 };

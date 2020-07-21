@@ -3,5 +3,6 @@ export const enum BlockchainEventWatcherEnum {
     TransferFrom='TransferFrom',
     TransferTo='TransferTo',
     IdentityValidate='URIValidate',
-    IdentityUpdate ='URIUpdated'
+    IdentityUpdate ='URIUpdated',
+    MessageReceive='MessageReceive'
 }
