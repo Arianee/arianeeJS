@@ -1,4 +1,4 @@
-import { injectable } from 'tsyringe';
+import { injectable, singleton } from 'tsyringe';
 import { BlockchainEventWatcherEnum } from '../../../../models/enum';
 import { ContractService } from '../contractService/contractsService';
 
@@ -23,13 +23,22 @@ export class BlockchainEventWatcherService {
   ) {
     eventEmitter.EE.on(ArianeListenerEvent.newListener, async (event) => {
       this.watcherParameters
+      // is event handle by our watchers
         .filter(conf => conf.eventNames.includes(event))
-        .filter(conf => eventEmitter.EE.listeners(conf.blockchainEvent).length === 0)
+        // there is no on going watcher yet. Avoid double watcher.
+        .filter(conf => !this.onGoingWatchers.has(this.createCompositeIdWatcher(conf.eventNames)))
         .forEach(async (conf) => {
+          this.onGoingWatchers.add(this.createCompositeIdWatcher(conf.eventNames));
           this.watch(conf);
         });
     });
   }
+
+  private createCompositeIdWatcher = (eventNames:string[]) => {
+    return eventNames.sort().join();
+  }
+
+  private onGoingWatchers=new Set();
 
   public timeout=2000;
 
@@ -69,6 +78,7 @@ export class BlockchainEventWatcherService {
   watch = async (conf:watchParameter) => {
     setTimeout(async () => {
       const { contract, filter, blockchainEvent, eventNames } = conf;
+
       const cursorKey = blockchainEvent.concat(JSON.stringify(filter)) + contract.options.address;
 
       const currentBlock = await this.web3Service.web3.eth.getBlockNumber();
@@ -89,13 +99,14 @@ export class BlockchainEventWatcherService {
           }
         });
       }
-
       const sumOfListeners = eventNames.reduce((acc, eventName) => {
         return acc + this.eventEmitter.EE.listeners(eventName).length;
       }, 0);
 
       if (sumOfListeners > 0) {
         this.watch(conf);
+      } else {
+        this.onGoingWatchers.delete(this.createCompositeIdWatcher(conf.eventNames));
       }
     }, this.timeout);
   };

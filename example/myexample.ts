@@ -1,3 +1,4 @@
+import { waitFor } from '../features/steps/helpers/waitFor';
 import { makeWalletReady } from '../features/steps/helpers/walletCreator';
 import { Arianee, NETWORK } from '../src';
 import { blockchainEventsName } from '../src/models/blockchainEventsName';
@@ -5,40 +6,46 @@ import { blockchainEventsName } from '../src/models/blockchainEventsName';
 (async function () {
   const arianee = await new Arianee().init(NETWORK.testnet);
   const wallet = arianee.fromPrivateKey('0x6c2504d31d9c51e24e23048c80f1b83cdf8c491fce77d5f193d3d906ab60cd2b');
-  // console.log(wallet.address);
-  // console.log(await wallet.contracts.smartAssetContract.methods.ownerOf(45678745678765456).call());
 
-  // await wallet.methods.requestCertificateOwnership(31136419, 'hdj7i2m9q4ey');
+  const wallet2 = arianee.fromPrivateKey('0x068c8d3160ab989a9f9d80a3722282f1d51ddf6af28b00a918687230e82290c4');
 
-  await wallet.methods.approveStore();
-  await wallet.methods.createAndStoreCertificate({
+  wallet.watch.on('TransferTo', () => {
+    console.log('transferTo1');
+  });
+
+  wallet.watch.on('TransferFrom', () => {
+    console.log('transferTo1');
+  });
+
+/*
+  const result = await wallet.methods.createCertificate({
+    uri: 'http://localhost:3000/mycertificate.json',
     content: {
-      $schema: 'https://cert.arianee.org/version1/ArianeeProductCertificate-i18n.json',
-      name: 'Top Time Limited Edition'
+      $schema: 'https://cert.arianee.org/version1/ArianeeAsset.json',
+      name: 'Arianee'
     }
-  }, 'https://arianee.cleverapps.io/testnet/rpc')
-    .catch(e => console.log(e))
+  });
 
-  /*
-  const certificate = await wallet.methods.getCertificate(31136419, undefined, { content: true });
+  const cert = result.certificateId;
+  wallet.watch.on('TransferTo', () => {
+    console.log('transferTo1');
+  });
+  wallet.watch.removeAllListeners('TransferTo');
 
-  await wallet.methods.storeContentInRPCServer(31136419, certificate.content.data, 'http://localhost:3000/rpc');
+  await waitFor(3000);
 
-  const jwt = wallet.methods.createCertificateJWTProof(31136419);
+  wallet.watch.on('TransferTo', () => {
+    console.log('transferTo2');
+  });
 
-  const otherWallet = arianee.fromRandomMnemonic();
+  console.log(0);
+  const link = await wallet.methods.createCertificateRequestOwnershipLink(cert);
+  console.log(1);
+  await wallet2.methods.requestCertificateOwnership(link.certificateId, link.passphrase);
+  console.log(2);
 
-  const d = await otherWallet.methods.getCertificateFromJWT(jwt, { content: true, issuer: { rpcURI: 'http://localhost:3000/rpc' } });
-
-  console.log(d);
-  // const ActionJWTProofLink = wallet.methods.createActionJWTProofLink('http://lemonde.fr', 31136419);
-
-  //  console.log(d);
-
-  // const isValid = await wallet.methods.isJWTProofValid(d);
-  // console.log('isValid', isValid);
-
-  // const l = wallet.methods.decodeJWTProof(d);
-  // console.log(l);
-   */
+  const link2 = await wallet2.methods.createCertificateRequestOwnershipLink(cert);
+  console.log(3);
+  await wallet.methods.requestCertificateOwnership(link2.certificateId, link2.passphrase);
+  console.log(4); */
 })();
