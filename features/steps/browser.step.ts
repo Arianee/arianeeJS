@@ -7,7 +7,7 @@ const puppeteer = require('puppeteer');
 Given('ArianeeLib is used on browser {string} it works', async function (browserName) {
   const contentHtml = '<!doctype html><html><body id=\'div1\'></body></html>';
   const contentJSBundle = fs.readFileSync('./browser/bundle.js', 'utf8');
-  const contentTestJS = fs.readFileSync('./dist/example/myexecfile.js', 'utf8');
+  const contentTestJS = fs.readFileSync('./dist/myexecfile.js', 'utf8');
 
   let browser;
   if (browserName === 'chrome') {

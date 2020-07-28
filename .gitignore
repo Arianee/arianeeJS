@@ -83,3 +83,4 @@ dist/
 browser/
 node/
 @rerun.txt
+.cache
