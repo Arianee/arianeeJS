@@ -6,7 +6,7 @@ import { WalletService } from '../walletService/walletService';
 import { JWTService } from './JWTService';
 
 @injectable()
-export class ArianeeProofTokenService {
+export class ArianeeAccessTokenService {
   constructor (private jwtService: JWTService, private walletService: WalletService, private contractService: ContractService) {
 
   }
@@ -15,7 +15,7 @@ export class ArianeeProofTokenService {
    * Create a certificate JWTProof
    * @param certificateId
    */
-  public createCertificateArianeeProofToken =(certificateId: number) => {
+  public createCertificateArianeeAccessToken =(certificateId: number) => {
     return this.jwtService.sign({
       sub: 'certificate',
       subId: certificateId
@@ -27,17 +27,17 @@ export class ArianeeProofTokenService {
    * @param url
    * @param certificateId
    */
-    public createActionArianeeProofTokenLink= (url:string, certificateId: number) => {
-      const arianeeJWT = this.createCertificateArianeeProofToken(certificateId);
+    public createActionArianeeAccessTokenLink= (url:string, certificateId: number) => {
+      const arianeeAccessToken = this.createCertificateArianeeAccessToken(certificateId);
 
-      return appendQuery(url, { arianeeJWT });
+      return appendQuery(url, { arianeeAccessToken });
     }
 
   /**
    * Decode proof and return it
    * @param token
    */
-  public decodeArianeeProofToken = (token) => {
+  public decodeArianeeAccessToken = (token) => {
     return this.jwtService.decode<CertificateJwt>(token);
   };
 
@@ -45,7 +45,7 @@ export class ArianeeProofTokenService {
    * Method to check if token is valid and if certificateId is own by current wallet
    * @param token
    */
-  public isCertificateArianeeProofTokenValid = async (token): Promise<boolean> => {
+  public isCertificateArianeeAccessTokenValid = async (token): Promise<boolean> => {
     const { payload } = this.jwtService.decode(token);
     const owner = await this.contractService.smartAssetContract.methods.ownerOf(payload.subId).call().catch(e => '');
 

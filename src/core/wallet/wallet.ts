@@ -17,7 +17,7 @@ import { DiagnosisService } from './services/diagnosisService/diagnosisService';
 import { EventService } from './services/eventService/eventsService';
 import { GlobalConfigurationService } from './services/globalConfigurationService/globalConfigurationService';
 import { IdentityService } from './services/identityService/identityService';
-import { JWTService } from './services/JWTService/JWTService';
+import { JWTService } from './services/ArianeeAccessToken/JWTService';
 import { MessageService } from './services/messageService/messageService';
 import { POAAndAriaService } from './services/POAAndAriaFaucet/POAAndAriaService';
 import { UtilsService } from './services/utilService/utilsService';

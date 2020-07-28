@@ -9,43 +9,41 @@ import { blockchainEventsName } from '../src/models/blockchainEventsName';
 
   const wallet2 = arianee.fromPrivateKey('0x068c8d3160ab989a9f9d80a3722282f1d51ddf6af28b00a918687230e82290c4');
 
-  wallet.watch.on('TransferTo', () => {
-    console.log('transferTo1');
-  });
 
-  wallet.watch.on('TransferFrom', () => {
-    console.log('transferTo1');
-  });
 
-/*
-  const result = await wallet.methods.createCertificate({
-    uri: 'http://localhost:3000/mycertificate.json',
-    content: {
-      $schema: 'https://cert.arianee.org/version1/ArianeeAsset.json',
-      name: 'Arianee'
-    }
-  });
+  const proof='https://www.lemonde.fr/?proofLink=https%3A%2F%2Ftest.arian.ee%2Fproof%2F48957398%2Cq2cynb5d6n93'
 
-  const cert = result.certificateId;
-  wallet.watch.on('TransferTo', () => {
-    console.log('transferTo1');
-  });
-  wallet.watch.removeAllListeners('TransferTo');
+  const isValid=await wallet.methods.isCertificateProofValidFromActionProofLink(proof);
+  console.log(isValid)
+  /*
+    const result = await wallet.methods.createCertificate({
+      uri: 'http://localhost:3000/mycertificate.json',
+      content: {
+        $schema: 'https://cert.arianee.org/version1/ArianeeAsset.json',
+        name: 'Arianee'
+      }
+    });
 
-  await waitFor(3000);
+    const cert = result.certificateId;
+    wallet.watch.on('TransferTo', () => {
+      console.log('transferTo1');
+    });
+    wallet.watch.removeAllListeners('TransferTo');
 
-  wallet.watch.on('TransferTo', () => {
-    console.log('transferTo2');
-  });
+    await waitFor(3000);
 
-  console.log(0);
-  const link = await wallet.methods.createCertificateRequestOwnershipLink(cert);
-  console.log(1);
-  await wallet2.methods.requestCertificateOwnership(link.certificateId, link.passphrase);
-  console.log(2);
+    wallet.watch.on('TransferTo', () => {
+      console.log('transferTo2');
+    });
 
-  const link2 = await wallet2.methods.createCertificateRequestOwnershipLink(cert);
-  console.log(3);
-  await wallet.methods.requestCertificateOwnership(link2.certificateId, link2.passphrase);
-  console.log(4); */
+    console.log(0);
+    const link = await wallet.methods.createCertificateRequestOwnershipLink(cert);
+    console.log(1);
+    await wallet2.methods.requestCertificateOwnership(link.certificateId, link.passphrase);
+    console.log(2);
+
+    const link2 = await wallet2.methods.createCertificateRequestOwnershipLink(cert);
+    console.log(3);
+    await wallet.methods.requestCertificateOwnership(link2.certificateId, link2.passphrase);
+    console.log(4); */
 })();

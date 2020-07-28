@@ -6,6 +6,7 @@ import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
 import { BlockchainEvent, EventContent } from '../../../../models/blockchainEvent';
 import { blockchainEventsName } from '../../../../models/blockchainEventsName';
 import { ExtendedBoolean } from '../../../../models/extendedBoolean';
+import { QueryAndSearchParams } from '../../../../models/queryAndSearchParams.enum';
 import { StoreNamespace } from '../../../../models/storeNamespace';
 import { hydrateTokenParameters } from '../../../../models/transaction-parameters';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
@@ -24,7 +25,7 @@ import { ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { EventService } from '../eventService/eventsService';
 import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
-import { ArianeeProofTokenService } from '../JWTService/ArianeeProofTokenService';
+import { ArianeeAccessTokenService } from '../ArianeeAccessToken/ArianeeAccessTokenService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
@@ -45,7 +46,7 @@ export class CertificateService {
     private store:SimpleStore,
     private batchService:BatchService,
     private diagnosisService:DiagnosisService,
-    private jwtProofService: ArianeeProofTokenService
+    private jwtProofService: ArianeeAccessTokenService
   ) {
   }
 
@@ -305,20 +306,20 @@ export class CertificateService {
   }
 
   /**
-   * Get certificate from arianeeJWT
-   * example: getCertificateFromJWT(eyJ0eXAiOiJK...restOfYourJWT)
-   * @param arianeeJWT
+   * Get certificate from Arianee Access Token
+   * example: getCertificateFromArianeeAccessToken(eyJ0eXAiOiJK...restOfYourJWT)
+   * @param Arianee Access Token
    * @param query
    */
-  public getCertificateFromArianeeProofToken = (arianeeJWT: string, query?: ConsolidatedCertificateRequest) => {
-    const { payload: { subId } } = this.jwtProofService.decodeArianeeProofToken(arianeeJWT);
+  public getCertificateFromArianeeAccessToken = (arianeeAccessToken: string, query?: ConsolidatedCertificateRequest) => {
+    const { payload: { subId } } = this.jwtProofService.decodeArianeeAccessToken(arianeeAccessToken);
 
     const queryWithJWT = {
       ...query
     };
     queryWithJWT.advanced = {
       ...queryWithJWT.advanced,
-      arianeeProofToken: arianeeJWT
+      arianeeProofToken: arianeeAccessToken
     };
 
     return this.getCertificate(subId, undefined, queryWithJWT);
@@ -556,8 +557,9 @@ export class CertificateService {
 
   public isCertificateProofValidFromActionProofLink = async (actionProofLink: string) => {
     const d = this.utils.simplifiedParsedURL(actionProofLink);
-    const matches = d.search.match(/proofLink=([^&]*)/);
-    const arianeeJWT = new URL(actionProofLink).searchParams.get('arianeeJWT');
+    const regex = `${QueryAndSearchParams.proofLink}=([^&]*)`;
+    const matches = d.search.match(regex);
+    const arianeeJWT = new URL(actionProofLink).searchParams.get(QueryAndSearchParams.arianeeAccessToken);
 
     if (matches) {
       const link = matches[1];
@@ -565,7 +567,7 @@ export class CertificateService {
     }
 
     if (arianeeJWT) {
-      return this.jwtProofService.isCertificateArianeeProofTokenValid(arianeeJWT);
+      return this.jwtProofService.isCertificateArianeeAccessTokenValid(arianeeJWT);
     }
 
     return false;
@@ -593,8 +595,8 @@ export class CertificateService {
   }
 
   private isJwtProofValid = async (certificateId, jwt):Promise<ExtendedBoolean<{timestamp?:number}>> => {
-    const isJWTValid = await this.jwtProofService.isCertificateArianeeProofTokenValid(jwt);
-    const { payload } = this.jwtProofService.decodeArianeeProofToken(jwt);
+    const isJWTValid = await this.jwtProofService.isCertificateArianeeAccessTokenValid(jwt);
+    const { payload } = this.jwtProofService.decodeArianeeAccessToken(jwt);
     if (isJWTValid && (payload.subId === certificateId)) {
       return {
         isTrue: true,

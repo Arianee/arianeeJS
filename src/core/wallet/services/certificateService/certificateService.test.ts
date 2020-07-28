@@ -12,7 +12,7 @@ import { EventService } from '../eventService/eventsService';
 import { Web3Service } from '../web3Service/web3Service';
 import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 import { BatchService } from '../batchService/batchService';
-import { ArianeeProofTokenService } from '../JWTService/ArianeeProofTokenService';
+import { ArianeeAccessTokenService } from '../ArianeeAccessToken/ArianeeAccessTokenService';
 
 describe('CertificateService > ', () => {
   const getAllDependencies = () => {
@@ -36,7 +36,7 @@ describe('CertificateService > ', () => {
     const simpleStore:SimpleStore = {} as SimpleStore;
     const batchService:BatchService = {} as BatchService;
     const diagnosisService:DiagnosisService = {} as DiagnosisService;
-    const jwtProofService:ArianeeProofTokenService = {} as ArianeeProofTokenService;
+    const jwtProofService:ArianeeAccessTokenService = {} as ArianeeAccessTokenService;
 
     return {
       utils,
