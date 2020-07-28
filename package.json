@@ -20,7 +20,8 @@
     "prepare": "npm run build",
     "prepare:publish": "npm run build && npm run test",
     "build": "npm run build-web && npm run build-node",
-    "build-web": "webpack -p --mode production --env browser",
+    "build-web": "parcel build ./src/index.ts --out-dir=browser --out-file=bundle.js --global=ArianeeLib && npm run build-webFileForTest",
+    "build-webFileForTest": "parcel build ./example/myexecfile.ts --out-dir=dist",
     "build-node": "./node_modules/.bin/tsc",
     "changelog": "gt -po=changelog.md"
   },
@@ -35,17 +36,11 @@
     "url": "https://github.com/Arianee/arianeeJS"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.2",
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
-    "@babel/preset-env": "^7.6.2",
-    "@babel/preset-typescript": "^7.6.0",
     "@types/chai": "^4.1.7",
     "@types/cucumber": "^4.0.5",
     "@types/jest": "^24.0.17",
     "@typescript-eslint/eslint-plugin": "^2.6.0",
     "@typescript-eslint/parser": "^2.6.0",
-    "babel-loader": "^8.0.6",
     "chai": "^4.2.0",
     "cucumber": "^5.1.0",
     "cucumber-pretty": "^1.5.2",
@@ -60,6 +55,7 @@
     "jest": "^24.1.0",
     "node-fetch-polyfill": "^2.0.6",
     "nodemon": "^1.19.1",
+    "parcel-bundler": "^1.12.4",
     "puppeteer": "^1.20.0",
     "puppeteer-firefox": "^0.5.0",
     "source-map-loader": "^0.2.4",
@@ -69,11 +65,7 @@
     "tslint": "^5.20.0",
     "typechain": "^0.3.14",
     "typedoc": "^0.14.2",
-    "typescript": "3.6.3",
-    "webpack": "^4.41.0",
-    "webpack-bundle-analyzer": "^3.5.2",
-    "webpack-cli": "^3.3.9",
-    "webpack-node-externals": "^1.7.2"
+    "typescript": "3.6.3"
   },
   "dependencies": {
     "@0xcert/cert": "1.5.2",
