@@ -137,6 +137,12 @@ export class ArianeeWallet {
       return walletCustomMethods.getMethods();
     }
 
+    public get arianeeMethods () {
+      const walletCustomMethods: WalletCustomMethodService = this.container.resolve(WalletCustomMethodService);
+
+      return walletCustomMethods.arianeeMethods();
+    }
+
     public get utils () {
       const utilsService: UtilsService = this.container.resolve(UtilsService);
 
