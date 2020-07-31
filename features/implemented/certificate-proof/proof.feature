@@ -61,5 +61,5 @@ Feature: Create and read certificate proof
         "description":"a description"
         }
       """
-      Given user1 create arianeeProofToken0 on certficate0
-      Then user2 check that arianeeProofToken0 is valid
+      Given user1 create Arianee Access Token0 on certficate0
+      Then user2 check that Arianee Access Token0 is valid

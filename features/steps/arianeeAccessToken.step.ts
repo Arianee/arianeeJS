@@ -1,16 +1,16 @@
 import { expect } from 'chai';
 import { Given, Then } from 'cucumber';
 
-Given('user{int} creates arianeeProofToken from certificate{int}',
+Given('user{int} creates Arianee Access Token from certificate{int}',
   async function (userIndex, tokenIndex) {
     const wallet = this.store.getUserWallet(userIndex);
     const certificateId = this.store.getToken(tokenIndex);
-    const certificateProof = await wallet.methods.createCertificateArianeeProofToken(certificateId);
+    const certificateProof = await wallet.methods.createCertificateArianeeAccessToken(certificateId);
 
     this.store.storeCustom('arianeeJWT', certificateProof);
   });
 
-Given('user{int} get certificate with arianeeProofToken with parameters:',
+Given('user{int} get certificate with Arianee Access Token with parameters:',
   async function (userIndex, queryParameters) {
     const params = JSON.parse(queryParameters);
     const wallet = this.store.getUserWallet(userIndex);
@@ -20,7 +20,7 @@ Given('user{int} get certificate with arianeeProofToken with parameters:',
 
     let result;
     try {
-      result = await wallet.methods.getCertificateFromArianeeProofToken(arianeeJWT, {
+      result = await wallet.methods.getCertificateFromArianeeAccessToken(arianeeJWT, {
         issuer: {
           rpcURI: issuerRPC
         },
@@ -35,23 +35,23 @@ Given('user{int} get certificate with arianeeProofToken with parameters:',
   });
 
 Then(
-  'user{int} check that arianeeProofToken{int} is valid',
+  'user{int} check that Arianee Access Token{int} is valid',
   async function (userIndex, arianeeJwtIndex) {
     const wallet = this.store.getUserWallet(userIndex);
     const arianeejwt = this.store.getCustom(`arianeeJwtIndex_${arianeeJwtIndex}`);
 
-    const isValid = await wallet.methods.isCertificateArianeeProofTokenValid(arianeejwt);
+    const isValid = await wallet.methods.isCertificateArianeeAccessTokenValid(arianeejwt);
     expect(isValid).equals(true);
   }
 );
 
 Given(
-  'user{int} create arianeeProofToken{int} on certficate{int}',
+  'user{int} create Arianee Access Token{int} on certficate{int}',
   function (userIndex, arianeeJwtIndex, tokenIndex) {
     const certificateId = this.store.getToken(tokenIndex);
     const wallet = this.store.getUserWallet(userIndex);
 
-    const arianeejwt = wallet.methods.createCertificateArianeeProofToken(certificateId);
+    const arianeejwt = wallet.methods.createCertificateArianeeAccessToken(certificateId);
 
     this.store.storeCustom(`arianeeJwtIndex_${arianeeJwtIndex}`, arianeejwt);
   }

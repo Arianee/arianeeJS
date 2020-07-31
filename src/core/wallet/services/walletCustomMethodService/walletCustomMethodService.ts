@@ -9,7 +9,7 @@ import { ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { EventService } from '../eventService/eventsService';
 import { IdentityService } from '../identityService/identityService';
-import { ArianeeProofTokenService } from '../JWTService/ArianeeProofTokenService';
+import { ArianeeAccessTokenService } from '../ArianeeAccessToken/ArianeeAccessTokenService';
 import { MessageService } from '../messageService/messageService';
 import { POAAndAriaService } from '../POAAndAriaFaucet/POAAndAriaService';
 import { WalletService } from '../walletService/walletService';
@@ -30,7 +30,7 @@ export class WalletCustomMethodService {
                private certificateAuthorizationService:CertificateAuthorizationService,
                private balanceService:BalanceService,
                private diagnosisService:DiagnosisService,
-               private arianeeProofTokenService:ArianeeProofTokenService
+               private arianeeAccessTokenService:ArianeeAccessTokenService
   ) {
 
   }
@@ -46,7 +46,7 @@ export class WalletCustomMethodService {
       createAndStoreCertificate: this.certificateService.createAndStoreCertificate,
 
       getCertificate: this.certificateService.getCertificate,
-      getCertificateFromArianeeProofToken: this.certificateService.getCertificateFromArianeeProofToken,
+      getCertificateFromArianeeAccessToken: this.certificateService.getCertificateFromArianeeAccessToken,
 
       destroyCertificate: this.certificateService.destroyCertificate,
       recoverCertificate: this.certificateService.recoverCertificate,
@@ -94,10 +94,10 @@ export class WalletCustomMethodService {
 
       diagnosis: this.diagnosisService.diagnosis,
 
-      createActionJWTProofLink: this.arianeeProofTokenService.createActionArianeeProofTokenLink,
-      decodeArianeeProofToken: this.arianeeProofTokenService.decodeArianeeProofToken,
-      createCertificateArianeeProofToken: this.arianeeProofTokenService.createCertificateArianeeProofToken,
-      isCertificateArianeeProofTokenValid: this.arianeeProofTokenService.isCertificateArianeeProofTokenValid
+      createActionArianeeAccessTokenLink: this.arianeeAccessTokenService.createActionArianeeAccessTokenLink,
+      decodeArianeeAccessToken: this.arianeeAccessTokenService.decodeArianeeAccessToken,
+      createCertificateArianeeAccessToken: this.arianeeAccessTokenService.createCertificateArianeeAccessToken,
+      isCertificateArianeeAccessTokenValid: this.arianeeAccessTokenService.isCertificateArianeeAccessTokenValid
     };
   }
 
