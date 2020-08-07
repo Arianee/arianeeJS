@@ -109,15 +109,13 @@ export class MessageService {
     let creationDate = await this.utils.getTimestampFromBlock(messageCreationEvent.blockNumber);
     creationDate = parseInt(creationDate) * 1000;
 
-    const messageReadEvents = await this.contractService.messageContract.getPastEvents(
-      'MessageRead',
-      { fromBlock: 0, toBlock: 'latest', filter: { _messageId: messageId } }
-    );
-
-    const isRead = messageReadEvents.length > 0;
+    const isRead = await this.isMessageRead(messageId);
 
     return {
       certificateId: result.tokenId,
+      to: result.to,
+      from: result.sender,
+      messageId,
       issuer: {
         isIdentityVerified: messageIdentityIssuer.isApproved,
         isIdentityAuthentic: messageIdentityIssuer.isAuthentic,
@@ -125,9 +123,7 @@ export class MessageService {
         identity: messageIdentityIssuer
       },
       content,
-      to: result.to,
-      from: result.sender,
-      messageId,
+
       timestamp: creationDate,
       isRead: isRead
 
@@ -158,9 +154,15 @@ export class MessageService {
   ):Promise<ExtendedBoolean> => {
     const walletReward = this.configurationService.arianeeConfiguration.walletReward.address;
 
-    try {
-      // Not necessary. It never throws. To update when reward getter become public
-      await this.contractService.storeContract.methods.readMessage(messageId, walletReward).call();
+    const isAlreadyRead = await this.isMessageRead(messageId);
+
+    if (isAlreadyRead) {
+      return {
+        isTrue: false,
+        code: 'message.markasread',
+        message: 'message was already mark as read or cant be mark as read'
+      };
+    } else {
       await this.contractService.storeContract.methods.readMessage(messageId, walletReward).send();
       await this.getMessage({ messageId: messageId, forceRefresh: true });
 
@@ -169,20 +171,18 @@ export class MessageService {
         code: 'message.markasread',
         message: 'message was mark as read'
       };
-    } catch (err) {
-      return {
-        isTrue: false,
-        code: 'message.markasread',
-        message: 'message was already mark as read or cant be mark as read'
-      };
     }
   }
 
   public isMessageRead=async (
     messageId?: number
   ):Promise<boolean> => {
-    // work in progress
-    return true;
+    const messageReadEvents = await this.contractService.messageContract.getPastEvents(
+      'MessageRead',
+      { fromBlock: 0, toBlock: 'latest', filter: { _messageId: messageId } }
+    );
+
+    return messageReadEvents.length > 0;
   }
 
   public storeMessageContentInRPCServer =async (
