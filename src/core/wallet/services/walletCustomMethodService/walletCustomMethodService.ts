@@ -86,6 +86,7 @@ export class WalletCustomMethodService {
       getMyMessages: this.messageService.getMyMessages,
       getMessage: this.messageService.getMessage,
 
+      isMessageRead: this.messageService.isMessageRead,
       createMessage: this.messageService.createMessage,
       storeMessage: this.messageService.storeMessageContentInRPCServer,
       createAndStoreMessage: this.messageService.createAndStoreMessage,
