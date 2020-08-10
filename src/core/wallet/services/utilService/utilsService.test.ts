@@ -19,7 +19,7 @@ describe('UtilsService', () => {
         }
       };
 
-      const utils = new UtilsService(undefined, configurationServiceStub, undefined);
+      const utils = new UtilsService(undefined, configurationServiceStub, undefined, undefined);
 
       const certificateId = 1314;
       const passphrase = 'mypassaezfkzn';
@@ -47,7 +47,7 @@ describe('UtilsService', () => {
           }
         }
       };
-      const utils = new UtilsService(undefined, configurationServiceStub, undefined);
+      const utils = new UtilsService(undefined, configurationServiceStub, undefined, undefined);
 
       const certificateId = 1314;
       const passphrase = 'mypassaezfkzn';
@@ -74,7 +74,7 @@ describe('UtilsService', () => {
           }
         }
       };
-      const utils = new UtilsService(undefined, configurationServiceStub, undefined);
+      const utils = new UtilsService(undefined, configurationServiceStub, undefined, undefined);
 
       const certificateId = 1314;
       const passphrase = 'mypassaezfkzn';
@@ -99,7 +99,7 @@ describe('UtilsService', () => {
 
       const supportedDeepLink = configurationService.supportedConfigurations[NETWORK.arianeeTestnet].deepLink;
 
-      const utils = new UtilsService(undefined, configurationService, undefined);
+      const utils = new UtilsService(undefined, configurationService, undefined, undefined);
 
       expect(utils.isRightChain(supportedDeepLink)).toBe(true);
     });
@@ -113,7 +113,7 @@ describe('UtilsService', () => {
 
         const supportedDeepLink = configurationService.supportedConfigurations[NETWORK.mainnet].deepLink;
 
-        const utils = new UtilsService(undefined, configurationService, undefined);
+        const utils = new UtilsService(undefined, configurationService, undefined, undefined);
 
         try {
           utils.isRightChain(supportedDeepLink);
@@ -133,7 +133,7 @@ describe('UtilsService', () => {
 
         const supportedDeepLink = configurationService.supportedConfigurations[NETWORK.mainnet].deepLink;
 
-        const utils = new UtilsService(undefined, configurationService, undefined);
+        const utils = new UtilsService(undefined, configurationService, undefined, undefined);
 
         try {
           utils.isRightChain('unsupportedHost');
@@ -148,7 +148,7 @@ describe('UtilsService', () => {
   });
 
   describe('urlParse', () => {
-    const utils = new UtilsService(undefined, undefined, undefined);
+    const utils = new UtilsService(undefined, undefined, undefined, undefined);
 
     test('it should parse complicated url', () => {
       const myURL =
@@ -180,7 +180,7 @@ describe('UtilsService', () => {
   describe('find chain from hostname', () => {
     test('it find for supported main network', () => {
       const configurationService = new ConfigurationService();
-      const utils = new UtilsService(undefined, configurationService, undefined);
+      const utils = new UtilsService(undefined, configurationService, undefined, undefined);
 
       configurationService.arianeeConfiguration = {
         deepLink: 'myCustomDeepLink',
@@ -198,7 +198,7 @@ describe('UtilsService', () => {
 
     test('it find for supported alternative network', () => {
       const configurationService = new ConfigurationService();
-      const utils = new UtilsService(undefined, configurationService, undefined);
+      const utils = new UtilsService(undefined, configurationService, undefined, undefined);
       configurationService.supportedConfigurations = {
         [NETWORK.arianeeTestnet]: {
           faucetUrl: '',
@@ -227,7 +227,7 @@ describe('UtilsService', () => {
 
     test('it should return undefined for non existing network in configuration', () => {
       const configurationService = new ConfigurationService();
-      const utils = new UtilsService(undefined, configurationService, undefined);
+      const utils = new UtilsService(undefined, configurationService, undefined, undefined);
 
       configurationService.arianeeConfiguration = {
         deepLink: 'myCustomDeepLink',
@@ -241,7 +241,7 @@ describe('UtilsService', () => {
 
     test('it should find network of current config if deeplink has been modified', () => {
       const configurationService = new ConfigurationService();
-      const utils = new UtilsService(undefined, configurationService, undefined);
+      const utils = new UtilsService(undefined, configurationService, undefined, undefined);
       configurationService.supportedConfigurations = {
         [NETWORK.arianeeTestnet]: {
           faucetUrl: '',
@@ -268,7 +268,7 @@ describe('UtilsService', () => {
   });
 
   describe('timestampIsMoreRecentThan', () => {
-    const utils = new UtilsService(undefined, undefined, undefined);
+    const utils = new UtilsService(undefined, undefined, undefined, undefined);
     test('it should return true if timestamp is recent', () => {
       const testTimestamp = Math.round((new Date().valueOf() - 3000) / 1000); // now - 3 secondes (in seconds)
       const isRecent = utils.timestampIsMoreRecentThan(testTimestamp, 300); // test if timestamp is > (now - 3 minutes)
@@ -283,6 +283,38 @@ describe('UtilsService', () => {
       const isRecent = utils.timestampIsMoreRecentThan(testTimestamp, 300); // test if timestamp is > (now - 3 minutes)
 
       expect(isRecent).toBe(false);
+    });
+  });
+
+  describe('calculateImprint', () => {
+    test('it should return string', async (done) => {
+      const schema = {
+        $id: 'https://cert.arianee.org/version1/ArianeeProductCertificate-i18n.json',
+        $schema: 'https://cert.arianee.org/version1/ArianeeProductCertificate-i18n.json',
+        title: 'Arianee Certificate',
+        type: 'object',
+        properties: {
+          $schema: {
+            title: '$schema',
+            type: 'string'
+          },
+          title: {
+            type: 'string'
+          }
+        }
+      };
+
+      const utils = new UtilsService(undefined, undefined, undefined, {
+        fetch: () => Promise.resolve(schema)
+      } as any);
+
+      const imprint = await utils.calculateImprint({
+        $schema: 'http://monurl.com',
+        title: 'mon titre'
+      });
+
+      expect(imprint).toBe('0x0147503548d3f6656c9380fc1634aa6a07fdb9543104ad9a5fe740fcb6d05468');
+      done();
     });
   });
 });

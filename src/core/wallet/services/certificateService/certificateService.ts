@@ -163,11 +163,7 @@ export class CertificateService {
     );
 
     if (content) {
-      const certificateSchema = await this.httpClient.fetch(
-        content.$schema
-      );
-
-      hash = await this.utils.cert(certificateSchema, content);
+      hash = await this.utils.calculateImprint(content);
     }
 
     return {
