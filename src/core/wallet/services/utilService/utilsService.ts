@@ -4,6 +4,7 @@ import { Sign, SignedTransaction, Transaction } from 'web3-core';
 
 import { NETWORK } from '../../../..';
 import { ArianeeConfig } from '../../../../models/arianeeConfiguration';
+import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { BDHAPIService } from '../BDHAPIService/BDHAPIService';
 import { ConfigurationService } from '../configurationService/configurationService';
 
@@ -13,9 +14,10 @@ import { Web3Service } from '../web3Service/web3Service';
 @injectable()
 export class UtilsService {
   constructor (
-    private web3Service: Web3Service,
-    private configurationService: ConfigurationService,
-    private walletService: WalletService
+      private web3Service: Web3Service,
+      private configurationService: ConfigurationService,
+      private walletService: WalletService,
+      private httpService: ArianeeHttpClient
   ) {
     this.bdhVaultService = new BDHAPIService(walletService, this);
   }
@@ -90,6 +92,17 @@ export class UtilsService {
   public recover (data: string | Array<any>, signature: string):string {
     return this.web3.eth.accounts.recover(<string>data, signature);
   }
+
+  /**
+   * Calculate imprint from JSON (identity, certificate...etc)
+   * @param {{$schema: string; [p: string]: any}} content
+   * @returns {Promise<string>}
+   */
+  public calculateImprint = async (content: { $schema: string, [key: string]: any }):Promise<string> => {
+    const $schema = await this.httpService.fetch(content.$schema);
+
+    return this.cert($schema, content);
+  };
 
   public async cert (schema, data): Promise<string> {
     const cert = new Cert({

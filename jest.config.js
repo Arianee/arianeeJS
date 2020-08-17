@@ -5,6 +5,7 @@ module.exports = {
   transform: {
     '^.+\\.tsx?$': 'ts-jest'
   },
+  testEnvironment: 'jest-environment-node',
   collectCoverage: true,
   setupFilesAfterEnv: ['./jest.setup.js'],
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
