@@ -1,6 +1,9 @@
 import { injectable } from 'tsyringe';
+import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
 import { creditTypeEnum } from '../../../../models/creditTypesEnum';
+import { hydrateTokenParameters } from '../../../../models/transaction-parameters';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
+import { ConsolidatedCertificateRequest, ConsolidatedIssuerRequest } from '../../certificateSummary/certificateSummary';
 import { BalanceService } from '../balanceService/balanceService';
 import { CertificateAuthorizationService } from '../certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateService } from '../certificateService/certificateService';
@@ -33,6 +36,173 @@ export class WalletCustomMethodService {
                private arianeeAccessTokenService:ArianeeAccessTokenService
   ) {
 
+  }
+
+  public arianeeMethods () {
+    // eslint-disable-next-line no-console
+    console.info('arianee Methods is a beta feature. It will evolve in future');
+
+    return {
+      aria: {
+        faucet: this.poaAndAriaService.requestAria,
+        balance: (objParams: { address }) => this.balanceService.balanceOfAria(objParams.address)
+      },
+      poa: {
+        balance: this.poaAndAriaService.requestPoa,
+        faucet: (objParams: { address }) => this.balanceService.balanceOfPoa(objParams.address)
+      },
+      credit: {
+        buy: (objParams: { creditType: string, quantity: number, receiver?: string }) =>
+          this.buyCredits(objParams.creditType, objParams.quantity, objParams.receiver),
+        balance: (objParams: { creditType: string, address?: string }) =>
+          this.balanceService.balanceOfCredit(objParams.creditType, objParams.address),
+        types: this.getCreditTypes
+      },
+      identity: {
+        fetch: (objParams: { address: string, query?: ConsolidatedIssuerRequest }) =>
+          this.identityService.getSimpleIdentity(objParams.address, objParams.query),
+        // ICI
+        getByShortId: (objParams: { shortId: string }) => this.identityService.getIdentityByShortId(objParams.shortId)
+      },
+      certificate: {
+        fetch: {
+          one: (objParams: { certificateId: string, passphrase?: string, query?: ConsolidatedCertificateRequest }) =>
+            this.certificateService
+              .getCertificate(objParams.certificateId, objParams.passphrase, objParams.query),
+          oneFromLink: (objParams: { link: string, query: ConsolidatedCertificateRequest }) =>
+            this.certificateService.getCertificateFromLink(objParams.link, objParams.query),
+          oneFromArianeeAccessToken: (objParams: { arianeeAccessToken: string, query: ConsolidatedCertificateRequest }) =>
+            this.certificateService.getCertificateFromArianeeAccessToken(objParams.arianeeAccessToken, objParams.query),
+          mine: {
+            all: (objParams: { verifyOwnership?: boolean, query?: ConsolidatedCertificateRequest }) =>
+              this.certificateService.getMyCertificates(objParams.query, objParams.verifyOwnership),
+            groupByIssuer:
+                (objParams: { query?: ConsolidatedCertificateRequest }) =>
+                  this.certificateService.getMyCertificatesGroupByIssuer(objParams.query)
+          }
+        },
+        creation: {
+          create: (objParams: { hydrateTokenParameters: hydrateTokenParameters }) =>
+            this.certificateService.customHydrateToken(objParams.hydrateTokenParameters),
+          reserveId: (objParams: { certificateId: number }) => this.certificateService.reserveCertificateId(objParams.certificateId),
+          createAndStore: (objParams: { data: hydrateTokenParameters, urlOfRPCServer: string }) =>
+            this.certificateService.createAndStoreCertificate(objParams.data, objParams.urlOfRPCServer),
+          storeContent: (objParams: {
+            certificateId: ArianeeTokenId, content, url?: string
+          }) => this.certificateService.storeContentInRPCServer(objParams.certificateId, objParams.content, objParams.url),
+          batch: (objParams: { datas: hydrateTokenParameters[] }) => this.certificateService.customHydrateTokenBatch(objParams.datas)
+        },
+        arianeeAccessToken: {
+          create: (objParams:{url:string, certificateId: number}) =>
+            this.arianeeAccessTokenService.createActionArianeeAccessTokenLink(objParams.url, objParams.certificateId),
+          decode: (objParams:{arianeeAccessToken}) =>
+            this.arianeeAccessTokenService.decodeArianeeAccessToken(objParams.arianeeAccessToken),
+          isArianeeAccessTokenValid: (objParams:{arianeeAccessToken}) =>
+            this.arianeeAccessTokenService.isCertificateArianeeAccessTokenValid(objParams.arianeeAccessToken),
+          isCertificateProofValid: (objParams:{
+            certificateId: number,
+            passphrase?: string,
+            arianeeAccessToken?:string
+          }) => this.certificateService.isCertificateProofValid(objParams.certificateId, objParams.passphrase, objParams.arianeeAccessToken),
+          isCertificateProofValidFromLink: (objParams:{proofLink:string}) =>
+            this.certificateService.isCertificateProofValidFromLink(objParams.proofLink),
+          isCertificateProofValidFromActionProofLink: (objParams:{actionProofLink:string}) =>
+            this.certificateService.isCertificateProofValidFromActionProofLink(objParams.actionProofLink)
+        },
+        proof: {
+          createCertificateProofLink: (objParams:{certificateId: number, passphrase?: string}) =>
+            this.certificateService.createCertificateProofLink(objParams.certificateId, objParams.passphrase),
+          createActionProofLink: (objParams:{url:string, certificateId: number, passphrase?: string}) =>
+            this.certificateService.createActionProofLink(objParams.url, objParams.certificateId, objParams.passphrase),
+          isCertificateProofValid: (objParams:{
+            certificateId: number,
+            passphrase?: string,
+            arianeeAccessToken?:string
+          }) => this.certificateService.isCertificateProofValid(objParams.certificateId, objParams.passphrase, objParams.arianeeAccessToken),
+          isCertificateProofValidFromLink: (objParams:{proofLink:string}) =>
+            this.certificateService.isCertificateProofValidFromLink(objParams.proofLink),
+          isCertificateProofValidFromActionProofLink: (objParams:{actionProofLink:string}) =>
+            this.certificateService.isCertificateProofValidFromActionProofLink(objParams.actionProofLink)
+        },
+        ownership: {
+          destroy: (objParams:{certificateId:ArianeeTokenId}) =>
+            this.certificateService.destroyCertificate(objParams.certificateId),
+          recover: (objParams:{certificateId:ArianeeTokenId}) =>
+            this.certificateService.recoverCertificate(objParams.certificateId),
+          request: (objParams:{certificateId:ArianeeTokenId, passphrase:string}) =>
+            this.certificateService.customRequestToken(objParams.certificateId, objParams.passphrase),
+          isRequestable: (objParams:{certificateId:ArianeeTokenId, passphrase:string}) =>
+            this.certificateService.isCertificateOwnershipRequestable(objParams.certificateId, objParams.passphrase),
+          createRequestLink: (objParams:{certificateId:ArianeeTokenId, passphrase:string}) =>
+            this.certificateService.createCertificateRequestOwnershipLink(objParams.certificateId, objParams.passphrase)
+        }
+      },
+      arianeeEvent: {
+        accept: (objParams: { eventId: string }) => this.eventService.acceptArianeeEvent(objParams.eventId),
+        refuse: (objParams: { eventId: string }) => this.eventService.refuseArianeeEvent(objParams.eventId),
+        setMessageAuthorization: (objParams:{
+          certificateId:ArianeeTokenId, senderAddress:string, isAuthorized:boolean
+        }) => this.certificateAuthorizationService
+          .setMessageAuthorizationFor(objParams.certificateId, objParams.senderAddress, objParams.isAuthorized),
+        senders: this.certificateAuthorizationService.getMessageSenders,
+        creation: {
+          create: this.eventService.createArianeeEvent,
+          storeContent: (objParams:{
+            certificateId:ArianeeTokenId,
+            arianeeEventId:number,
+            content,
+            url:string
+          }) => this.eventService
+            .storeArianeeEventContentInRPCServer(objParams.certificateId, objParams.arianeeEventId, objParams.content, objParams.url),
+          createAndStore: (objParams:{
+              data: {
+                uri?: string;
+                certificateId: number,
+                arianeeEventId?:number;
+                content?: { $schema: string;[key: string]: any };
+              }, urlOfRPC:string
+          }
+          ) => this.eventService.createAndStoreArianeeEvent(objParams.data, objParams.urlOfRPC)
+        }
+      },
+      store: {
+        approve: this.approveStore
+      },
+      advanced: {
+        diagnosis: this.diagnosisService.diagnosis
+      },
+      dMessage: {
+        fetch: {
+          mine: this.messageService.getMyMessages,
+          one: this.messageService.getMessage
+        },
+        creation: {
+          send: (objParams:{
+            data: {
+              uri?: string;
+              certificateId: number,
+              content?: { $schema: string;[key: string]: any };
+              messageId?: number;
+            }, url:string
+          }) => this.messageService.createAndStoreMessage(objParams.data, objParams.url),
+          storeContent: (objParams:{
+            messageId:number,
+            content,
+            url:string
+          }) => this.messageService.storeMessageContentInRPCServer(objParams.messageId, objParams.messageId, objParams.url),
+          create: this.messageService.createMessage,
+          createAndStore: (objParams:{
+            data: {
+              uri?: string;
+              certificateId: number,
+              content?: { $schema: string;[key: string]: any };
+              messageId?: number;
+            }, url:string
+          }) => this.messageService.createAndStoreMessage(objParams.data, objParams.url)
+        },
+        markAsRead: (objParams:{certificateId:ArianeeTokenId}) => this.messageService.markAsRead(objParams.certificateId)
+      }
+    };
   }
 
   public getMethods () {
@@ -110,6 +280,8 @@ export class WalletCustomMethodService {
       )
       .send();
   }
+
+  public getCreditTypes = () => Object.values(creditTypeEnum);
 
   public buyCredits = async (creditType: string, quantity: number, receiver?: string) => {
     if (!Object.prototype.hasOwnProperty.call(creditTypeEnum, creditType)) {

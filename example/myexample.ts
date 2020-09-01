@@ -6,14 +6,89 @@ import { blockchainEventsName } from '../src/models/blockchainEventsName';
 (async function () {
   const arianee = await new Arianee().init(NETWORK.testnet);
   const wallet = arianee.fromPrivateKey('0x6c2504d31d9c51e24e23048c80f1b83cdf8c491fce77d5f193d3d906ab60cd2b');
+  /*
+  await wallet
+    .arianeeMethods
+    .arianeeEvent
+    .accept({ eventId: '123' });
 
-  // const messages = await wallet.methods.getMyMessages();
+  await wallet
+    .arianeeMethods
+    .arianeeEvent
+    .accept('123');
 
-  // const b = await wallet.methods.getMessage({ messageId: 6212570 });
-  const d = await wallet.methods.isMessageRead(6212570);
-  console.log(d);
-  await wallet.methods.markAsRead(6212570)
-  const c = await wallet.methods.isMessageRead(6212570);
-  console.log(c);
-  // console.log(messages);
+  wallet
+    .arianeeMethods
+    .certificate
+    .fetch
+    .one({
+      certificateId: 123
+    });
+
+  wallet
+    .arianeeMethods
+    .certificate
+    .fetch
+    .one(123, 'zfezef');
+*/
+
+  // https://www.monbdh.com/api/arian/balance
+
+  /* fetch('https://www.monbdh.com/api/certificate/fetch/one',{
+        certificateId: 31136419,
+        query: {owner: true}
+})
+*/
+
+  // https://www.monbdh.com/api/dMessage/creation/createAndStore
+
+  /* fetch('https://www.monbdh.com/api/certificate/creation/create',{
+      uri: 'http://localhost:3000/mycertificate.json',
+      content: {
+        $schema: 'https://cert.arianee.org/version1/ArianeeAsset.json',
+        name: 'Arianee'
+      }
+    })
+*/
+
+  /* fetch('https://www.monbdh.com/api/certificate/creation/storeContent',{
+    uri: 'http://localhost:3000/mycertificate.json',
+    content: {
+      $schema: 'https://cert.arianee.org/version1/ArianeeAsset.json',
+      name: 'Arianee'
+    }
+  })
+*/
+
+  /*
+    const result = await wallet.methods.createCertificate({
+      uri: 'http://localhost:3000/mycertificate.json',
+      content: {
+        $schema: 'https://cert.arianee.org/version1/ArianeeAsset.json',
+        name: 'Arianee'
+      }
+    });
+
+    const cert = result.certificateId;
+    wallet.watch.on('TransferTo', () => {
+      console.log('transferTo1');
+    });
+    wallet.watch.removeAllListeners('TransferTo');
+
+    await waitFor(3000);
+
+    wallet.watch.on('TransferTo', () => {
+      console.log('transferTo2');
+    });
+
+    console.log(0);
+    const link = await wallet.methods.createCertificateRequestOwnershipLink(cert);
+    console.log(1);
+    await wallet2.methods.requestCertificateOwnership(link.certificateId, link.passphrase);
+    console.log(2);
+
+    const link2 = await wallet2.methods.createCertificateRequestOwnershipLink(cert);
+    console.log(3);
+    await wallet.methods.requestCertificateOwnership(link2.certificateId, link2.passphrase);
+    console.log(4); */
 })();
