@@ -6,6 +6,22 @@ import { blockchainEventsName } from '../src/models/blockchainEventsName';
 (async function () {
   const arianee = await new Arianee().init(NETWORK.testnet);
   const wallet = arianee.fromPrivateKey('0x6c2504d31d9c51e24e23048c80f1b83cdf8c491fce77d5f193d3d906ab60cd2b');
+
+  // await wallet.methods.requestCertificateOwnership(477240924, 'bp9ksfnv7e2c');
+
+  // const d = await wallet.methods.getCertificate(477240924, 'bp9ksfnv7e2c', { owner: true });
+
+  // https://test.arian.ee/477240924,
+  /*
+  const messages = await wallet.methods.getMyMessages();
+  messages.map(d => {
+    console.log(d.messageId);
+    console.log(d.content.data);
+  });
+*/
+  const messages = await wallet.methods.getMessage({ messageId: 274101524, query: { advanced: { languages: ['fr'] } } });
+
+  console.log(messages.content.data);
   /*
   await wallet
     .arianeeMethods
