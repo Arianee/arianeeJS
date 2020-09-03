@@ -82,8 +82,7 @@ export class WalletCustomMethodService {
           }
         },
         creation: {
-          create: (objParams: { hydrateTokenParameters: hydrateTokenParameters }) =>
-            this.certificateService.customHydrateToken(objParams.hydrateTokenParameters),
+          create: this.certificateService.customHydrateToken,
           reserveId: (objParams: { certificateId: number }) => this.certificateService.reserveCertificateId(objParams.certificateId),
           createAndStore: (objParams: { data: hydrateTokenParameters, urlOfRPCServer: string }) =>
             this.certificateService.createAndStoreCertificate(objParams.data, objParams.urlOfRPCServer),
