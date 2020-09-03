@@ -10,7 +10,7 @@ import { QueryAndSearchParams } from '../../../../models/queryAndSearchParams.en
 import { StoreNamespace } from '../../../../models/storeNamespace';
 import { hydrateTokenParameters } from '../../../../models/transaction-parameters';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
-import { isCertificateI18n } from '../../../libs/certificateVersion';
+import { isSchemai18n } from '../../../libs/certificateVersion';
 import { replaceLanguage } from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
 import { isNullOrUndefined } from '../../../libs/isNullOrUndefined';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
@@ -421,7 +421,7 @@ export class CertificateService {
 
     if (get(query, 'advanced.languages') &&
         get(summary, 'content.data') &&
-        isCertificateI18n(summary.content.data)) {
+        isSchemai18n(summary.content.data)) {
       return replaceLanguage(summary, query.advanced.languages) as any;
     } else {
       return summary;

@@ -1,20 +1,20 @@
 import { get, range } from 'lodash';
 import { injectable } from 'tsyringe';
 import { ExtendedBoolean } from '../../../../models/extendedBoolean';
+import { StoreNamespace } from '../../../../models/storeNamespace';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
+import { isSchemai18n } from '../../../libs/certificateVersion';
+import { replaceLanguage } from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
 import { isNullOrUndefined } from '../../../libs/isNullOrUndefined';
+import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { ConsolidatedCertificateRequest, Message } from '../../certificateSummary/certificateSummary';
+import { CertificateService } from '../certificateService/certificateService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
-import { IdentitySummary } from '../../../../models/arianee-identity';
-import { StoreNamespace } from '../../../../models/storeNamespace';
-import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
-import { WalletCustomMethodService } from '../walletCustomMethodService/walletCustomMethodService';
-import { CertificateService } from '../certificateService/certificateService';
 
 @injectable()
 export class MessageService {
@@ -42,11 +42,38 @@ export class MessageService {
     return this.store.get<Message>(StoreNamespace.messages, parameters.messageId, () => this.fetchMessage(parameters), forceRefresh);
   }
 
+  /**
+   * Fetch message and apply i18n
+   * @param {{messageId: number; query?: ConsolidatedCertificateRequest; url?: string}} parameters
+   * @returns {Promise<Message>}
+   */
   public fetchMessage=async (parameters:{
-        messageId: number,
-        query?:ConsolidatedCertificateRequest,
-        url?:string
-      }):Promise<Message> => {
+    messageId: number,
+    query?: ConsolidatedCertificateRequest,
+    url?: string
+  }): Promise<Message> => {
+    const { query } = parameters;
+    let messageSummary = await this.fetchRawMessage(parameters);
+
+    if (get(query, 'advanced.languages') &&
+        get(messageSummary.content, 'data') &&
+        isSchemai18n(messageSummary.content.data)) {
+      messageSummary = replaceLanguage(messageSummary, query.advanced.languages) as any;
+    }
+
+    return messageSummary;
+  };
+
+  /**
+   * Fetch message
+   * @param {{messageId: number; query?: ConsolidatedCertificateRequest; url?: string}} parameters
+   * @returns {Promise<Message>}
+   */
+  public fetchRawMessage = async (parameters: {
+    messageId: number,
+    query?: ConsolidatedCertificateRequest,
+    url?: string
+  }): Promise<Message> => {
     const { messageId, query } = parameters;
     const result = await this.contractService.messageContract.methods.messages(messageId).call();
     const certificateIdentityIssuer = await this.certificateService.getCertificate(result.tokenId, '', {
@@ -111,7 +138,7 @@ export class MessageService {
 
     const isRead = await this.isMessageRead(messageId);
 
-    return {
+    let messageSummary = {
       certificateId: result.tokenId,
       to: result.to,
       from: result.sender,
@@ -128,6 +155,13 @@ export class MessageService {
       isRead: isRead
 
     };
+    if (get(query, 'advanced.languages') &&
+        get(content, 'data') &&
+        isSchemai18n(content.data)) {
+      messageSummary = replaceLanguage(messageSummary, query.advanced.languages) as any;
+    }
+
+    return messageSummary;
   }
 
   public getMyMessages=async (parameters?:{

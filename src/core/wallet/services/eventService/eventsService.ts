@@ -4,7 +4,7 @@ import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
 import { BlockchainEvent, EventContent } from '../../../../models/blockchainEvent';
 import { blockchainEventsName } from '../../../../models/blockchainEventsName';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
-import { isCertificateI18n } from '../../../libs/certificateVersion';
+import { isSchemai18n } from '../../../libs/certificateVersion';
 import { replaceLanguage } from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
 import { isNullOrUndefined } from '../../../libs/isNullOrUndefined';
 import { sortEvents } from '../../../libs/sortEvents';
@@ -96,7 +96,7 @@ export class EventService {
     if (get(query, 'advanced.languages')) {
       return orderedArianeeEvents
         .map(arianeeEvent => {
-          if (isCertificateI18n(arianeeEvent.content.data)) {
+          if (isSchemai18n(arianeeEvent.content.data)) {
             return replaceLanguage(arianeeEvent, query.advanced.languages) as any;
           } else {
             return arianeeEvent;
