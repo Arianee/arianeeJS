@@ -6,6 +6,7 @@ import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpCl
 import { ConsolidatedCertificateRequest, ConsolidatedIssuerRequest } from '../../certificateSummary/certificateSummary';
 import { BalanceService } from '../balanceService/balanceService';
 import { CertificateAuthorizationService } from '../certificateAuthorizationService/certificateAuthorizationService';
+import { CertificateProofService } from '../certificateProofService/certificateProofService';
 import { CertificateService } from '../certificateService/certificateService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
@@ -33,7 +34,8 @@ export class WalletCustomMethodService {
                private certificateAuthorizationService:CertificateAuthorizationService,
                private balanceService:BalanceService,
                private diagnosisService:DiagnosisService,
-               private arianeeAccessTokenService:ArianeeAccessTokenService
+               private arianeeAccessTokenService:ArianeeAccessTokenService,
+               private certificateProofService:CertificateProofService
   ) {
 
   }
@@ -102,26 +104,26 @@ export class WalletCustomMethodService {
             certificateId: number,
             passphrase?: string,
             arianeeAccessToken?:string
-          }) => this.certificateService.isCertificateProofValid(objParams.certificateId, objParams.passphrase, objParams.arianeeAccessToken),
+          }) => this.certificateProofService.isCertificateProofValid(objParams.certificateId, objParams.passphrase, objParams.arianeeAccessToken),
           isCertificateProofValidFromLink: (objParams:{proofLink:string}) =>
-            this.certificateService.isCertificateProofValidFromLink(objParams.proofLink),
+            this.certificateProofService.isCertificateProofValidFromLink(objParams.proofLink),
           isCertificateProofValidFromActionProofLink: (objParams:{actionProofLink:string}) =>
-            this.certificateService.isCertificateProofValidFromActionProofLink(objParams.actionProofLink)
+            this.certificateProofService.isAuthURL(objParams.actionProofLink)
         },
         proof: {
           createCertificateProofLink: (objParams:{certificateId: number, passphrase?: string}) =>
-            this.certificateService.createCertificateProofLink(objParams.certificateId, objParams.passphrase),
+            this.certificateProofService.createCertificateProofLink(objParams.certificateId, objParams.passphrase),
           createActionProofLink: (objParams:{url:string, certificateId: number, passphrase?: string}) =>
-            this.certificateService.createActionProofLink(objParams.url, objParams.certificateId, objParams.passphrase),
+            this.certificateProofService.createActionProofLink(objParams.url, objParams.certificateId, objParams.passphrase),
           isCertificateProofValid: (objParams:{
             certificateId: number,
             passphrase?: string,
             arianeeAccessToken?:string
-          }) => this.certificateService.isCertificateProofValid(objParams.certificateId, objParams.passphrase, objParams.arianeeAccessToken),
+          }) => this.certificateProofService.isCertificateProofValid(objParams.certificateId, objParams.passphrase, objParams.arianeeAccessToken),
           isCertificateProofValidFromLink: (objParams:{proofLink:string}) =>
-            this.certificateService.isCertificateProofValidFromLink(objParams.proofLink),
+            this.certificateProofService.isCertificateProofValidFromLink(objParams.proofLink),
           isCertificateProofValidFromActionProofLink: (objParams:{actionProofLink:string}) =>
-            this.certificateService.isCertificateProofValidFromActionProofLink(objParams.actionProofLink)
+            this.certificateProofService.isAuthURL(objParams.actionProofLink)
         },
         ownership: {
           destroy: (objParams:{certificateId:ArianeeTokenId}) =>
@@ -225,14 +227,14 @@ export class WalletCustomMethodService {
       getIdentityByShortId: this.identityService.getIdentityByShortId,
       createCertificateRequestOwnershipLink: this.certificateService
         .createCertificateRequestOwnershipLink,
-      createCertificateProofLink: this.certificateService.createCertificateProofLink,
-      createActionProofLink: this.certificateService.createActionProofLink,
+      createCertificateProofLink: this.certificateProofService.createCertificateProofLink,
+      createActionProofLink: this.certificateProofService.createActionProofLink,
 
       getCertificateFromLink: this.certificateService.getCertificateFromLink,
 
-      isCertificateProofValid: this.certificateService.isCertificateProofValid,
-      isCertificateProofValidFromLink: this.certificateService.isCertificateProofValidFromLink,
-      isCertificateProofValidFromActionProofLink: this.certificateService.isCertificateProofValidFromActionProofLink,
+      isCertificateProofValid: this.certificateProofService.isCertificateProofValid,
+      isCertificateProofValidFromLink: this.certificateProofService.isCertificateProofValidFromLink,
+      isCertificateProofValidFromActionProofLink: this.certificateProofService.isAuthURL,
 
       isCertificateOwnershipRequestable: this.certificateService.isCertificateOwnershipRequestable,
       requestCertificateOwnership: this.certificateService.customRequestToken,
@@ -267,7 +269,11 @@ export class WalletCustomMethodService {
       createActionArianeeAccessTokenLink: this.arianeeAccessTokenService.createActionArianeeAccessTokenLink,
       decodeArianeeAccessToken: this.arianeeAccessTokenService.decodeArianeeAccessToken,
       createCertificateArianeeAccessToken: this.arianeeAccessTokenService.createCertificateArianeeAccessToken,
-      isCertificateArianeeAccessTokenValid: this.arianeeAccessTokenService.isCertificateArianeeAccessTokenValid
+      isCertificateArianeeAccessTokenValid: this.arianeeAccessTokenService.isCertificateArianeeAccessTokenValid,
+
+      createAuthURL: this.certificateProofService.createAuthURL,
+      isAuthURL: this.certificateProofService.isAuthURL
+
     };
   }
 
