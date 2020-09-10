@@ -5,12 +5,16 @@ import { blockchainEventsName } from '../src/models/blockchainEventsName';
 
 (async function () {
   const arianee = await new Arianee().init(NETWORK.testnet);
-  const wallet = arianee.fromPrivateKey('0x6c2504d31d9c51e24e23048c80f1b83cdf8c491fce77d5f193d3d906ab60cd2b');
+  const wallet = arianee.fromMnemonic('roof stick equip flock grit need pony lazy cable sleep mosquito year');
 
+  wallet.methods.requestCertificateOwnership(9039809,'wbep8cl81x2v')
   // await wallet.methods.requestCertificateOwnership(477240924, 'bp9ksfnv7e2c');
 
   // const d = await wallet.methods.getCertificate(477240924, 'bp9ksfnv7e2c', { owner: true });
 
+  // const d = await wallet.methods.createAuthURL({ type: 'arianeeAccessToken', certificateId: '477240924', url: 'http://lemonde.fr' });
+
+  // console.log(d);
   // https://test.arian.ee/477240924,
   /*
   const messages = await wallet.methods.getMyMessages();
@@ -19,9 +23,9 @@ import { blockchainEventsName } from '../src/models/blockchainEventsName';
     console.log(d.content.data);
   });
 */
-  const messages = await wallet.methods.getMessage({ messageId: 274101524, query: { advanced: { languages: ['fr'] } } });
+  // const messages = await wallet.methods.getMessage({ messageId: 274101524, query: { advanced: { languages: ['fr'] } } });
 
-  console.log(messages.content.data);
+  // console.log(messages.content.data);
   /*
   await wallet
     .arianeeMethods
