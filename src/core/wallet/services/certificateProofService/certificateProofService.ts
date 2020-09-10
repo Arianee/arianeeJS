@@ -123,7 +123,7 @@ export class CertificateProofService {
     }
   }
 
-  private isJwtProofValid = async (certificateId, jwt):Promise<ExtendedBoolean<{timestamp?:number}>> => {
+  private isJwtProofValid = async (certificateId, jwt):Promise<ExtendedBoolean<{timestamp?:number, certificateId:ArianeeTokenId}>> => {
     const isJWTValid = await this.arianeeAccessTokenService.isCertificateArianeeAccessTokenValid(jwt);
     const { payload } = this.arianeeAccessTokenService.decodeArianeeAccessToken(jwt);
     if (isJWTValid && (payload.subId === certificateId)) {
@@ -131,14 +131,16 @@ export class CertificateProofService {
         isTrue: true,
         code: 'proof.token.valid',
         message: 'proof is valid',
-        timestamp: payload.iat
+        timestamp: payload.iat,
+        certificateId: certificateId
       };
     } else {
       return {
         isTrue: false,
         code: 'proof.token.dontmatch',
-        message: 'token proof does not match',
-        timestamp: payload.iat
+        message: 'token proof does not match or is expired',
+        timestamp: payload.iat,
+        certificateId: certificateId
       };
     }
   }
