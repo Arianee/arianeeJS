@@ -234,7 +234,13 @@ export class MessageService {
     certificateId: number,
     content?: { $schema: string;[key: string]: any };
       messageId?: number;
-  }, url:string) => {
+  }, url?:string) => {
+    if (!url) {
+      const certificateIssuerAddress = await this.contractService.smartAssetContract.methods.issuerOf(data.certificateId).call();
+      const issuerIdentity = await this.identityService.getIdentity({ address: certificateIssuerAddress, query: { issuer: true } });
+      url = issuerIdentity.data.rpcEndpoint;
+    }
+
     const result = await this.createMessage(data);
     await this.storeMessageContentInRPCServer(result.messageId, data.content, url);
 

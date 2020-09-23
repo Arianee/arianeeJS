@@ -267,7 +267,7 @@ export class EventService {
     certificateId:ArianeeTokenId,
     arianeeEventId:number,
     content,
-    url:string) => {
+    url:string = '') => {
     return this.httpClient.RPCCall(url, 'event.create', {
       certificateId: certificateId,
       eventId: arianeeEventId,
@@ -280,8 +280,15 @@ export class EventService {
     certificateId: number,
     arianeeEventId?:number;
     content?: { $schema: string;[key: string]: any };
-  }, url:string) => {
+  }, url?:string) => {
+    if (!url) {
+      const certificateIssuerAddress = await this.contractService.smartAssetContract.methods.issuerOf(data.certificateId).call();
+      const issuerIdentity = await this.identityService.getIdentity({ address: certificateIssuerAddress, query: { issuer: true } });
+      url = issuerIdentity.data.rpcEndpoint;
+    }
+
     const result = await this.createArianeeEvent(data);
+
     await this.storeArianeeEventContentInRPCServer(data.certificateId, result.arianeeEventId, data.content, url);
 
     return result;
