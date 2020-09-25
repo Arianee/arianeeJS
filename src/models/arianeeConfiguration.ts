@@ -25,7 +25,6 @@ export interface ArianeeConfig {
   message:ContractConfiguration;
   userAction:ContractConfiguration;
 
-
   networkName:NETWORK;
   web3Provider: provider;
   chainId: number;
@@ -34,5 +33,6 @@ export interface ArianeeConfig {
   brandDataHubReward: { address: string };
   deepLink: string;
   alternativeDeeplink: string[];
-  transactionOptions?:TransactionOptions
+  transactionOptions?:TransactionOptions,
+  defaultArianeePrivacyGateway?:string
 }

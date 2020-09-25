@@ -30,7 +30,8 @@ export class Arianee {
       httpProvider?:provider,
       transactionOptions?: TransactionOptions,
       deepLink?:string,
-      protocolConfiguration?:any
+      protocolConfiguration?:any,
+      defaultArianeePrivacyGateway?:string
     } = {}
   ): Promise<ArianeeWalletBuilder> {
     const arianeeConfiguration: ArianeeConfig = {
@@ -58,6 +59,8 @@ export class Arianee {
     arianeeConfiguration.faucetUrl = faucetUrl;
     arianeeConfiguration.alternativeDeeplink = alternativeDeeplink;
     arianeeConfiguration.networkName = currentNetworkName;
+
+    arianeeConfiguration.defaultArianeePrivacyGateway = arianeeCustomConfiguration.defaultArianeePrivacyGateway;
 
     arianeeConfiguration.web3Provider = (function () {
       if (arianeeCustomConfiguration.httpProvider) {
