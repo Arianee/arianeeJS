@@ -2,10 +2,7 @@ import { TransactionObject } from '@arianee/arianee-abi/types/types';
 import { get } from 'lodash';
 import { injectable } from 'tsyringe';
 import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
-import { BlockchainEvent, EventContent } from '../../../../models/blockchainEvent';
-import { blockchainEventsName } from '../../../../models/blockchainEventsName';
-import { ExtendedBoolean } from '../../../../models/extendedBoolean';
-import { QueryAndSearchParams } from '../../../../models/queryAndSearchParams.enum';
+import { EventContent } from '../../../../models/blockchainEvent';
 import { StoreNamespace } from '../../../../models/storeNamespace';
 import { hydrateTokenParameters } from '../../../../models/transaction-parameters';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
@@ -13,41 +10,25 @@ import { isSchemai18n } from '../../../libs/certificateVersion';
 import { replaceLanguage } from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
 import { isNullOrUndefined } from '../../../libs/isNullOrUndefined';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
-import { sortEvents } from '../../../libs/sortEvents';
 import { CertificateSummaryBuilder } from '../../certificateSummary';
 import { CertificateSummary, ConsolidatedCertificateRequest } from '../../certificateSummary/certificateSummary';
+import { ArianeeAccessTokenService } from '../ArianeeAccessToken/ArianeeAccessTokenService';
 import { BatchService } from '../batchService/batchService';
 import { CertificateAuthorizationService } from '../certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateDetails } from '../certificateDetailsService/certificatesDetailsService';
+import { CertificateUtilsService } from '../certificateUtilsService/certificateUtilsService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { EventService } from '../eventService/eventsService';
 import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
-import { ArianeeAccessTokenService } from '../ArianeeAccessToken/ArianeeAccessTokenService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
 
 @injectable()
 export class CertificateService {
-  constructor (
-    private utils: UtilsService,
-    private httpClient: ArianeeHttpClient,
-    private configurationService: ConfigurationService,
-    private contractService: ContractService,
-    private certificateDetails: CertificateDetails,
-    private walletService: WalletService,
-    private eventService: EventService,
-    private web3Service: Web3Service,
-    private certificateAuthorizationService:CertificateAuthorizationService,
-    private globalConfiguration: GlobalConfigurationService,
-    private store:SimpleStore,
-    private batchService:BatchService,
-    private diagnosisService:DiagnosisService,
-    private jwtProofService: ArianeeAccessTokenService
-  ) {
-  }
+  public isCertificateOwnershipRequestable = this.certificateUtilsService.isCertificateOwnershipRequestable;
 
   public reserveCertificateId = async (certificateId?:number) => {
     if (certificateId) {
@@ -100,82 +81,24 @@ export class CertificateService {
     }
   }
 
-  private canCreateCertificateWithCertificateId = async (certificateId:number):Promise<boolean> => {
-    try {
-      const owner = await this.contractService.smartAssetContract.methods.ownerOf(certificateId).call();
-      const imprint = await this.contractService.smartAssetContract.methods.tokenImprint(certificateId).call();
-      const imprintIsEmpty = !imprint || imprint === '0x0000000000000000000000000000000000000000000000000000000000000000';
-      const isOwner = owner === this.walletService.address;
-
-      return imprintIsEmpty && isOwner;
-    } catch {
-      return true;
-    }
+  constructor (
+      private utils: UtilsService,
+      private httpClient: ArianeeHttpClient,
+      private configurationService: ConfigurationService,
+      private contractService: ContractService,
+      private certificateDetails: CertificateDetails,
+      private walletService: WalletService,
+      private eventService: EventService,
+      private web3Service: Web3Service,
+      private certificateAuthorizationService:CertificateAuthorizationService,
+      private globalConfiguration: GlobalConfigurationService,
+      private store:SimpleStore,
+      private batchService:BatchService,
+      private diagnosisService:DiagnosisService,
+      private jwtProofService: ArianeeAccessTokenService,
+      private certificateUtilsService: CertificateUtilsService
+  ) {
   }
-
-  private prepareHydrateToken = async (data: hydrateTokenParameters):Promise<hydrateTokenParameters> => {
-    let {
-      uri,
-      hash,
-      certificateId,
-      passphrase,
-      tokenRecoveryTimestamp,
-      sameRequestOwnershipPassphrase,
-      content
-    } = data;
-
-    if (certificateId) {
-      const certificateIdIsAvailable = await this.canCreateCertificateWithCertificateId(certificateId);
-
-      if (!certificateIdIsAvailable) {
-        throw new Error(`Certificate id (${certificateId}) is not available`);
-      }
-    } else {
-      certificateId = await this.getAvailableCertificateId();
-    }
-
-    const fiveYears = 60 * 60 * 24 * 365 * 5;
-    const now = new Date();
-
-    tokenRecoveryTimestamp =
-      tokenRecoveryTimestamp ||
-      Math.round(now.setDate(now.getDate()) / 1000) + fiveYears;
-
-    sameRequestOwnershipPassphrase =
-      sameRequestOwnershipPassphrase !== undefined
-        ? sameRequestOwnershipPassphrase
-        : true;
-
-    passphrase = passphrase || this.utils.createPassphrase();
-
-    const temporaryWallet = this.configurationService
-      .walletFactory()
-      .fromPassPhrase(passphrase);
-
-    console.assert(
-      !(hash && content),
-      'you should choose between hash and certificate'
-    );
-    console.assert(
-      !(isNullOrUndefined(hash) && isNullOrUndefined(content)),
-      'you should pass at least on parameter'
-    );
-
-    if (content) {
-      hash = await this.utils.calculateImprint(content);
-    }
-
-    return {
-      uri,
-      hash,
-      certificateId,
-      encryptedInitialKey: temporaryWallet.address,
-      passphrase,
-      tokenRecoveryTimestamp,
-      sameRequestOwnershipPassphrase,
-      content
-    };
-  };
 
   private hydrateTokenTransaction = (data:hydrateTokenParameters):TransactionObject<any> => {
     const {
@@ -217,11 +140,12 @@ export class CertificateService {
     deepLink:string
   }> => {
     data.uri = data.uri || '';
-
-    const preparedData = await this.prepareHydrateToken(data);
-    const transcationObject = this.hydrateTokenTransaction(preparedData);
+    const preparedData = data;
     try {
-      var result = await transcationObject.send()
+      const preparedData = await this.prepareHydrateToken(data);
+      const transcationObject = this.hydrateTokenTransaction(preparedData);
+
+      const result = await transcationObject.send()
         .then(i => ({
           ...(<any>i),
           passphrase: preparedData.passphrase,
@@ -262,46 +186,10 @@ export class CertificateService {
     return this.httpClient.RPCCall(arianeePrivacyGatewayURL, 'certificate.create', { certificateId: certificateId, json: content });
   }
 
-  private customRequestTokenFactory = (certificateId, passphrase) => {
-    const temporaryWallet = this.configurationService
-      .walletFactory()
-      .fromPassPhrase(passphrase);
-
-    const proof = this.utils.signProofForRequestToken(
-      certificateId,
-      this.walletService.address,
-      temporaryWallet.privateKey
-    );
-
-    return this.contractService.storeContract.methods.requestToken(
-      certificateId,
-      proof.messageHash,
-      false,
-      this.configurationService.arianeeConfiguration.brandDataHubReward.address,
-      proof.signature
-    );
-  }
-
-  public isCertificateOwnershipRequestable = async (
-    certificateId,
-    passphrase
-  ): Promise<ExtendedBoolean> => {
-    try {
-      await this.customRequestTokenFactory(certificateId, passphrase).call();
-
-      return {
-        isTrue: true,
-        code: 'certicate.requestable',
-        message: 'certificate is requestable'
-      };
-    } catch (err) {
-      return {
-        isTrue: false,
-        code: 'certicate.notrequestable',
-        message: 'certificate is not requestable'
-      };
-    }
-  }
+  public customRequestToken = async (
+    certificateId: number,
+    passphrase: string
+  ) => this.certificateUtilsService.customRequestTokenFactory(certificateId, passphrase).send();
 
   /**
    * Get certificate from Arianee Access Token
@@ -524,10 +412,69 @@ export class CertificateService {
     return this.getCertificate(certificateId, passphrase, query);
   }
 
-  public customRequestToken = async (
-    certificateId: number,
-    passphrase: string
-  ) => this.customRequestTokenFactory(certificateId, passphrase).send();
+  private prepareHydrateToken = async (data: hydrateTokenParameters):Promise<hydrateTokenParameters> => {
+    let {
+      uri,
+      hash,
+      certificateId,
+      passphrase,
+      tokenRecoveryTimestamp,
+      sameRequestOwnershipPassphrase,
+      content
+    } = data;
+
+    if (certificateId) {
+      const certificateIdIsAvailable = await this.certificateUtilsService.canCreateCertificateWithCertificateId(certificateId);
+
+      if (!certificateIdIsAvailable) {
+        throw new Error(`Certificate id (${certificateId}) is not available`);
+      }
+    } else {
+      certificateId = await this.getAvailableCertificateId();
+    }
+
+    const fiveYears = 60 * 60 * 24 * 365 * 5;
+    const now = new Date();
+
+    tokenRecoveryTimestamp =
+      tokenRecoveryTimestamp ||
+      Math.round(now.setDate(now.getDate()) / 1000) + fiveYears;
+
+    sameRequestOwnershipPassphrase =
+      sameRequestOwnershipPassphrase !== undefined
+        ? sameRequestOwnershipPassphrase
+        : true;
+
+    passphrase = passphrase || this.utils.createPassphrase();
+
+    const temporaryWallet = this.configurationService
+      .walletFactory()
+      .fromPassPhrase(passphrase);
+
+    console.assert(
+      !(hash && content),
+      'you should choose between hash and certificate'
+    );
+    console.assert(
+      !(isNullOrUndefined(hash) && isNullOrUndefined(content)),
+      'you should pass at least on parameter'
+    );
+
+    if (content) {
+      hash = await this.utils.calculateImprint(content);
+    }
+
+    return {
+      uri,
+      hash,
+      certificateId,
+      encryptedInitialKey: temporaryWallet.address,
+      passphrase,
+      tokenRecoveryTimestamp,
+      sameRequestOwnershipPassphrase,
+      content
+    };
+  };
 
   public destroyCertificate =(certificateId:ArianeeTokenId):Promise<any> => {
     return this.contractService.smartAssetContract.methods

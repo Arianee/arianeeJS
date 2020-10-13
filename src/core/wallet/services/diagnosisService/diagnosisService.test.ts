@@ -4,6 +4,7 @@ import { BalanceService } from '../balanceService/balanceService';
 import { BatchService } from '../batchService/batchService';
 import { CertificateAuthorizationService } from '../certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateDetails } from '../certificateDetailsService/certificatesDetailsService';
+import { CertificateUtilsService } from '../certificateUtilsService/certificateUtilsService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
 import { EventService } from '../eventService/eventsService';
@@ -35,6 +36,8 @@ describe('DigagnosisService ', () => {
     const simpleStore:SimpleStore = {} as SimpleStore;
     const batchService:BatchService = {} as BatchService;
     const balanceService:BalanceService = {} as BalanceService;
+    const certificateUtilsService:CertificateUtilsService = {} as CertificateUtilsService;
+
     return {
       utils,
       httpClient,
@@ -48,7 +51,8 @@ describe('DigagnosisService ', () => {
       certificateAuthorizationService,
       simpleStore,
       batchService,
-      balanceService
+      balanceService,
+      certificateUtilsService
     };
   };
   test('should intitialize', () => {
@@ -58,7 +62,8 @@ describe('DigagnosisService ', () => {
       dep.contractService,
       dep.configurationService,
       dep.balanceService,
-      dep.walletService
+      dep.walletService,
+      dep.certificateUtilsService
     );
 
     expect(certificateService).toBeDefined();
@@ -70,7 +75,8 @@ describe('DigagnosisService ', () => {
       dep.contractService,
       dep.configurationService,
       dep.balanceService,
-      dep.walletService
+      dep.walletService,
+      dep.certificateUtilsService
     );
 
     const result = await certificateService.diagnosis([
@@ -100,7 +106,8 @@ describe('DigagnosisService ', () => {
       dep.contractService,
       dep.configurationService,
       dep.balanceService,
-      dep.walletService
+      dep.walletService,
+      dep.certificateUtilsService
     );
 
     const result = await certificateService.diagnosis([
