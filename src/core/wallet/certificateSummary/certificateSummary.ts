@@ -63,6 +63,11 @@ export interface CertificateOwner {
   identity?: IdentitySummary;
 }
 
+export interface CertificateRecover {
+  isRecoverable: boolean;
+  timestamp: number;
+}
+
 export interface ArianeeEvent<EventType=any, IdentityType=any>{
   certificateId: ArianeeTokenId;
   arianeeEventId:ArianeeTokenId;
@@ -99,7 +104,6 @@ export class CertificateEventsSummary implements CertificateEvents {
 }
 
 export interface CertificateAdvanced {
-  tokenRecoveryDate?: string;
   languages?:string[],
   arianeeProofToken?:string
 }
@@ -112,6 +116,7 @@ export interface CertificateSummary<CertificateType=any, IdentityType=any> {
   owner?: CertificateOwner;
   events?: CertificateEvents;
   advanced?: CertificateAdvanced;
+  recover?: CertificateRecover;
   messageSenders?:{
     [key:string]:boolean
   }
@@ -133,5 +138,6 @@ export interface ConsolidatedCertificateRequest {
   events?: boolean;
   arianeeEvents?: boolean;
   advanced?: CertificateAdvanced;
-  messageSenders?:boolean
+  messageSenders?: boolean,
+  recover?: boolean
 }

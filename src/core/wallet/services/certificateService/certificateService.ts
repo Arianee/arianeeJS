@@ -301,6 +301,19 @@ export class CertificateService {
       requestQueue.push(arianeeEvents);
     }
 
+    if (query.recover) {
+      const recoverCertificiate = async () => {
+        const result = await this.contractService.smartAssetContract.methods.tokenRecoveryDate(certificateId).call();
+        const isRecoverable = Date.now() / 1000 < +result;
+        response.setRecover({
+          isRecoverable,
+          timestamp: +result * 1000
+        });
+      };
+
+      requestQueue.push(recoverCertificiate());
+    }
+
     try {
       await Promise.all(requestQueue);
     } catch (err) {
