@@ -3,6 +3,7 @@ import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
 import { creditTypeEnum } from '../../../../models/creditTypesEnum';
 import { ExtendedBoolean } from '../../../../models/extendedBoolean';
 import { BalanceService } from '../balanceService/balanceService';
+import { CertificateUtilsService } from '../certificateUtilsService/certificateUtilsService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
 import { WalletService } from '../walletService/walletService';
@@ -12,7 +13,9 @@ export class DiagnosisService {
   constructor (private contractService:ContractService,
                private configurationService:ConfigurationService,
                private balanceService:BalanceService,
-               private walletService:WalletService) {}
+               private walletService:WalletService,
+               private certificateUtilsService:CertificateUtilsService
+  ) {}
 
   diagnosis=async (diagnosisList:Array<Promise<ExtendedBoolean>>, rawErrors?:any) => {
     if (diagnosisList === undefined || undefined) {
@@ -121,18 +124,12 @@ export class DiagnosisService {
     }
 
     public isCertificateIdExist=async (tokenId:ArianeeTokenId):Promise<ExtendedBoolean> => {
-      var isOwner:boolean;
-      try {
-        await this.contractService.smartAssetContract.methods.ownerOf(tokenId).call();
-        isOwner = false;
-      } catch (e) {
-        isOwner = true;
-      }
+      const isCertifIdAvailableOrReserved = await this.certificateUtilsService.canCreateCertificateWithCertificateId(tokenId);
 
       return {
-        isTrue: isOwner,
-        rawValue: isOwner,
-        message: 'This certificate id already exist',
+        isTrue: isCertifIdAvailableOrReserved,
+        rawValue: isCertifIdAvailableOrReserved,
+        message: 'This certificate id already exist and you have not reserved it',
         code: 'certificate.id'
       };
     }

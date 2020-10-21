@@ -11,6 +11,7 @@ import { BlockchainEventWatcherService } from './services/blockchainEventWatcher
 import { CertificateAuthorizationService } from './services/certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateDetails } from './services/certificateDetailsService/certificatesDetailsService';
 import { CertificateService } from './services/certificateService/certificateService';
+import { CertificateUtilsService } from './services/certificateUtilsService/certificateUtilsService';
 import { ConfigurationService } from './services/configurationService/configurationService';
 import { ContractService } from './services/contractService/contractsService';
 import { DiagnosisService } from './services/diagnosisService/diagnosisService';
@@ -60,7 +61,8 @@ export class ArianeeWallet {
         UtilsService,
         WalletService,
         Web3Service,
-        JWTService
+        JWTService,
+        CertificateUtilsService
       );
 
       this.container.resolve(ConfigurationService).arianeeConfiguration = arianeeConfig;
