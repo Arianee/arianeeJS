@@ -16,7 +16,8 @@ export class GlobalConfigurationService {
       advanced: {
         languages: undefined
       },
-      messageSenders: true
+      messageSenders: true,
+      recover: false
     }
 
     getMergedQuery (query:ConsolidatedCertificateRequest = {}):ConsolidatedCertificateRequest {

@@ -6,7 +6,7 @@ import {
   CertificateEvents,
   CertificateEventsSummary,
   CertificateIssuer,
-  CertificateOwner,
+  CertificateOwner, CertificateRecover,
   CertificateSummary
 } from './certificateSummary';
 
@@ -19,6 +19,8 @@ export class CertificateSummaryBuilder {
     private _advanced: CertificateAdvanced;
     private _certificateId: string;
     private _messageSenders:{[key:string]:boolean}
+
+    private _recover: CertificateRecover;
 
     public setContent (
       data: CertificateContent,
@@ -65,6 +67,11 @@ export class CertificateSummaryBuilder {
     public setIsRequestable (isRequestable): CertificateSummaryBuilder {
       this._isRequestable = isRequestable;
 
+      return this;
+    }
+
+    public setRecover (recover: CertificateRecover): CertificateSummaryBuilder {
+      this._recover = recover;
       return this;
     }
 
@@ -117,7 +124,8 @@ export class CertificateSummaryBuilder {
         owner: this._owner,
         events: this._events,
         advanced: this._advanced,
-        messageSenders: this._messageSenders
+        messageSenders: this._messageSenders,
+        recover: this._recover
       };
 
       Object.keys(arianeCertificate).forEach(key => {
