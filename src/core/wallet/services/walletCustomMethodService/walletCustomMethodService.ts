@@ -272,8 +272,10 @@ export class WalletCustomMethodService {
       isCertificateArianeeAccessTokenValid: this.arianeeAccessTokenService.isCertificateArianeeAccessTokenValid,
 
       createAuthURL: this.certificateProofService.createAuthURL,
-      isAuthURL: this.certificateProofService.isAuthURL
-
+      isAuthURL: this.certificateProofService.isAuthURL,
+      updateAndStoreCertificate: this.certificateService.updateAndStoreCertificateContent,
+      storeUpdateContentInRPCServer: this.certificateService.storeUpdateContentInRPCServer,
+      updateCertificate: this.certificateService.updateCertificate
     };
   }
 

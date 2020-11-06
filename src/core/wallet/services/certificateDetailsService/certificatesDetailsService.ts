@@ -101,7 +101,7 @@ export class CertificateDetails {
 
     const certificateRPCResult = await this.httpClient.RPCCall<CertificateContentContainer>(
       rpcEndPoint,
-      'certificate.read',
+      'update.read',
       {
         certificateId: certificateId,
         authentification: arianeeRPCAuthentification
@@ -192,8 +192,8 @@ export class CertificateDetails {
       certificateContentData
     );
 
-    const tokenImprint = await this.contractService.smartAssetContract.methods
-      .tokenImprint(certificateId.toString())
+    const tokenImprint = await this.contractService.updateSmartAssetContract.methods
+      .getImprint(certificateId.toString())
       .call();
 
     const isCertificateContentValid = hash === tokenImprint;
