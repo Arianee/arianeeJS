@@ -11,7 +11,7 @@ import whitelist from '@arianee/arianee-abi/abi/js/ArianeeWhitelist';
 import lost from '@arianee/arianee-abi/abi/js/ArianeeLost';
 import message from '@arianee/arianee-abi/abi/js/ArianeeMessage';
 import userAction from '@arianee/arianee-abi/abi/js/ArianeeUserAction';
-
+import updateSmartAssets from '@arianee/arianee-abi/abi/js/ArianeeUpdate';
 
 export {
   appConfig,
@@ -25,5 +25,6 @@ export {
   staking,
   lost,
   message,
-  userAction
+  userAction,
+  updateSmartAssets
 };

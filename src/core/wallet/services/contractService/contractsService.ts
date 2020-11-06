@@ -8,7 +8,8 @@ import {
   ArianeeStore,
   ArianeeWhitelist,
   ArianeeMessage,
-  ArianeeUserAction
+  ArianeeUserAction,
+  ArianeeUpdate
 } from '@arianee/arianee-abi';
 import { ArianeeLost } from '@arianee/arianee-abi/types/ArianeeLost';
 import { container, injectable } from 'tsyringe';
@@ -34,6 +35,7 @@ export class ContractService {
   public lostContract: ArianeeLost;
   public messageContract: ArianeeMessage;
   public userActionContract: ArianeeUserAction;
+  public updateSmartAssetContract: ArianeeUpdate;
 
   constructor (private walletService: WalletService,
               private web3Service: Web3Service,
@@ -80,6 +82,14 @@ export class ContractService {
 
     if (isUserAction) {
       this.userActionContract = this.create<ArianeeUserAction>('userAction');
+    }
+
+    const isupdateSmartAssetContract =
+      get(this.configurationService, 'arianeeConfiguration.updateSmartAssets.abi') &&
+      get(this.configurationService, 'arianeeConfiguration.updateSmartAssets.address');
+
+    if (isupdateSmartAssetContract) {
+      this.updateSmartAssetContract = this.create<ArianeeUpdate>('updateSmartAssets');
     }
   }
 
