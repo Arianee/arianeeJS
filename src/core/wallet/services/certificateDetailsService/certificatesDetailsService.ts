@@ -16,6 +16,7 @@ import { ContractService } from '../contractService/contractsService';
 import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
+import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 
 @injectable()
 export class CertificateDetails {
@@ -26,8 +27,9 @@ export class CertificateDetails {
     private configurationService: ConfigurationService,
     private walletService: WalletService,
     private utils: UtilsService,
-    private store: SimpleStore) {
-
+    private store: SimpleStore,
+    private globalConfigurationService:GlobalConfigurationService
+  ) {
   }
 
   public getCertificateIssuer = async (parameters:{certificateId: ArianeeTokenId, query: ConsolidatedCertificateRequest}) => {
@@ -132,8 +134,10 @@ export class CertificateDetails {
       query:ConsolidatedCertificateRequest
     }
   ) => {
-    const { certificateId } = parameters;
-    return this.store.get<CertificateContentContainer>(StoreNamespace.certificateContent, certificateId, () => this.fetchCertificateContent(parameters));
+    const { certificateId, query } = parameters;
+    const { content } = this.globalConfigurationService.getMergedQuery(query);
+    const { forceRefresh } = content as ConsolidatedIssuerRequestInterface;
+    return this.store.get<CertificateContentContainer>(StoreNamespace.certificateContent, certificateId, () => this.fetchCertificateContent(parameters), forceRefresh);
   }
 
   private fetchCertificateContent = async (

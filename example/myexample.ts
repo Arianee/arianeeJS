@@ -15,11 +15,23 @@ import { blockchainEventsName } from '../src/models/blockchainEventsName';
       serialnumber: [{ type: 'serialnumber', value: 'SAMPLE' }]
     }
   };
+  // const certificateId = 249916428;
+  // const passphrase = '4cydocq78443';
 
-  const certificateId = 249916428;
-  const passphrase = '4cydocq78443';
+  const { certificateId, passphrase } = await wallet.methods.createAndStoreCertificate({
+    content: content.content
+  }, 'http://localhost:5001/bdharianeestef/us-central1/rpc');
 
-  await wallet.methods.storeContentInRPCServer(certificateId, content.content, 'http://localhost:3000/rpc');
+  const result1 = await wallet.methods.getCertificate(certificateId, passphrase, {
+    content: {
+      forceRefresh: true
+    },
+    issuer: {
+      rpcURI: 'http://localhost:5001/bdharianeestef/us-central1/rpc'
+    }
+  });
+
+  console.log('result1', result1.content);
 
   const newContent = {
     $schema: 'https://cert.arianee.org/version1/ArianeeAsset.json',
@@ -29,16 +41,20 @@ import { blockchainEventsName } from '../src/models/blockchainEventsName';
   };
 
   await wallet.methods.updateAndStoreCertificate(
-    { certificateId, content: newContent },
-    'http://localhost:3000/rpc')
+    {
+      certificateId,
+      content: newContent
+    },
+    'http://localhost:5001/bdharianeestef/us-central1/rpc');
 
-
-  const result = await wallet.methods.getCertificate(certificateId, passphrase, {
-    content: true,
+  const result2 = await wallet.methods.getCertificate(certificateId, passphrase, {
+    content: {
+      forceRefresh: true
+    },
     issuer: {
-      rpcURI: 'http://localhost:3000/rpc'
+      rpcURI: 'http://localhost:5001/bdharianeestef/us-central1/rpc'
     }
   });
 
-
+  console.log('result2', result2.content);
 })();

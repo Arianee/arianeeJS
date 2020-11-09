@@ -42,12 +42,14 @@ describe('CertificateDetails', () => {
   test('should initialize', () => {
     const dep = getAllDependencies();
 
-    const i = new CertificateDetails(dep.identityService,
+    const i = new CertificateDetails(
+      dep.identityService,
       dep.httpClient,
       dep.contractService,
       dep.configurationService,
       dep.walletService,
       dep.utils,
-      dep.simpleStore);
+      dep.simpleStore,
+      dep.globalConfigurationService);
   });
 });

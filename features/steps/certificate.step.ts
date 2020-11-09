@@ -122,7 +122,7 @@ When(
     const wallet = this.store.getUserWallet(userIndex);
 
     try {
-      const { certificateId, ...rest } = await wallet.methods.createAndStoreCertificate({
+      const { certificateId } = await wallet.methods.createAndStoreCertificate({
         content: {
           $schema: 'https://cert.arianee.org/version1/ArianeeProductCertificate-i18n.json',
           name: 'Top Time Limited Edition'
@@ -176,13 +176,14 @@ Given('user{int} fetch certificate{int} summary',
     const certificateId = this.store.getToken(certificateIndex);
 
     const certificate = await wallet.methods.getCertificate(certificateId, undefined, {
-      content: true,
+      content: {
+        forceRefresh: true
+      },
       issuer: {
         rpcURI: `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`
       }
     });
 
-    console.log('certificate', certificateId);
     this.store.storeCertificateSummary(certificateId, certificate);
   });
 

@@ -183,7 +183,7 @@ export class CertificateService {
         .updateSmartAsset(
           certificateId,
           contentImprint,
-          this.configurationService.arianeeConfiguration.walletReward.address)
+          this.configurationService.arianeeConfiguration.brandDataHubReward.address)
         .send();
     } catch (e) {
       const diagnosis = await this.diagnosisService.diagnosis([
