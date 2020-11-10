@@ -141,6 +141,53 @@ When(
 );
 
 When(
+  'user{int} updates certificate{int}',
+  { timeout: 45000 },
+  async function (userIndex, tokenIndex) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const tokenId = this.store.getToken(tokenIndex);
+    const imprint = await wallet.utils.calculateImprint({
+      $schema: 'https://cert.arianee.org/version1/ArianeeProductCertificate-i18n.json',
+      name: 'Certificate Updated'
+    });
+
+    try {
+      await wallet.methods.updateAndStoreCertificate({
+        certificateId: tokenId,
+        content: {
+          $schema: 'https://cert.arianee.org/version1/ArianeeProductCertificate-i18n.json',
+          name: 'Certificate Updated'
+        }
+      }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`);
+
+      expect(true).equals(true);
+    } catch (err) {
+      console.error(err);
+      console.error('ERROR');
+      expect(true).equals(false);
+    }
+  }
+);
+
+Given('user{int} fetch certificate{int} summary',
+  async function (userIndex, certificateIndex) {
+    const wallet = this.store.getUserWallet(userIndex);
+
+    const certificateId = this.store.getToken(certificateIndex);
+
+    const certificate = await wallet.methods.getCertificate(certificateId, undefined, {
+      content: {
+        forceRefresh: true
+      },
+      issuer: {
+        rpcURI: `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`
+      }
+    });
+
+    this.store.storeCertificateSummary(certificateId, certificate);
+  });
+
+When(
   'user{int} creates {int} new certificate in batch',
   async function (userIndex, certNb) {
     const wallet = this.store.getUserWallet(userIndex);
@@ -253,8 +300,6 @@ When(
     expect(linkObject.link).contain(password);
   }
 );
-
-
 
 Then(
   'user{int} can check the proof in certificate{int} with passphrase {word}',
@@ -534,6 +579,15 @@ Given('user{int} want to see certificateId {string} with passphrase {string}',
     verify(certificate, query);
 
     this.store.storeCertificateSummary(certificateId, certificate);
+  });
+
+Then('certificate{int} imprint should be {string}',
+  async function (tokenIndex, expectedImprint) {
+    const certificateId = this.store.getToken(tokenIndex);
+    const summary = this.store.getCertificateSummary(certificateId);
+    const contentToBeVerified = summary.content.imprint;
+
+    expect(contentToBeVerified === expectedImprint).to.be.true;
   });
 
 Then('certificateId {string} {string} imprint should be {string}',

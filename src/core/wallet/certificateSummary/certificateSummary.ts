@@ -128,11 +128,18 @@ export interface ConsolidatedIssuerRequestInterface {
   rpcURI?:string
 }
 
+export interface ConsolidatedContentRequestInterface {
+  waitingIdentity?: boolean;
+  forceRefresh?:boolean;
+  rpcURI?:string
+}
+
 export type ConsolidatedIssuerRequest = ConsolidatedIssuerRequestInterface | boolean;
+export type ConsolidatedContentRequest = ConsolidatedContentRequestInterface | boolean;
 
 export interface ConsolidatedCertificateRequest {
   isRequestable?: boolean;
-  content?: boolean;
+  content?: ConsolidatedContentRequest;
   issuer?: ConsolidatedIssuerRequest;
   owner?: boolean;
   events?: boolean;

@@ -16,6 +16,7 @@ import { ContractService } from '../contractService/contractsService';
 import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
+import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 
 @injectable()
 export class CertificateDetails {
@@ -26,8 +27,9 @@ export class CertificateDetails {
     private configurationService: ConfigurationService,
     private walletService: WalletService,
     private utils: UtilsService,
-    private store: SimpleStore) {
-
+    private store: SimpleStore,
+    private globalConfigurationService:GlobalConfigurationService
+  ) {
   }
 
   public getCertificateIssuer = async (parameters:{certificateId: ArianeeTokenId, query: ConsolidatedCertificateRequest}) => {
@@ -101,7 +103,7 @@ export class CertificateDetails {
 
     const certificateRPCResult = await this.httpClient.RPCCall<CertificateContentContainer>(
       rpcEndPoint,
-      'certificate.read',
+      'update.read',
       {
         certificateId: certificateId,
         authentification: arianeeRPCAuthentification
@@ -132,8 +134,10 @@ export class CertificateDetails {
       query:ConsolidatedCertificateRequest
     }
   ) => {
-    const { certificateId } = parameters;
-    return this.store.get<CertificateContentContainer>(StoreNamespace.certificateContent, certificateId, () => this.fetchCertificateContent(parameters));
+    const { certificateId, query } = parameters;
+    const { content } = this.globalConfigurationService.getMergedQuery(query);
+    const { forceRefresh } = content as ConsolidatedIssuerRequestInterface;
+    return this.store.get<CertificateContentContainer>(StoreNamespace.certificateContent, certificateId, () => this.fetchCertificateContent(parameters), forceRefresh);
   }
 
   private fetchCertificateContent = async (
@@ -192,8 +196,8 @@ export class CertificateDetails {
       certificateContentData
     );
 
-    const tokenImprint = await this.contractService.smartAssetContract.methods
-      .tokenImprint(certificateId.toString())
+    const tokenImprint = await this.contractService.updateSmartAssetContract.methods
+      .getImprint(certificateId.toString())
       .call();
 
     const isCertificateContentValid = hash === tokenImprint;

@@ -165,6 +165,74 @@ export class CertificateService {
     }
   }
 
+  /**
+   * Update certificate imprint of a certificate
+   * @param {{certificateId: ArianeeTokenId; content?: any; imprint?: string}} parameters
+   * @returns {Promise<never>}
+   */
+  public updateCertificate = async <T = any>(parameters: {
+    certificateId: ArianeeTokenId,
+    content?: any,
+    imprint?: string
+  }) => {
+    const { certificateId, content, imprint } = parameters;
+
+    const contentImprint: string = imprint || await this.utils.calculateImprint(content);
+    try {
+      await this.contractService.storeContract.methods
+        .updateSmartAsset(
+          certificateId,
+          contentImprint,
+          this.configurationService.arianeeConfiguration.brandDataHubReward.address)
+        .send();
+    } catch (e) {
+      const diagnosis = await this.diagnosisService.diagnosis([
+        this.diagnosisService.isStoreApprove(),
+        this.diagnosisService.isPOACredit(),
+        this.diagnosisService.isUpdateCertificateCredit()
+      ], e);
+      return Promise.reject(diagnosis);
+    }
+  };
+
+  /**
+   * Update imprint and content of certificate
+   * @param {{certificateId: ArianeeTokenId; content: any}} parameters
+   * @param {string} urlOfRPCServer
+   * @returns {Promise<never>}
+   */
+  public updateAndStoreCertificateContent = async <T = any>(parameters: { certificateId: ArianeeTokenId, content: any }, urlOfRPCServer?: string) => {
+    const { content, certificateId } = parameters;
+
+    const result = await this.updateCertificate({
+      certificateId,
+      content
+    });
+
+    await this.storeUpdateContentInRPCServer(certificateId, content, urlOfRPCServer);
+
+    return result;
+  };
+
+  /**
+   * Store update content of a certificate to Arianee Privacy Gateway
+   * @param {ArianeeTokenId} certificateId
+   * @param content
+   * @param {string} arianeePrivacyGatewayURL
+   * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
+   */
+  public storeUpdateContentInRPCServer = async (certificateId: ArianeeTokenId, content, arianeePrivacyGatewayURL?: string) => {
+    arianeePrivacyGatewayURL = arianeePrivacyGatewayURL || this.configurationService.arianeeConfiguration.defaultArianeePrivacyGateway;
+    if (!arianeePrivacyGatewayURL) {
+      throw new Error('You need to specify an Arianee Privacy Gateway URL');
+    }
+
+    return this.httpClient.RPCCall(arianeePrivacyGatewayURL, 'update.create', {
+      certificateId: certificateId,
+      json: content
+    });
+  };
+
   public customHydrateTokenBatch = async (datas:hydrateTokenParameters[]) => {
     datas.forEach(async (data) => {
       if (data) {

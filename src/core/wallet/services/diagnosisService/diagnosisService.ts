@@ -58,6 +58,19 @@ export class DiagnosisService {
       };
     }
 
+  public isUpdateCertificateCredit=async ():Promise<ExtendedBoolean> => {
+    const balance = await this.balanceService.balanceOfCredit('update');
+
+    const isTrue = parseInt(balance.toString()) > 0;
+
+    return {
+      isTrue,
+      rawValue: balance,
+      message: 'update credit should be higher than 0',
+      code: 'credit.update'
+    };
+  }
+
     public isCertificateCredit=async ():Promise<ExtendedBoolean> => {
       const balance = await this.balanceService.balanceOfCredit('certificate');
 

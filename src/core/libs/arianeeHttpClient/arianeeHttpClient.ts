@@ -56,7 +56,7 @@ export class ArianeeHttpClient {
       const RPCRes = await this.fetch(endpoint, config);
 
       if (RPCRes.error) {
-        throw new Error();
+        throw new Error(JSON.stringify(RPCRes.error));
       }
 
       if (RPCRes.result) {
