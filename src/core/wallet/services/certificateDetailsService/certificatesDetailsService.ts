@@ -137,7 +137,10 @@ export class CertificateDetails {
       rpcEndPoint
     };
     const certificateRPCResult = await this.updateCertificateContentReadRPC(rpcConfig)
-      .catch(error => this.originalCertificateContentReadRPC(rpcConfig));
+      .catch(error => {
+        return this.originalCertificateContentReadRPC(rpcConfig);
+      });
+
 
     return certificateRPCResult.result;
   }

@@ -294,10 +294,8 @@ export class CertificateService {
     query?: ConsolidatedCertificateRequest
   ): Promise<CertificateSummary<CertificateType, IdentityType>> => {
     query = this.globalConfiguration.getMergedQuery(query);
-
     const response = new CertificateSummaryBuilder();
     response.setCertificateId(certificateId);
-
     const requestQueue = [];
 
     if (query.content) {

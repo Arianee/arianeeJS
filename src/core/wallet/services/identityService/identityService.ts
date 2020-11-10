@@ -77,6 +77,7 @@ export class IdentityService {
         .waitingURI(address)
         .call();
 
+      console.log('identityURI', identityURI);
       if (identityURI) {
         const identityContentData = await this.httpClient.fetch(
           identityURI
