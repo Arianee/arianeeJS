@@ -71,6 +71,36 @@ export class CertificateDetails {
     );
   }
 
+  private updateCertificateContentReadRPC = async (parameters: { certificateId:string,
+      rpcEndPoint: string,
+      arianeeRPCAuthentification: ArianeeGateWayAuthentification }) => {
+    const { rpcEndPoint, arianeeRPCAuthentification, certificateId } = parameters;
+
+    return this.httpClient.RPCCall<CertificateContentContainer>(
+      rpcEndPoint,
+      'update.read',
+      {
+        certificateId: certificateId,
+        authentification: arianeeRPCAuthentification
+      }
+    );
+  };
+
+  private originalCertificateContentReadRPC = async (parameters: { certificateId:string,
+      rpcEndPoint: string,
+      arianeeRPCAuthentification: ArianeeGateWayAuthentification }) => {
+    const { rpcEndPoint, arianeeRPCAuthentification, certificateId } = parameters;
+
+    return this.httpClient.RPCCall<CertificateContentContainer>(
+      rpcEndPoint,
+      'certificate.read',
+      {
+        certificateId: certificateId,
+        authentification: arianeeRPCAuthentification
+      }
+    );
+  };
+
   private getCertificateContentFromRPC = async (
     parameters:{
       certificateURI: string, certificateId: string, arianeeRPCAuthentification: ArianeeGateWayAuthentification, query: ConsolidatedCertificateRequest
@@ -101,14 +131,13 @@ export class CertificateDetails {
       rpcEndPoint = identity.data.rpcEndpoint;
     }
 
-    const certificateRPCResult = await this.httpClient.RPCCall<CertificateContentContainer>(
-      rpcEndPoint,
-      'update.read',
-      {
-        certificateId: certificateId,
-        authentification: arianeeRPCAuthentification
-      }
-    );
+    const rpcConfig = {
+      certificateId,
+      arianeeRPCAuthentification,
+      rpcEndPoint
+    };
+    const certificateRPCResult = await this.updateCertificateContentReadRPC(rpcConfig)
+      .catch(error => this.originalCertificateContentReadRPC(rpcConfig));
 
     return certificateRPCResult.result;
   }
@@ -196,9 +225,17 @@ export class CertificateDetails {
       certificateContentData
     );
 
-    const tokenImprint = await this.contractService.updateSmartAssetContract.methods
-      .getImprint(certificateId.toString())
-      .call();
+    let tokenImprint;
+    if (this.contractService.updateSmartAssetContract) {
+      tokenImprint = await this.contractService.updateSmartAssetContract.methods
+        .getImprint(certificateId.toString())
+        .call();
+    } else {
+      tokenImprint = await this.contractService.smartAssetContract
+        .methods
+        .tokenImprint(certificateId.toString())
+        .call();
+    }
 
     const isCertificateContentValid = hash === tokenImprint;
 
