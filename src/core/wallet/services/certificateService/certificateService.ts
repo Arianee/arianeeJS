@@ -178,8 +178,9 @@ export class CertificateService {
     const { certificateId, content, imprint } = parameters;
 
     const contentImprint: string = imprint || await this.utils.calculateImprint(content);
+    let result;
     try {
-      await this.contractService.storeContract.methods
+      result = await this.contractService.storeContract.methods
         .updateSmartAsset(
           certificateId,
           contentImprint,
@@ -193,6 +194,8 @@ export class CertificateService {
       ], e);
       return Promise.reject(diagnosis);
     }
+
+    return result;
   };
 
   /**
