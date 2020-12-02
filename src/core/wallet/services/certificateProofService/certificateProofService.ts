@@ -115,7 +115,7 @@ export class CertificateProofService {
     jwt?:string
   ): Promise<ExtendedBoolean<{timestamp?:number}>> => {
     if (passphrase) {
-      return this.isProofValidSince(certificateId, passphrase, 2, 300);
+      return this.isProofValidSince(certificateId, passphrase, 2);
     }
 
     if (jwt) {
@@ -166,8 +166,7 @@ export class CertificateProofService {
   private isProofValidSince = async (
     certificateId: number,
     passphrase: string,
-    tokenType: number,
-    validity: number
+    tokenType: number
   ): Promise<ExtendedBoolean<{timestamp?:number}>> => {
     const tokenHashedAccess = await this.contractService.smartAssetContract.methods
       .tokenHashedAccess(certificateId, tokenType)
@@ -192,10 +191,19 @@ export class CertificateProofService {
     let events: BlockchainEvent[] = await this.contractService.smartAssetContract.getPastEvents(
       blockchainEventsName.smartAsset.tokenAccessAdded,
       {
-        fromBlock: currentBlock - Math.round(validity / 5 + 30),
+        fromBlock: currentBlock - Math.round(259200 / 5 + 30), // search the proof in the last 3 days
         toBlock: currentBlock
       }
     );
+
+    if (events.length === 0) {
+      return {
+        isTrue: false,
+        code: 'proof.token.tooold',
+        message: 'token proof is too old',
+        timestamp: 0
+      };
+    }
 
     events = events.filter(event => {
       return event.returnValues._tokenId === certificateId.toString() &&
@@ -209,17 +217,6 @@ export class CertificateProofService {
 
     if (lastEvent) {
       blockTimestamp = await this.utils.getTimestampFromBlock(lastEvent.blockNumber);
-    }
-
-    if (
-      !this.utils.timestampIsMoreRecentThan(blockTimestamp, validity)
-    ) {
-      return {
-        isTrue: false,
-        code: 'proof.token.tooold',
-        message: 'token proof is too old',
-        timestamp: blockTimestamp * 1000
-      };
     }
 
     const lastEventTransaction = await this.web3Service.web3.eth.getTransaction(
