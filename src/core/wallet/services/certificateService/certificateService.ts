@@ -30,7 +30,7 @@ import { Web3Service } from '../web3Service/web3Service';
 export class CertificateService {
   public isCertificateOwnershipRequestable = this.certificateUtilsService.isCertificateOwnershipRequestable;
 
-  public reserveCertificateId = async (certificateId?:number) => {
+  public reserveCertificateId = async (certificateId?: number, receiver?: string) => {
     if (certificateId) {
       const certificateIdIsAvailable = await this.isCertificateIdFree(certificateId);
       if (!certificateIdIsAvailable) {
@@ -40,7 +40,13 @@ export class CertificateService {
       certificateId = await this.getAvailableCertificateId();
     }
 
-    const transcationObject = this.contractService.storeContract.methods.reserveToken(certificateId, this.walletService.address);
+    const targetAddress = receiver || this.walletService.address;
+    const transcationObject = this.contractService
+      .storeContract
+      .methods
+      .reserveToken(
+        certificateId,
+        targetAddress);
 
     try {
       var result = await transcationObject.send()

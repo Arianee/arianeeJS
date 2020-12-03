@@ -141,7 +141,6 @@ export class CertificateDetails {
         return this.originalCertificateContentReadRPC(rpcConfig);
       });
 
-
     return certificateRPCResult.result;
   }
 
