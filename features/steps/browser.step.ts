@@ -27,7 +27,11 @@ Given('ArianeeLib is used on browser {string} it works', async function (browser
   await page.addScriptTag({ content: contentTestJS });
 
   const i = await page
-    .waitForSelector('#successFullID');
+    .waitForSelector('#successFullID',
+      {
+        timeout: 120000
+      }
+    );
 
   return browser.close();
 });
