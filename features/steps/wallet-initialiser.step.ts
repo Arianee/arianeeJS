@@ -28,6 +28,8 @@ const walletFactory = (arianee: ArianeeWalletBuilder, type: string, key?) => {
       .fromPassPhrase(key);
   } else if (type === 'fromRandomMnemonic') {
     wallet = arianee.fromRandomMnemonic();
+  } else if (type === 'readOnlyWallet') {
+    wallet = arianee.readOnlyWallet();
   } else {
     const message = `this method to create a account is not supported ${type}`;
     throw new Error(message);
