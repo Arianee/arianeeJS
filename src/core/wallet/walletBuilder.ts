@@ -52,6 +52,14 @@ export class ArianeeWalletBuilder {
     return this.fromRandomKey();
   }
 
+  public readOnlyWallet ():ArianeeWallet {
+    return new ArianeeWallet({
+      account: {
+        address: '0x0000000000000000000000000000000000000000'
+      }
+    }, this.arianeeConfig);
+  }
+
   /**
    *  From a mnemonic and return ArianeeProtocol
    * @param mnemonic

@@ -17,6 +17,10 @@ Feature: I can recover my account from different technics
         Then user1 has a valid wallet
         Then user1 can retrieve its mnemonic
 
+    Scenario: from read only wallet
+        Given user1 with account from readOnlyWallet
+        Then user1 has a valid wallet
+
     Scenario: from mnemonic
         Given user1 with account from mnemonic 'that crowd shallow message swear outdoor certain decline ski stock wheel proof'
         Then user1 has a valid wallet
