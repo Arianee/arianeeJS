@@ -245,7 +245,7 @@ export class EventService {
         isIdentityVerified: issuer.isApproved,
         isIdentityAuthentic: issuer.isAuthentic,
         imprint: issuer.imprint,
-        identity: issuer.data
+        identity: issuer
       },
       arianeeEventId,
       content,
