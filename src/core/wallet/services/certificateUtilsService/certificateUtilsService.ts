@@ -64,25 +64,26 @@ export class CertificateUtilsService {
       certificateId,
       passphrase
     ): Promise<ExtendedBoolean> => {
-      const temporaryWallet = this.configurationService
-        .walletFactory()
-        .fromPassPhrase(passphrase);
+      if (passphrase) {
+        const temporaryWallet = this.configurationService
+          .walletFactory()
+          .fromPassPhrase(passphrase);
 
-      const tokenHashedAccess = await temporaryWallet.contracts.smartAssetContract.methods.tokenHashedAccess(certificateId, 1).call().catch(e => false);
-      const isRequestable = tokenHashedAccess === temporaryWallet.address;
+        const tokenHashedAccess = await temporaryWallet.contracts.smartAssetContract.methods.tokenHashedAccess(certificateId, 1).call().catch(e => false);
+        const isRequestable = tokenHashedAccess === temporaryWallet.address;
 
-      if (isRequestable) {
-        return {
-          isTrue: isRequestable,
-          code: 'certicate.requestable',
-          message: 'certificate is requestable'
-        };
-      } else {
-        return {
-          isTrue: false,
-          code: 'certicate.notrequestable',
-          message: 'certificate is not requestable'
-        };
+        if (isRequestable) {
+          return {
+            isTrue: isRequestable,
+            code: 'certicate.requestable',
+            message: 'certificate is requestable'
+          };
+        }
       }
+      return {
+        isTrue: false,
+        code: 'certicate.notrequestable',
+        message: 'certificate is not requestable'
+      };
     }
 }
