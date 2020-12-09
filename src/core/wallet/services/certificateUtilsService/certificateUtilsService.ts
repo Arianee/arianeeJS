@@ -64,15 +64,20 @@ export class CertificateUtilsService {
       certificateId,
       passphrase
     ): Promise<ExtendedBoolean> => {
-      try {
-        await this.customRequestTokenFactory(certificateId, passphrase).call();
+      const temporaryWallet = this.configurationService
+        .walletFactory()
+        .fromPassPhrase(passphrase);
 
+      const tokenHashedAccess = await temporaryWallet.contracts.smartAssetContract.methods.tokenHashedAccess(certificateId, 1).call().catch(e => false);
+      const isRequestable = tokenHashedAccess === temporaryWallet.address;
+
+      if (isRequestable) {
         return {
-          isTrue: true,
+          isTrue: isRequestable,
           code: 'certicate.requestable',
           message: 'certificate is requestable'
         };
-      } catch (err) {
+      } else {
         return {
           isTrue: false,
           code: 'certicate.notrequestable',
