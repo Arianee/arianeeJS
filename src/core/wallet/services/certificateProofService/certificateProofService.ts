@@ -196,15 +196,6 @@ export class CertificateProofService {
       }
     );
 
-    if (events.length === 0) {
-      return {
-        isTrue: false,
-        code: 'proof.token.tooold',
-        message: 'token proof is too old',
-        timestamp: 0
-      };
-    }
-
     events = events.filter(event => {
       return event.returnValues._tokenId === certificateId.toString() &&
           event.returnValues._tokenType === tokenType.toString() &&
@@ -213,12 +204,17 @@ export class CertificateProofService {
     }).sort(sortEvents).reverse();
 
     const lastEvent = events[0];
-    let blockTimestamp = 0;
 
-    if (lastEvent) {
-      blockTimestamp = await this.utils.getTimestampFromBlock(lastEvent.blockNumber);
+    if (!lastEvent) {
+      return {
+        isTrue: false,
+        code: 'proof.token.tooold',
+        message: 'token proof is too old',
+        timestamp: 0
+      };
     }
 
+    const blockTimestamp = await this.utils.getTimestampFromBlock(lastEvent.blockNumber);
     const lastEventTransaction = await this.web3Service.web3.eth.getTransaction(
       lastEvent.transactionHash
     );
@@ -226,7 +222,8 @@ export class CertificateProofService {
     const actualOwner = await this.contractService.smartAssetContract.methods
       .ownerOf(certificateId)
       .call();
-    if (lastEventTransaction.from !== actualOwner) {
+
+    if (lastEventTransaction && lastEventTransaction.from !== actualOwner) {
       return {
         isTrue: false,
         code: 'proof.token.notowner',
