@@ -1,6 +1,6 @@
 import { injectable } from 'tsyringe';
 import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
-import { creditTypeEnum } from '../../../../models/creditTypesEnum';
+import { creditNameToType, creditTypeEnum } from '../../../../models/creditTypesEnum';
 import { hydrateTokenParameters } from '../../../../models/transaction-parameters';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { ConsolidatedCertificateRequest, ConsolidatedIssuerRequest } from '../../certificateSummary/certificateSummary';
@@ -239,8 +239,9 @@ export class WalletCustomMethodService {
       isCertificateOwnershipRequestable: this.certificateService.isCertificateOwnershipRequestable,
       requestCertificateOwnership: this.certificateService.customRequestToken,
       balanceOfAria: this.balanceService.balanceOfAria,
+      balanceOfRia: this.balanceService.balanceOfRia,
       balanceOfPoa: this.balanceService.balanceOfPoa,
-
+      getCreditPrice: this.balanceService.getCreditPrice,
       approveStore: this.approveStore,
       buyCredits: this.buyCredits,
       balanceOfCredit: this.balanceService.balanceOfCredit,
@@ -299,7 +300,7 @@ export class WalletCustomMethodService {
 
     try {
       var result = await this.contractService.storeContract.methods
-        .buyCredit(creditTypeEnum[creditType], quantity, receiver)
+        .buyCredit(creditNameToType[creditType], quantity, receiver)
         .send();
 
       return result;
