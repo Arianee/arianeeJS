@@ -5,14 +5,14 @@ export default deepFreeze({
   [NETWORK.testnet]: {
     networkName: NETWORK.testnet,
     faucetUrl: `https://faucet.arianee.org/faucet?network=${NETWORK.testnet}`,
-    deepLink: 'test.arian.ee',
-    alternativeDeeplink: []
+    deepLink: 'test.arianee.net',
+    alternativeDeeplink: ['test.arian.ee']
   },
   [NETWORK.mainnet]: {
     networkName: NETWORK.mainnet,
     faucetUrl: `https://faucet.arianee.org/faucet?network=${NETWORK.mainnet}`,
-    deepLink: 'arian.ee',
-    alternativeDeeplink: ['dev.test.arian.ee']
+    deepLink: 'arianee.net',
+    alternativeDeeplink: ['dev.test.arian.ee', 'arian.ee']
   },
   [NETWORK.arianeeTestnet]: {
     networkName: NETWORK.arianeeTestnet,
