@@ -5,8 +5,8 @@ export enum NETWORK {
 }
 
 export const networkURL = {
-  [NETWORK.testnet]: 'https://cert.arianee.org/contractAddresses/newsokol.json',
+  [NETWORK.testnet]: 'https://cert.arianee.net/contractAddresses/newsokol.json',
   [NETWORK.mainnet]:
-    'https://cert.arianee.org/contractAddresses/newpoacore.json',
-  [NETWORK.arianeeTestnet]: 'https://cert.arianee.org/contractAddresses/arianeetest.json'
+    'https://cert.arianee.net/contractAddresses/newpoacore.json',
+  [NETWORK.arianeeTestnet]: 'https://cert.arianee.net/contractAddresses/arianeetest.json'
 };
