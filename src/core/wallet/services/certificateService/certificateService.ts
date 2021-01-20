@@ -25,6 +25,7 @@ import { GlobalConfigurationService } from '../globalConfigurationService/global
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
+import { ArianeeAuthentificationService } from '../arianeeAuthentificationService/arianeeAuthentificationService';
 
 @injectable()
 export class CertificateService {
@@ -102,7 +103,8 @@ export class CertificateService {
       private batchService:BatchService,
       private diagnosisService:DiagnosisService,
       private jwtProofService: ArianeeAccessTokenService,
-      private certificateUtilsService: CertificateUtilsService
+      private certificateUtilsService: CertificateUtilsService,
+      private arianeeAuthentificationService:ArianeeAuthentificationService
   ) {
   }
 
@@ -315,11 +317,7 @@ export class CertificateService {
           query
         }
       ).then((certificateContent) => {
-        response.setContent(
-          certificateContent.data,
-          certificateContent.isAuthentic,
-          certificateContent.imprint
-        );
+        response.setContent(certificateContent);
       });
 
       requestQueue.push(
@@ -400,13 +398,7 @@ export class CertificateService {
 
     const summary = response.build();
 
-    if (get(query, 'advanced.languages') &&
-        get(summary, 'content.data') &&
-        isSchemai18n(summary.content.data)) {
-      return replaceLanguage(summary, query.advanced.languages) as any;
-    } else {
-      return summary;
-    }
+    return summary;
   }
 
   /**
@@ -496,11 +488,15 @@ export class CertificateService {
 
   // Ajouter une passphrase à un token
   //  this.smartAssetContract.methods.addTokenAccess()
+  /**
+   *
+   * @param arianeeLink can be both "https://arianee.net/4567,fgheziufez" or a Arianee Access Token
+   * @param query
+   */
+  public getCertificateFromLink = (arianeeLink: string, query?: ConsolidatedCertificateRequest) => {
+    const { certificateId, authentification } = this.arianeeAuthentificationService.extractParametersFromArianeeLink(arianeeLink);
 
-  public getCertificateFromLink = (link: string, query?: ConsolidatedCertificateRequest) => {
-    const { certificateId, passphrase } = this.utils.readLink(link);
-
-    return this.getCertificate(certificateId, passphrase, query);
+    return this.getCertificate(certificateId, authentification, query);
   }
 
   private prepareHydrateToken = async (data: hydrateTokenParameters):Promise<hydrateTokenParameters> => {

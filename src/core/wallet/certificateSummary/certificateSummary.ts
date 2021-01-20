@@ -1,6 +1,7 @@
 import { IdentitySummary } from '../../../models/arianee-identity';
 import { EventContent } from '../../../models/blockchainEvent';
 import { ArianeeTokenId } from '../../../models/ArianeeTokenId';
+import { GenericJsonSchema } from '../../../models/jsonSchema/certificates/ArianeeProducti18n';
 import { sortEvents } from '../../libs/sortEvents';
 
 export interface Serialnumber {
@@ -43,10 +44,13 @@ export interface CertificateContent {
 interface ArianeeEvents {
 }
 
-export interface CertificateContentContainer<CertificateType=CertificateContent> {
+export interface CertificateContentContainer<CertificateType=GenericJsonSchema> {
   isAuthentic: boolean;
   imprint:string;
   data: CertificateType;
+  parents?:CertificateContentContainer[];
+  isRawAuthentic?:boolean;
+  raw:CertificateType;
 }
 
 export interface CertificateIssuer<IdentityType=any> {

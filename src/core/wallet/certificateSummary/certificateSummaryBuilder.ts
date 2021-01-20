@@ -23,15 +23,9 @@ export class CertificateSummaryBuilder {
     private _recover: CertificateRecover;
 
     public setContent (
-      data: CertificateContent,
-      isAuthentic: boolean,
-      imprint:string
+      data: CertificateContentContainer
     ): CertificateSummaryBuilder {
-      this._content = {
-        data,
-        isAuthentic,
-        imprint
-      };
+      this._content = data;
 
       return this;
     }
