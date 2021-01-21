@@ -27,8 +27,8 @@ export class ArianeeAccessTokenService {
    * @param url
    * @param certificateId
    */
-    public createActionArianeeAccessTokenLink= (url:string, certificateId: number) => {
-      const arianeeAccessToken = this.createCertificateArianeeAccessToken(certificateId);
+    public createActionArianeeAccessTokenLink= async (url:string, certificateId: number) => {
+      const arianeeAccessToken = await this.createCertificateArianeeAccessToken(certificateId);
 
       return appendQuery(url, { arianeeAccessToken });
     }

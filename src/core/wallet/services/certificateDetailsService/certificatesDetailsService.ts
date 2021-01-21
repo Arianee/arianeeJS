@@ -178,12 +178,12 @@ export class CertificateDetails {
   ) => {
     const { certificateId, passphrase } = parameters;
 
-    const generateProof = ():ArianeeGateWayAuthentification => {
+    const generateProof = ():Promise<ArianeeGateWayAuthentification> => {
       if (get(parameters, 'query.advanced.arianeeProofToken')) {
-        return {
+        return Promise.resolve({
           bearer: parameters.query.advanced.arianeeProofToken,
           jwt: parameters.query.advanced.arianeeProofToken
-        };
+        });
       } else if (passphrase) {
         const temporaryWallet = this.configurationService.walletFactory()
           .fromPassPhrase(passphrase);
@@ -213,7 +213,7 @@ export class CertificateDetails {
     const certificateContentData: any = await this.getContent(
       {
         ...parameters,
-        arianeeRPCAuthentification: generateProof(),
+        arianeeRPCAuthentification: await generateProof(),
         certificateURI: tokenURI
       }
     );

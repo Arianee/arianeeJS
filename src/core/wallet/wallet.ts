@@ -7,7 +7,6 @@ import { ConsolidatedCertificateRequest } from './certificateSummary/certificate
 import { ArianeeEventEmitter } from './services/arianeeEventEmitterService/ArianeeEventEmitter';
 import { BalanceService } from './services/balanceService/balanceService';
 import { BatchService } from './services/batchService/batchService';
-import { BDHAPIService } from './services/BDHAPIService/BDHAPIService';
 import { BlockchainEventWatcherService } from './services/blockchainEventWatcherService/blochainEventWatcherService';
 import { CertificateAuthorizationService } from './services/certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateDetails } from './services/certificateDetailsService/certificatesDetailsService';
@@ -30,7 +29,8 @@ import EventEmitter = require('eventemitter3');
 
 export interface ClassicConfiguration{
     account:any,
-    mnemonic?:string
+    mnemonic?:string,
+    web3?:any
 }
 
 export class ArianeeWallet {
@@ -45,7 +45,6 @@ export class ArianeeWallet {
         ArianeeEventEmitter,
         BatchService,
         BalanceService,
-        BDHAPIService,
         BlockchainEventWatcherService,
         CertificateAuthorizationService,
         CertificateDetails,
@@ -66,6 +65,10 @@ export class ArianeeWallet {
         CertificateUtilsService
       );
 
+      if (configuration.web3) {
+        this.container.resolve(Web3Service).web3 = configuration.web3;
+      }
+
       this.container.register(ArianeeHttpClient,
         { useValue: arianeeConfig.arianeeHttpClient });
 
@@ -84,16 +87,6 @@ export class ArianeeWallet {
       classNames.forEach(className => {
         this.container.registerSingleton(className);
       });
-    }
-
-    /**
-     * Set BDH vault URL
-     * @param url
-     */
-    public useBDHVault (url:string):ArianeeWallet {
-      const walletService:WalletService = this.container.resolve(WalletService);
-      walletService.bdhVaultURL = url;
-      return this;
     }
 
     public get globalConfiguration () {

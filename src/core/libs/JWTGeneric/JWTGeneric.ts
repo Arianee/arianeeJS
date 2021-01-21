@@ -13,10 +13,11 @@ export class JWTGeneric {
      * Set payload to be signed
      * @param payload
      */
-    public setPayload = (payload) => {
+    public setPayload =async (payload) => {
       this.payload = payload;
+
       return {
-        sign: this.sign.bind(this),
+        sign: await this.sign.bind(this),
         setHeader: this.setHeader.bind(this)
       };
     };
@@ -25,10 +26,10 @@ export class JWTGeneric {
      * Set payload to be signed
      * @param payload
      */
-    public setHeader = (payload) => {
+    public setHeader = async (payload) => {
       this.header = payload;
       return {
-        sign: this.sign.bind(this),
+        sign: await this.sign.bind(this),
         setPayload: this.setPayload.bind(this)
       };
     };
@@ -53,10 +54,10 @@ export class JWTGeneric {
       return JSON.parse(Base64.fromBase64(data));
     }
 
-    private sign () {
+    private async sign () {
       const header = JWTGeneric.base64Stringified(this.header);
       const payload = JWTGeneric.base64Stringified(this.payload);
-      const signature = this.signature();
+      const signature = await this.signature();
 
       return `${header}.${payload}.${signature}`;
     }

@@ -47,11 +47,11 @@ Then(
 
 Given(
   'user{int} create Arianee Access Token{int} on certficate{int}',
-  function (userIndex, arianeeJwtIndex, tokenIndex) {
+  async function (userIndex, arianeeJwtIndex, tokenIndex) {
     const certificateId = this.store.getToken(tokenIndex);
     const wallet = this.store.getUserWallet(userIndex);
 
-    const arianeejwt = wallet.methods.createCertificateArianeeAccessToken(certificateId);
+    const arianeejwt = await wallet.methods.createCertificateArianeeAccessToken(certificateId);
 
     this.store.storeCustom(`arianeeJwtIndex_${arianeeJwtIndex}`, arianeejwt);
   }

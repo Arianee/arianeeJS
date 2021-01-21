@@ -55,14 +55,10 @@ describe('Arianee', () => {
   describe('override send', () => {
     test('should use override send', async () => {
       const arianee = await new Arianee().init();
-
       const wallet = arianee.fromRandomMnemonic();
-
       const customSend = jest.fn().mockImplementation(() => Promise.resolve());
       wallet.setCustomSendTransaction(customSend);
-
       await wallet.methods.approveStore();
-
       expect(customSend).toHaveBeenCalled();
     });
   });

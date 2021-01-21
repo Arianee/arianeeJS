@@ -1,5 +1,5 @@
 import { provider } from 'web3-core';
-import {ArianeeHttpClient} from "../core/libs/arianeeHttpClient/arianeeHttpClient";
+import { ArianeeHttpClient } from '../core/libs/arianeeHttpClient/arianeeHttpClient';
 import { NETWORK } from './networkConfiguration';
 
 interface ContractConfiguration {

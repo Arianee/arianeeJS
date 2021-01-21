@@ -10,7 +10,7 @@ export class JWTService {
 
   }
 
-  public sign (payload): string {
+  public sign = async (payload): Promise<string> => {
     var exp = new Date();
     exp.setMinutes(exp.getMinutes() + 5);
     const enrichedPayload = {
@@ -22,7 +22,8 @@ export class JWTService {
       ...payload
     };
 
-    return this.JWTGenericFactory().setPayload(enrichedPayload).sign();
+    const jwt = await this.JWTGenericFactory().setPayload(enrichedPayload);
+    return jwt.sign();
   }
 
   public decode<T = any> (JWT): {header:any;payload:T, signature:string} {
@@ -38,7 +39,10 @@ export class JWTService {
   }
 
     private JWTGenericFactory = () => {
-      const signer = (data) => this.utilService.signProof(data).signature;
+      const signer = async (data) => {
+        const signatureObject = await this.utilService.signProof(data);
+        return signatureObject.signature;
+      };
       const decoder = (message, signature) => this.utilService.recover(message, signature);
 
       return new JWTGeneric(signer, decoder);

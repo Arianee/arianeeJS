@@ -266,7 +266,10 @@ export class CertificateService {
   public customRequestToken = async (
     certificateId: number,
     passphrase: string
-  ) => this.certificateUtilsService.customRequestTokenFactory(certificateId, passphrase).send();
+  ) => {
+    const requestTokenPromise = await this.certificateUtilsService.customRequestTokenFactory(certificateId, passphrase);
+    return requestTokenPromise.send();
+  }
 
   /**
    * Get certificate from Arianee Access Token
