@@ -3,6 +3,7 @@ import Web3 from 'web3';
 import { provider } from 'web3-core';
 import * as conf from '../../configurations';
 import { ArianeeConfig, TransactionOptions } from '../../models/arianeeConfiguration';
+import { HttpInterceptor } from '../../models/httpClient';
 import { NETWORK, networkURL } from '../../models/networkConfiguration';
 import { ArianeeHttpClient } from '../libs/arianeeHttpClient/arianeeHttpClient';
 import { Store } from '../libs/simpleStore/store';
@@ -31,18 +32,26 @@ export class Arianee {
       transactionOptions?: TransactionOptions,
       deepLink?:string,
       protocolConfiguration?:any,
-      defaultArianeePrivacyGateway?:string
+      defaultArianeePrivacyGateway?:string,
+      httpInterceptor?:HttpInterceptor
     } = {}
   ): Promise<ArianeeWalletBuilder> {
     const arianeeConfiguration: ArianeeConfig = {
     } as ArianeeConfig;
+
+    arianeeConfiguration.arianeeHttpClient = new ArianeeHttpClient();
+    if (arianeeCustomConfiguration.httpInterceptor) {
+      arianeeConfiguration
+        .arianeeHttpClient
+        .setRequestInterceptor(arianeeCustomConfiguration.httpInterceptor.httpRequestInterceptor);
+    }
 
     let addressesResult;
     if (get(arianeeCustomConfiguration, 'protocolConfiguration')) {
       addressesResult = get(arianeeCustomConfiguration, 'protocolConfiguration');
     } else {
       const url = networkURL[networkName];
-      addressesResult = await ArianeeHttpClient.fetch(url).catch(err => console.error(`${url} not working`));
+      addressesResult = await arianeeConfiguration.arianeeHttpClient.fetch(url).catch(err => console.error(`${url} not working`));
     }
 
     Object.keys(addressesResult.contractAdresses).forEach(contractName => {

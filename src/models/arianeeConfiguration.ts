@@ -1,4 +1,5 @@
 import { provider } from 'web3-core';
+import {ArianeeHttpClient} from "../core/libs/arianeeHttpClient/arianeeHttpClient";
 import { NETWORK } from './networkConfiguration';
 
 interface ContractConfiguration {
@@ -34,5 +35,7 @@ export interface ArianeeConfig {
   deepLink: string;
   alternativeDeeplink: string[];
   transactionOptions?:TransactionOptions,
-  defaultArianeePrivacyGateway?:string
+  defaultArianeePrivacyGateway?:string,
+
+  arianeeHttpClient:ArianeeHttpClient
 }
