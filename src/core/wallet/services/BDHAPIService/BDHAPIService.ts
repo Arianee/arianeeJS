@@ -18,7 +18,7 @@ export class BDHAPIService {
 
     const Authorization = `Signature keyId="${auth.signature}",algorithm="ECDSA"`;
 
-    return ArianeeHttpClient.fetch(url, {
+    return new ArianeeHttpClient().fetch(url, {
       headers: {
         Authorization
       },

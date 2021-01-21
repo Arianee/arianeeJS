@@ -1,6 +1,7 @@
 import { container } from 'tsyringe';
 import { Transaction } from 'web3-core';
 import { ArianeeConfig } from '../../models/arianeeConfiguration';
+import { ArianeeHttpClient } from '../libs/arianeeHttpClient/arianeeHttpClient';
 import { SimpleStore } from '../libs/simpleStore/simpleStore';
 import { ConsolidatedCertificateRequest } from './certificateSummary/certificateSummary';
 import { ArianeeEventEmitter } from './services/arianeeEventEmitterService/ArianeeEventEmitter';
@@ -64,6 +65,9 @@ export class ArianeeWallet {
         JWTService,
         CertificateUtilsService
       );
+
+      this.container.register(ArianeeHttpClient,
+        { useValue: arianeeConfig.arianeeHttpClient });
 
       this.container.resolve(ConfigurationService).arianeeConfiguration = arianeeConfig;
 

@@ -1,8 +1,16 @@
 import axios from 'axios';
-import { injectable, singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
+import { HttpInterceptor, HttpRequestInterceptor } from '../../../models/httpClient';
 
 @injectable()
 export class ArianeeHttpClient {
+    private httpRequestInterceptor:HttpRequestInterceptor;
+
+    public setRequestInterceptor=(interceptor:HttpRequestInterceptor):ArianeeHttpClient => {
+      this.httpRequestInterceptor = interceptor;
+      return this;
+    }
+
     /**
      * Calculate hash key from url and headers of a request
      * @param url
@@ -85,7 +93,7 @@ export class ArianeeHttpClient {
      * @param config
      * @return Promise{any}
      */
-    public static fetch (
+    public async fetch (
       url: string,
       config: any = { ...ArianeeHttpClient.defaultConfig }
     ) {
@@ -93,6 +101,11 @@ export class ArianeeHttpClient {
         config.data = config.body;
       }
 
+      if (this.httpRequestInterceptor) {
+        const result = await this.httpRequestInterceptor(url, config);
+        url = result.url;
+        config = result.config;
+      }
       try {
         return axios(url, config).then(result => result.data);
       } catch (e) {
@@ -101,8 +114,7 @@ export class ArianeeHttpClient {
       }
     }
 
-    /**
+  /**
      * The exact same method as static fetch method
      */
-    public fetch = ArianeeHttpClient.fetch;
 }
