@@ -89,4 +89,25 @@ export class ArianeeWalletBuilder {
 
     return this.buildAriaWalletFrom({ account });
   }
+
+  public async fromCustomWeb3 (web3:any) {
+    this.web3 = web3;
+    let account:{address:string, privateKey?:string};
+
+    if (web3.eth.accounts.wallet[0]) {
+      account = {
+        address: web3.eth.accounts.wallet[0].address,
+        privateKey: web3.eth.accounts.wallet[0].privateKey
+      };
+    } else {
+      const remoteWallet = await web3.eth.getAccounts();
+      if (remoteWallet[0]) {
+        account = { address: remoteWallet[0] };
+      } else {
+        throw new Error('Their is no account in the custom web3 instance');
+      }
+    }
+
+    return this.buildAriaWalletFrom({ account, web3: web3 });
+  }
 }

@@ -5,7 +5,6 @@ import { Sign, SignedTransaction, Transaction } from 'web3-core';
 import { NETWORK } from '../../../..';
 import { ArianeeConfig } from '../../../../models/arianeeConfiguration';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
-import { BDHAPIService } from '../BDHAPIService/BDHAPIService';
 import { ConfigurationService } from '../configurationService/configurationService';
 
 import { WalletService } from '../walletService/walletService';
@@ -19,10 +18,7 @@ export class UtilsService {
       private walletService: WalletService,
       private httpService: ArianeeHttpClient
   ) {
-    this.bdhVaultService = new BDHAPIService(walletService, this);
   }
-
-  private bdhVaultService:BDHAPIService;
 
   private get web3 () {
     return this.web3Service.web3;
@@ -85,8 +81,26 @@ export class UtilsService {
     );
   }
 
-  public signProof (data: string | Array<any>, privateKey = this.walletService.privateKey):Sign {
-    return this.web3.eth.accounts.sign(<string>data, privateKey);
+  public isRemoteAccount () {
+    return this.walletService.privateKey === undefined && this.walletService.address;
+  }
+
+  public async signProof (data: string | Array<any>, privateKey = this.walletService.privateKey):Promise<{ message:string, messageHash:string, signature:string }> {
+    let signature;
+    let messageHash;
+
+    if (privateKey) {
+      const signObject = this.web3.eth.accounts.sign(<string>data, privateKey);
+      signature = signObject.signature;
+      messageHash = signObject.messageHash;
+    } else if (this.isRemoteAccount()) {
+      signature = await this.web3.eth.personal.sign(<string>data, this.walletService.address);
+      messageHash = this.web3.eth.accounts.hashMessage(data);
+    } else {
+      throw new Error('There is no signing account');
+    }
+
+    return { message: data as string, signature, messageHash };
   }
 
   public recover (data: string | Array<any>, signature: string):string {
@@ -262,11 +276,7 @@ export class UtilsService {
   }
 
   public signTransaction=(transaction:Transaction):Promise<SignedTransaction> => {
-    const signTransaction:Promise<any> = this.walletService.isBdhVault()
-      ? this.bdhVaultService.signTransaction(transaction)
-      : this.walletService.account.signTransaction(transaction);
-
-    return signTransaction;
+    return this.walletService.account.signTransaction(transaction);
   }
 
   public async prepareTransaction (encodeABI, contractAddress, overrideNonce?, transaction?):Promise<Transaction> {

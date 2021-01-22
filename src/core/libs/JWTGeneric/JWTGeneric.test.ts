@@ -16,12 +16,11 @@ describe('JWTGeneric', function () {
   const expectedToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFVEgifQ==.eyJ1c2VySWQiOiIxMTAxMDAxIiwibmFtZSI6IkpvaG4gRG9lIn0=.0xaa8b8f783731be8460927145d9f0f53bd83715dead3a39c9e68d8e3c4c7644d0045a6b75ec80ad39de664542210e2d97fe485a7aa0647dfdf93ba91443c8c03d1b';
 
   describe('basic methods', () => {
-    test('it should create a token', () => {
+    test('it should create a token', async () => {
       const jwt = new JWTGeneric(signer, decoder as any);
 
-      const token = jwt
-        .setPayload(payload)
-        .sign();
+      const jwtService = await jwt.setPayload(payload);
+      const token = await jwtService.sign();
 
       expect(token).toBe(expectedToken);
     });
@@ -59,7 +58,7 @@ describe('JWTGeneric', function () {
 
   describe('verify methods', () => {
     describe('exp', () => {
-      test('it should be false if expired', () => {
+      test('it should be false if expired', async () => {
         const jwt = new JWTGeneric(signer, decoder as any);
         const now = Date.now();
         var exp = new Date();
@@ -70,9 +69,8 @@ describe('JWTGeneric', function () {
           exp: exp.getTime()
         };
 
-        const token = jwt
-          .setPayload(payload)
-          .sign();
+        const jwtService = await jwt.setPayload(payload);
+        const token = await jwtService.sign();
 
         const isAuthentic = jwt
           .setToken(token)
@@ -80,7 +78,7 @@ describe('JWTGeneric', function () {
 
         expect(isAuthentic).toBeFalsy();
       });
-      test('it should be true if not expired', () => {
+      test('it should be true if not expired', async () => {
         const jwt = new JWTGeneric(signer, decoder as any);
         var exp = new Date();
         exp.setMinutes(exp.getMinutes() + 5);
@@ -90,9 +88,9 @@ describe('JWTGeneric', function () {
           exp: exp.getTime()
         };
 
-        const token = jwt
-          .setPayload(payload)
-          .sign();
+        const jwtService = await jwt.setPayload(payload);
+        const token = await jwtService.sign();
+
         const isAuthentic = jwt
           .setToken(token)
           .verify(pubKey);
@@ -101,7 +99,7 @@ describe('JWTGeneric', function () {
       });
     });
     describe('nbf', () => {
-      test('it should be false if before nbf', () => {
+      test('it should be false if before nbf', async () => {
         const jwt = new JWTGeneric(signer, decoder as any);
         var nbf = new Date();
         nbf.setMinutes(nbf.getMinutes() + 5);
@@ -111,9 +109,8 @@ describe('JWTGeneric', function () {
           nbf: nbf.getTime()
         };
 
-        const token = jwt
-          .setPayload(payload)
-          .sign();
+        const jwtService = await jwt.setPayload(payload);
+        const token = await jwtService.sign();
 
         const isAuthentic = jwt
           .setToken(token)
@@ -121,7 +118,7 @@ describe('JWTGeneric', function () {
 
         expect(isAuthentic).toBeFalsy();
       });
-      test('it should be true if after nbf', () => {
+      test('it should be true if after nbf', async () => {
         const jwt = new JWTGeneric(signer, decoder as any);
         var nbf = new Date();
         nbf.setMinutes(nbf.getMinutes() - 5);
@@ -131,9 +128,9 @@ describe('JWTGeneric', function () {
           nbf: nbf.getTime()
         };
 
-        const token = jwt
-          .setPayload(payload)
-          .sign();
+        const jwtService = await jwt.setPayload(payload);
+        const token = await jwtService.sign();
+
         const isAuthentic = jwt
           .setToken(token)
           .verify(pubKey);

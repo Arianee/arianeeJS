@@ -88,7 +88,7 @@ export class MessageService {
     let content;
     const rpcURL = get(certificateIssuer, 'data.rpcEndpoint') || parameters.url;
     if (rpcURL) {
-      const proof = this.utils.signProof(
+      const proof = await this.utils.signProof(
         JSON.stringify({
           messageId,
           timestamp: new Date()

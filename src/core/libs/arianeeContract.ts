@@ -84,35 +84,54 @@ export class ArianeeContract<ContractImplementation extends Contract> {
     data: TransactionObject<any>
   ): Promise<any> => {
     const encodeABI = data.encodeABI();
-
     const preparedTransaction = await this.utilsService.prepareTransaction(encodeABI, this.contract.options.address, false, transaction);
 
     if (this.walletService.isCustomSendTransaction()) {
       return this.walletService
-        .customSendTransaction(preparedTransaction);
+        .customSendTransaction(preparedTransaction)
+        .then((txHash:string) => {
+          this.web3Service.web3.eth.getTransactionReceipt(txHash)
+            .then((receipt) => {
+              return {
+                undefined,
+                receipt
+              };
+            });
+        })
+        .catch((e) => {
+          return {
+            receipt: e.message,
+            error: e
+          };
+        });
     } else {
-      const signTransaction = this.utilsService.signTransaction(preparedTransaction);
-      const [result] = await Promise.all([
-        signTransaction,
-        this.poaAndAriaService.requestPoa().catch()
-      ]);
+      if (this.utilsService.isRemoteAccount()) {
+        return this.web3Service.web3.eth.sendTransaction(preparedTransaction);
+      } else {
+        const signTransaction = this.utilsService.signTransaction(preparedTransaction);
 
-      return new Promise((resolve, reject) => {
-        this.web3Service.web3.eth
-          .sendSignedTransaction(result.rawTransaction)
-          .once('error', async (error, receipt) => {
-            reject({
-              receipt,
-              error
+        const [result] = await Promise.all([
+          signTransaction,
+          this.poaAndAriaService.requestPoa().catch()
+        ]);
+
+        return new Promise((resolve, reject) => {
+          this.web3Service.web3.eth
+            .sendSignedTransaction(result.rawTransaction)
+            .once('error', async (error, receipt) => {
+              reject({
+                receipt,
+                error
+              });
+            })
+            .once('receipt', (receipt) => {
+              resolve({
+                result,
+                receipt
+              });
             });
-          })
-          .once('receipt', (receipt) => {
-            resolve({
-              result,
-              receipt
-            });
-          });
-      });
+        });
+      }
     }
   };
 }

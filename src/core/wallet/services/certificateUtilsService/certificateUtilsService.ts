@@ -40,12 +40,12 @@ export class CertificateUtilsService {
       }
     }
 
-    public customRequestTokenFactory = (certificateId, passphrase) => {
+    public customRequestTokenFactory = async (certificateId, passphrase) => {
       const temporaryWallet = this.configurationService
         .walletFactory()
         .fromPassPhrase(passphrase);
 
-      const proof = this.utils.signProofForRequestToken(
+      const proof = await this.utils.signProofForRequestToken(
         certificateId,
         this.walletService.address,
         temporaryWallet.privateKey

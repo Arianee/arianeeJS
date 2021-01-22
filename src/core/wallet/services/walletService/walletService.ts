@@ -25,12 +25,6 @@ export class WalletService {
     return this.account.privateKey;
   }
 
-  public bdhVaultURL:string;
-
-  public isBdhVault ():boolean {
-    return this.bdhVaultURL !== undefined;
-  }
-
   public isCustomSendTransaction ():boolean {
     return this.userCustomSendTransaction !== undefined;
   }
