@@ -241,6 +241,7 @@ export class WalletCustomMethodService {
       balanceOfAria: this.balanceService.balanceOfAria,
       balanceOfRia: this.balanceService.balanceOfRia,
       balanceOfPoa: this.balanceService.balanceOfPoa,
+      balanceOfAriaReadable: this.balanceService.balanceOfAriaReadable,
       getCreditPrice: this.balanceService.getCreditPrice,
       approveStore: this.approveStore,
       buyCredits: this.buyCredits,
