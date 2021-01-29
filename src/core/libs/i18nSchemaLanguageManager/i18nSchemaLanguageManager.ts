@@ -17,6 +17,12 @@ export const replaceLanguage = (certificateSummary :CertificateSummary<ArianeeCe
   return certificateSummary;
 };
 
+export const replaceLanguageContentWithFavUserLanguage = (certificateId18n: ArianeeCertificatei18n, languages: string[]) => {
+  const defaultLanguage = certificateId18n.language;
+  const language = pickLanguageAccordingToUserLanguagesWithMacrosFallback(macros, languages, availableLanguages, defaultLanguage);
+
+  replaceLanguageContent(certificateId18n, language);
+};
 export const availableLanguages = (certificateId18n: ArianeeCertificatei18n, language: string): string[] => {
   const defaultLanguage = certificateId18n.language;
   const availableTranslation = certificateId18n.i18n.map(i => i.language);

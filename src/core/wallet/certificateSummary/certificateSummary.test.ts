@@ -6,7 +6,7 @@ describe('certificateSummaryBuilder', () => {
   describe('It should build a certificate', () => {
     it('should be returning only set properties', () => {
       const arianeeCertificate = new CertificateSummaryBuilder()
-        .setContent(<any>{ mycontent: 'zefezf' }, true, '2345D4S')
+        .setContent({ isAuthentic: true, data: { $schema: '' } } as any)
         .build();
 
       expect(arianeeCertificate.content).toBeDefined();

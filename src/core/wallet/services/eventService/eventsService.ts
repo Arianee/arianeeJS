@@ -8,7 +8,11 @@ import { isSchemai18n } from '../../../libs/certificateVersion';
 import { replaceLanguage } from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
 import { isNullOrUndefined } from '../../../libs/isNullOrUndefined';
 import { sortEvents } from '../../../libs/sortEvents';
-import { ArianeeEvent, ConsolidatedCertificateRequest } from '../../certificateSummary/certificateSummary';
+import {
+  ArianeeEvent,
+  CertificateContentContainer,
+  ConsolidatedCertificateRequest
+} from '../../certificateSummary/certificateSummary';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
@@ -168,7 +172,7 @@ export class EventService {
       return this.utils.getTimestampFromBlock(creationEvent[0].blockNumber);
     };
 
-    const getEventContent = async () => {
+    const getEventContent = async ():Promise<CertificateContentContainer<any>> => {
       const requestBody: any = {
         eventId: arianeeEventId,
         certificateId: certificateId
@@ -220,13 +224,15 @@ export class EventService {
         return {
           data: eventContent,
           imprint: tokenImprint[1],
-          isAuthentic: isCertificateContentValid
+          isAuthentic: isCertificateContentValid,
+          raw: eventContent
         };
       } else {
         return {
           data: eventContent,
           imprint: undefined,
-          isAuthentic: false
+          isAuthentic: false,
+          raw: eventContent
         };
       }
     };
@@ -234,7 +240,6 @@ export class EventService {
     const [issuer, timestamp, content] = await Promise.all([
       this.identityService.getIdentity({ address: eventBc['2'], query: { issuer: true } }),
       getTimestamp(),
-      getEventContent(),
       getEventContent()
     ]);
 

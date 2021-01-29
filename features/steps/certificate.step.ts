@@ -206,6 +206,68 @@ When(
 );
 
 When(
+  'user{int} creates and stores certificate{int} with parent certificate',
+  async function (userIndex, tokenIndex) {
+    const wallet = this.store.getUserWallet(userIndex);
+    const parentContent0 = {
+      $schema: 'https://cert.arianee.org/version3/ArianeeProductCertificate-i18n.json',
+      name: 'john',
+      externalContents: [
+        {
+          title: 'About Arianee',
+          url: 'https://www.arianee.org',
+          backgroundColor: '#000',
+          color: '#FFF'
+        }
+      ]
+    };
+
+    const parentContent1 = {
+      $schema: 'https://cert.arianee.org/version2/ArianeeProductCertificate-i18n.json',
+      sku: '"mon sky',
+      title: 'titre nonnon',
+      externalContents: [
+        {
+          title: 'About Arianee',
+          url: 'https://www.arianee.org',
+          backgroundColor: '#000',
+          color: '#FFF'
+        }
+      ]
+    };
+
+    const result0 = await wallet.methods.createAndStoreCertificate({
+      content: parentContent0
+    }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`);
+
+    const result1 = await wallet.methods.createAndStoreCertificate({
+      content: parentContent1
+    }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`);
+
+    const { certificateId } = await wallet.methods.createAndStoreCertificate({
+      content: {
+        $schema: 'https://cert.arianee.org/version3/ArianeeProductCertificate-i18n.json',
+        title: 'mon titre',
+        parentCertificates: [
+          {
+            type: 'full',
+            order: 0,
+            arianeeLink: result0.deepLink.link
+          },
+          {
+            type: 'full',
+            order: 1,
+            arianeeLink: result1.deepLink.link
+          }
+        ]
+      }
+    }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`);
+
+    this.store.storeToken(tokenIndex, certificateId);
+  }
+);
+
+When(
   'user{int} can call wallet method {string}',
   { timeout: 45000 },
 
@@ -226,6 +288,31 @@ When(
     const result = await wallet.methods[methodName](...args);
 
     this.store.storeCustom('result', result);
+  }
+);
+
+When(
+  'user{int} creates and stores certificate{int} as:',
+  { timeout: 45000 },
+
+  async function (userIndex, tokenIndex, certificateContent) {
+    const wallet = this.store.getUserWallet(userIndex);
+
+    const content = JSON.parse(certificateContent);
+
+    try {
+      const result = await wallet.methods.createAndStoreCertificate({
+        content
+      }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`);
+
+      const { certificateId } = result;
+      this.store.storeToken(tokenIndex, certificateId);
+      this.store.storeCustom('result', result);
+    } catch (err) {
+      console.error('ERROR');
+      console.log(err);
+      this.store.storeCustom('result', err);
+    }
   }
 );
 
@@ -588,6 +675,19 @@ Then('certificate{int} imprint should be {string}',
     const contentToBeVerified = summary.content.imprint;
 
     expect(contentToBeVerified === expectedImprint).to.be.true;
+  });
+
+Then('certificate{int} {string} should contains:',
+  async function (tokenIndex, objectPath, expectedStringContent) {
+    const certificateId = this.store.getToken(tokenIndex);
+    const summary = this.store.getCertificateSummary(certificateId);
+
+    const expectedContent = JSON.parse(expectedStringContent);
+
+    Object.keys(expectedContent)
+      .forEach(key => {
+        expect(get(summary, objectPath)[key] === expectedContent[key]).to.be.true;
+      });
   });
 
 Then('certificateId {string} {string} imprint should be {string}',

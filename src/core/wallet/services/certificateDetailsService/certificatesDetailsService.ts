@@ -1,9 +1,15 @@
-import { get } from 'lodash';
+import { cloneDeep, get, orderBy } from 'lodash';
 import { injectable } from 'tsyringe';
 import { ArianeeGateWayAuthentification } from '../../../../models/ArianeeGateWayAuthentification';
 import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
+import { ArianeeCertificatei18nV3 } from '../../../../models/jsonSchema/certificates/ArianeeProducti18n';
 import { StoreNamespace } from '../../../../models/storeNamespace';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
+import { certificateParentMerger } from '../../../libs/certificateParentMerger/certificateParentMerger';
+import { isSchemai18n } from '../../../libs/certificateVersion';
+import { deepFreeze } from '../../../libs/deepFreeze';
+import { hasParentCertificate } from '../../../libs/hasParentCertificates';
+import { replaceLanguageContentWithFavUserLanguage } from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { CertificateSummaryBuilder } from '../../certificateSummary';
 import {
@@ -11,12 +17,13 @@ import {
   ConsolidatedCertificateRequest,
   ConsolidatedIssuerRequestInterface
 } from '../../certificateSummary/certificateSummary';
+import { ArianeeAuthentificationService } from '../arianeeAuthentificationService/arianeeAuthentificationService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
+import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
-import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 
 @injectable()
 export class CertificateDetails {
@@ -28,6 +35,7 @@ export class CertificateDetails {
     private walletService: WalletService,
     private utils: UtilsService,
     private store: SimpleStore,
+    private arianeeAuthentificationService:ArianeeAuthentificationService,
     private globalConfigurationService:GlobalConfigurationService
   ) {
   }
@@ -164,47 +172,68 @@ export class CertificateDetails {
       passphrase?:string,
       query:ConsolidatedCertificateRequest
     }
-  ) => {
+  ): Promise<CertificateContentContainer> => {
     const { certificateId, query } = parameters;
     const { content } = this.globalConfigurationService.getMergedQuery(query);
     const { forceRefresh } = content as ConsolidatedIssuerRequestInterface;
-    return this.store.get<CertificateContentContainer>(StoreNamespace.certificateContent, certificateId, () => this.fetchCertificateContent(parameters), forceRefresh);
-  }
+    return this.store.get<CertificateContentContainer>(StoreNamespace.certificateContent, certificateId, () => this.getCertificateAndParentCertificate(parameters), forceRefresh);
+  };
+
+  public getCertificateAndParentCertificate = async (
+    parameters: {
+        certificateId: ArianeeTokenId,
+        passphrase?: string,
+        query: ConsolidatedCertificateRequest
+      }
+  ): Promise<CertificateContentContainer> => {
+    const { query } = parameters;
+    const certificateContentSummary = await this.fetchCertificateContent(parameters);
+    if (hasParentCertificate(certificateContentSummary.raw)) {
+      const certificateContentSummaryWithParents: ArianeeCertificatei18nV3 = certificateContentSummary.raw as ArianeeCertificatei18nV3;
+      const parentCertificates = certificateContentSummaryWithParents.parentCertificates;
+      const sortedParentLinks = orderBy(parentCertificates, ['type'], ['asc']);
+      const parentLinks = sortedParentLinks.map(d => d.arianeeLink)
+        .map(arianeeLink => this.arianeeAuthentificationService.extractParametersFromArianeeLink(arianeeLink));
+
+      const $fetchingParents = parentLinks.map(link => {
+        return this.getCertificateContent({
+          certificateId: link.certificateId,
+          passphrase: link.authentification,
+          query
+        });
+      });
+
+      const parentCertificateSummary = await Promise.all($fetchingParents);
+      const parentCertificateContent = parentCertificateSummary.map(summary => summary.data);
+
+      const parentAuthenticity = parentCertificateSummary.map(d => d.isAuthentic);
+      // should not have unauthentic content
+      const isAuthentic = ![certificateContentSummary.isAuthentic, ...parentAuthenticity]
+        .includes(false);
+
+      return {
+        ...certificateContentSummary,
+        isAuthentic,
+        parents: parentCertificateSummary,
+        isRawAuthentic: certificateContentSummary.isAuthentic,
+        data: certificateParentMerger([...parentCertificateContent, certificateContentSummary.data])
+      };
+    }
+
+    return certificateContentSummary;
+  };
 
   private fetchCertificateContent = async (
     parameters:{ certificateId: ArianeeTokenId,
         passphrase?:string,
         query:ConsolidatedCertificateRequest}
-  ) => {
-    const { certificateId, passphrase } = parameters;
+  ): Promise<CertificateContentContainer> => {
+    if (parameters.passphrase === undefined &&
+        get(parameters, 'query.advanced.arianeeProofToken')) {
+      parameters.passphrase = parameters.query.advanced.arianeeProofToken;
+    }
 
-    const generateProof = ():Promise<ArianeeGateWayAuthentification> => {
-      if (get(parameters, 'query.advanced.arianeeProofToken')) {
-        return Promise.resolve({
-          bearer: parameters.query.advanced.arianeeProofToken,
-          jwt: parameters.query.advanced.arianeeProofToken
-        });
-      } else if (passphrase) {
-        const temporaryWallet = this.configurationService.walletFactory()
-          .fromPassPhrase(passphrase);
-
-        return this.utils.signProof(
-          JSON.stringify({
-            certificateId: certificateId,
-            timestamp: new Date()
-          }),
-          temporaryWallet.privateKey
-        );
-      } else {
-        return this.utils.signProof(
-          JSON.stringify({
-            certificateId: certificateId,
-            timestamp: new Date()
-          }),
-          this.walletService.privateKey
-        );
-      }
-    };
+    const { certificateId, passphrase, query } = parameters;
 
     const tokenURI = await this.contractService.smartAssetContract.methods
       .tokenURI(certificateId.toString())
@@ -213,7 +242,8 @@ export class CertificateDetails {
     const certificateContentData: any = await this.getContent(
       {
         ...parameters,
-        arianeeRPCAuthentification: await generateProof(),
+        arianeeRPCAuthentification: await this.arianeeAuthentificationService
+          .generateAuthentificationHeader(certificateId, passphrase),
         certificateURI: tokenURI
       }
     );
@@ -241,6 +271,19 @@ export class CertificateDetails {
 
     const isCertificateContentValid = hash === tokenImprint;
 
-    return Promise.resolve({ imprint: tokenImprint, data: certificateContentData, isAuthentic: isCertificateContentValid });
+    const certificateSummary:CertificateContentContainer = {
+      imprint: tokenImprint,
+      data: certificateContentData,
+      isRawAuthentic: isCertificateContentValid,
+      isAuthentic: isCertificateContentValid,
+      raw: deepFreeze(cloneDeep(certificateContentData))
+    };
+
+    if (get(query, 'advanced.languages') &&
+        get(certificateSummary, 'content.data') &&
+        isSchemai18n(certificateContentData)) {
+      certificateSummary.data = replaceLanguageContentWithFavUserLanguage(certificateContentData, query.advanced.languages) as any;
+    }
+    return certificateSummary;
   }
 }

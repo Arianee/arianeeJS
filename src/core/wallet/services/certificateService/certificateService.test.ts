@@ -1,4 +1,5 @@
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
+import { ArianeeAuthentificationService } from '../arianeeAuthentificationService/arianeeAuthentificationService';
 import { CertificateAuthorizationService } from '../certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateUtilsService } from '../certificateUtilsService/certificateUtilsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
@@ -39,6 +40,9 @@ describe('CertificateService > ', () => {
     const diagnosisService:DiagnosisService = {} as DiagnosisService;
     const jwtProofService:ArianeeAccessTokenService = {} as ArianeeAccessTokenService;
     const certificateUtilsService:CertificateUtilsService = {} as CertificateUtilsService;
+    const authentificateService:ArianeeAuthentificationService = {
+      generateAuthentificationHeader: () => ({ bearer: 'ezfzef' })
+    } as any;
 
     return {
       utils,
@@ -55,7 +59,8 @@ describe('CertificateService > ', () => {
       batchService,
       diagnosisService,
       jwtProofService,
-      certificateUtilsService
+      certificateUtilsService,
+      authentificateService
     };
   };
   test('should intitialize', () => {
@@ -76,7 +81,8 @@ describe('CertificateService > ', () => {
       dep.batchService,
       dep.diagnosisService,
       dep.jwtProofService,
-      dep.certificateUtilsService
+      dep.certificateUtilsService,
+      dep.authentificateService
     );
 
     expect(certificateService).toBeDefined();
@@ -102,7 +108,9 @@ describe('CertificateService > ', () => {
           dep.batchService,
           dep.diagnosisService,
           dep.jwtProofService,
-          dep.certificateUtilsService
+          dep.certificateUtilsService,
+          dep.authentificateService
+
         );
 
         const result = await certificateService.getCertificate(2233);
@@ -137,7 +145,8 @@ describe('CertificateService > ', () => {
             dep.batchService,
             dep.diagnosisService,
             dep.jwtProofService,
-            dep.certificateUtilsService
+            dep.certificateUtilsService,
+            dep.authentificateService
           );
 
           const result = await certificateService.getCertificate(2233, undefined, { content: false });
@@ -161,7 +170,8 @@ describe('CertificateService > ', () => {
             dep.batchService,
             dep.diagnosisService,
             dep.jwtProofService,
-            dep.certificateUtilsService
+            dep.certificateUtilsService,
+            dep.authentificateService
           );
 
           const result = await certificateService.getCertificate(2233, undefined, { content: true });
@@ -195,7 +205,8 @@ describe('CertificateService > ', () => {
             dep.batchService,
             dep.diagnosisService,
             dep.jwtProofService,
-            dep.certificateUtilsService
+            dep.certificateUtilsService,
+            dep.authentificateService
           );
 
           await certificateService.getCertificate(2233, undefined, { issuer: { waitingIdentity: true } });
@@ -219,7 +230,8 @@ describe('CertificateService > ', () => {
             dep.batchService,
             dep.diagnosisService,
             dep.jwtProofService,
-            dep.certificateUtilsService
+            dep.certificateUtilsService,
+            dep.authentificateService
           );
 
           await certificateService.getCertificate(2233, undefined, { issuer: true });
@@ -243,7 +255,8 @@ describe('CertificateService > ', () => {
             dep.batchService,
             dep.diagnosisService,
             dep.jwtProofService,
-            dep.certificateUtilsService
+            dep.certificateUtilsService,
+            dep.authentificateService
           );
 
           await certificateService.getCertificate(2233, undefined, { issuer: false });

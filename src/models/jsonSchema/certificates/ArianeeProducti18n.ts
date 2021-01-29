@@ -413,8 +413,12 @@ export type ProductCertificationsCompliance = {
     [k: string]: any;
 }[];
 
-export interface ArianeeCertificatei18n {
+export interface GenericJsonSchema {
     $schema: $Schema;
+    [key:string]:any
+}
+
+export interface ArianeeCertificatei18n extends GenericJsonSchema{
     name?: Name;
     sku?: SKU;
     gtin?: GTIN;
@@ -438,5 +442,14 @@ export interface ArianeeCertificatei18n {
     manufacturingCountry?: CountryManufacturing;
     facilityId?: FacilityIdentificationNumber;
     productCertification?: ProductCertificationsCompliance;
+
     [k: string]: any;
+}
+
+export interface ArianeeCertificatei18nV3 extends ArianeeCertificatei18n{
+    parentCertificates:Array<{
+        type: string,
+        order: number,
+        arianeeLink:string
+    }>
 }

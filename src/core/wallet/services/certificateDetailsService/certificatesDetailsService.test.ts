@@ -1,3 +1,4 @@
+import { ArianeeAuthentificationService } from '../arianeeAuthentificationService/arianeeAuthentificationService';
 import { CertificateDetails } from './certificatesDetailsService';
 
 import { UtilsService } from '../utilService/utilsService';
@@ -24,6 +25,7 @@ describe('CertificateDetails', () => {
     const walletService: WalletService = {} as WalletService;
     const eventService: EventService = {} as EventService;
     const web3Service: Web3Service = {} as Web3Service;
+    const arianeeAuthentificationService:ArianeeAuthentificationService = {} as ArianeeAuthentificationService;
 
     return {
       utils,
@@ -35,7 +37,8 @@ describe('CertificateDetails', () => {
       walletService,
       eventService,
       web3Service,
-      globalConfigurationService
+      globalConfigurationService,
+      arianeeAuthentificationService
     };
   };
 
@@ -50,6 +53,8 @@ describe('CertificateDetails', () => {
       dep.walletService,
       dep.utils,
       dep.simpleStore,
-      dep.globalConfigurationService);
+      dep.arianeeAuthentificationService,
+      dep.globalConfigurationService
+    );
   });
 });
