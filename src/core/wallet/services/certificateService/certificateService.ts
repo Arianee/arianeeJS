@@ -378,7 +378,7 @@ export class CertificateService {
     }
 
     if (query.recover) {
-      const recoverCertificiate = async () => {
+      const recoverCertificate = async () => {
         const result = await this.contractService.smartAssetContract.methods.tokenRecoveryDate(certificateId).call();
         const isRecoverable = Date.now() / 1000 < +result;
         response.setRecover({
@@ -387,7 +387,7 @@ export class CertificateService {
         });
       };
 
-      requestQueue.push(recoverCertificiate());
+      requestQueue.push(recoverCertificate());
     }
 
     try {

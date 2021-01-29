@@ -284,6 +284,24 @@ export class CertificateDetails {
         isSchemai18n(certificateContentData)) {
       certificateSummary.data = replaceLanguageContentWithFavUserLanguage(certificateContentData, query.advanced.languages) as any;
     }
+
+    if (get(certificateSummary, 'data') && get(certificateSummary, 'data.externalContents')) {
+      const externalContents = get(certificateSummary, 'data.externalContents');
+      externalContents.sort(function (a, b) {
+        return a.order - b.order;
+      });
+
+      certificateSummary.data.externalContents = externalContents;
+    }
+
+    if (get(certificateSummary, 'data') && get(certificateSummary, 'data.medias')) {
+      const medias = get(certificateSummary, 'data.medias');
+      medias.sort(function (a, b) {
+        return a.order - b.order;
+      });
+
+      certificateSummary.data.medias = medias;
+    }
     return certificateSummary;
   }
 }
