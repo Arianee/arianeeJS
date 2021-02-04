@@ -280,7 +280,7 @@ export class CertificateDetails {
     };
 
     if (get(query, 'advanced.languages') &&
-        get(certificateSummary, 'content.data') &&
+        get(certificateSummary, 'data') &&
         isSchemai18n(certificateContentData)) {
       certificateSummary.data = replaceLanguageContentWithFavUserLanguage(certificateContentData, query.advanced.languages) as any;
     }
