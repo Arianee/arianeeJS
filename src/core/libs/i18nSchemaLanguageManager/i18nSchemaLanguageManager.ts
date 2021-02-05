@@ -6,6 +6,7 @@ const macros = ['fr-FR', 'en-US', 'ko-KR', 'ja-JP', 'de-DE'];
 
 export const replaceLanguage = (certificateSummary :CertificateSummary<ArianeeCertificatei18n, any>, languages:string[]):CertificateSummary<ArianeeCertificatei18n, any> => {
   const availableLanguages = availableLanguagesExtract(certificateSummary.content.data);
+
   const defaultLanguage = certificateSummary.content.data.language;
 
   const language = pickLanguageAccordingToUserLanguagesWithMacrosFallback(macros, languages, availableLanguages, defaultLanguage);

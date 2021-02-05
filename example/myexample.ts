@@ -3,8 +3,8 @@ import { Arianee, NETWORK } from '../src';
 (async function () {
   const arianee = await new Arianee().init(NETWORK.testnet);
 
-  const wallet = arianee
-    .fromMnemonic('borrow frog indoor harsh agent gorilla view donkey avoid tuition into daughter');
+ 
+
   /*
   const parentContent0 = {
     $schema: 'https://cert.arianee.org/version3/ArianeeProductCertificate-i18n.json',
@@ -57,12 +57,13 @@ import { Arianee, NETWORK } from '../src';
 
   console.log(certificateId, passphrase, deepLink);
 */
-  const b = await wallet.methods.getCertificate(319874637, 'oz62wl081tsg', {
+  const b = await wallet.methods.getCertificate(7305865, '', {
     content: true,
-    issuer: {
-      rpcURI: 'https://arianee.cleverapps.io/testnet/rpc'
-    }
+    events: true,
+    arianeeEvents: true,
 
   });
-  console.log(b);
+
+  console.log(wallet.address)
+  console.log(b.events.arianeeEvents);
 })();

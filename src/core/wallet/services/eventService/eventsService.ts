@@ -184,13 +184,13 @@ export class EventService {
         privateKey = this.configurationService
           .walletFactory()
           .fromPassPhrase(passphrase).privateKey;
-        requestBody.authentification = this.utils.signProofForRpc(
+        requestBody.authentification = await this.utils.signProofForRpc(
           certificateId,
           privateKey
         );
       } else {
         privateKey = this.walletService.privateKey;
-        requestBody.authentification = this.utils.signProofForRpc(
+        requestBody.authentification = await this.utils.signProofForRpc(
           certificateId,
           privateKey
         );
