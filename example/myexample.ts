@@ -56,7 +56,7 @@ import { Arianee, NETWORK } from '../src';
   }, 'https://arianee.cleverapps.io/testnet/rpc');
 
   console.log(certificateId, passphrase, deepLink);
-*/
+
   const b = await wallet.methods.getCertificate(7305865, '', {
     content: true,
     events: true,
@@ -66,4 +66,6 @@ import { Arianee, NETWORK } from '../src';
 
   console.log(wallet.address)
   console.log(b.events.arianeeEvents);
+  */
+
 })();
