@@ -88,25 +88,25 @@ export class ArianeeContract<ContractImplementation extends Contract> {
 
     if (this.walletService.isCustomSendTransaction()) {
       return this.walletService
-        .customSendTransaction(preparedTransaction)
-        .then((txHash:string) => {
-          this.web3Service.web3.eth.getTransactionReceipt(txHash)
-            .then((receipt) => {
-              return {
-                undefined,
-                receipt
-              };
-            });
-        })
-        .catch((e) => {
-          return {
-            receipt: e.message,
-            error: e
-          };
-        });
+        .customSendTransaction(preparedTransaction);
     } else {
       if (this.utilsService.isRemoteAccount()) {
-        return this.web3Service.web3.eth.sendTransaction(preparedTransaction);
+        return this.web3Service.web3.eth.sendTransaction(preparedTransaction)
+          .then((txHash:string) => {
+            this.web3Service.web3.eth.getTransactionReceipt(txHash)
+              .then((receipt) => {
+                return {
+                  undefined,
+                  receipt
+                };
+              });
+          })
+          .catch((e) => {
+            return {
+              receipt: e.message,
+              error: e
+            };
+          });
       } else {
         const signTransaction = this.utilsService.signTransaction(preparedTransaction);
 
