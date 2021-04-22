@@ -13,7 +13,6 @@ Feature: Send message
         }
       """
 
-
   Scenario: Brand can send a message
     When user1 send a message0 on certificate0 as:
       """
@@ -24,7 +23,8 @@ Feature: Send message
       """
     Then result should have property
       | messageId      | true |
-      | result         | true |
+      | receipt        | true |
+
     Then user1 is the owner of the certificate0
 
 
@@ -41,7 +41,6 @@ Feature: Send message
       """
     Then result should have property
       | messageId      | true |
-      | result         | true |
 
   Scenario: User wants to create a message with an message Id already used
     Then user1 try to create 2 message with the same message id on certficate0

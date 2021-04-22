@@ -1,5 +1,6 @@
 import { ethers, Wallet as etherWallet } from 'ethers';
 import { container } from 'tsyringe';
+import { Transaction } from 'web3-core';
 import { ArianeeConfig } from '../../models/arianeeConfiguration';
 import { isPrivateKeyValid } from '../libs/isPrivateKeyValid';
 import { ConfigurationService } from './services/configurationService/configurationService';
@@ -89,6 +90,20 @@ export class ArianeeWalletBuilder {
 
     return this.buildAriaWalletFrom({ account });
   }
+
+  public fromExternalWallet=(data:
+                            { address: string,
+                              customSign: (data: string) => Promise<{ message: string, messageHash: string, signature: string }> }) => {
+    const wallet = new ArianeeWallet({
+      account: {
+        address: data.address
+      }
+    }, this.arianeeConfig);
+
+    wallet.setCustomSign(data.customSign);
+
+    return wallet;
+  };
 
   public async fromCustomWeb3 (web3:any) {
     this.web3 = web3;

@@ -90,7 +90,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
       return this.walletService
         .customSendTransaction(preparedTransaction);
     } else {
-      if (this.utilsService.isRemoteAccount()) {
+      if (this.walletService.isRemoteAccount()) {
         return this.web3Service.web3.eth.sendTransaction(preparedTransaction)
           .then((txHash:string) => {
             this.web3Service.web3.eth.getTransactionReceipt(txHash)
@@ -108,17 +108,18 @@ export class ArianeeContract<ContractImplementation extends Contract> {
             };
           });
       } else {
-        const signTransaction = this.utilsService.signTransaction(preparedTransaction);
+        const signTransaction = this.walletService.signTransaction(preparedTransaction);
 
-        const [result] = await Promise.all([
+        const [{ rawTransaction }] = await Promise.all([
           signTransaction,
           this.poaAndAriaService.requestPoa().catch()
         ]);
 
         return new Promise((resolve, reject) => {
           this.web3Service.web3.eth
-            .sendSignedTransaction(result.rawTransaction)
+            .sendSignedTransaction(rawTransaction)
             .once('error', async (error, receipt) => {
+              console.error(error);
               reject({
                 receipt,
                 error
@@ -126,7 +127,6 @@ export class ArianeeContract<ContractImplementation extends Contract> {
             })
             .once('receipt', (receipt) => {
               resolve({
-                result,
                 receipt
               });
             });

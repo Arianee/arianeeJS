@@ -32,7 +32,7 @@ export class ArianeeAuthentificationService {
           const temporaryWallet = this.configurationService.walletFactory()
             .fromPassPhrase(arianeeAuthenticator);
 
-          return this.utils.signProof(
+          return this.walletService.signProof(
             JSON.stringify({
               certificateId: certificateId,
               timestamp: new Date()
@@ -42,7 +42,7 @@ export class ArianeeAuthentificationService {
         }
       } else {
         // sign with current wallet
-        return this.utils.signProof(
+        return this.walletService.signProof(
           JSON.stringify({
             certificateId: certificateId,
             timestamp: new Date()

@@ -73,6 +73,7 @@
     "@0xcert/conventions": "^2.0.0-alpha3",
     "@arianee/arianee-abi": "^0.13.0",
     "@arianee/iso-language-picker": "^0.3.0",
+    "@ethereumjs/tx": "^3.1.3",
     "@types/js-base64": "^2.3.1",
     "append-query": "^2.1.0",
     "axios": "^0.21.1",
