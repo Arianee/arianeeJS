@@ -45,7 +45,7 @@ describe('SimpleStore', () => {
     it('should fetch one', async () => {
       const store = new Store();
       const configService = configurationServiceStub();
-      const walletService = new WalletService();
+      const walletService = new WalletService({} as any, {} as any);
       const simpleStore = new SimpleStore(store, configService, walletService, new ArianeeEventEmitter());
       const httpClient = new ArianeeHttpClient();
 
@@ -58,7 +58,7 @@ describe('SimpleStore', () => {
     it('should fetch once with 2 calls at same time', async () => {
       const store = new Store();
       const configService = configurationServiceStub();
-      const walletService = new WalletService();
+      const walletService = new WalletService({} as any, {} as any);
       const simpleStore = new SimpleStore(store, configService, walletService, new ArianeeEventEmitter());
       const httpClient = new ArianeeHttpClient();
       simpleStore.get('test', 'test', () => httpClient.fetch(url));
@@ -72,7 +72,7 @@ describe('SimpleStore', () => {
     it('should fetch once with 2 calls one after the other', async () => {
       const store = new Store();
       const configService = configurationServiceStub();
-      const walletService = new WalletService();
+      const walletService = new WalletService({} as any, {} as any);
       const simpleStore = new SimpleStore(store, configService, walletService, new ArianeeEventEmitter());
       const httpClient = new ArianeeHttpClient();
       await simpleStore.get('test', 'test', () => httpClient.fetch(url));
@@ -87,7 +87,7 @@ describe('SimpleStore', () => {
       const store = new Store();
 
       const configService = configurationServiceStub();
-      const walletService = new WalletService();
+      const walletService = new WalletService({} as any, {} as any);
       const simpleStore = new SimpleStore(store, configService, walletService, new ArianeeEventEmitter());
 
       const httpClient = new ArianeeHttpClient();
@@ -104,7 +104,7 @@ describe('SimpleStore', () => {
       const store = new Store();
 
       const configService = configurationServiceStub();
-      const walletService = new WalletService();
+      const walletService = new WalletService({} as any, {} as any);
       const simpleStore = new SimpleStore(store, configService, walletService, new ArianeeEventEmitter());
 
       const httpClient = new ArianeeHttpClient();
@@ -124,7 +124,7 @@ describe('SimpleStore', () => {
     test('should RE fetch', async () => {
       const store = new Store();
       const configService = configurationServiceStub();
-      const walletService = new WalletService();
+      const walletService = new WalletService({} as any, {} as any);
       const simpleStore = new SimpleStore(store, configService, walletService, new ArianeeEventEmitter());
       const httpClient = jest.fn().mockImplementation(() => Promise.resolve('data'));
 
@@ -135,7 +135,7 @@ describe('SimpleStore', () => {
     test('should NOT fetch', async () => {
       const store = new Store();
       const configService = configurationServiceStub();
-      const walletService = new WalletService();
+      const walletService = new WalletService({} as any, {} as any);
       const simpleStore = new SimpleStore(store, configService, walletService, new ArianeeEventEmitter());
       const httpClient = jest.fn().mockImplementation(() => Promise.resolve('data'));
 

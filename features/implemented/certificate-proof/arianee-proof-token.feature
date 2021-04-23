@@ -2,7 +2,7 @@ Feature: Arianee JWT
 
   Background: Brand has a valid wallet
     Given user1 is a brand
-@dev
+
   Scenario: Owner of certificate creates Arianee Proof Token. User can see certificate
     Given user1 buys 1 credit of type certificate
     And user1 createsAndStores certificate0

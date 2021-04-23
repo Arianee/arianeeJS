@@ -27,3 +27,7 @@ Feature: I can recover my account from different technics
         Then user1 can retrieve its mnemonic
 
 
+
+    Scenario: from external wallet
+        Given user1 with account from externalWallet
+        Then user1 has a valid wallet

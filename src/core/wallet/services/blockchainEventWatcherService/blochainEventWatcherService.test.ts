@@ -41,7 +41,7 @@ describe('Event Watcher', () => {
     contractService = {
 
     } as ContractService;
-    store = new SimpleStore(new Store(), configurationService, new WalletService(), eventEmitter);
+    store = new SimpleStore(new Store(), configurationService, new WalletService({} as any, {} as any), eventEmitter);
 
     let blockNumber = 10;
 
@@ -55,7 +55,8 @@ describe('Event Watcher', () => {
       }
     } as Web3Service;
 
-    eventWatcher = new BlockchainEventWatcherService(contractService, new WalletService(), store, eventEmitter, web3Service);
+    eventWatcher = new BlockchainEventWatcherService(contractService, new WalletService({} as any, {} as any),
+      store, eventEmitter, web3Service);
     eventWatcher.timeout = 10;
   });
 

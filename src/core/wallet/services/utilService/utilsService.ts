@@ -36,7 +36,7 @@ export class UtilsService {
       )
     );
 
-    return this.signProof(data, privateKeyPreviousOwner);
+    return this.walletService.signProof(data, privateKeyPreviousOwner);
   }
 
   public signProofForRpc (certificateId: number, privateKey: string) {
@@ -45,7 +45,7 @@ export class UtilsService {
       timestamp: new Date()
     };
 
-    return this.signProof(JSON.stringify(message), privateKey);
+    return this.walletService.signProof(JSON.stringify(message), privateKey);
   }
 
   public simplifiedParsedURL (url: string) {
@@ -79,28 +79,6 @@ export class UtilsService {
         .toString(36)
         .substring(2, 8)
     );
-  }
-
-  public isRemoteAccount () {
-    return this.walletService.privateKey === undefined && this.walletService.address;
-  }
-
-  public async signProof (data: string | Array<any>, privateKey = this.walletService.privateKey):Promise<{ message:string, messageHash:string, signature:string }> {
-    let signature;
-    let messageHash;
-
-    if (privateKey) {
-      const signObject = this.web3.eth.accounts.sign(<string>data, privateKey);
-      signature = signObject.signature;
-      messageHash = signObject.messageHash;
-    } else if (this.isRemoteAccount()) {
-      signature = await this.web3.eth.personal.sign(<string>data, this.walletService.address);
-      messageHash = this.web3.eth.accounts.hashMessage(data);
-    } else {
-      throw new Error('There is no signing account');
-    }
-
-    return { message: data as string, signature, messageHash };
   }
 
   public recover (data: string | Array<any>, signature: string):string {
@@ -275,10 +253,6 @@ export class UtilsService {
     return block.timestamp;
   }
 
-  public signTransaction=(transaction:Transaction):Promise<SignedTransaction> => {
-    return this.walletService.account.signTransaction(transaction);
-  }
-
   public async prepareTransaction (encodeABI, contractAddress, overrideNonce?, transaction?):Promise<Transaction> {
     const nonce = overrideNonce || await this.web3.eth.getTransactionCount(
       this.walletService.address,
@@ -291,7 +265,7 @@ export class UtilsService {
       from: this.walletService.address,
       data: encodeABI,
       to: contractAddress,
-      gas: this.configurationService.arianeeConfiguration.transactionOptions.gas,
+      gasLimit: this.configurationService.arianeeConfiguration.transactionOptions.gas,
       gasPrice: this.configurationService.arianeeConfiguration.transactionOptions.gasPrice
     };
 

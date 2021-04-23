@@ -40,7 +40,7 @@ export class JWTService {
 
     private JWTGenericFactory = () => {
       const signer = async (data) => {
-        const signatureObject = await this.utilService.signProof(data);
+        const signatureObject = await this.walletService.signProof(data);
         return signatureObject.signature;
       };
       const decoder = (message, signature) => this.utilService.recover(message, signature);

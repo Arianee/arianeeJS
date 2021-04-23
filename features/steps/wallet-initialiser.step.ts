@@ -30,6 +30,13 @@ const walletFactory = (arianee: ArianeeWalletBuilder, type: string, key?) => {
     wallet = arianee.fromRandomMnemonic();
   } else if (type === 'readOnlyWallet') {
     wallet = arianee.readOnlyWallet();
+  } else if (type === 'externalWallet') {
+    const walletTemp = arianee.fromRandomKey();
+
+    wallet = arianee.fromExternalWallet({
+      address: walletTemp.address,
+      customSign: (data) => walletTemp.walletservice.sign(data)
+    });
   } else {
     const message = `this method to create a account is not supported ${type}`;
     throw new Error(message);
@@ -82,7 +89,7 @@ Given('user{int} with account from {word}', async function (userIndex, type) {
   return Promise.resolve();
 });
 
-Given('user{int} can approve storeContract', async function (userIndex) {
+Given('user{int} approves storeContract', async function (userIndex) {
   const wallet = this.store.getUserWallet(userIndex);
   await wallet.methods.approveStore();
 

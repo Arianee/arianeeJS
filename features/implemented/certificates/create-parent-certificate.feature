@@ -1,4 +1,3 @@
-@dev
 Feature: Create a certificate with parent certificate and fetch the right content
   Background: User has a valid wallet
     Given user1 is a brand

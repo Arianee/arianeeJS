@@ -100,6 +100,12 @@ export class ArianeeWallet {
       return this;
     }
 
+    public setCustomSign (sign: (data: string) => Promise<{ message: string, messageHash: string, signature: string }>): ArianeeWallet {
+      const walletService: WalletService = this.container.resolve(WalletService);
+      walletService.userCustomSign = sign;
+      return this;
+    }
+
     /**
      * @deprecated use address instead
      */
@@ -158,6 +164,10 @@ export class ArianeeWallet {
 
     public get account () {
       return this._account;
+    }
+
+    public get walletservice ():WalletService {
+      return this.container.resolve(WalletService);
     }
 
     public get contracts (): ContractService {
