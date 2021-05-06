@@ -27,7 +27,7 @@ export class WalletService {
     };
   }
 
-  public isRemoteAccount () {
+  public isRemoteAccount =() => {
     return this.privateKey === undefined && this.address && this.userCustomSign === undefined;
   }
 
@@ -51,11 +51,11 @@ export class WalletService {
     return { rawTransaction: signature, transactionHash: messageHash };
   };
 
-  public async signProof (data: string, privateKey = this.privateKey): Promise<{ message: string, messageHash: string, signature: string }> {
+  public signProof =async (data: string, privateKey = this.privateKey): Promise<{ message: string, messageHash: string, signature: string }> => {
     return this.sign(data, privateKey);
   }
 
-  public async sign (data: string, privateKey = this.privateKey): Promise<{ message: string, messageHash: string, signature: string }> {
+  public sign =async (data: string, privateKey = this.privateKey): Promise<{ message: string, messageHash: string, signature: string }> => {
     let signature;
     let messageHash;
     let message = data;
@@ -96,7 +96,7 @@ export class WalletService {
     return this.account.privateKey;
   }
 
-  public isCustomSendTransaction ():boolean {
+  public isCustomSendTransaction =():boolean => {
     return this.userCustomSendTransaction !== undefined;
   }
 }
