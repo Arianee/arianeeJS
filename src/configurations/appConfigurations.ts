@@ -19,5 +19,17 @@ export default deepFreeze({
     faucetUrl: `https://test.arian.ee/faucet?network=${NETWORK.arianeeTestnet}`,
     deepLink: 'test.testnet.arian.ee',
     alternativeDeeplink: []
+  },
+  [NETWORK.mumbai]: {
+    networkName: NETWORK.mumbai,
+    faucetUrl: `https://test.arian.ee/faucet?network=${NETWORK.mumbai}`,
+    deepLink: 'testnet.poly.arian.ee',
+    alternativeDeeplink: ['mumbai.arian.ee']
+  },
+  [NETWORK.polygon]: {
+    networkName: NETWORK.polygon,
+    faucetUrl: `https://test.arian.ee/faucet?network=${NETWORK.polygon}`,
+    deepLink: 'poly.arian.ee',
+    alternativeDeeplink: []
   }
 });
