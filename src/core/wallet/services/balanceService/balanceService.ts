@@ -16,7 +16,7 @@ export class BalanceService {
    * @returns {Promise<string>}
    */
   public balanceOfAria = async (address = this.walletService.account.address): Promise<string> => {
-    return this.balanceOfRia();
+    return this.balanceOfRia(address);
   };
 
   /**
