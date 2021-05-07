@@ -19,7 +19,7 @@ export class POAAndAriaService {
         console.warn(e);
         const message = `An error occured when requesting POA. url: ${url}`;
         console.warn(message);
-        return Promise.reject(message);
+        throw new Error(message);
       }
     }
 
@@ -34,7 +34,7 @@ export class POAAndAriaService {
         console.warn(e);
         const message = `An error occured when requesting Aria. url: ${url}`;
         console.warn(message);
-        return Promise.reject(message);
+        throw new Error(message);
       }
     }
 }
