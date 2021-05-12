@@ -3,6 +3,7 @@ import { get } from 'lodash';
 import { injectable } from 'tsyringe';
 import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
 import { EventContent } from '../../../../models/blockchainEvent';
+import { IOwnerOf } from '../../../../models/IOwnerOf';
 import { StoreNamespace } from '../../../../models/storeNamespace';
 import { hydrateTokenParameters } from '../../../../models/transaction-parameters';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
@@ -563,13 +564,61 @@ export class CertificateService {
     };
   };
 
+  /**
+   * Get information about owner compared to this wallet.
+   * It does not throw if certificateId does not exist
+   * @param {ArianeeTokenId} certificateId
+   * @returns {Promise<IOwnerOf>}
+   */
+  public ownerOf = async (certificateId: ArianeeTokenId): Promise<IOwnerOf> => {
+    let address;
+    try {
+      address = await this.contractService
+        .smartAssetContract
+        .methods
+        .ownerOf(certificateId)
+        .call();
+    } catch (e) {
+      address = undefined;
+    }
+
+    return {
+      address,
+      hasOwner: address !== undefined,
+      isOwner: address === this.walletService.address
+    };
+  };
+
+  /**
+   * Transfer a certificate from this wallet to another wallet
+   * @param {ArianeeTokenId} certificateId
+   * @param {string} toAddress
+   * @returns {Promise<void>}
+   */
+  public transfer = async (certificateId: ArianeeTokenId, toAddress: string) => {
+    const { isOwner } = await this.ownerOf(certificateId);
+
+    if (!isOwner) {
+      throw new Error(`This wallet is not the owner of ${certificateId}`);
+    } else {
+      return this.contractService
+        .smartAssetContract
+        .methods
+        .safeTransferFrom(
+          this.walletService.address,
+          toAddress,
+          certificateId
+        ).send();
+    }
+  };
+
+  /**
+   * Transfer certificate to dead address if this wallet is owner
+   * @param {ArianeeTokenId} certificateId
+   * @returns {Promise<any>}
+   */
   public destroyCertificate =(certificateId:ArianeeTokenId):Promise<any> => {
-    return this.contractService.smartAssetContract.methods
-      .transferFrom(
-        this.walletService.address,
-        '0x000000000000000000000000000000000000dead',
-        certificateId)
-      .send();
+    return this.transfer(certificateId, '0x000000000000000000000000000000000000dead');
   }
 
   public recoverCertificate =(certificateId:ArianeeTokenId):Promise<any> => {
