@@ -246,7 +246,8 @@ export class WalletCustomMethodService {
       approveStore: this.approveStore,
       buyCredits: this.buyCredits,
       balanceOfCredit: this.balanceService.balanceOfCredit,
-
+      ownerOf: this.certificateService.ownerOf,
+      transfer: this.certificateService.transfer,
       acceptArianeeEvent: this.eventService.acceptArianeeEvent,
       refuseArianeeEvent: this.eventService.refuseArianeeEvent,
       setMessageAuthorizationFor: this.certificateAuthorizationService.setMessageAuthorizationFor,

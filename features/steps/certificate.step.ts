@@ -411,6 +411,18 @@ Then(
   }
 );
 
+Then('user{int} transfers certificate{int} to user{int}', async function (
+  userIndex,
+  certificateIndex,
+  userIndex2
+) {
+  const token = this.store.getToken(certificateIndex);
+  const wallet = this.store.getUserWallet(userIndex);
+  const wallet2 = this.store.getUserWallet(userIndex2);
+
+  await wallet.methods.transfer(token, wallet2.address);
+});
+
 Then('user{int} is the owner of the certificate{int}', async function (
   userIndex,
   certificateIndex
@@ -526,6 +538,17 @@ Given('user{int} want to see certificate{int} details',
     expect(certficiateDetails).to.be.not.undefined;
 
     expect(certficiateDetails.owner).to.be.not.undefined;
+  });
+
+Given('user{int} sees certificate{int} with params:',
+  async function (userIndex, tokenIndex, passphrase, queryParameters) {
+    const params = JSON.parse(queryParameters);
+    const wallet = this.store.getUserWallet(userIndex);
+    const certificateId = this.store.getToken(tokenIndex);
+
+    const certficiateDetails = await wallet.methods.getCertificate(certificateId, passphrase, params);
+
+    this.store.storeCustom('result', certficiateDetails);
   });
 
 Given('user{int} sees certificate{int} details with passphrase {word} with params:',
