@@ -2,6 +2,7 @@ export const certificatei18n1 = {
   certificateId: 52245,
   content: {
     data: {
+      language: 'fr',
       $schema: 'https://cert.arianee.org/version1/ArianeeProductCertificate-i18n.json',
       name: 'Mon Multilingue',
       description: 'MAINdescription',
