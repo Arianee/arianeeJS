@@ -1,12 +1,22 @@
-import { makeWalletReady } from '../features/steps/helpers/walletCreator';
 import { NETWORK } from '../src';
 import { Arianee } from '../src/core/arianee';
 
 (async function () {
-  const arianee = await new Arianee().init(NETWORK.testnet);
-  const wallet = arianee.fromPrivateKey('0xd172d239727bff289dafa9824987a4ef9eb2a0fe4bac9988b30a98368d447938');
+  const arianee = await new Arianee().init(NETWORK.polygon, {
+    defaultArianeePrivacyGateway:"https://polygon.arianee.net",
+    transactionOptions:{
+      gasPrice:1010000000,
+      gas: 2000000,
+    }
+  });
 
-  console.log(wallet.privateKey);
+  const wallet = arianee.readOnlyWallet();
 
-  console.log(await wallet.methods.ownerOf(837642124));
+  const events = await wallet.contracts.smartAssetContract.getPastEvents('Hydrated',{
+    fromBlock:14641850,
+    toBlock:14641852
+  })
+
+  console.log(events);
+
 })();
