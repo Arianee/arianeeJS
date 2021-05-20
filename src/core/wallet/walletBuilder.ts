@@ -14,6 +14,7 @@ export class ArianeeWalletBuilder {
   private web3=new Web3();
 
   constructor (private arianeeConfig: ArianeeConfig) {
+
   }
 
   private buildAriaWalletFrom (configuration:ClassicConfiguration): ArianeeWallet {

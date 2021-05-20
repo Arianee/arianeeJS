@@ -37,5 +37,6 @@ export interface ArianeeConfig {
   transactionOptions?:TransactionOptions,
   defaultArianeePrivacyGateway?:string,
 
-  arianeeHttpClient:ArianeeHttpClient
+  arianeeHttpClient:ArianeeHttpClient,
+  protocolVersion?:number
 }

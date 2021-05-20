@@ -54,22 +54,23 @@ export class Arianee {
       addressesResult = await arianeeConfiguration.arianeeHttpClient.fetch(url).catch(err => console.error(`${url} not working`));
     }
 
-    Object.keys(addressesResult.contractAdresses).forEach(contractName => {
-      const contractAddress = addressesResult.contractAdresses[contractName];
-      try {
-        arianeeConfiguration[contractName] = { abi: conf[contractName], address: contractAddress };
-      } catch (e) {
-        console.warn(`this contract is not working ${contractName}`);
-      }
-    });
-
-    const { deepLink, faucetUrl, alternativeDeeplink, networkName: currentNetworkName } = conf.appConfig[networkName];
+    const { deepLink, faucetUrl, alternativeDeeplink, networkName: currentNetworkName, protocolVersion } = conf.appConfig[networkName];
 
     arianeeConfiguration.faucetUrl = faucetUrl;
     arianeeConfiguration.alternativeDeeplink = alternativeDeeplink;
     arianeeConfiguration.networkName = currentNetworkName;
+    arianeeConfiguration.protocolVersion = protocolVersion;
 
     arianeeConfiguration.defaultArianeePrivacyGateway = arianeeCustomConfiguration.defaultArianeePrivacyGateway;
+
+    Object.keys(addressesResult.contractAdresses).forEach(contractName => {
+      const contractAddress = addressesResult.contractAdresses[contractName];
+      try {
+        arianeeConfiguration[contractName] = { abi: conf.contracts[arianeeConfiguration.protocolVersion][contractName], address: contractAddress };
+      } catch (e) {
+        console.warn(`this contract is not working ${contractName}`);
+      }
+    });
 
     arianeeConfiguration.web3Provider = (function () {
       if (arianeeCustomConfiguration.httpProvider) {
