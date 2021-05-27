@@ -5,11 +5,13 @@ import { WatchParameter } from '../../models/watchParameter';
 import { ArianeeHttpClient } from '../libs/arianeeHttpClient/arianeeHttpClient';
 import { SimpleStore } from '../libs/simpleStore/simpleStore';
 import { ConsolidatedCertificateRequest } from './certificateSummary/certificateSummary';
+import { JWTService } from './services/ArianeeAccessToken/JWTService';
 import { ArianeeEventEmitter } from './services/arianeeEventEmitterService/ArianeeEventEmitter';
 import { ArianeePrivacyGatewayService } from './services/arianeePrivacyGatewayService/arianeePrivacyGatewayService';
 import { BalanceService } from './services/balanceService/balanceService';
 import { BatchService } from './services/batchService/batchService';
 import { BlockchainEventWatcherService } from './services/blockchainEventWatcherService/blochainEventWatcherService';
+import { BlockchainUtilsService } from './services/blockChainUtilsService/blockchainUtilsService';
 import { CertificateAuthorizationService } from './services/certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateDetails } from './services/certificateDetailsService/certificatesDetailsService';
 import { CertificateService } from './services/certificateService/certificateService';
@@ -20,7 +22,6 @@ import { DiagnosisService } from './services/diagnosisService/diagnosisService';
 import { EventService } from './services/eventService/eventsService';
 import { GlobalConfigurationService } from './services/globalConfigurationService/globalConfigurationService';
 import { IdentityService } from './services/identityService/identityService';
-import { JWTService } from './services/ArianeeAccessToken/JWTService';
 import { MessageService } from './services/messageService/messageService';
 import { POAAndAriaService } from './services/POAAndAriaFaucet/POAAndAriaService';
 import { UtilsService } from './services/utilService/utilsService';
@@ -65,7 +66,8 @@ export class ArianeeWallet {
         Web3Service,
         JWTService,
         CertificateUtilsService,
-        ArianeePrivacyGatewayService
+        ArianeePrivacyGatewayService,
+        BlockchainUtilsService
       );
 
       if (configuration.web3) {

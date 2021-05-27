@@ -5,6 +5,7 @@ import { hydrateTokenParameters } from '../../../../models/transaction-parameter
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { ConsolidatedCertificateRequest, ConsolidatedIssuerRequest } from '../../certificateSummary/certificateSummary';
 import { BalanceService } from '../balanceService/balanceService';
+import { BlockchainUtilsService } from '../blockChainUtilsService/blockchainUtilsService';
 import { CertificateAuthorizationService } from '../certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateProofService } from '../certificateProofService/certificateProofService';
 import { CertificateService } from '../certificateService/certificateService';
@@ -35,7 +36,8 @@ export class WalletCustomMethodService {
                private balanceService:BalanceService,
                private diagnosisService:DiagnosisService,
                private arianeeAccessTokenService:ArianeeAccessTokenService,
-               private certificateProofService:CertificateProofService
+               private certificateProofService:CertificateProofService,
+               private blockchainUtilsService:BlockchainUtilsService
   ) {
 
   }
@@ -210,6 +212,7 @@ export class WalletCustomMethodService {
     return {
       requestAria: this.poaAndAriaService.requestAria,
       requestPoa: this.poaAndAriaService.requestPoa,
+      cancelTransactions: this.blockchainUtilsService.cancelTransactions,
 
       reserveCertificateId: this.certificateService.reserveCertificateId,
       createCertificate: this.certificateService.customHydrateToken,
