@@ -1,19 +1,28 @@
+import { makeWalletReady } from '../features/steps/helpers/walletCreator';
 import { NETWORK } from '../src';
 import { Arianee } from '../src/core/arianee';
-import { blockchainEventsName } from '../src/models/blockchainEventsName';
-import { BlockchainEventWatcherEnum } from '../src/models/enum';
 
 (async function () {
-  const arianee = await new Arianee().init(NETWORK.testnet);
+  const arianee = await new Arianee().init(NETWORK.testnet, {
+    defaultArianeePrivacyGateway: 'https://zfezefrianee.com/rpc'
+  });
 
-  const wallet = arianee.readOnlyWallet();
+  const wallet = arianee.fromPrivateKey('0xb1c7ff3bb6067200c1e1843e474db01c29de26ecb497278354923b12d7dad8d3');
 
-  wallet.customWatch({
-    contract: wallet.contracts.messageContract,
-    filter: { _tokenId: '20130517' },
-    blockchainEvent: blockchainEventsName.message.MessageSent,
-    eventNames: ['messageReceiveOnTokenId']
-  }).on('messageReceiveOnTokenId', () => {
-    console.log('hey');
+  const ed = {
+    certificateId: 446203579,
+    passphrase: 'gdptvumu6a46'
+  };
+
+  await wallet.methods.createAndStoreMessage({
+    content: {
+      $schema: 'https://cert.arianee.org/version1/ArianeeEvent-i18n.json',
+      eventType: 'service',
+      language: 'fr-FR',
+      title: 'zefzefez',
+      description: 'zefzefez'
+    },
+
+    certificateId: ed.certificateId
   });
 })();
