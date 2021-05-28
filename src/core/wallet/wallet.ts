@@ -1,6 +1,7 @@
 import { container } from 'tsyringe';
 import { Transaction } from 'web3-core';
 import { ArianeeConfig } from '../../models/arianeeConfiguration';
+import { WatchParameter } from '../../models/watchParameter';
 import { ArianeeHttpClient } from '../libs/arianeeHttpClient/arianeeHttpClient';
 import { SimpleStore } from '../libs/simpleStore/simpleStore';
 import { ConsolidatedCertificateRequest } from './certificateSummary/certificateSummary';
@@ -172,6 +173,12 @@ export class ArianeeWallet {
 
     public get contracts (): ContractService {
       return this.container.resolve(ContractService);
+    }
+
+    public customWatch=(watchParameters:WatchParameter) => {
+      const blockchainEventWatcherService = this.container.resolve(BlockchainEventWatcherService);
+      blockchainEventWatcherService.addWatchParameter(watchParameters);
+      return this.watch;
     }
 
     public get watch (): EventEmitter {

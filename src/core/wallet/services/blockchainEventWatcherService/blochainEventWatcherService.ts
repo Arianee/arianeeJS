@@ -8,24 +8,24 @@ import { ArianeeEventEmitter, ArianeListenerEvent } from '../arianeeEventEmitter
 
 import { Web3Service } from '../web3Service/web3Service';
 import { blockchainEventsName } from '../../../../models/blockchainEventsName';
-import { watchParameter } from '../../../../models/watchParameter';
+import { WatchParameter } from '../../../../models/watchParameter';
 
 const blockchainEventCursorNamespaceKey = 'blockchainEventCursor';
 
 @injectable()
 export class BlockchainEventWatcherService {
   constructor (
-    private contractService:ContractService,
-    private walletService:WalletService,
-    public store: SimpleStore,
-    private eventEmitter: ArianeeEventEmitter,
-    private web3Service:Web3Service
+      private contractService:ContractService,
+      private walletService:WalletService,
+      public store: SimpleStore,
+      private eventEmitter: ArianeeEventEmitter,
+      private web3Service:Web3Service
   ) {
     eventEmitter.EE.on(ArianeListenerEvent.newListener, async (event) => {
       this.watcherParameters
       // is event handle by our watchers
         .filter(conf => conf.eventNames.includes(event))
-        // there is no on going watcher yet. Avoid double watcher.
+      // there is no on going watcher yet. Avoid double watcher.
         .filter(conf => !this.onGoingWatchers.has(this.createCompositeIdWatcher(conf.eventNames)))
         .forEach(async (conf) => {
           this.onGoingWatchers.add(this.createCompositeIdWatcher(conf.eventNames));
@@ -42,7 +42,11 @@ export class BlockchainEventWatcherService {
 
   public timeout=2000;
 
-  public watcherParameters:watchParameter[]=[
+  public addWatchParameter=(watcherParameter:WatchParameter) => {
+    this.watcherParameters.push(watcherParameter);
+  }
+
+  public watcherParameters:WatchParameter[]=[
     {
       contract: this.contractService.smartAssetContract,
       filter: { _from: this.walletService.address },
@@ -75,7 +79,7 @@ export class BlockchainEventWatcherService {
     }
   ]
 
-  watch = async (conf:watchParameter) => {
+  public watch = async (conf:WatchParameter) => {
     setTimeout(async () => {
       const { contract, filter, blockchainEvent, eventNames } = conf;
 
