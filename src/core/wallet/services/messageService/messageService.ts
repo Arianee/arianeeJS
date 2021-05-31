@@ -8,6 +8,7 @@ import { replaceLanguage } from '../../../libs/i18nSchemaLanguageManager/i18nSch
 import { isNullOrUndefined } from '../../../libs/isNullOrUndefined';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { ConsolidatedCertificateRequest, Message } from '../../certificateSummary/certificateSummary';
+import { ArianeePrivacyGatewayService } from '../arianeePrivacyGatewayService/arianeePrivacyGatewayService';
 import { CertificateService } from '../certificateService/certificateService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
@@ -27,7 +28,8 @@ export class MessageService {
     private utils: UtilsService,
     private diagnosisService:DiagnosisService,
     private store: SimpleStore,
-    private certificateService: CertificateService
+    private certificateService: CertificateService,
+    private arianeePrivacyGateWayService:ArianeePrivacyGatewayService
   ) {
   }
 
@@ -222,8 +224,12 @@ export class MessageService {
   public storeMessageContentInRPCServer =async (
     messageId:number,
     content,
-    url:string) => {
-    return this.httpClient.RPCCall(url, 'message.create', {
+    url?:string) => {
+    const arianeePrivacyGatewayURL = await this
+      .arianeePrivacyGateWayService
+      .getArianeePrivacyURLORFallback(url);
+
+    return this.httpClient.RPCCall(arianeePrivacyGatewayURL, 'message.create', {
       messageId,
       json: content
     });
@@ -235,12 +241,6 @@ export class MessageService {
     content?: { $schema: string;[key: string]: any };
       messageId?: number;
   }, url?:string) => {
-    if (!url) {
-      const certificateIssuerAddress = await this.contractService.smartAssetContract.methods.issuerOf(data.certificateId).call();
-      const issuerIdentity = await this.identityService.getIdentity({ address: certificateIssuerAddress, query: { issuer: true } });
-      url = issuerIdentity.data.rpcEndpoint;
-    }
-
     const result = await this.createMessage(data);
     await this.storeMessageContentInRPCServer(result.messageId, data.content, url);
 

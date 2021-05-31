@@ -6,6 +6,7 @@ import { ArianeeHttpClient } from '../libs/arianeeHttpClient/arianeeHttpClient';
 import { SimpleStore } from '../libs/simpleStore/simpleStore';
 import { ConsolidatedCertificateRequest } from './certificateSummary/certificateSummary';
 import { ArianeeEventEmitter } from './services/arianeeEventEmitterService/ArianeeEventEmitter';
+import { ArianeePrivacyGatewayService } from './services/arianeePrivacyGatewayService/arianeePrivacyGatewayService';
 import { BalanceService } from './services/balanceService/balanceService';
 import { BatchService } from './services/batchService/batchService';
 import { BlockchainEventWatcherService } from './services/blockchainEventWatcherService/blochainEventWatcherService';
@@ -63,7 +64,8 @@ export class ArianeeWallet {
         WalletService,
         Web3Service,
         JWTService,
-        CertificateUtilsService
+        CertificateUtilsService,
+        ArianeePrivacyGatewayService
       );
 
       if (configuration.web3) {

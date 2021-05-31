@@ -13,6 +13,7 @@ import {
   CertificateContentContainer,
   ConsolidatedCertificateRequest
 } from '../../certificateSummary/certificateSummary';
+import { ArianeePrivacyGatewayService } from '../arianeePrivacyGatewayService/arianeePrivacyGatewayService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
@@ -23,13 +24,14 @@ import { WalletService } from '../walletService/walletService';
 @injectable()
 export class EventService {
   constructor (
-    private identityService: IdentityService,
-    private contractService: ContractService,
-    private walletService: WalletService,
-    private configurationService: ConfigurationService,
-    private httpClient: ArianeeHttpClient,
-    private utils: UtilsService,
-    private diagnosisService:DiagnosisService
+      private identityService: IdentityService,
+      private contractService: ContractService,
+      private walletService: WalletService,
+      private configurationService: ConfigurationService,
+      private httpClient: ArianeeHttpClient,
+      private utils: UtilsService,
+      private diagnosisService: DiagnosisService,
+      private arianeePrivacyGateWayService: ArianeePrivacyGatewayService
   ) {
   }
 
@@ -268,12 +270,24 @@ export class EventService {
       .refuseEvent(eventId, this.configurationService.arianeeConfiguration.walletReward.address).send();
   }
 
+  /**
+   * Sotre content to Arianee Privacy Gateway
+   * @param {ArianeeTokenId} certificateId
+   * @param {number} arianeeEventId
+   * @param content
+   * @param {string} url: if not url is specified, fallback to default rpc, if not fallback to rpc of issuer
+   * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
+   */
   public storeArianeeEventContentInRPCServer =async (
     certificateId:ArianeeTokenId,
     arianeeEventId:number,
     content,
-    url:string = '') => {
-    return this.httpClient.RPCCall(url, 'event.create', {
+    url?: string) => {
+    const arianeePrivacyGatewayURL = await this
+      .arianeePrivacyGateWayService
+      .getArianeePrivacyURLORFallback(url, certificateId);
+
+    return this.httpClient.RPCCall(arianeePrivacyGatewayURL, 'event.create', {
       certificateId: certificateId,
       eventId: arianeeEventId,
       json: content
@@ -286,12 +300,6 @@ export class EventService {
     arianeeEventId?:number;
     content?: { $schema: string;[key: string]: any };
   }, url?:string) => {
-    if (!url) {
-      const certificateIssuerAddress = await this.contractService.smartAssetContract.methods.issuerOf(data.certificateId).call();
-      const issuerIdentity = await this.identityService.getIdentity({ address: certificateIssuerAddress, query: { issuer: true } });
-      url = issuerIdentity.data.rpcEndpoint;
-    }
-
     const result = await this.createArianeeEvent(data);
 
     await this.storeArianeeEventContentInRPCServer(data.certificateId, result.arianeeEventId, data.content, url);

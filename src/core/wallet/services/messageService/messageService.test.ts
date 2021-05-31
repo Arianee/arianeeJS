@@ -62,7 +62,9 @@ describe('Message Service', () => {
             {} as any,
             {} as any,
             {} as any,
-            {} as any
+            {} as any,
+        {} as any
+
     );
 
     expect(messageService).toBeDefined();
@@ -78,7 +80,9 @@ describe('Message Service', () => {
             {} as any,
             {} as any,
             {} as any,
-            {} as any
+            {} as any,
+        {} as any
+
     );
 
     const mockMessage = mockMessageFactory();
@@ -99,7 +103,8 @@ describe('Message Service', () => {
             {} as any,
             {} as any,
             {} as any,
-            {} as any
+            {} as any,
+        {} as any
     );
     const mockMessage = mockMessageFactory();
 
