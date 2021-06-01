@@ -9,6 +9,7 @@ import { ConfigurationService } from '../configurationService/configurationServi
 
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
+import { MixedTransaction } from '../../../etherjsWeb3Transaction/TransactionMapper';
 
 @injectable()
 export class UtilsService {
@@ -266,7 +267,8 @@ export class UtilsService {
       data: encodeABI,
       to: contractAddress,
       gasLimit: this.configurationService.arianeeConfiguration.transactionOptions.gas,
-      gasPrice: this.configurationService.arianeeConfiguration.transactionOptions.gasPrice
+      gasPrice: this.configurationService.arianeeConfiguration.transactionOptions.gasPrice,
+      value: '0x00'
     };
 
     const mergedTransaction = { ...defaultTransaction, ...transaction };

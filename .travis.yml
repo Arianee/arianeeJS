@@ -4,7 +4,6 @@ cache:
   npm: true
 node_js:
   - 10
-  - 8
   - 12
 
 install:

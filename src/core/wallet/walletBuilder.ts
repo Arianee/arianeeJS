@@ -126,4 +126,14 @@ export class ArianeeWalletBuilder {
 
     return this.buildAriaWalletFrom({ account, web3: web3 });
   }
+
+  public fromMetamask (address):ArianeeWallet {
+    const account = {
+      address: address
+    };
+
+    const wallet = this.buildAriaWalletFrom({ account });
+    wallet.walletservice.metamask = true;
+    return wallet;
+  }
 }

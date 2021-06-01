@@ -7,7 +7,13 @@ import { UtilsService } from '../wallet/services/utilService/utilsService';
 import { WalletService } from '../wallet/services/walletService/walletService';
 import { Web3Service } from '../wallet/services/web3Service/web3Service';
 import { flatPromise } from './flat-promise';
+import { TransactionMapper } from '../etherjsWeb3Transaction/TransactionMapper';
 
+declare global {
+  interface Window {
+    ethereum:any
+  }
+}
 @injectable()
 export class ArianeeContract<ContractImplementation extends Contract> {
   public key: ContractImplementation;
@@ -84,8 +90,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
     data: TransactionObject<any>
   ): Promise<any> => {
     const encodeABI = data.encodeABI();
-    const preparedTransaction = await this.utilsService.prepareTransaction(encodeABI, this.contract.options.address, false, transaction);
-
+    const preparedTransaction:any = await this.utilsService.prepareTransaction(encodeABI, this.contract.options.address, false, transaction);
     if (this.walletService.isCustomSendTransaction()) {
       return this.walletService
         .customSendTransaction(preparedTransaction);
@@ -107,6 +112,13 @@ export class ArianeeContract<ContractImplementation extends Contract> {
               error: e
             };
           });
+      }
+      if (this.walletService.metamask) {
+        const metamaskTransaction = new TransactionMapper(preparedTransaction).toMetamaskTransaction();
+        await window.ethereum.request({
+          method: 'eth_sendTransaction',
+          params: [metamaskTransaction]
+        });
       } else {
         const signTransaction = this.walletService.signTransaction(preparedTransaction);
 
