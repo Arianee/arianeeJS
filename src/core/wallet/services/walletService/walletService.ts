@@ -11,6 +11,7 @@ export class WalletService {
   public userCustomSign: (data: string) => Promise<{ message: string, messageHash: string, signature: string }>;
 
   public account;
+  public metamask;
   public userCustomSendTransaction: (transaction:Transaction) => Promise<any>;
 
   constructor (private web3Service: Web3Service, private configurationService:ConfigurationService) {
@@ -28,7 +29,7 @@ export class WalletService {
   }
 
   public isRemoteAccount =() => {
-    return this.privateKey === undefined && this.address && this.userCustomSign === undefined;
+    return this.privateKey === undefined && this.address && this.userCustomSign === undefined && !this.metamask;
   }
 
   private customCommon= Common.forCustomChain(
@@ -81,6 +82,12 @@ export class WalletService {
       messageHash = this.web3Service.web3.eth.accounts.hashMessage(data);
     } else if (this.userCustomSign) {
       return this.userCustomSign(data);
+    } else if (this.metamask) {
+      signature = await window.ethereum.request({
+        method: 'personal_sign',
+        params: [data, this.address]
+      });
+      messageHash = this.web3Service.web3.eth.accounts.hashMessage(data);
     } else {
       throw new Error('There is no signing account');
     }

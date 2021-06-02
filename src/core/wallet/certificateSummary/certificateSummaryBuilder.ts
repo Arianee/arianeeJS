@@ -103,7 +103,7 @@ export class CertificateSummaryBuilder {
           return ownerAddress;
         },
         address: ownerAddress,
-        isOwner: ownerAddress === currentWallet
+        isOwner: ownerAddress.toLowerCase() === currentWallet.toLowerCase()
       };
 
       return this;

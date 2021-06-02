@@ -1,6 +1,6 @@
 import { TxData } from '@ethereumjs/tx';
 import { BigNumber, Transaction as EtherTransaction } from 'ethers/utils';
-import { TransactionConfig as Web3Transaction } from 'web3-core';
+import { provider, TransactionConfig as Web3Transaction } from 'web3-core';
 
 export interface MixedTransaction {
     nonce: string | number,
@@ -9,7 +9,7 @@ export interface MixedTransaction {
     value?: string,
     chainId?: number,
     data?: string
-
+    from?: string,
     gasLimit?: string | number,
     gas?: string | number,
 }
@@ -82,5 +82,16 @@ export class TransactionMapper {
         data: this.mixedTransaction.data,
         gasLimit: TransactionMapper.toBigNumber(this.gasLimit)
       }) as any;
+    }
+
+    public toMetamaskTransaction = () => {
+      return this.clean({
+        from: this.mixedTransaction.from,
+        to: this.mixedTransaction.to,
+        gasPrice: '0x' + this.mixedTransaction.gasPrice.toString(16),
+        gas: '0x' + this.mixedTransaction.gasLimit.toString(16),
+        nonce: '0x' + this.mixedTransaction.nonce.toString(16),
+        data: this.mixedTransaction.data
+      });
     }
 }

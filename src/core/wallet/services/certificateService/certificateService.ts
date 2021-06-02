@@ -329,7 +329,9 @@ export class CertificateService {
     if (query.owner) {
       requestQueue.push(
         this.certificateDetails.getCertificateOwner(certificateId)
-          .then(owner => response.setOwner(owner, this.walletService.address)));
+          .then(owner => {
+            return response.setOwner(owner, this.walletService.address);
+          }));
     }
 
     if (query.issuer) {
