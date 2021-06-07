@@ -43,7 +43,7 @@ export class ArianeeWalletBuilder {
       randomWallet.privateKey
     );
 
-    return this.buildAriaWalletFrom({ account, mnemonic });
+    return this.buildAriaWalletFrom({ account, mnemonic: mnemonic.phrase });
   }
 
   /**
@@ -67,7 +67,7 @@ export class ArianeeWalletBuilder {
    * @param mnemonic
    */
   public fromMnemonic (mnemonic: string): ArianeeWallet {
-    const isValidMnemonic = ethers.utils.HDNode.isValidMnemonic(mnemonic);
+    const isValidMnemonic = ethers.utils.isValidMnemonic(mnemonic);
     if (isValidMnemonic) {
       const { privateKey } = etherWallet.fromMnemonic(mnemonic);
       const account = this.web3.eth.accounts.privateKeyToAccount(privateKey);
