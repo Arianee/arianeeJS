@@ -1,5 +1,5 @@
 import { TxData } from '@ethereumjs/tx';
-import { BigNumber, Transaction as EtherTransaction } from 'ethers/utils';
+import { BigNumber, Transaction as EtherTransaction } from 'ethers';
 import { provider, TransactionConfig as Web3Transaction } from 'web3-core';
 
 export interface MixedTransaction {
@@ -29,7 +29,7 @@ export class TransactionMapper {
     } else if (BigNumber.isBigNumber(value)) {
       return value.toHexString() as any;
     } else {
-      return new BigNumber(value).toHexString() as any;
+      return BigNumber.from(value).toHexString() as any;
     }
   }
 

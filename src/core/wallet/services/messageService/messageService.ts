@@ -131,7 +131,7 @@ export class MessageService {
 
     const messageSentEvents = await this.contractService.messageContract.getPastEvents(
       'MessageSent',
-      { fromBlock: 0, toBlock: 'latest', filter: { _tokenId: result.tokenId } }
+      { fromBlock: 0, toBlock: 'latest', filter: { _tokenId: result.tokenId.toString() } }
     );
 
     const messageCreationEvent = messageSentEvents.find(event => event.returnValues._messageId === messageId.toString());
