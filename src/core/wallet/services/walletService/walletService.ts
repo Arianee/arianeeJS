@@ -2,7 +2,7 @@ import Common from '@ethereumjs/common';
 import { Transaction as Tx } from '@ethereumjs/tx';
 import { injectable } from 'tsyringe';
 import { Transaction } from 'web3-core';
-import { TransactionMapper } from '../../../etherjsWeb3Transaction/TransactionMapper';
+import { MixedTransaction, TransactionMapper } from '../../../etherjsWeb3Transaction/TransactionMapper';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { Web3Service } from '../web3Service/web3Service';
 
@@ -42,7 +42,7 @@ export class WalletService {
     'istanbul'
   );
 
-  public signTransaction = async (transaction: Transaction): Promise<{ rawTransaction:string, transactionHash:string }> => {
+  public signTransaction = async (transaction: MixedTransaction): Promise<{ rawTransaction:string, transactionHash:string }> => {
     const transactionMapped = new TransactionMapper(transaction).toEthereumjs();
 
     const tx = Tx.fromTxData(transactionMapped, { common: this.customCommon })
