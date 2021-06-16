@@ -11,6 +11,13 @@ import {
 import { ContractService } from '../contractService/contractsService';
 import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 import { UtilsService } from '../utilService/utilsService';
+import { get } from 'lodash';
+import { isIdentitySchemai18n, isSchemai18n } from '../../../libs/certificateVersion';
+import {
+  replaceLanguageContentWithFavUserLanguage,
+  replaceLanguageIdentityContentWithFavUserLanguage
+} from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
+import { ArianeeBrandIdentityi18n } from '../../../../models/jsonSchema/identities/ArianeeBrandIdentityi18n';
 
 @injectable()
 export class IdentityService {
@@ -53,16 +60,25 @@ export class IdentityService {
   ): Promise<IdentitySummary> => {
     const { query, address } = parameters;
     const { issuer } = this.globalConfigurationService.getMergedQuery(query);
+    let identitySummary:IdentitySummary<ArianeeBrandIdentityi18n>;
 
     const { forceRefresh, waitingIdentity } = issuer as ConsolidatedIssuerRequestInterface;
     if (!waitingIdentity) {
-      return this.store.get<IdentitySummary>(StoreNamespace.identity, address, () => this.fetchIdentity(address), forceRefresh)
+      identitySummary = await this.store.get<IdentitySummary<ArianeeBrandIdentityi18n>>(StoreNamespace.identity, address, () => this.fetchIdentity(address), forceRefresh)
         .catch(d => d);
     } else {
       console.warn('you are fetching waiting identity');
-      return this.store.get<IdentitySummary>(StoreNamespace.identityWaiting, address, () => this.fetchWaitingIdentity(address), forceRefresh)
+      identitySummary = await this.store.get<IdentitySummary<ArianeeBrandIdentityi18n>>(StoreNamespace.identityWaiting, address, () => this.fetchWaitingIdentity(address), forceRefresh)
         .catch(d => d);
     }
+    const identityContent:ArianeeBrandIdentityi18n = identitySummary.data;
+    if (get(query, 'advanced.languages') &&
+      get(identitySummary, 'data') &&
+      isIdentitySchemai18n(identityContent)) {
+      identitySummary.data = replaceLanguageIdentityContentWithFavUserLanguage(identityContent, query.advanced.languages) as any;
+    }
+
+    return identitySummary;
   }
 
   /**
