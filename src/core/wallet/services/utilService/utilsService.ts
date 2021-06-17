@@ -216,9 +216,17 @@ export class UtilsService {
     };
   }
 
-  public readLink (link) {
+  /**
+   * Read link and decompose it.
+    * @param link
+   * @param {boolean} checkChain, true by default. If you don't need to check that arianee is on the right chain
+   * @returns {{method: string; certificateId: number; passphrase: string}}
+   */
+  public readLink (link, checkChain = true) {
     const url = this.simplifiedParsedURL(link);
-    this.isRightChain(url.hostname);
+    if (checkChain) {
+      this.isRightChain(url.hostname);
+    }
 
     const methodUrl = url.pathname.split('/');
 
