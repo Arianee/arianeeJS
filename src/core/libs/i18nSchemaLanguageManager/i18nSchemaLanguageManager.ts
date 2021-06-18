@@ -1,6 +1,7 @@
 import { ArianeeCertificatei18n } from '../../../models/jsonSchema/certificates/ArianeeProducti18n';
 import { CertificateSummary } from '../../wallet/certificateSummary';
 import { pickLanguageAccordingToUserLanguagesWithMacrosFallback } from '@arianee/iso-language-picker';
+import { ArianeeBrandIdentityi18n } from '../../../models/jsonSchema/identities/ArianeeBrandIdentityi18n';
 
 const macros = ['fr-FR', 'en-US', 'ko-KR', 'ja-JP', 'de-DE'];
 
@@ -21,6 +22,7 @@ export const replaceLanguage = (certificateSummary :CertificateSummary<ArianeeCe
 export const replaceLanguageContentWithFavUserLanguage = (certificateId18n: ArianeeCertificatei18n, languages: string[]) => {
   const availableLanguages = availableLanguagesExtract(certificateId18n);
   const defaultLanguage = certificateId18n.language;
+
   const language = pickLanguageAccordingToUserLanguagesWithMacrosFallback(macros, languages, availableLanguages, defaultLanguage);
 
   return replaceLanguageContent(certificateId18n, language);
@@ -39,4 +41,12 @@ export const replaceLanguageContent = (certificateId18n :ArianeeCertificatei18n,
     ...certificateId18n,
     ...translated
   };
+};
+
+export const replaceLanguageIdentityContentWithFavUserLanguage = (identityI18n:ArianeeBrandIdentityi18n, languages:string[]) => {
+  const availableLanguages = identityI18n.i18n.map(i => i.language);
+  const defaultLanguage = 'en-US';
+
+  const language = pickLanguageAccordingToUserLanguagesWithMacrosFallback(macros, languages, availableLanguages, defaultLanguage);
+  return replaceLanguageContent(identityI18n, language);
 };
