@@ -5,9 +5,15 @@ import { HttpInterceptor, HttpRequestInterceptor } from '../../../models/httpCli
 @injectable()
 export class ArianeeHttpClient {
     private httpRequestInterceptor:HttpRequestInterceptor;
+    private httpFetch=(url, config) => axios(url, config).then(result => result.data);
 
     public setRequestInterceptor=(interceptor:HttpRequestInterceptor):ArianeeHttpClient => {
       this.httpRequestInterceptor = interceptor;
+      return this;
+    }
+
+    public setHttpFetch=(httpFetch:(url, config)=>Promise<any>):ArianeeHttpClient => {
+      this.httpFetch = httpFetch;
       return this;
     }
 
@@ -107,7 +113,7 @@ export class ArianeeHttpClient {
         config = result.config;
       }
       try {
-        return axios(url, config).then(result => result.data);
+        return this.httpFetch(url, config);
       } catch (e) {
         console.warn('Error on fetch', url, config);
         Promise.reject(e);
