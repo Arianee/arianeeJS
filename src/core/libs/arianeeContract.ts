@@ -115,10 +115,30 @@ export class ArianeeContract<ContractImplementation extends Contract> {
       }
       if (this.walletService.metamask) {
         const metamaskTransaction = new TransactionMapper(preparedTransaction).toMetamaskTransaction();
-        await window.ethereum.request({
+        const txHash = await window.ethereum.request({
           method: 'eth_sendTransaction',
           params: [metamaskTransaction]
         });
+
+        if (txHash === '0x0000000000000000000000000000000000000000000000000000000000000000') {
+          throw new Error('An error occurred while sending the transaction');
+        }
+
+        const watchReceipt = async () => {
+          const receipt = await window.ethereum.request({
+            method: 'eth_getTransactionReceipt',
+            params: [txHash]
+          });
+          if (receipt === null) {
+            return watchReceipt();
+          } else {
+            return receipt;
+          }
+        };
+
+        const receipt = await watchReceipt();
+
+        return { receipt };
       } else {
         const signTransaction = this.walletService.signTransaction(preparedTransaction);
 
