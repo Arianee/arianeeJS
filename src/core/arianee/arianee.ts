@@ -33,7 +33,8 @@ export class Arianee {
       deepLink?:string,
       protocolConfiguration?:any,
       defaultArianeePrivacyGateway?:string,
-      httpInterceptor?:HttpInterceptor
+      httpInterceptor?:HttpInterceptor,
+      httpFetch?:(url, config)=>Promise<any>
     } = {}
   ): Promise<ArianeeWalletBuilder> {
     const arianeeConfiguration: ArianeeConfig = {
@@ -44,6 +45,12 @@ export class Arianee {
       arianeeConfiguration
         .arianeeHttpClient
         .setRequestInterceptor(arianeeCustomConfiguration.httpInterceptor.httpRequestInterceptor);
+    }
+
+    if (arianeeCustomConfiguration.httpFetch) {
+      arianeeConfiguration
+        .arianeeHttpClient
+        .setHttpFetch(arianeeCustomConfiguration.httpFetch);
     }
 
     let addressesResult;
