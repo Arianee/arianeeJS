@@ -14,7 +14,8 @@ export class WalletService {
   public metamask;
   public userCustomSendTransaction: (transaction:Transaction) => Promise<any>;
 
-  constructor (private web3Service: Web3Service, private configurationService:ConfigurationService) {
+  constructor (private web3Service: Web3Service,
+               private configurationService:ConfigurationService) {
   }
 
   public get customSendTransaction () {
@@ -71,7 +72,7 @@ export class WalletService {
       if (decodedTx) {
         message = JSON.stringify(decodedTx.toJSON());
         signature = '0x' + decodedTx.sign(Buffer.from(privateKey.substring(2), 'hex')).serialize().toString('hex');
-        messageHash = data;
+        messageHash = this.web3Service.web3.eth.accounts.hashMessage(data);
       } else {
         signObject = this.web3Service.web3.eth.accounts.sign(<string>data, privateKey);
         signature = signObject.signature;
