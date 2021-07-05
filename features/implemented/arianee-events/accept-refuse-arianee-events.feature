@@ -1,3 +1,4 @@
+@browser
 Feature: Certificate owner can accept or refuse event
   Background: 2 users with valid wallet
     Given user1 is a brand

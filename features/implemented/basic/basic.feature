@@ -1,3 +1,4 @@
+@browser
 Feature: Simple maths
   In order to do maths
   As a developer

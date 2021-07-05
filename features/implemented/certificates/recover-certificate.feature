@@ -1,3 +1,4 @@
+@browser
 Feature: Recover a certificate
 
   Background: User has a valid wallet

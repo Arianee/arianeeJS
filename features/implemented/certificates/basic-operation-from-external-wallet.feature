@@ -1,3 +1,4 @@
+@browser
 Feature: external wallet basic operation
   Background: User has a valid wallet
     Given user1 with account from externalWallet

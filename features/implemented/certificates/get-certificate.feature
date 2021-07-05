@@ -1,3 +1,4 @@
+@browser
 Feature: Certificate creation
 
   Background: User has a valid wallet

@@ -1,3 +1,4 @@
+@browser
 Feature: Get certificate with read only wallet
 
   Scenario: User wants to read certificate

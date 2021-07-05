@@ -1,4 +1,4 @@
-
+@browser
 Feature: Send message
   Background: User has a valid wallet
     Given user1 is a brand
@@ -26,7 +26,6 @@ Feature: Send message
       | receipt        | true |
 
     Then user1 is the owner of the certificate0
-
 
   Scenario: Brand2 can send a message after whitelist
     Given user2 is a brand

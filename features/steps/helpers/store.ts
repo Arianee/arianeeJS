@@ -1,7 +1,5 @@
-import { World } from 'cucumber';
-import { ArianeeWallet } from '../../../src/core/wallet';
-import { CertificateSummary } from '../../../src/core/wallet/certificateSummary';
-import { ArianeeWalletBuilder } from '../../../src/core/wallet/walletBuilder';
+import {ArianeeWallet} from '../../../src/core/wallet';
+import {CertificateSummary} from '../../../src/core/wallet/certificateSummary';
 
 export class CCStore {
     private users: ArianeeWallet[] = [];

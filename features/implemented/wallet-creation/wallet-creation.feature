@@ -1,3 +1,4 @@
+@browser
 Feature: I can recover my account from different technics
 
     Scenario: from valid privatekey

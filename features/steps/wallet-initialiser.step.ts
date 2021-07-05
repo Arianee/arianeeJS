@@ -1,8 +1,8 @@
-import { expect } from 'chai';
-import { Given, Then } from 'cucumber';
-import { ArianeeWallet } from '../../src/core/wallet';
-import { ArianeeWalletBuilder } from '../../src/core/wallet/walletBuilder';
-import { makeWalletReady } from './helpers/walletCreator';
+import {Given, Then} from '@cucumber/cucumber';
+import {expect} from 'chai';
+import {ArianeeWallet} from '../../src/core/wallet';
+import {ArianeeWalletBuilder} from '../../src/core/wallet/walletBuilder';
+import {makeWalletReady} from './helpers/walletCreator';
 
 Given('user{int} has a valid wallet', async function (userIndex) {
   const wallet = this.store.getUserWallet(userIndex);

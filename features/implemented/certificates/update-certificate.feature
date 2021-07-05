@@ -1,3 +1,4 @@
+@browser
 Feature: Certificate update
 
   Background: User has a valid wallet
