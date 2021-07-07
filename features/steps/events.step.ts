@@ -1,5 +1,5 @@
-import { expect } from 'chai';
-import { When, Given, Then } from 'cucumber';
+import {Given, Then} from '@cucumber/cucumber';
+import {expect} from 'chai';
 
 Given('user{int} creates an event{int} with title {string} on certificate{int} with proper errors', async function (
   userIndex, eventIndex, title, certificateIndex
@@ -39,7 +39,7 @@ Given('user{int} creates an event{int} on certificate{int} as:', async function 
   const { arianeeEventId } = await wallet.methods.createAndStoreArianeeEvent({
     certificateId,
     content: eventContent
-  }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`
+  }, `http://localhost:3002/${process.env.NETWORK}/rpc`
   );
 
   this.store.storeEvent(eventIndex, arianeeEventId);
@@ -50,15 +50,12 @@ Given('user{int} createsAndStores an event{int} on certificate{int} as:', async 
 ) {
   const wallet = this.store.getUserWallet(userIndex);
   const certificateId = this.store.getToken(certificateIndex);
-
   const eventContent = JSON.parse(eventContentSTR);
-
   const { arianeeEventId } = await wallet.methods.createAndStoreArianeeEvent({
     certificateId,
     content: eventContent
-  }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`
+  }, `http://localhost:3002/${process.env.NETWORK}/rpc`
   );
-
   this.store.storeEvent(eventIndex, arianeeEventId);
 });
 
@@ -74,7 +71,7 @@ Given('user{int} createsAndStores an event{int} with title {string} on certifica
       title,
       $schema: 'https://cert.arianee.org/version1/ArianeeEvent-i18n.json'
     }
-  }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`
+  }, `http://localhost:3002/${process.env.NETWORK}/rpc`
   );
 
   this.store.storeEvent(eventIndex, arianeeEventId);

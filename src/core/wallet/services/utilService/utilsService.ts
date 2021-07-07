@@ -129,7 +129,7 @@ export class UtilsService {
    * @param arianeeConfig
    */
   private findHostNameInConfig (hostname:string, arianeeConfig:ArianeeConfig) {
-    const isCurrentConfigDeeplink = arianeeConfig.deepLink === hostname;
+    const isCurrentConfigDeeplink = arianeeConfig.deepLink.split(':')[0] === hostname.split(':')[0];
 
     const isCurrentConfigAlternativeDeeplinks = arianeeConfig
       .alternativeDeeplink

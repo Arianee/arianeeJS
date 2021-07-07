@@ -1,5 +1,5 @@
-import { expect } from 'chai';
-import { Given } from 'cucumber';
+import {Given} from '@cucumber/cucumber';
+import {expect} from 'chai';
 
 Given('user{int} looses certificate{int}', async function (
   userIndex, certificateIndex

@@ -1,5 +1,5 @@
-import { expect } from 'chai';
-import { When, Given, Then } from 'cucumber';
+import {Given, Then} from '@cucumber/cucumber';
+import {expect} from 'chai';
 
 Given('user{int} send a message{int} on certificate{int} as:', async function (
   userIndex, messageIndex, certificateIndex, messageContentSTR

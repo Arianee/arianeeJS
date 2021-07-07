@@ -1,20 +1,14 @@
-import { Given } from 'cucumber';
+import {Given} from '@cucumber/cucumber';
 import fs from 'fs';
 
-const pptrFirefox = require('puppeteer-firefox');
-const puppeteer = require('puppeteer');
+const playwright = require('playwright')
 
 Given('ArianeeLib is used on browser {string} it works', async function (browserName) {
   const contentHtml = '<!doctype html><html><body id=\'div1\'></body></html>';
   const contentJSBundle = fs.readFileSync('./browser/bundle.js', 'utf8');
   const contentTestJS = fs.readFileSync('./dist/myexecfile.js', 'utf8');
 
-  let browser;
-  if (browserName === 'chrome') {
-    browser = await puppeteer.launch({ headless: true });
-  } else if (browserName === 'firefox') {
-    browser = await pptrFirefox.launch({ headless: true });
-  }
+  const browser = await playwright[browserName].launch({ headless: true });
 
   const page = await browser.newPage();
 

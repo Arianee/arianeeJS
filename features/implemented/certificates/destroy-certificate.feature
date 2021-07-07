@@ -1,3 +1,4 @@
+@browser
 Feature: Destroy a certificate
 
   Background: User has a valid wallet

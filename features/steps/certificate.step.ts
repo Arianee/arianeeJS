@@ -1,13 +1,11 @@
-import { expect } from 'chai';
-import axios from 'axios';
-import { Given, Then, When } from 'cucumber';
+import {Given, Then, When} from '@cucumber/cucumber';
+import {expect} from 'chai';
+import {get} from 'lodash';
 import {
-  CertificateSummary,
-  ConsolidatedCertificateRequest,
-  ConsolidatedIssuerRequest
+    CertificateSummary,
+    ConsolidatedCertificateRequest
 } from '../../src/core/wallet/certificateSummary/certificateSummary';
-import { waitFor } from './helpers/waitFor';
-import { get } from 'lodash';
+import {waitFor} from './helpers/waitFor';
 
 Given('user{int} has positive credit certificate balance', async function (
   userIndex
@@ -127,7 +125,7 @@ When(
           $schema: 'https://cert.arianee.org/version1/ArianeeProductCertificate-i18n.json',
           name: 'Top Time Limited Edition'
         }
-      }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`);
+      }, `http://localhost:3002/${process.env.NETWORK}/rpc`);
 
       this.store.storeToken(tokenIndex, certificateId);
 
@@ -158,7 +156,7 @@ When(
           $schema: 'https://cert.arianee.org/version1/ArianeeProductCertificate-i18n.json',
           name: 'Certificate Updated'
         }
-      }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`);
+      }, `http://localhost:3002/${process.env.NETWORK}/rpc`)
 
       expect(true).equals(true);
     } catch (err) {
@@ -174,16 +172,14 @@ Given('user{int} fetch certificate{int} summary',
     const wallet = this.store.getUserWallet(userIndex);
 
     const certificateId = this.store.getToken(certificateIndex);
-
     const certificate = await wallet.methods.getCertificate(certificateId, undefined, {
       content: {
         forceRefresh: true
       },
       issuer: {
-        rpcURI: `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`
+        rpcURI: `http://localhost:3002/${process.env.NETWORK}/rpc`
       }
     });
-
     this.store.storeCertificateSummary(certificateId, certificate);
   });
 
@@ -238,11 +234,11 @@ When(
 
     const result0 = await wallet.methods.createAndStoreCertificate({
       content: parentContent0
-    }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`);
+    }, `http://localhost:3002/${process.env.NETWORK}/rpc`);
 
     const result1 = await wallet.methods.createAndStoreCertificate({
       content: parentContent1
-    }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`);
+    }, `http://localhost:3002/${process.env.NETWORK}/rpc`);
 
     const { certificateId } = await wallet.methods.createAndStoreCertificate({
       content: {
@@ -261,7 +257,7 @@ When(
           }
         ]
       }
-    }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`);
+    }, `http://localhost:3002/${process.env.NETWORK}/rpc`);
 
     this.store.storeToken(tokenIndex, certificateId);
   }
@@ -303,7 +299,7 @@ When(
     try {
       const result = await wallet.methods.createAndStoreCertificate({
         content
-      }, `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`);
+      }, `http://localhost:3002/${process.env.NETWORK}/rpc`);
 
       const { certificateId } = result;
       this.store.storeToken(tokenIndex, certificateId);

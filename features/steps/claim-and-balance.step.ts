@@ -1,7 +1,6 @@
-import { expect } from 'chai';
-import { Given, Then, When } from 'cucumber';
-import { creditTypeEnum } from '../../src/models/creditTypesEnum';
-import { makeWalletReady } from './helpers/walletCreator';
+import {Given, Then, When} from '@cucumber/cucumber';
+import {expect} from 'chai';
+import {makeWalletReady} from './helpers/walletCreator';
 
 When('user{int} claims faucet', async function (userIndex) {
   const wallet = this.store.getUserWallet(userIndex);

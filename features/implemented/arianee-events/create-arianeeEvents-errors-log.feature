@@ -1,3 +1,4 @@
+@browser
 Feature: event creation error logs
 
   Scenario: User wants to create a event but has errors. He has proper error logs

@@ -1,3 +1,4 @@
+@browser
 Feature: Arianee JWT
 
   Background: Brand has a valid wallet

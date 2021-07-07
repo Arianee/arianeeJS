@@ -1,5 +1,5 @@
-import { expect } from 'chai';
-import { Given, Then } from 'cucumber';
+import {Given, Then} from '@cucumber/cucumber';
+import {expect} from 'chai';
 
 Given('user{int} creates Arianee Access Token from certificate{int}',
   async function (userIndex, tokenIndex) {
@@ -16,7 +16,7 @@ Given('user{int} get certificate with Arianee Access Token with parameters:',
     const wallet = this.store.getUserWallet(userIndex);
     const arianeeJWT = this.store.getCustom('arianeeJWT');
 
-    const issuerRPC = `https://arianee.cleverapps.io/${process.env.NETWORK}/rpc`;
+    const issuerRPC = `http://localhost:3002/${process.env.NETWORK}/rpc`;
 
     let result;
     try {
