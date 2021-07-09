@@ -408,6 +408,10 @@ export class CertificateService {
    * Get all certificate ids owned by this wallet
    */
   public getMyCertificateIds =async ():Promise<ArianeeTokenId[]> => {
+    if (this.walletService.address === '0x0000000000000000000000000000000000000000') {
+      return [];
+    }
+
     const numberOfCertificates = await this.contractService.smartAssetContract.methods
       .balanceOf(this.walletService.address)
       .call();
