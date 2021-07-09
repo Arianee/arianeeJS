@@ -309,7 +309,6 @@ export class CertificateService {
     const response = new CertificateSummaryBuilder();
     response.setCertificateId(certificateId);
     const requestQueue = [];
-
     if (query.content) {
       const contentDetails = this.certificateDetails.getCertificateContent(
         {

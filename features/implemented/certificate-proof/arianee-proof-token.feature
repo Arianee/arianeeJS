@@ -36,5 +36,4 @@ Feature: Arianee JWT
           }
         """
     Then result should have property
-      | content      | false  |
       | content.data | false  |

@@ -2,7 +2,10 @@ import { cloneDeep, get, orderBy } from 'lodash';
 import { injectable } from 'tsyringe';
 import { ArianeeGateWayAuthentification } from '../../../../models/ArianeeGateWayAuthentification';
 import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
-import { ArianeeCertificatei18nV3 } from '../../../../models/jsonSchema/certificates/ArianeeProducti18n';
+import {
+  ArianeeCertificatei18n,
+  ArianeeCertificatei18nV3
+} from '../../../../models/jsonSchema/certificates/ArianeeProducti18n';
 import { StoreNamespace } from '../../../../models/storeNamespace';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { certificateParentMerger } from '../../../libs/certificateParentMerger/certificateParentMerger';
@@ -154,7 +157,7 @@ export class CertificateDetails {
 
   private getContent = (parameters:{
     certificateURI:string, certificateId:string, arianeeRPCAuthentification:any, query:ConsolidatedCertificateRequest
-  }) => {
+  }):Promise<ArianeeCertificatei18n|undefined> => {
     const { certificateURI, certificateId } = parameters;
     return this.getCertificateContentFromRPC(parameters)
       .catch(err => {
@@ -188,7 +191,7 @@ export class CertificateDetails {
   ): Promise<CertificateContentContainer> => {
     const { query } = parameters;
     const certificateContentSummary = await this.fetchCertificateContent(parameters);
-    if (hasParentCertificate(certificateContentSummary.raw)) {
+    if (certificateContentSummary.raw && hasParentCertificate(certificateContentSummary.raw)) {
       const certificateContentSummaryWithParents: ArianeeCertificatei18nV3 = certificateContentSummary.raw as ArianeeCertificatei18nV3;
       const parentCertificates = certificateContentSummaryWithParents.parentCertificates;
       const sortedParentLinks = orderBy(parentCertificates, ['type'], ['asc']);
@@ -238,8 +241,7 @@ export class CertificateDetails {
     const tokenURI = await this.contractService.smartAssetContract.methods
       .tokenURI(certificateId.toString())
       .call();
-
-    const certificateContentData: any = await this.getContent(
+    const certificateContentData = await this.getContent(
       {
         ...parameters,
         arianeeRPCAuthentification: await this.arianeeAuthentificationService
@@ -247,6 +249,16 @@ export class CertificateDetails {
         certificateURI: tokenURI
       }
     );
+
+    if (!certificateContentData) {
+      return {
+        imprint: undefined,
+        data: undefined,
+        isRawAuthentic: false,
+        isAuthentic: false,
+        raw: undefined
+      };
+    }
 
     const certificateSchema = await this.httpClient.fetch(
       certificateContentData.$schema
