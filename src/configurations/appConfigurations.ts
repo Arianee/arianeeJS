@@ -19,7 +19,7 @@ export default deepFreeze({
   [NETWORK.arianeeTestnet]: {
     networkName: NETWORK.arianeeTestnet,
     faucetUrl: `http://localhost:3001/faucet?network=${NETWORK.arianeeTestnet}`,
-    deepLink: 'localhost:4200',
+    deepLink: 'wallet:4200',
     alternativeDeeplink: ['test.testnet.arian.ee'],
     protocolVersion: 2
   },
