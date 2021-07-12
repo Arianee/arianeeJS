@@ -1,5 +1,11 @@
-[![Build Status](https://travis-ci.org/Arianee/arianeeJS.svg?branch=master)](https://travis-ci.org/Arianee/arianeeJS)
-[![npm version](https://img.shields.io/npm/v/@arianee/arianeejs.svg?style=flat)](https://www.npmjs.com/package/@arianee/arianeejs)
+
+### Builds
+Develop: [![CircleCI](https://circleci.com/gh/Arianee/arianeeJS/tree/develop.svg)](https://circleci.com/gh/Arianee/arianeeJS/tree/develop.svg)
+
+Master: [![CircleCI](https://circleci.com/gh/Arianee/arianeeJS/tree/master.svg)](https://circleci.com/gh/Arianee/arianeeJS/tree/master.svg)
+
+NPM: [![npm version](https://img.shields.io/npm/v/@arianee/arianeejs.svg?style=flat)](https://www.npmjs.com/package/@arianee/arianeejs)
+
 
 # ArianeeJS
 
