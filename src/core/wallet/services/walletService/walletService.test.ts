@@ -42,6 +42,33 @@ describe('WalletService', () => {
       expect(data).toEqual(expectedTransaction);
     });
 
+    test('private key with decoded tx', async () => {
+      const expectedSignPayload = {
+        message:
+            '{"nonce":"0x22","gasPrice":"0x3b9aca00","gasLimit":"0x1e8480","to":"0xb81afe27c103bcd42f4026cf719af6d802928765","value":"0x0","data":"0x095ea7b300000000000000000000000082890cedcb8eb0cdc229ac7b8fdd39f93700c8540000000000000000000000000000000000000000204fce5e3e25026110000000"}',
+        signature:
+            '0xf8aa22843b9aca00831e848094b81afe27c103bcd42f4026cf719af6d80292876580b844095ea7b300000000000000000000000082890cedcb8eb0cdc229ac7b8fdd39f93700c8540000000000000000000000000000000000000000204fce5e3e2502611000000081bea0fd34522588c8efef2859084767ded935804e5fdc8251f8f26108258112f26975a07067a2e0f1d0e13054ba44505272ca2702ea8dd3cdf34b27c81888464f8b9169',
+        messageHash:
+            '0x03a03819cc9a5821b25069a7a89b28b130c43467665361a4dd7c2eef56a41f97'
+      };
+
+      const walletService = new WalletService({ web3: new Web3() } as any,
+          {
+            arianeeConfiguration: {
+              chainId: 77,
+              networkName: 'testnet'
+            }
+          } as any
+      );
+
+      const data = await walletService.sign(
+        'f86922843b9aca00831e848094b81afe27c103bcd42f4026cf719af6d80292876580b844095ea7b300000000000000000000000082890cedcb8eb0cdc229ac7b8fdd39f93700c8540000000000000000000000000000000000000000204fce5e3e25026110000000808080',
+        walletPK
+      );
+
+      expect(data).toEqual(expectedSignPayload);
+    });
+
     test('private key', async () => {
       const walletService = new WalletService({ web3: new Web3() } as any,
         {
