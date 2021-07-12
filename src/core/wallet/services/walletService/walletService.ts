@@ -48,6 +48,7 @@ export class WalletService {
 
     const tx = Tx.fromTxData(transactionMapped, { common: this.customCommon })
       .serialize().toString('hex');
+
     const { signature, messageHash } = await this.sign(tx);
 
     return { rawTransaction: signature, transactionHash: messageHash };
@@ -72,7 +73,8 @@ export class WalletService {
       if (decodedTx) {
         message = JSON.stringify(decodedTx.toJSON());
         signature = '0x' + decodedTx.sign(Buffer.from(privateKey.substring(2), 'hex')).serialize().toString('hex');
-        messageHash = this.web3Service.web3.eth.accounts.hashMessage(data);
+
+        messageHash = this.web3Service.web3.utils.keccak256(signature);
       } else {
         signObject = this.web3Service.web3.eth.accounts.sign(<string>data, privateKey);
         signature = signObject.signature;
