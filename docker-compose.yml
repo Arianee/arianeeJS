@@ -14,7 +14,7 @@ services:
   privacy-gateway:
     container_name: rpc
     build:
-      context: "https://${RPCDOCKERTOKEN}@github.com/Arianee/docker-rpc-server.git#master"
+      context: "https://${GITHUBTOKEN}@github.com/Arianee/docker-rpc-server.git#master"
     links:
       - mongo
     ports:
@@ -26,6 +26,6 @@ services:
   faucet:
     container_name: faucet
     build:
-      context: "https://${FAUCETDOCKERTOKEN}@github.com/Arianee/arianee-faucet.git#feat/docker"
+      context: "https://${GITHUBTOKEN}@github.com/Arianee/arianee-faucet.git#feat/docker"
     ports:
       - 3001:3000
