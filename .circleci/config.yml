@@ -21,7 +21,8 @@ jobs:
       - run:
           name: Declare domain wallet
           command: echo 127.0.0.1 wallet | sudo tee -a /etc/hosts
-      - node/install-packages
+      - node/install-packages:
+          cache-version: "v2"
       - run:
           name: Launch docker
           command: docker-compose up --detach --force-recreate
@@ -35,7 +36,8 @@ jobs:
       NODE_ENV: development
     steps:
       - checkout
-      - node/install-packages
+      - node/install-packages:
+          cache-version: "v2"
       - run:
           name: Run tests
           command: npm run test:playwright
