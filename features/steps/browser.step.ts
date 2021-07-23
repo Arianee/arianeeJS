@@ -10,10 +10,7 @@ Given('ArianeeLib is used on browser {string} it works', async function (browser
 
   const browser = await playwright[browserName].launch({ headless: true });
 
-  const page = await browser.newPage();
-
-  // launch any page
-  await page.goto('https://google.com', { waitUntil: 'load' });
+  const page = await browser.newPage({baseUrl:"https://google.com"});
 
   // replace content
   await page.setContent(contentHtml);

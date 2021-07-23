@@ -3,10 +3,7 @@
 version: 2.1
 
 orbs:
-  # The Node.js orb contains a set of prepackaged CircleCI configuration you can utilize
-  # Orbs reduce the amount of configuration required for common tasks.
-  # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/node
-  node: circleci/node@4.1
+  node: circleci/node@4.5.1
 
 jobs:
   build-and-test-uat:
@@ -21,8 +18,7 @@ jobs:
       - run:
           name: Declare domain wallet
           command: echo 127.0.0.1 wallet | sudo tee -a /etc/hosts
-      - node/install-packages:
-          cache-version: "v2"
+      - node/install-packages
       - run:
           name: Launch docker
           command: docker-compose up --detach --force-recreate
@@ -36,8 +32,10 @@ jobs:
       NODE_ENV: development
     steps:
       - checkout
-      - node/install-packages:
-          cache-version: "v2"
+      - node/install-packages
+      - run:
+          name: Build wallet
+          command: npm run build
       - run:
           name: Run tests
           command: npm run test:playwright

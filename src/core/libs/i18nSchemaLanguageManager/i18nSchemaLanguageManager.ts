@@ -44,7 +44,7 @@ export const replaceLanguageContent = (certificateId18n :ArianeeCertificatei18n,
 };
 
 export const replaceLanguageIdentityContentWithFavUserLanguage = (identityI18n:ArianeeBrandIdentityi18n, languages:string[]) => {
-  const availableLanguages = identityI18n.i18n.map(i => i.language);
+  const availableLanguages = identityI18n.i18n.map(i => i.language).filter(i => i !== undefined && i !== null);
   const defaultLanguage = 'en-US';
 
   const language = pickLanguageAccordingToUserLanguagesWithMacrosFallback(macros, languages, availableLanguages, defaultLanguage);
