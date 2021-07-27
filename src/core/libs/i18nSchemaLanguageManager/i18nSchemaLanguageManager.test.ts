@@ -1,9 +1,15 @@
 import lodash from 'lodash';
 import { ArianeeCertificatei18n } from '../../../models/jsonSchema/certificates/ArianeeProducti18n';
 import { CertificateSummary } from '../../wallet/certificateSummary';
-import { replaceLanguage, replaceLanguageContent } from './i18nSchemaLanguageManager';
+import {
+  replaceLanguage,
+  replaceLanguageContent,
+  replaceLanguageIdentityContentWithFavUserLanguage
+} from './i18nSchemaLanguageManager';
 import { certificatei18n1, certificatei18n2 } from './certificateMock';
 import { eventI18n } from './eventMock';
+import { identityI18n } from './identityMock';
+import { ArianeeBrandIdentityi18n } from '../../../models/jsonSchema/identities/ArianeeBrandIdentityi18n';
 
 describe('Certificate Language', () => {
   test('should replace by selected language', () => {
@@ -82,6 +88,22 @@ describe('Certificate Language', () => {
 
     expect(true).toBeTruthy();
   });
+
+  test('language is wrongly defined', () => {
+    const clonedCertificate:CertificateSummary<ArianeeCertificatei18n, any> = lodash.cloneDeep(certificatei18n1 as any);
+
+    const wronglydefinedTranslation = {
+      language: undefined,
+      description: 'esdescription'
+    };
+
+    // Preparing data
+    clonedCertificate.content.data.i18n.push(<any>wronglydefinedTranslation);
+
+    const value = replaceLanguageContent(clonedCertificate.content.data, 'es');
+
+    expect(value.description).toBe('MAINdescription');
+  });
 });
 describe('Event Language', () => {
   test('should replace by selected language FR', () => {
@@ -112,5 +134,34 @@ describe('Event Language', () => {
     const value = replaceLanguageContent(clonedCertificate.content.data, 'zh-CN');
 
     expect(value.title).toBe(expectedTranslations.title);
+  });
+
+  test('language is wrongly defined', () => {
+    const clonedCertificate:CertificateSummary<ArianeeCertificatei18n, any> = lodash.cloneDeep(eventI18n as any);
+
+    const wronglydefinedTranslation = {
+      language: undefined,
+      title: 'Vente initiale'
+    };
+
+    // Preparing data
+    clonedCertificate.content.data.i18n.push(<any>wronglydefinedTranslation);
+
+    const value = replaceLanguageContent(clonedCertificate.content.data, 'fr-FR');
+
+    expect(value.title).toBe('Original Sale');
+  });
+});
+describe('Identity', () => {
+  test('language is wrongly defined', () => {
+    const clonedIdentity:ArianeeBrandIdentityi18n = lodash.cloneDeep(identityI18n as any);
+    clonedIdentity.i18n[0].language = undefined;
+
+    const wronglydefinedTranslation = {
+      description: 'Brand test anglais'
+    };
+
+    const value = replaceLanguageIdentityContentWithFavUserLanguage(clonedIdentity, ['fr']);
+    expect(value.description).toBe(wronglydefinedTranslation.description);
   });
 });
