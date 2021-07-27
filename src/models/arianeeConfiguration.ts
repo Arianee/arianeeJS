@@ -32,6 +32,7 @@ export interface ArianeeConfig {
   faucetUrl: string;
   walletReward: { address: string };
   brandDataHubReward: { address: string };
+  gasStationURL?:string;
   deepLink: string;
   alternativeDeeplink: string[];
   transactionOptions?:TransactionOptions,

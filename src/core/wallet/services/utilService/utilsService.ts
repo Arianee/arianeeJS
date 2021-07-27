@@ -6,6 +6,7 @@ import { NETWORK } from '../../../..';
 import { ArianeeConfig } from '../../../../models/arianeeConfiguration';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { ConfigurationService } from '../configurationService/configurationService';
+import { GasStationService } from '../gasStationService/gasStationService';
 
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
@@ -17,7 +18,8 @@ export class UtilsService {
       private web3Service: Web3Service,
       private configurationService: ConfigurationService,
       private walletService: WalletService,
-      private httpService: ArianeeHttpClient
+      private httpService: ArianeeHttpClient,
+      private gasStationService:GasStationService
   ) {
   }
 
@@ -268,6 +270,7 @@ export class UtilsService {
       'pending'
     );
 
+    const gasPrice = await this.gasStationService.fetchGas();
     const defaultTransaction = {
       nonce,
       chainId: this.configurationService.arianeeConfiguration.chainId,
@@ -275,7 +278,7 @@ export class UtilsService {
       data: encodeABI,
       to: contractAddress,
       gasLimit: this.configurationService.arianeeConfiguration.transactionOptions.gas,
-      gasPrice: this.configurationService.arianeeConfiguration.transactionOptions.gasPrice,
+      gasPrice,
       value: '0x00'
     };
 
