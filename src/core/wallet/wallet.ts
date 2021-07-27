@@ -20,6 +20,7 @@ import { ConfigurationService } from './services/configurationService/configurat
 import { ContractService } from './services/contractService/contractsService';
 import { DiagnosisService } from './services/diagnosisService/diagnosisService';
 import { EventService } from './services/eventService/eventsService';
+import { GasStationService } from './services/gasStationService/gasStationService';
 import { GlobalConfigurationService } from './services/globalConfigurationService/globalConfigurationService';
 import { IdentityService } from './services/identityService/identityService';
 import { MessageService } from './services/messageService/messageService';
@@ -53,6 +54,7 @@ export class ArianeeWallet {
         CertificateDetails,
         CertificateService,
         ConfigurationService,
+        GasStationService,
         ContractService,
         DiagnosisService,
         EventService,

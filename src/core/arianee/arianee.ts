@@ -31,6 +31,7 @@ export class Arianee {
       httpProvider?:provider,
       transactionOptions?: TransactionOptions,
       deepLink?:string,
+      gasStation?:string,
       protocolConfiguration?:any,
       defaultArianeePrivacyGateway?:string,
       httpInterceptor?:HttpInterceptor,
@@ -78,6 +79,7 @@ export class Arianee {
         console.warn(`this contract is not working ${contractName}`);
       }
     });
+    arianeeConfiguration.gasStationURL = arianeeCustomConfiguration.gasStation || addressesResult.gasStation;
 
     arianeeConfiguration.web3Provider = (function () {
       if (arianeeCustomConfiguration.httpProvider) {
