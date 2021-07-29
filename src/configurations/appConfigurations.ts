@@ -1,4 +1,4 @@
-import { deepFreeze } from '../core/libs/deepFreeze';
+import { deepFreeze } from '../core/libs/deepFreeze/deepFreeze';
 import { NETWORK } from '../models/networkConfiguration';
 
 export default deepFreeze({

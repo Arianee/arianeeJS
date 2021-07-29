@@ -1,7 +1,11 @@
+import { get } from 'lodash';
 import { injectable } from 'tsyringe';
 import { IdentitySummary } from '../../../../models/arianee-identity';
+import { ArianeeBrandIdentityi18n } from '../../../../models/jsonSchema/identities/ArianeeBrandIdentityi18n';
 import { StoreNamespace } from '../../../../models/storeNamespace';
+import { isIdentitySchemai18n } from '../../../libs';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
+import { replaceLanguageIdentityContentWithFavUserLanguage } from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import {
   ConsolidatedCertificateRequest,
@@ -11,13 +15,6 @@ import {
 import { ContractService } from '../contractService/contractsService';
 import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 import { UtilsService } from '../utilService/utilsService';
-import { get } from 'lodash';
-import { isIdentitySchemai18n, isSchemai18n } from '../../../libs/certificateVersion';
-import {
-  replaceLanguageContentWithFavUserLanguage,
-  replaceLanguageIdentityContentWithFavUserLanguage
-} from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
-import { ArianeeBrandIdentityi18n } from '../../../../models/jsonSchema/identities/ArianeeBrandIdentityi18n';
 
 @injectable()
 export class IdentityService {

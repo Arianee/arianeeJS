@@ -1,10 +1,6 @@
 import { ethers, Wallet as etherWallet } from 'ethers';
-import { container } from 'tsyringe';
-import { Transaction } from 'web3-core';
 import { ArianeeConfig } from '../../models/arianeeConfiguration';
-import { isPrivateKeyValid } from '../libs/isPrivateKeyValid';
-import { ConfigurationService } from './services/configurationService/configurationService';
-import { Web3Service } from './services/web3Service/web3Service';
+import { isPrivateKeyValid } from '../isPrivateKeyValid/isPrivateKeyValid';
 import { ArianeeWallet, ClassicConfiguration } from './wallet';
 
 const Web3 = require('web3');

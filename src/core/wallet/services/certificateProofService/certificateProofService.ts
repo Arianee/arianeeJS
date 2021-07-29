@@ -6,7 +6,7 @@ import { blockchainEventsName } from '../../../../models/blockchainEventsName';
 import { ExtendedBoolean } from '../../../../models/extendedBoolean';
 import { QueryAndSearchParams } from '../../../../models/queryAndSearchParams.enum';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
-import { sortEvents } from '../../../libs/sortEvents';
+import { sortEvents } from '../../../libs/sort/sortEvents';
 import { ArianeeAccessTokenService } from '../ArianeeAccessToken/ArianeeAccessTokenService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractService } from '../contractService/contractsService';

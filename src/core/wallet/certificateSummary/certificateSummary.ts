@@ -2,7 +2,7 @@ import { IdentitySummary } from '../../../models/arianee-identity';
 import { EventContent } from '../../../models/blockchainEvent';
 import { ArianeeTokenId } from '../../../models/ArianeeTokenId';
 import { GenericJsonSchema } from '../../../models/jsonSchema/certificates/ArianeeProducti18n';
-import { sortEvents } from '../../libs/sortEvents';
+import { sortEvents } from '../../libs/sort/sortEvents';
 
 export interface Serialnumber {
   type: string;
