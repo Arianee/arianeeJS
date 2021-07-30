@@ -9,10 +9,10 @@ import {
 import { StoreNamespace } from '../../../../models/storeNamespace';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { certificateParentMerger } from '../../../libs/certificateParentMerger/certificateParentMerger';
-import { isSchemai18n } from '../../../libs/certificateVersion';
-import { deepFreeze } from '../../../libs/deepFreeze';
-import { hasParentCertificate } from '../../../libs/hasParentCertificates';
-import { replaceLanguageContentWithFavUserLanguage } from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
+import { isSchemai18n } from '../../../libs/is18n/certificateVersion';
+import { deepFreeze, replaceLanguageContentWithFavUserLanguage } from '../../../libs';
+import { hasParentCertificate } from '../../../libs/hasParentCertificate/hasParentCertificates';
+
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { CertificateSummaryBuilder } from '../../certificateSummary';
 import {

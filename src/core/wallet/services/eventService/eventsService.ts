@@ -4,10 +4,10 @@ import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
 import { BlockchainEvent, EventContent } from '../../../../models/blockchainEvent';
 import { blockchainEventsName } from '../../../../models/blockchainEventsName';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
-import { isSchemai18n } from '../../../libs/certificateVersion';
+import { isSchemai18n } from '../../../libs/is18n/certificateVersion';
 import { replaceLanguage } from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
-import { isNullOrUndefined } from '../../../libs/isNullOrUndefined';
-import { sortEvents } from '../../../libs/sortEvents';
+import { isNullOrUndefined } from '../../../libs/isNullOrUndefined/isNullOrUndefined';
+import { sortEvents } from '../../../libs/sort/sortEvents';
 import {
   ArianeeEvent,
   CertificateContentContainer,

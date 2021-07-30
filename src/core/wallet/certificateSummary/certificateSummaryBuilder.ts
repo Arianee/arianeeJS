@@ -1,4 +1,4 @@
-import { isNullOrUndefined } from './../../libs/isNullOrUndefined';
+import { isNullOrUndefined } from '../../libs/isNullOrUndefined/isNullOrUndefined';
 import {
   CertificateAdvanced,
   CertificateContent,

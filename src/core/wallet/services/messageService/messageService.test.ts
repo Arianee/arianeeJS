@@ -1,4 +1,4 @@
-import { deepFreeze } from '../../../libs/deepFreeze';
+import { deepFreeze } from '../../../libs/deepFreeze/deepFreeze';
 import { MessageService } from './messageService';
 
 describe('Message Service', () => {
