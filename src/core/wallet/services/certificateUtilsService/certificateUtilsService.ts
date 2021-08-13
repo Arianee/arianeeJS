@@ -1,4 +1,5 @@
 import { injectable } from 'tsyringe';
+import { ErrorCodeEnum } from '../../../../models/enum/ErrocCodeEnum';
 import { ExtendedBoolean } from '../../../../models/extendedBoolean';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { CertificateDetails } from '../certificateDetailsService/certificatesDetailsService';
@@ -75,14 +76,14 @@ export class CertificateUtilsService {
         if (isRequestable) {
           return {
             isTrue: isRequestable,
-            code: 'certicate.requestable',
+            code: ErrorCodeEnum.isRequestable,
             message: 'certificate is requestable'
           };
         }
       }
       return {
         isTrue: false,
-        code: 'certicate.notrequestable',
+        code: ErrorCodeEnum.isRequestable,
         message: 'certificate is not requestable'
       };
     }

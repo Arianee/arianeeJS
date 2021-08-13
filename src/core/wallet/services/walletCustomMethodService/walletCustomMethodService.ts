@@ -133,7 +133,7 @@ export class WalletCustomMethodService {
           recover: (objParams:{certificateId:ArianeeTokenId}) =>
             this.certificateService.recoverCertificate(objParams.certificateId),
           request: (objParams:{certificateId:ArianeeTokenId, passphrase:string}) =>
-            this.certificateService.customRequestToken(objParams.certificateId, objParams.passphrase),
+            this.certificateService.requestCertificateOwnershipWithPassphrase(objParams.certificateId, objParams.passphrase),
           isRequestable: (objParams:{certificateId:ArianeeTokenId, passphrase:string}) =>
             this.certificateService.isCertificateOwnershipRequestable(objParams.certificateId, objParams.passphrase),
           createRequestLink: (objParams:{certificateId:ArianeeTokenId, passphrase:string}) =>
@@ -240,7 +240,7 @@ export class WalletCustomMethodService {
       isCertificateProofValidFromActionProofLink: this.certificateProofService.isAuthURL,
 
       isCertificateOwnershipRequestable: this.certificateService.isCertificateOwnershipRequestable,
-      requestCertificateOwnership: this.certificateService.customRequestToken,
+      requestCertificateOwnership: this.certificateService.requestCertificateOwnershipWithPassphrase,
       balanceOfAria: this.balanceService.balanceOfAria,
       balanceOfRia: this.balanceService.balanceOfRia,
       balanceOfPoa: this.balanceService.balanceOfPoa,
