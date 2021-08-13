@@ -576,13 +576,14 @@ export class CertificateService {
    * @returns {Promise<IOwnerOf>}
    */
   public ownerOf = async (certificateId: ArianeeTokenId): Promise<IOwnerOf> => {
-    let address;
+    let address, addressLowerCase;
     try {
       address = await this.contractService
         .smartAssetContract
         .methods
         .ownerOf(certificateId)
         .call();
+      addressLowerCase = address.toLowerCase();
     } catch (e) {
       address = undefined;
     }
@@ -590,7 +591,7 @@ export class CertificateService {
     return {
       address,
       hasOwner: address !== undefined,
-      isOwner: address === this.walletService.address
+      isOwner: addressLowerCase === this.walletService.address.toLowerCase()
     };
   };
 
