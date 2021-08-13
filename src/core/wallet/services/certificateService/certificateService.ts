@@ -1,5 +1,4 @@
 import { TransactionObject } from '@arianee/arianee-abi/types/types';
-import { get } from 'lodash';
 import { injectable } from 'tsyringe';
 import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
 import { EventContent } from '../../../../models/blockchainEvent';
@@ -7,13 +6,12 @@ import { IOwnerOf } from '../../../../models/IOwnerOf';
 import { StoreNamespace } from '../../../../models/storeNamespace';
 import { hydrateTokenParameters } from '../../../../models/transaction-parameters';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
-import { isSchemai18n } from '../../../libs/is18n/certificateVersion';
-import { replaceLanguage } from '../../../libs/i18nSchemaLanguageManager/i18nSchemaLanguageManager';
 import { isNullOrUndefined } from '../../../libs/isNullOrUndefined/isNullOrUndefined';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { CertificateSummaryBuilder } from '../../certificateSummary';
 import { CertificateSummary, ConsolidatedCertificateRequest } from '../../certificateSummary/certificateSummary';
 import { ArianeeAccessTokenService } from '../ArianeeAccessToken/ArianeeAccessTokenService';
+import { ArianeeAuthentificationService } from '../arianeeAuthentificationService/arianeeAuthentificationService';
 import { BatchService } from '../batchService/batchService';
 import { CertificateAuthorizationService } from '../certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateDetails } from '../certificateDetailsService/certificatesDetailsService';
@@ -26,7 +24,6 @@ import { GlobalConfigurationService } from '../globalConfigurationService/global
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
-import { ArianeeAuthentificationService } from '../arianeeAuthentificationService/arianeeAuthentificationService';
 
 @injectable()
 export class CertificateService {
@@ -266,12 +263,32 @@ export class CertificateService {
     return this.httpClient.RPCCall(arianeePrivacyGatewayURL, 'certificate.create', { certificateId: certificateId, json: content });
   }
 
-  public customRequestToken = async (
+  /**
+   *
+   * @param {number} certificateId
+   * @param {string} passphrase
+   * @returns {Promise<never>}
+   */
+  public requestCertificateOwnershipWithPassphrase = async (
     certificateId: number,
     passphrase: string
   ) => {
+    const isRequestable = await this.diagnosisService.isRequestable(certificateId, passphrase);
+
+    if (isRequestable.isTrue === false) {
+      return Promise.reject([isRequestable]);
+    }
+
     const requestTokenPromise = await this.certificateUtilsService.customRequestTokenFactory(certificateId, passphrase);
-    return requestTokenPromise.send();
+    try {
+      return await requestTokenPromise.send();
+    } catch (e) {
+      const diagnosis = await this.diagnosisService.diagnosis([
+        Promise.resolve(isRequestable),
+        this.diagnosisService.isPOACredit()
+      ], e);
+      return Promise.reject(diagnosis);
+    }
   }
 
   /**

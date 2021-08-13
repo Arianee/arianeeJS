@@ -1,6 +1,7 @@
 import { injectable } from 'tsyringe';
 import { ArianeeTokenId } from '../../../../models/ArianeeTokenId';
 import { creditTypeEnum } from '../../../../models/creditTypesEnum';
+import { ErrorCodeEnum } from '../../../../models/enum/ErrocCodeEnum';
 import { ExtendedBoolean } from '../../../../models/extendedBoolean';
 import { BalanceService } from '../balanceService/balanceService';
 import { CertificateUtilsService } from '../certificateUtilsService/certificateUtilsService';
@@ -17,7 +18,8 @@ export class DiagnosisService {
                private certificateUtilsService:CertificateUtilsService
   ) {}
 
-  diagnosis=async (diagnosisList:Array<Promise<ExtendedBoolean>>, rawErrors?:any) => {
+  diagnosis = async (diagnosisList: Array<Promise<ExtendedBoolean>>, rawErrors?: any)
+      : Promise<ExtendedBoolean[]> => {
     if (diagnosisList === undefined || undefined) {
       diagnosisList = [
         this.isStoreApprove(),
@@ -44,19 +46,25 @@ export class DiagnosisService {
     return errors;
   }
 
-    public isStoreApprove=async ():Promise<ExtendedBoolean> => {
-      const smartAssetContractAddress = this.configurationService.arianeeConfiguration.store.address;
-      const isApproved = await this.contractService.ariaContract.methods
-        .allowance(this.walletService.address, smartAssetContractAddress)
-        .call();
+  public isRequestable = async (tokenId: ArianeeTokenId, passphrase: string): Promise<ExtendedBoolean> => {
+    this.certificateUtilsService.isCertificateOwnershipRequestable(tokenId, passphrase);
 
-      return {
-        isTrue: isApproved.toString() !== '0',
-        rawValue: isApproved,
-        message: 'You should approveStore on aria smart contract',
-        code: 'approve.store'
-      };
-    }
+    return this.certificateUtilsService.isCertificateOwnershipRequestable(tokenId, passphrase);
+  };
+
+  public isStoreApprove=async ():Promise<ExtendedBoolean> => {
+    const smartAssetContractAddress = this.configurationService.arianeeConfiguration.store.address;
+    const isApproved = await this.contractService.ariaContract.methods
+      .allowance(this.walletService.address, smartAssetContractAddress)
+      .call();
+
+    return {
+      isTrue: isApproved.toString() !== '0',
+      rawValue: isApproved,
+      message: 'You should approveStore on aria smart contract',
+      code: ErrorCodeEnum.approveStore
+    };
+  }
 
   public isUpdateCertificateCredit=async ():Promise<ExtendedBoolean> => {
     const balance = await this.balanceService.balanceOfCredit('update');
@@ -67,7 +75,7 @@ export class DiagnosisService {
       isTrue,
       rawValue: balance,
       message: 'update credit should be higher than 0',
-      code: 'credit.update'
+      code: ErrorCodeEnum.creditUpdate
     };
   }
 
@@ -80,7 +88,7 @@ export class DiagnosisService {
         isTrue,
         rawValue: balance,
         message: 'certificate credit should be higher than 0',
-        code: 'credit.certificate'
+        code: ErrorCodeEnum.creditCertificate
       };
     }
 
@@ -93,7 +101,7 @@ export class DiagnosisService {
         isTrue,
         rawValue: balance,
         message: 'event credit should be higher than 0',
-        code: 'credit.event'
+        code: ErrorCodeEnum.creditEvent
       };
     }
 
@@ -106,7 +114,7 @@ export class DiagnosisService {
         isTrue,
         rawValue: balance,
         message: 'message credit should be higher than 0',
-        code: 'credit.message'
+        code: ErrorCodeEnum.creditMessage
       };
     }
 
@@ -119,7 +127,7 @@ export class DiagnosisService {
         isTrue,
         rawValue: balance,
         message: 'Your aria credit credit should be higher than 0',
-        code: 'credit.Aria'
+        code: ErrorCodeEnum.creditAria
       };
     }
 
@@ -132,7 +140,7 @@ export class DiagnosisService {
         isTrue,
         rawValue: balance,
         message: 'You poa credit credit should be higher than 0',
-        code: 'credit.POA'
+        code: ErrorCodeEnum.creditPOA
       };
     }
 
@@ -143,7 +151,7 @@ export class DiagnosisService {
         isTrue: isCertifIdAvailableOrReserved,
         rawValue: isCertifIdAvailableOrReserved,
         message: 'This certificate id already exist and you have not reserved it',
-        code: 'certificate.id'
+        code: ErrorCodeEnum.certificateIdAlreadyExist
       };
     }
 
@@ -160,7 +168,7 @@ export class DiagnosisService {
         isTrue: isWhitelisted,
         rawValue: isWhitelisted,
         message: 'This address is not whitelisted',
-        code: 'message.whitelist'
+        code: ErrorCodeEnum.messagWhitelist
       };
     }
 }
