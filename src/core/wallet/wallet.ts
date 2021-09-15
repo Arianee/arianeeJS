@@ -23,6 +23,7 @@ import { EventService } from './services/eventService/eventsService';
 import { GasStationService } from './services/gasStationService/gasStationService';
 import { GlobalConfigurationService } from './services/globalConfigurationService/globalConfigurationService';
 import { IdentityService } from './services/identityService/identityService';
+import { LostAndStolenService } from './services/lostAndStolenService/lostAndStolenService';
 import { MessageService } from './services/messageService/messageService';
 import { POAAndAriaService } from './services/POAAndAriaFaucet/POAAndAriaService';
 import { UtilsService } from './services/utilService/utilsService';
@@ -70,6 +71,7 @@ export class ArianeeWallet {
         CertificateUtilsService,
         ArianeePrivacyGatewayService,
         BlockchainUtilsService,
+        LostAndStolenService,
         GasStationService
       );
 

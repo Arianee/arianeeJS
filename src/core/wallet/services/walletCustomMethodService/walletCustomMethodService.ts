@@ -15,6 +15,7 @@ import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { EventService } from '../eventService/eventsService';
 import { IdentityService } from '../identityService/identityService';
 import { ArianeeAccessTokenService } from '../ArianeeAccessToken/ArianeeAccessTokenService';
+import { LostAndStolenService } from '../lostAndStolenService/lostAndStolenService';
 import { MessageService } from '../messageService/messageService';
 import { POAAndAriaService } from '../POAAndAriaFaucet/POAAndAriaService';
 import { WalletService } from '../walletService/walletService';
@@ -38,8 +39,9 @@ export class WalletCustomMethodService {
                private diagnosisService:DiagnosisService,
                private arianeeAccessTokenService:ArianeeAccessTokenService,
                private certificateProofService:CertificateProofService,
+               private gasStationService: GasStationService,
                private blockchainUtilsService:BlockchainUtilsService,
-               private gasStationService: GasStationService
+               private lostAndStolenService:LostAndStolenService
   ) {
 
   }
@@ -284,6 +286,14 @@ export class WalletCustomMethodService {
       updateAndStoreCertificate: this.certificateService.updateAndStoreCertificateContent,
       storeUpdateContentInRPCServer: this.certificateService.storeUpdateContentInRPCServer,
       updateCertificate: this.certificateService.updateCertificate,
+
+      setMissingStatus: this.lostAndStolenService.setMissingStatus,
+      unsetMissingStatus: this.lostAndStolenService.unsetMissingStatus,
+      setStolenStatus: this.lostAndStolenService.setStolenStatus,
+      unsetStolenStatus: this.lostAndStolenService.unsetStolenStatus,
+      isMissing: this.lostAndStolenService.isMissing,
+      isStolen: this.lostAndStolenService.isStolen,
+
       fetchGasPrice: this.gasStationService.fetchGas
     };
   }
