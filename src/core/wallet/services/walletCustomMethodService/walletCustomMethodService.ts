@@ -19,6 +19,7 @@ import { MessageService } from '../messageService/messageService';
 import { POAAndAriaService } from '../POAAndAriaFaucet/POAAndAriaService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
+import { GasStationService } from '../gasStationService/gasStationService';
 
 @injectable()
 export class WalletCustomMethodService {
@@ -37,7 +38,8 @@ export class WalletCustomMethodService {
                private diagnosisService:DiagnosisService,
                private arianeeAccessTokenService:ArianeeAccessTokenService,
                private certificateProofService:CertificateProofService,
-               private blockchainUtilsService:BlockchainUtilsService
+               private blockchainUtilsService:BlockchainUtilsService,
+               private gasStationService: GasStationService
   ) {
 
   }
@@ -281,7 +283,8 @@ export class WalletCustomMethodService {
       isAuthURL: this.certificateProofService.isAuthURL,
       updateAndStoreCertificate: this.certificateService.updateAndStoreCertificateContent,
       storeUpdateContentInRPCServer: this.certificateService.storeUpdateContentInRPCServer,
-      updateCertificate: this.certificateService.updateCertificate
+      updateCertificate: this.certificateService.updateCertificate,
+      fetchGasPrice: this.gasStationService.fetchGas()
     };
   }
 
