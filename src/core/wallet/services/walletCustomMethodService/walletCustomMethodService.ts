@@ -284,7 +284,7 @@ export class WalletCustomMethodService {
       updateAndStoreCertificate: this.certificateService.updateAndStoreCertificateContent,
       storeUpdateContentInRPCServer: this.certificateService.storeUpdateContentInRPCServer,
       updateCertificate: this.certificateService.updateCertificate,
-      fetchGasPrice: this.gasStationService.fetchGas()
+      fetchGasPrice: this.gasStationService.fetchGas
     };
   }
 
