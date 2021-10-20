@@ -69,7 +69,8 @@ export class ArianeeWallet {
         JWTService,
         CertificateUtilsService,
         ArianeePrivacyGatewayService,
-        BlockchainUtilsService
+        BlockchainUtilsService,
+        GasStationService
       );
 
       if (configuration.web3) {

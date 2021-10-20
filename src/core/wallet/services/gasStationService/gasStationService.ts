@@ -11,7 +11,7 @@ export class GasStationService {
   ) {
   };
 
-  public fetchGas = async (): Promise<string>=> {
+  public fetchGas = async (): Promise<string> => {
     let gasPrice = this.configurationService.arianeeConfiguration.transactionOptions.gasPrice;
     const { gasStationURL } = this.configurationService.arianeeConfiguration;
     if (gasStationURL) {

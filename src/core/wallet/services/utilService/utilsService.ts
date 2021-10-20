@@ -1,6 +1,6 @@
 import { Cert } from '@0xcert/cert';
 import { injectable } from 'tsyringe';
-import { Sign, SignedTransaction, Transaction } from 'web3-core';
+import { Transaction } from 'web3-core';
 
 import { NETWORK } from '../../../..';
 import { ArianeeConfig } from '../../../../models/arianeeConfiguration';
@@ -10,7 +10,7 @@ import { GasStationService } from '../gasStationService/gasStationService';
 
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
-import { MixedTransaction } from '../../../etherjsWeb3Transaction/TransactionMapper';
+import { getRandomCharacter, getRandomInt } from '../../../libs/random/randomCharacter';
 
 @injectable()
 export class UtilsService {
@@ -74,14 +74,14 @@ export class UtilsService {
   }
 
   public createPassphrase () {
-    return (
-      Math.random()
-        .toString(36)
-        .substring(2, 8) +
-      Math.random()
-        .toString(36)
-        .substring(2, 8)
-    );
+    let result = '';
+    for (var i = 0; i < 11; i++) {
+      result += getRandomCharacter();
+    }
+    const position = getRandomInt(0, 11);
+    const extraCharacter = getRandomCharacter();
+
+    return result.substring(0, position) + extraCharacter + result.substring(position);
   }
 
   public recover (data: string | Array<any>, signature: string):string {
