@@ -21,12 +21,20 @@ export class ArianeeWalletBuilder {
   }
 
   public fromPassPhrase (passphrase: string): ArianeeWallet {
-    const privateKey = this.web3.utils.padLeft(
-      this.web3.utils.toHex(passphrase),
-      64
-    );
+    let privateKeyFromPassphrase;
+    if (isNaN(+passphrase)) {
+      privateKeyFromPassphrase = this.web3.utils.padLeft(
+        this.web3.utils.asciiToHex(passphrase),
+        64
+      );
+    } else {
+      privateKeyFromPassphrase = this.web3.utils.padLeft(
+        this.web3.utils.numberToHex(passphrase),
+        64
+      );
+    }
 
-    return this.fromPrivateKey(privateKey);
+    return this.fromPrivateKey(privateKeyFromPassphrase);
   }
 
   /**
