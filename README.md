@@ -59,3 +59,22 @@ Your contribution are welcome if they comply to the following requirements:
  1. Commit name should follow this specification [https://www.conventionalcommits.org/en/v1.0.0-beta.2/#summary](https://www.conventionalcommits.org/en/v1.0.0-beta.2/#summary)
  2. All tests should be ok
  3. Add value to the product
+
+## Test
+
+1. Generate a github token
+2. Set github token 
+```bash
+export GITHUBTOKEN=YOUR_GIT_HUB_TOKEN
+```
+
+3. Declare domain blockchain and declare domain wallet
+```bash
+echo 127.0.0.1 blockchain | sudo tee -a /etc/hosts
+echo 127.0.0.1 wallet | sudo tee -a /etc/hosts
+```
+
+4 Launch Docker compose
+```bash
+docker-compose up
+```
