@@ -11,8 +11,8 @@ export class ConfigurationService {
     walletReward: { address: '0x39da7e30d2D5F2168AE3B8599066ab122680e1ef' },
     brandDataHubReward: { address: '0xA79B29AD7e0196C95B87f4663ded82Fbf2E3ADD8' },
     transactionOptions: {
-      gas: 2000000,
-      gasPrice: 1000000000
+      gas: 500_000,
+      gasPrice: -1 // use gas station
     }
   } as ArianeeConfig;
 

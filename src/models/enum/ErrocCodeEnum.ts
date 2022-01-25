@@ -9,5 +9,8 @@ export const enum ErrorCodeEnum {
     creditUpdate = 'credit.update',
     approveStore ='approve.store',
     isRequestable ='token.requestable',
+    alreadyKnown ='transaction.alreadyKnown',
+    tooLowToCompete ='transaction.tooLowToComete',
+    nonceTooLow ='transaction.nonceTooLow',
 
 }
