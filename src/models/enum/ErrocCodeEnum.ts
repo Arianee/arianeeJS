@@ -10,7 +10,7 @@ export const enum ErrorCodeEnum {
     approveStore ='approve.store',
     isRequestable ='token.requestable',
     alreadyKnown ='transaction.alreadyKnown',
-    tooLowToCompete ='transaction.tooLowToComete',
+    tooLowToCompete ='transaction.tooLowToCompete',
     nonceTooLow ='transaction.nonceTooLow',
 
 }
