@@ -265,4 +265,49 @@ describe('CertificateService > ', () => {
       });
     });
   });
+
+  describe('certificateOwnershipLink', () => {
+    const createLinkMock = jest.fn();
+    const certificateService = new CertificateService(
+      { createLink: createLinkMock, createPassphrase: () => 'generatedPassphrase' } as any,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      {} as any,
+      undefined);
+
+    beforeEach(() => {
+      createLinkMock.mockReset();
+    });
+
+    const handleSpy = jest.spyOn(certificateService as any, 'setPassphrase');
+    handleSpy.mockImplementation(() => {
+      return Promise.resolve(true);
+    });
+
+    test('should create a ownership certificate', async () => {
+      await certificateService.createCertificateRequestOwnershipLink(12345, 'testtest');
+      expect(createLinkMock).toHaveBeenCalledWith(12345, 'testtest', undefined);
+    });
+
+    test('should create a ownership certificate with generated passphrase if not specified', async () => {
+      await certificateService.createCertificateRequestOwnershipLink(12345);
+      expect(createLinkMock).toHaveBeenCalledWith(12345, 'generatedPassphrase', undefined);
+    });
+
+    test('should create a ownership certificate if custom domain is specified', async () => {
+      await certificateService.createCertificateRequestOwnershipLink(12345, undefined, 'nft.arianee.com');
+      expect(createLinkMock).toHaveBeenCalledWith(12345, 'generatedPassphrase', 'nft.arianee.com');
+    });
+  });
 });

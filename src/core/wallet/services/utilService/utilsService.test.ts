@@ -317,4 +317,58 @@ describe('UtilsService', () => {
       done();
     });
   });
+
+  describe('createLink', () => {
+    test('it should return valid link', () => {
+      const utils = new UtilsService(undefined, { arianeeConfiguration: { deepLink: 'test.arian.ee' } } as any, undefined, undefined, undefined);
+      const link = utils.createLink(12345, 'ghreiuguhre');
+      expect(link.link).toBe('https://test.arian.ee/12345,ghreiuguhre');
+    });
+
+    test('it should return valid link if arianee config has a final /', () => {
+      const utils = new UtilsService(undefined, { arianeeConfiguration: { deepLink: 'test.arian.ee/' } } as any, undefined, undefined, undefined);
+      const link = utils.createLink(12345, 'ghreiuguhre');
+      expect(link.link).toBe('https://test.arian.ee/12345,ghreiuguhre');
+    });
+    test('it should return valid link if arianee config has a procotol', () => {
+      const utils = new UtilsService(undefined, { arianeeConfiguration: { deepLink: 'https://test.arian.ee/' } } as any, undefined, undefined, undefined);
+      const link = utils.createLink(12345, 'ghreiuguhre');
+      expect(link.link).toBe('https://test.arian.ee/12345,ghreiuguhre');
+    });
+
+    test('it should return valid link with custom deeplink without protocol', () => {
+      const utils = new UtilsService(undefined, { arianeeConfiguration: { deepLink: 'test.arian.ee/' } } as any, undefined, undefined, undefined);
+      const link = utils.createLink(12345, 'ghreiuguhre', 'nft.arianee.com');
+      expect(link.link).toBe('https://nft.arianee.com/12345,ghreiuguhre');
+    });
+
+    test('it should return valid link with custom deeplink with final /', () => {
+      const utils = new UtilsService(undefined, { arianeeConfiguration: { deepLink: 'test.arian.ee/' } } as any, undefined, undefined, undefined);
+      const link = utils.createLink(12345, 'ghreiuguhre', 'nft.arianee.com/');
+      expect(link.link).toBe('https://nft.arianee.com/12345,ghreiuguhre');
+    });
+
+    test('it should return valid link with custom deeplink with final / and protocol', () => {
+      const utils = new UtilsService(undefined, { arianeeConfiguration: { deepLink: 'test.arian.ee/' } } as any, undefined, undefined, undefined);
+      const link = utils.createLink(12345, 'ghreiuguhre', 'https://nft.arianee.com/');
+      expect(link.link).toBe('https://nft.arianee.com/12345,ghreiuguhre');
+    });
+
+    test('it should return valid link with custom deeplink and a sufix', () => {
+      const utils = new UtilsService(undefined, { arianeeConfiguration: { deepLink: 'test.arian.ee/' } } as any, undefined, undefined, undefined);
+      const link = utils.createLink(12345, 'ghreiuguhre', 'https://nft.arianee.com/', 'proof');
+      expect(link.link).toBe('https://nft.arianee.com/proof/12345,ghreiuguhre');
+    });
+    test('it should return valid link with custom deeplink simple and a sufix', () => {
+      const utils = new UtilsService(undefined, { arianeeConfiguration: { deepLink: 'test.arian.ee/' } } as any, undefined, undefined, undefined);
+      const link = utils.createLink(12345, 'ghreiuguhre', 'nft.arianee.com', 'proof');
+      expect(link.link).toBe('https://nft.arianee.com/proof/12345,ghreiuguhre');
+    });
+
+    test('it should return valid link with custom link with http', () => {
+      const utils = new UtilsService(undefined, { arianeeConfiguration: { deepLink: 'test.arian.ee/' } } as any, undefined, undefined, undefined);
+      const link = utils.createLink(12345, 'ghreiuguhre', 'http://nft.arianee.com');
+      expect(link.link).toBe('http://nft.arianee.com/12345,ghreiuguhre');
+    });
+  });
 });

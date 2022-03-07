@@ -201,15 +201,27 @@ export class UtilsService {
   public createLink (
     certificateId: number,
     passphrase: string,
+    customDeepLink?: string,
     suffix?: string
   ): { certificateId: number; passphrase: string; link: string } {
-    let link = `https://${this.configurationService.arianeeConfiguration.deepLink}`;
-
-    if (suffix) {
-      link = link + '/' + suffix;
+    let link = this.configurationService.arianeeConfiguration.deepLink;
+    if (customDeepLink) {
+      link = customDeepLink;
     }
 
-    link = link + `/${certificateId},${passphrase}`;
+    if (link.indexOf('://') === -1) {
+      link = `https://${link}`;
+    }
+
+    if (!link.endsWith('/')) {
+      link = `${link}/`;
+    }
+
+    if (suffix) {
+      link = link + suffix + '/';
+    }
+
+    link = link + `${certificateId},${passphrase}`;
 
     return {
       certificateId: certificateId,

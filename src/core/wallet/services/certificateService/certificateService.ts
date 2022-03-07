@@ -485,14 +485,15 @@ export class CertificateService {
 
   public createCertificateRequestOwnershipLink = async (
     certificateId: number,
-    passphrase?: string
+    passphrase?: string,
+    customDeeplink?: string
   ) => {
     if (!passphrase) {
       passphrase = this.utils.createPassphrase();
     }
     await this.setPassphrase(certificateId, passphrase, 1);
 
-    return this.utils.createLink(certificateId, passphrase);
+    return this.utils.createLink(certificateId, passphrase, customDeeplink);
   }
 
   private async setPassphrase (

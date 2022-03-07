@@ -44,14 +44,15 @@ export class CertificateProofService {
 
   public createCertificateProofLink = async (
     certificateId: number,
-    passphrase?: string
+    passphrase?: string,
+    customDeeplink?:string
   ) => {
     if (!passphrase) {
       passphrase = this.utils.createPassphrase();
     }
     await this.setPassphrase(certificateId, passphrase, 2);
 
-    return this.utils.createLink(certificateId, passphrase, 'proof');
+    return this.utils.createLink(certificateId, passphrase, customDeeplink, 'proof');
   }
 
   /**
