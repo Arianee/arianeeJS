@@ -280,7 +280,8 @@ export class WalletCustomMethodService {
       decodeArianeeAccessToken: this.arianeeAccessTokenService.decodeArianeeAccessToken,
       createCertificateArianeeAccessToken: this.arianeeAccessTokenService.createCertificateArianeeAccessToken,
       isCertificateArianeeAccessTokenValid: this.arianeeAccessTokenService.isCertificateArianeeAccessTokenValid,
-
+      isArianeeAccessTokenValid: this.arianeeAccessTokenService.isArianeeAccessTokenValid,
+      getArianeeAccessTokenJWT: this.arianeeAccessTokenService.getArianeeAccessTokenJWT,
       createAuthURL: this.certificateProofService.createAuthURL,
       isAuthURL: this.certificateProofService.isAuthURL,
       updateAndStoreCertificate: this.certificateService.updateAndStoreCertificateContent,

@@ -42,6 +42,29 @@ export class ArianeeAccessTokenService {
   };
 
   /**
+   * Only check if iss of token signer of token
+   * @param token
+   */
+  public isArianeeAccessTokenValid=async (token) => {
+    const { payload } = this.jwtService.decode(token);
+
+    return this.jwtService.isValidJWT(token, payload.iss);
+  }
+
+  /**
+   * Get jwt in js object if token is valid
+   * @param token
+   */
+  public getArianeeAccessTokenJWT=async (token) => {
+    const isValid = await this.isArianeeAccessTokenValid(token);
+    if (isValid) {
+      return this.jwtService.decode(token);
+    } else {
+      throw new Error('arianee access token not vald');
+    }
+  }
+
+  /**
    * Method to check if token is valid and if certificateId is own by current wallet
    * @param token
    */
