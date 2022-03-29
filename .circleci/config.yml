@@ -13,6 +13,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Fix up git URLs
+          command: echo -e '[url "https://github.com/"]\n  insteadOf = "git://github.com/"' >> ~/.gitconfig
+      - run:
           name: Declare domain blockchain
           command: echo 127.0.0.1 blockchain | sudo tee -a /etc/hosts
       - run:
@@ -33,6 +36,9 @@ jobs:
     steps:
       - checkout
       - node/install-packages
+      - run:
+          name: Fix up git URLs
+          command: echo -e '[url "https://github.com/"]\n  insteadOf = "git://github.com/"' >> ~/.gitconfig
       - run:
           name: Build wallet
           command: npm run build
