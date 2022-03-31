@@ -267,11 +267,13 @@ export class CertificateService {
    *
    * @param {number} certificateId
    * @param {string} passphrase
+   * @param targetWallet
    * @returns {Promise<never>}
    */
   public requestCertificateOwnershipWithPassphrase = async (
     certificateId: number,
-    passphrase: string
+    passphrase: string,
+    targetWallet = this.walletService.address
   ) => {
     const isRequestable = await this.diagnosisService.isRequestable(certificateId, passphrase);
 
@@ -279,7 +281,9 @@ export class CertificateService {
       return Promise.reject([isRequestable]);
     }
 
-    const requestTokenPromise = await this.certificateUtilsService.customRequestTokenFactory(certificateId, passphrase);
+    const requestTokenPromise = await this.certificateUtilsService
+      .customRequestTokenFactory(certificateId, passphrase, targetWallet);
+
     try {
       return await requestTokenPromise.send();
     } catch (e) {
