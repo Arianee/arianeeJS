@@ -196,7 +196,7 @@ export class CertificateDetails {
       const parentCertificates = certificateContentSummaryWithParents.parentCertificates;
       const sortedParentLinks = orderBy(parentCertificates, ['type'], ['asc']);
       const parentLinks = sortedParentLinks.map(d => d.arianeeLink)
-        .map(arianeeLink => this.arianeeAuthentificationService.extractParametersFromArianeeLink(arianeeLink));
+        .map(arianeeLink => this.arianeeAuthentificationService.extractParametersFromArianeeLink(arianeeLink, false));
 
       const $fetchingParents = parentLinks.map(link => {
         return this.getCertificateContent({

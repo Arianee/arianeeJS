@@ -52,7 +52,7 @@ export class ArianeeAuthentificationService {
       }
     };
 
-    public extractParametersFromArianeeLink = (arianeeLink: string):ArianeeLinkObject => {
+    public extractParametersFromArianeeLink = (arianeeLink: string, checkChain = true):ArianeeLinkObject => {
       try {
         const decoded = this.jwtService.decode(arianeeLink);
         return {
@@ -61,8 +61,8 @@ export class ArianeeAuthentificationService {
           type: 'arianeeAccessToken'
         };
       } catch (e) {
-        const result = this.utils.readLink(arianeeLink);
-        if (result) {
+        const result = this.utils.readLink(arianeeLink, checkChain);
+        if (result && result.certificateId) {
           const { certificateId, passphrase, method } = result;
           return {
             certificateId,
