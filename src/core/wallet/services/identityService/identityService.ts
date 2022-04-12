@@ -28,7 +28,7 @@ export class IdentityService {
 
   public getIdentityByShortId = async (shortId:string) => {
     const address = await this.contractService.identityContract.methods.addressFromId(shortId).call();
-    return this.getSimpleIdentity(address);
+    return this.getIdentity({ address });
   }
 
   public getSimpleIdentity = async (address: string, issuerQuery?:ConsolidatedIssuerRequest): Promise<IdentitySummary> => {
@@ -39,16 +39,7 @@ export class IdentityService {
       query = this.globalConfigurationService.getMergedQuery();
     }
 
-    const { issuer } = query;
-
-    const { forceRefresh, waitingIdentity } = issuer as ConsolidatedIssuerRequestInterface;
-
-    if (!waitingIdentity) {
-      return this.store.get<IdentitySummary>(StoreNamespace.identity, address, () => this.fetchIdentity(address), forceRefresh);
-    } else {
-      console.warn('you are fetching waiting identity');
-      return this.store.get<IdentitySummary>(StoreNamespace.identityWaiting, address, () => this.fetchWaitingIdentity(address), forceRefresh);
-    }
+    return this.getIdentity({ address, query });
   }
 
   public getIdentity = async (parameters:{
@@ -56,7 +47,7 @@ export class IdentityService {
     query?: ConsolidatedCertificateRequest}
   ): Promise<IdentitySummary> => {
     const { query, address } = parameters;
-    const { issuer } = this.globalConfigurationService.getMergedQuery(query);
+    const { issuer, advanced } = this.globalConfigurationService.getMergedQuery(query);
     let identitySummary:IdentitySummary<ArianeeBrandIdentityi18n>;
 
     const { forceRefresh, waitingIdentity } = issuer as ConsolidatedIssuerRequestInterface;
@@ -69,10 +60,10 @@ export class IdentityService {
         .catch(d => d);
     }
     const identityContent:ArianeeBrandIdentityi18n = identitySummary.data;
-    if (get(query, 'advanced.languages') &&
+    if (get(advanced, 'languages') &&
       get(identitySummary, 'data') &&
       isIdentitySchemai18n(identityContent)) {
-      identitySummary.data = replaceLanguageIdentityContentWithFavUserLanguage(identityContent, query.advanced.languages) as any;
+      identitySummary.data = replaceLanguageIdentityContentWithFavUserLanguage(identityContent, advanced.languages) as any;
     }
 
     return identitySummary;
