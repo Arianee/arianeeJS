@@ -12,6 +12,15 @@ export class ArianeeAccessTokenService {
   }
 
   /**
+   * Create a wallet JWTProof
+   */
+  public createWalletAccessToken = () => {
+    return this.jwtService.sign({
+      sub: 'wallet'
+    });
+  }
+
+  /**
    * Create a certificate JWTProof
    * @param certificateId
    */
