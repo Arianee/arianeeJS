@@ -5,6 +5,7 @@ import { Transaction } from 'web3-core';
 import { MixedTransaction, TransactionMapper } from '../../../etherjsWeb3Transaction/TransactionMapper';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { Web3Service } from '../web3Service/web3Service';
+import { TransactionObject } from '@arianee/arianee-abi/types/types';
 
 @injectable()
 export class WalletService {
@@ -13,6 +14,7 @@ export class WalletService {
   public account;
   public metamask;
   public userCustomSendTransaction: (transaction:Transaction) => Promise<any>;
+  public userCustomCall: (transaction:Transaction, data:TransactionObject<any>)=> Promise<any>;
 
   constructor (private web3Service: Web3Service,
                private configurationService:ConfigurationService) {
@@ -108,5 +110,9 @@ export class WalletService {
 
   public isCustomSendTransaction =():boolean => {
     return this.userCustomSendTransaction !== undefined;
+  }
+
+  public isCustomCall =():boolean => {
+    return this.userCustomCall !== undefined;
   }
 }
