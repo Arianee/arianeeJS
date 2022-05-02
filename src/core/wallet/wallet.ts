@@ -31,6 +31,7 @@ import { WalletCustomMethodService } from './services/walletCustomMethodService/
 import { WalletService } from './services/walletService/walletService';
 import { Web3Service } from './services/web3Service/web3Service';
 import EventEmitter = require('eventemitter3');
+import { TransactionObject } from '@arianee/arianee-abi/types/types';
 
 export interface ClassicConfiguration{
     account:any,
@@ -106,6 +107,13 @@ export class ArianeeWallet {
     public setCustomSendTransaction (send:(transaction:Transaction)=>Promise<any>):ArianeeWallet {
       const walletService:WalletService = this.container.resolve(WalletService);
       walletService.userCustomSendTransaction = send;
+
+      return this;
+    }
+
+    public setCustomCall (call:(transaction:Transaction, data:TransactionObject<any>)=>Promise<any>):ArianeeWallet {
+      const walletService:WalletService = this.container.resolve(WalletService);
+      walletService.userCustomCall = call;
 
       return this;
     }

@@ -77,12 +77,16 @@ export class ArianeeContract<ContractImplementation extends Contract> {
     transaction: Transaction,
     data: TransactionObject<any>
   ) => {
-    const defaultTransaction = {
-      from: this.walletService.address
-    };
-    const mergedTransaction = { ...defaultTransaction, ...transaction };
+    if (this.walletService.isCustomCall()) {
+      return this.walletService.userCustomCall(transaction, data);
+    } else {
+      const defaultTransaction = {
+        from: this.walletService.address
+      };
+      const mergedTransaction = { ...defaultTransaction, ...transaction };
 
-    return data.call(mergedTransaction);
+      return data.call(mergedTransaction);
+    }
   };
 
   private overideSend = async (
