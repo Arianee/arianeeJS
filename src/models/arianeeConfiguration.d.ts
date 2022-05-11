@@ -39,5 +39,9 @@ export interface ArianeeConfig {
   defaultArianeePrivacyGateway?:string,
 
   arianeeHttpClient:ArianeeHttpClient,
-  protocolVersion?:number
+  protocolVersion?:number,
+  blockchainProxy?:{
+    enable:boolean,
+    host?:string
+  }
 }

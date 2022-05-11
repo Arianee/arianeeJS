@@ -1,4 +1,4 @@
-import { assignIn } from 'lodash';
+import { assignIn, get } from 'lodash';
 import { injectable } from 'tsyringe';
 import Web3 from 'web3';
 import configurations from '../../../../configurations/appConfigurations';
@@ -20,6 +20,14 @@ export class ConfigurationService {
 
   public set arianeeConfiguration (value:ArianeeConfig) {
     this._arianeeConfiguration = value;
+  }
+
+  public getBlockChainProxyEndpoint () {
+    return this.arianeeConfiguration.blockchainProxy.host || 'http://api.arianee.net';
+  }
+
+  public isProxyEnable ():boolean {
+    return get(this.arianeeConfiguration, 'blockchainProxy.enable') || false;
   }
 
   public get arianeeConfiguration ():ArianeeConfig {

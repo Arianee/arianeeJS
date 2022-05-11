@@ -35,7 +35,11 @@ export class Arianee {
       protocolConfiguration?:any,
       defaultArianeePrivacyGateway?:string,
       httpInterceptor?:HttpInterceptor,
-      httpFetch?:(url, config)=>Promise<any>
+      httpFetch?:(url, config)=>Promise<any>,
+      blockchainProxy?:{
+        enable:boolean,
+        host?:string
+      }
     } = {}
   ): Promise<ArianeeWalletBuilder> {
     const arianeeConfiguration: ArianeeConfig = {
@@ -113,6 +117,7 @@ export class Arianee {
     if (get(arianeeCustomConfiguration, 'brandDataHubReward.address')) {
       arianeeConfiguration.brandDataHubReward = arianeeCustomConfiguration.brandDataHubReward;
     }
+    arianeeConfiguration.blockchainProxy = arianeeCustomConfiguration.blockchainProxy;
 
     return new ArianeeWalletBuilder(arianeeConfiguration);
   }

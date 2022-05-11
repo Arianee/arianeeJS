@@ -12,7 +12,9 @@ import { BalanceService } from './services/balanceService/balanceService';
 import { BatchService } from './services/batchService/batchService';
 import { BlockchainEventWatcherService } from './services/blockchainEventWatcherService/blochainEventWatcherService';
 import { BlockchainUtilsService } from './services/blockChainUtilsService/blockchainUtilsService';
-import { CertificateAuthorizationService } from './services/certificateAuthorizationService/certificateAuthorizationService';
+import {
+  CertificateAuthorizationService
+} from './services/certificateAuthorizationService/certificateAuthorizationService';
 import { CertificateDetails } from './services/certificateDetailsService/certificatesDetailsService';
 import { CertificateService } from './services/certificateService/certificateService';
 import { CertificateUtilsService } from './services/certificateUtilsService/certificateUtilsService';
@@ -30,8 +32,9 @@ import { UtilsService } from './services/utilService/utilsService';
 import { WalletCustomMethodService } from './services/walletCustomMethodService/walletCustomMethodService';
 import { WalletService } from './services/walletService/walletService';
 import { Web3Service } from './services/web3Service/web3Service';
-import EventEmitter = require('eventemitter3');
 import { TransactionObject } from '@arianee/arianee-abi/types/types';
+import { GetPastEventService } from './services/getPastEventService/getPastEventService';
+import EventEmitter = require('eventemitter3');
 
 export interface ClassicConfiguration{
     account:any,
@@ -73,7 +76,8 @@ export class ArianeeWallet {
         ArianeePrivacyGatewayService,
         BlockchainUtilsService,
         LostAndStolenService,
-        GasStationService
+        GasStationService,
+        GetPastEventService
       );
 
       if (configuration.web3) {

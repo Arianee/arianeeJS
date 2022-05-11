@@ -1,11 +1,20 @@
-import { Arianee, NETWORK } from '../src';
-import { makeWalletReady } from '../features/steps/helpers/walletCreator';
+import {Arianee, NETWORK} from '../src';
 
 (async function () {
-  const arianee = await new Arianee().init(NETWORK.testnet);
-  const wallet = arianee.fromPrivateKey('0x510701c5f68e96bc5ac843be8951bc24d93c001673ac94a9df2c5ffd783ea4c0');
-  // https://poa.iwc.com/35289079,wy8se9xjvyyi
+  const arianee = await new Arianee().init(NETWORK.testnet, {
+    blockchainProxy: {
+      enable: true,
+      host: 'http://localhost:8080/report'
+    }
+  });
 
-  const d = await wallet.methods.getCertificateFromLink('https://test.arian.ee/35289079,wy8se9xjvyyi');
-  console.log(d.content.data);
+  const wallet = arianee.fromMnemonic('tell bottom casual hobby announce garbage marble envelope slide stove please manual');
+
+  const r = await
+  wallet.methods.getCertificate(
+    '9600',
+    undefined, { events: true });
+
+  console.log(r.events.transfer.length);
+  console.log(r.events.transfer[0]);
 })();

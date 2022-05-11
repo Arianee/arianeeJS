@@ -1,4 +1,3 @@
-import { Contract } from 'ethers';
 import { blockchainEventsName } from '../../../../models/blockchainEventsName';
 import { ArianeeEventEmitter } from '../arianeeEventEmitterService/ArianeeEventEmitter';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
@@ -11,9 +10,8 @@ import { BlockchainEventWatcherService } from './blochainEventWatcherService';
 
 jest.mock('../walletService/walletService');
 
-const watcherParameterFactory = (getPastEvents) => {
+const watcherParameterFactory = () => {
   const stubContract = {
-    getPastEvents,
     options: {
       address: '1049830493'
     }
@@ -29,8 +27,13 @@ const watcherParameterFactory = (getPastEvents) => {
   ];
 };
 describe('Event Watcher', () => {
-  let contractService:ContractService, store: SimpleStore, eventEmitter: ArianeeEventEmitter, web3Service:Web3Service, eventWatcher:BlockchainEventWatcherService;
+  const stubGetPastEvent = jest.fn();
+  let contractService: ContractService,
+    store: SimpleStore,
+    arianeeEventEmitter: ArianeeEventEmitter,
+    web3Service: Web3Service, eventWatcher: BlockchainEventWatcherService;
   beforeEach(() => {
+    jest.clearAllMocks();
     let configurationService = new ConfigurationService();
     configurationService = {
       arianeeConfiguration: {
@@ -38,14 +41,15 @@ describe('Event Watcher', () => {
       }
     } as any;
 
-    contractService = {
-
-    } as ContractService;
-    store = new SimpleStore(new Store(), configurationService, new WalletService({} as any, {} as any), eventEmitter);
+    arianeeEventEmitter = new ArianeeEventEmitter();
+    contractService = {} as ContractService;
+    store = new SimpleStore(new Store(),
+      configurationService,
+      new WalletService({} as any, {} as any),
+      arianeeEventEmitter);
 
     let blockNumber = 10;
 
-    eventEmitter = new ArianeeEventEmitter();
     web3Service = {
 
       web3: {
@@ -55,8 +59,15 @@ describe('Event Watcher', () => {
       }
     } as Web3Service;
 
-    eventWatcher = new BlockchainEventWatcherService(contractService, new WalletService({} as any, {} as any),
-      store, eventEmitter, web3Service);
+    eventWatcher = new BlockchainEventWatcherService(
+      contractService,
+      new WalletService({} as any, {} as any),
+      store,
+      arianeeEventEmitter,
+      web3Service,
+            {
+              getPastEvents: stubGetPastEvent
+            } as any);
     eventWatcher.timeout = 10;
   });
 
@@ -67,45 +78,45 @@ describe('Event Watcher', () => {
   it('should do emit one event at each Transfer', (done) => {
     let counter = 0;
 
-    const getPastEvent = jest.fn(() => Promise.resolve(['zefzef']));
+    stubGetPastEvent.mockImplementation(() => Promise.resolve(['zefzef']));
+    eventWatcher.watcherParameters = watcherParameterFactory();
 
-    eventWatcher.watcherParameters = watcherParameterFactory(getPastEvent);
-
-    eventEmitter.EE.on('Transfer', () => {
+    const listener = arianeeEventEmitter.EE.on('Transfer', () => {
       expect(true).toBe(true);
       counter++;
+      // on each event there should be one getPastEvent
       if (counter === 4) {
-        expect(getPastEvent).toHaveBeenCalledTimes(4);
+        expect(stubGetPastEvent).toHaveBeenCalledTimes(4);
+        listener.removeListener('Transfer');
         done();
       }
     });
   });
-
   it('should stop requesting if no listener', () => {
-    const getPastEvent = jest.fn(() => Promise.resolve(['zefzef']));
+    stubGetPastEvent.mockImplementation(() => Promise.resolve(['zefzef']));
 
-    eventWatcher.watcherParameters = watcherParameterFactory(getPastEvent);
-    expect(getPastEvent).toHaveBeenCalledTimes(0);
+    eventWatcher.watcherParameters = watcherParameterFactory();
+    expect(stubGetPastEvent).toHaveBeenCalledTimes(0);
   });
 
   it('should stop requesting if removing listener', (done) => {
-    const getPastEvent = jest.fn(() => Promise.resolve(['zefzef']));
+    stubGetPastEvent.mockImplementation(() => Promise.resolve(['zefzef']));
 
-    eventWatcher.watcherParameters = watcherParameterFactory(getPastEvent);
-    const listener = eventEmitter.EE.on('Transfer', () => {});
+    eventWatcher.watcherParameters = watcherParameterFactory();
+    const listener = arianeeEventEmitter.EE.on('Transfer', () => {});
     listener.removeListener('Transfer');
     setTimeout(() => {
-      expect(getPastEvent).toHaveBeenCalledTimes(1);
+      expect(stubGetPastEvent).toHaveBeenCalledTimes(1);
       done();
-    }, 20);
+    }, 100);
   });
 
   it('should emit if one or more listeners', (done) => {
-    const getPastEvent = jest.fn(() => Promise.resolve(['zefzef']));
+    stubGetPastEvent.mockImplementation(() => Promise.resolve(['zefzef']));
     let counter = 0;
-    eventWatcher.watcherParameters = watcherParameterFactory(getPastEvent);
-    eventEmitter.EE.on('Transfer', () => { counter++; });
-    eventEmitter.EE.on('Transfer', () => { counter++; });
+    eventWatcher.watcherParameters = watcherParameterFactory();
+    arianeeEventEmitter.EE.on('Transfer', () => { counter++; });
+    arianeeEventEmitter.EE.on('Transfer', () => { counter++; });
     setTimeout(() => {
       expect(counter === 2).toBeTruthy();
       done();

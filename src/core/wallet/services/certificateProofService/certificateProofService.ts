@@ -5,16 +5,15 @@ import { BlockchainEvent } from '../../../../models/blockchainEvent';
 import { blockchainEventsName } from '../../../../models/blockchainEventsName';
 import { ExtendedBoolean } from '../../../../models/extendedBoolean';
 import { QueryAndSearchParams } from '../../../../models/queryAndSearchParams.enum';
-import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { sortEvents } from '../../../libs/sort/sortEvents';
 import { ArianeeAccessTokenService } from '../ArianeeAccessToken/ArianeeAccessTokenService';
 import { ConfigurationService } from '../configurationService/configurationService';
-import { ContractService } from '../contractService/contractsService';
-import { IdentityService } from '../identityService/identityService';
+import { ContractName, ContractService } from '../contractService/contractsService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
 import { get } from 'lodash';
+import { GetPastEventService } from '../getPastEventService/getPastEventService';
 
 @injectable()
 export class CertificateProofService {
@@ -24,7 +23,9 @@ export class CertificateProofService {
     private arianeeAccessTokenService:ArianeeAccessTokenService,
     private walletService: WalletService,
     private web3Service:Web3Service,
-    private utils: UtilsService) {
+    private utils: UtilsService,
+    private getPastEventService:GetPastEventService
+  ) {
 
   }
 
@@ -189,7 +190,8 @@ export class CertificateProofService {
 
     const currentBlock = await this.web3Service.web3.eth.getBlockNumber();
 
-    let events: BlockchainEvent[] = await this.contractService.smartAssetContract.getPastEvents(
+    let events: BlockchainEvent[] = await this.getPastEventService.getPastEvents(
+      ContractName.smartAssetContract,
       blockchainEventsName.smartAsset.tokenAccessAdded,
       {
         fromBlock: currentBlock - Math.round(259200 / 5 + 30), // search the proof in the last 3 days
