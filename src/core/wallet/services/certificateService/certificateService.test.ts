@@ -15,6 +15,7 @@ import { Web3Service } from '../web3Service/web3Service';
 import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 import { BatchService } from '../batchService/batchService';
 import { ArianeeAccessTokenService } from '../ArianeeAccessToken/ArianeeAccessTokenService';
+import { ArianeeBlockchainProxyService } from '../arianeeBlockchainProxyService/arianeeBlockchainProxyService';
 
 describe('CertificateService > ', () => {
   const getAllDependencies = () => {
@@ -40,6 +41,8 @@ describe('CertificateService > ', () => {
     const diagnosisService:DiagnosisService = {} as DiagnosisService;
     const jwtProofService:ArianeeAccessTokenService = {} as ArianeeAccessTokenService;
     const certificateUtilsService:CertificateUtilsService = {} as CertificateUtilsService;
+    const arianeeBlockchainProxyService:ArianeeBlockchainProxyService = {} as ArianeeBlockchainProxyService;
+
     const authentificateService:ArianeeAuthentificationService = {
       generateAuthentificationHeader: () => ({ bearer: 'ezfzef' })
     } as any;
@@ -60,7 +63,8 @@ describe('CertificateService > ', () => {
       diagnosisService,
       jwtProofService,
       certificateUtilsService,
-      authentificateService
+      authentificateService,
+      arianeeBlockchainProxyService
     };
   };
   test('should intitialize', () => {
@@ -82,7 +86,8 @@ describe('CertificateService > ', () => {
       dep.diagnosisService,
       dep.jwtProofService,
       dep.certificateUtilsService,
-      dep.authentificateService
+      dep.authentificateService,
+      dep.arianeeBlockchainProxyService
     );
 
     expect(certificateService).toBeDefined();
@@ -109,7 +114,8 @@ describe('CertificateService > ', () => {
           dep.diagnosisService,
           dep.jwtProofService,
           dep.certificateUtilsService,
-          dep.authentificateService
+          dep.authentificateService,
+          dep.arianeeBlockchainProxyService
 
         );
 
@@ -146,7 +152,9 @@ describe('CertificateService > ', () => {
             dep.diagnosisService,
             dep.jwtProofService,
             dep.certificateUtilsService,
-            dep.authentificateService
+            dep.authentificateService,
+            dep.arianeeBlockchainProxyService
+
           );
 
           const result = await certificateService.getCertificate(2233, undefined, { content: false });
@@ -171,7 +179,9 @@ describe('CertificateService > ', () => {
             dep.diagnosisService,
             dep.jwtProofService,
             dep.certificateUtilsService,
-            dep.authentificateService
+            dep.authentificateService,
+            dep.arianeeBlockchainProxyService
+
           );
 
           const result = await certificateService.getCertificate(2233, undefined, { content: true });
@@ -206,7 +216,9 @@ describe('CertificateService > ', () => {
             dep.diagnosisService,
             dep.jwtProofService,
             dep.certificateUtilsService,
-            dep.authentificateService
+            dep.authentificateService,
+            dep.arianeeBlockchainProxyService
+
           );
 
           await certificateService.getCertificate(2233, undefined, { issuer: { waitingIdentity: true } });
@@ -231,7 +243,9 @@ describe('CertificateService > ', () => {
             dep.diagnosisService,
             dep.jwtProofService,
             dep.certificateUtilsService,
-            dep.authentificateService
+            dep.authentificateService,
+            dep.arianeeBlockchainProxyService
+
           );
 
           await certificateService.getCertificate(2233, undefined, { issuer: true });
@@ -256,7 +270,9 @@ describe('CertificateService > ', () => {
             dep.diagnosisService,
             dep.jwtProofService,
             dep.certificateUtilsService,
-            dep.authentificateService
+            dep.authentificateService,
+            dep.arianeeBlockchainProxyService
+
           );
 
           await certificateService.getCertificate(2233, undefined, { issuer: false });
@@ -284,7 +300,9 @@ describe('CertificateService > ', () => {
       undefined,
       undefined,
       {} as any,
-      undefined);
+      undefined,
+        {} as any
+    );
 
     beforeEach(() => {
       createLinkMock.mockReset();

@@ -10,11 +10,7 @@ import {Arianee, NETWORK} from '../src';
 
   const wallet = arianee.fromMnemonic('tell bottom casual hobby announce garbage marble envelope slide stove please manual');
 
-  const r = await
-  wallet.methods.getCertificate(
-    '9600',
-    undefined, { events: true });
+  const r = await wallet.methods.getMyCertificates();
 
-  console.log(r.events.transfer.length);
-  console.log(r.events.transfer[0]);
+  console.log(r);
 })();

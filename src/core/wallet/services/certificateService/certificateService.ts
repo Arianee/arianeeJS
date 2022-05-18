@@ -24,6 +24,7 @@ import { GlobalConfigurationService } from '../globalConfigurationService/global
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
+import { ArianeeBlockchainProxyService } from '../arianeeBlockchainProxyService/arianeeBlockchainProxyService';
 
 @injectable()
 export class CertificateService {
@@ -102,7 +103,8 @@ export class CertificateService {
       private diagnosisService:DiagnosisService,
       private jwtProofService: ArianeeAccessTokenService,
       private certificateUtilsService: CertificateUtilsService,
-      private arianeeAuthentificationService:ArianeeAuthentificationService
+      private arianeeAuthentificationService:ArianeeAuthentificationService,
+      private arianeeProxyService:ArianeeBlockchainProxyService
   ) {
   }
 
@@ -428,24 +430,28 @@ export class CertificateService {
       return [];
     }
 
-    const numberOfCertificates = await this.contractService.smartAssetContract.methods
-      .balanceOf(this.walletService.address)
-      .call();
+    if (this.configurationService.isProxyEnable()) {
+      return this.arianeeProxyService.getAllMyCertificateIds();
+    } else {
+      const numberOfCertificates = await this.contractService.smartAssetContract.methods
+        .balanceOf(this.walletService.address)
+        .call();
 
-    const rangeOfIndex = [];
+      const rangeOfIndex = [];
 
-    for (let i = 0; i < <any>numberOfCertificates; i++) {
-      rangeOfIndex.push(i);
+      for (let i = 0; i < <any>numberOfCertificates; i++) {
+        rangeOfIndex.push(i);
+      }
+
+      // Fetch certificateIds of certificate with index
+      return Promise.all(
+        rangeOfIndex.map(index =>
+          this.contractService.smartAssetContract.methods
+            .tokenOfOwnerByIndex(this.walletService.address, index)
+            .call()
+        )
+      );
     }
-
-    // Fetch certificateIds of certificate with index
-    return Promise.all(
-      rangeOfIndex.map(index =>
-        this.contractService.smartAssetContract.methods
-          .tokenOfOwnerByIndex(this.walletService.address, index)
-          .call()
-      )
-    );
   }
 
   public getMyCertificates = async (
