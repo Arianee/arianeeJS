@@ -11,11 +11,12 @@ import { ConsolidatedCertificateRequest, Message } from '../../certificateSummar
 import { ArianeePrivacyGatewayService } from '../arianeePrivacyGatewayService/arianeePrivacyGatewayService';
 import { CertificateService } from '../certificateService/certificateService';
 import { ConfigurationService } from '../configurationService/configurationService';
-import { ContractService } from '../contractService/contractsService';
+import { ContractName, ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
+import { GetPastEventService } from '../getPastEventService/getPastEventService';
 
 @injectable()
 export class MessageService {
@@ -29,7 +30,8 @@ export class MessageService {
     private diagnosisService:DiagnosisService,
     private store: SimpleStore,
     private certificateService: CertificateService,
-    private arianeePrivacyGateWayService:ArianeePrivacyGatewayService
+    private arianeePrivacyGateWayService:ArianeePrivacyGatewayService,
+    private getPastEvent:GetPastEventService
   ) {
   }
 
@@ -129,7 +131,8 @@ export class MessageService {
       }
     }
 
-    const messageSentEvents = await this.contractService.messageContract.getPastEvents(
+    const messageSentEvents = await this.getPastEvent.getPastEvents(
+      ContractName.messageContract,
       'MessageSent',
       { fromBlock: 0, toBlock: 'latest', filter: { _tokenId: result.tokenId.toString() } }
     );
@@ -213,7 +216,8 @@ export class MessageService {
   public isMessageRead=async (
     messageId?: number
   ):Promise<boolean> => {
-    const messageReadEvents = await this.contractService.messageContract.getPastEvents(
+    const messageReadEvents = await this.getPastEvent.getPastEvents(
+      ContractName.messageContract,
       'MessageRead',
       { fromBlock: 0, toBlock: 'latest', filter: { _messageId: messageId } }
     );

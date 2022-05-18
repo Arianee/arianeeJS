@@ -15,11 +15,12 @@ import {
 } from '../../certificateSummary/certificateSummary';
 import { ArianeePrivacyGatewayService } from '../arianeePrivacyGatewayService/arianeePrivacyGatewayService';
 import { ConfigurationService } from '../configurationService/configurationService';
-import { ContractService } from '../contractService/contractsService';
+import { ContractName, ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
+import { GetPastEventService } from '../getPastEventService/getPastEventService';
 
 @injectable()
 export class EventService {
@@ -31,7 +32,8 @@ export class EventService {
       private httpClient: ArianeeHttpClient,
       private utils: UtilsService,
       private diagnosisService: DiagnosisService,
-      private arianeePrivacyGateWayService: ArianeePrivacyGatewayService
+      private arianeePrivacyGateWayService: ArianeePrivacyGatewayService,
+      private getPastEventService:GetPastEventService
   ) {
   }
 
@@ -42,8 +44,8 @@ export class EventService {
   ): Promise<any> => {
     const { certificateId } = parameters;
 
-    const sortedEvents:BlockchainEvent[] = await this.contractService.smartAssetContract
-      .getPastEvents('Transfer', {
+    const sortedEvents:BlockchainEvent[] = await this.getPastEventService.getPastEvents(ContractName.smartAssetContract, 'Transfer',
+      {
         filter: { _tokenId: certificateId },
         fromBlock: 0,
         toBlock: 'latest'
@@ -51,17 +53,14 @@ export class EventService {
       .then(events => events.sort(sortEvents));
 
     const consolidatedEvent = async (event) => {
-      const [timestamp, identity] = await Promise.all([
-        this.utils.getTimestampFromBlock(event.blockNumber),
-        this.identityService
-          .getIdentity({
-            ...parameters,
-            address: event.returnValues._to
-          })
-      ]);
+      const identity = await
+      this.identityService
+        .getIdentity({
+          ...parameters,
+          address: event.returnValues._to
+        });
 
       return {
-        timestamp,
         identity,
         ...event
       };
@@ -169,7 +168,8 @@ export class EventService {
     const eventBc:any = await this.contractService.eventContract.methods.getEvent(arianeeEventId).call();
 
     const getTimestamp = async ():Promise<number> => {
-      const creationEvent:BlockchainEvent[] = await this.contractService.eventContract.getPastEvents(
+      const creationEvent:BlockchainEvent[] = await this.getPastEventService.getPastEvents(
+        ContractName.eventContract,
         blockchainEventsName.arianeeEvent.eventCreated,
         { fromBlock: 0, toBlock: 'latest', filter: { _eventId: arianeeEventId } }
       );

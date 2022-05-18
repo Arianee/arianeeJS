@@ -1,6 +1,6 @@
-import { injectable, singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 import { BlockchainEventWatcherEnum } from '../../../../models/enum';
-import { ContractService } from '../contractService/contractsService';
+import { ContractName, ContractService } from '../contractService/contractsService';
 
 import { WalletService } from '../walletService/walletService';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
@@ -9,6 +9,7 @@ import { ArianeeEventEmitter, ArianeListenerEvent } from '../arianeeEventEmitter
 import { Web3Service } from '../web3Service/web3Service';
 import { blockchainEventsName } from '../../../../models/blockchainEventsName';
 import { WatchParameter } from '../../../../models/watchParameter';
+import { GetPastEventService } from '../getPastEventService/getPastEventService';
 
 const blockchainEventCursorNamespaceKey = 'blockchainEventCursor';
 
@@ -19,7 +20,8 @@ export class BlockchainEventWatcherService {
       private walletService:WalletService,
       public store: SimpleStore,
       private eventEmitter: ArianeeEventEmitter,
-      private web3Service:Web3Service
+      private web3Service:Web3Service,
+      private getPastEventService:GetPastEventService
   ) {
     eventEmitter.EE.on(ArianeListenerEvent.newListener, async (event) => {
       this.watcherParameters
@@ -48,31 +50,31 @@ export class BlockchainEventWatcherService {
 
   public watcherParameters:WatchParameter[]=[
     {
-      contract: this.contractService.smartAssetContract,
+      contract: this.contractService[ContractName.smartAssetContract],
       filter: { _from: this.walletService.address },
       blockchainEvent: blockchainEventsName.smartAsset.transfer,
       eventNames: [BlockchainEventWatcherEnum.Transfer, BlockchainEventWatcherEnum.TransferFrom]
     },
     {
-      contract: this.contractService.smartAssetContract,
+      contract: this.contractService[ContractName.smartAssetContract],
       filter: { _to: this.walletService.address },
       blockchainEvent: blockchainEventsName.smartAsset.transfer,
       eventNames: [BlockchainEventWatcherEnum.Transfer, BlockchainEventWatcherEnum.TransferTo]
     },
     {
-      contract: this.contractService.identityContract,
+      contract: this.contractService[ContractName.identityContract],
       filter: {},
       blockchainEvent: blockchainEventsName.identity.IdentityUpdate,
       eventNames: [BlockchainEventWatcherEnum.IdentityUpdate]
     },
     {
-      contract: this.contractService.identityContract,
+      contract: this.contractService[ContractName.identityContract],
       filter: {},
       blockchainEvent: blockchainEventsName.identity.IdentityValidate,
       eventNames: [BlockchainEventWatcherEnum.IdentityValidate]
     },
     {
-      contract: this.contractService.messageContract,
+      contract: this.contractService[ContractName.messageContract],
       blockchainEvent: blockchainEventsName.message.MessageSent,
       filter: { _receiver: this.walletService.address },
       eventNames: [BlockchainEventWatcherEnum.MessageReceive]
@@ -83,14 +85,16 @@ export class BlockchainEventWatcherService {
     setTimeout(async () => {
       const { contract, filter, blockchainEvent, eventNames } = conf;
 
-      const cursorKey = blockchainEvent.concat(JSON.stringify(filter)) + contract.options.address;
+      const contractAddress = contract.options.address;
+      const cursorKey = blockchainEvent.concat(JSON.stringify(filter)) + contractAddress;
 
       const currentBlock = await this.web3Service.web3.eth.getBlockNumber();
 
       const cursor:number = await this.store.get(blockchainEventCursorNamespaceKey, cursorKey, () => Promise.resolve(currentBlock - 1));
 
       if (currentBlock > cursor) {
-        const pastEvent = await contract.getPastEvents(
+        const pastEvent = await this.getPastEventService.getPastEvents(
+          contractAddress,
           blockchainEvent,
           { fromBlock: cursor, toBlock: currentBlock, filter: filter }
         );

@@ -3,7 +3,15 @@ import { CertificateProofService } from './certificateProofService';
 describe('CertificateProofService', () => {
   describe('create proof', () => {
     const createLinkMock = jest.fn();
-    const certificateProofService = new CertificateProofService(undefined, undefined, undefined, undefined, undefined, { createLink: createLinkMock, createPassphrase: () => 'generatePassphrase' } as any);
+    const certificateProofService = new CertificateProofService(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+        { createLink: createLinkMock, createPassphrase: () => 'generatePassphrase' } as any,
+        {} as any
+    );
 
     const handleSpy = jest.spyOn(certificateProofService as any, 'setPassphrase');
     handleSpy.mockImplementation(() => {
