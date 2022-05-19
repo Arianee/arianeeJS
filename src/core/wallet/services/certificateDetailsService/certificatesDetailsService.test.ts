@@ -54,7 +54,8 @@ describe('CertificateDetails', () => {
       dep.utils,
       dep.simpleStore,
       dep.arianeeAuthentificationService,
-      dep.globalConfigurationService
+      dep.globalConfigurationService,
+        {} as any
     );
   });
 });

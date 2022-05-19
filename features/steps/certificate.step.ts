@@ -766,7 +766,8 @@ Then('user{int} create a certificate with certificateId{int}',
         hash
       });
       expect(true).equals(true);
-    } catch {
+    } catch(e) {
+        console.log(e)
       expect(true).equals(false);
     }
   });

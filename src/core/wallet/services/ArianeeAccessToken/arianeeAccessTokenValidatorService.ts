@@ -4,43 +4,17 @@ import { CertificateJwt } from '../../../../models/JWT/certificate-jwt';
 import { ContractService } from '../contractService/contractsService';
 import { WalletService } from '../walletService/walletService';
 import { JWTService } from './JWTService';
+import { ArianeeBlockchainProxyService } from '../arianeeBlockchainProxyService/arianeeBlockchainProxyService';
 
 @injectable()
-export class ArianeeAccessTokenService {
-  constructor (private jwtService: JWTService, private walletService: WalletService, private contractService: ContractService) {
+export class ArianeeAccessTokenValidatorService {
+  constructor (private jwtService: JWTService,
+               private walletService: WalletService,
+               private contractService: ContractService,
+               private arianeeProxyService:ArianeeBlockchainProxyService
+  ) {
 
   }
-
-  /**
-   * Create a wallet JWTProof
-   */
-  public createWalletAccessToken = () => {
-    return this.jwtService.sign({
-      sub: 'wallet'
-    });
-  }
-
-  /**
-   * Create a certificate JWTProof
-   * @param certificateId
-   */
-  public createCertificateArianeeAccessToken =(certificateId: number) => {
-    return this.jwtService.sign({
-      sub: 'certificate',
-      subId: certificateId
-    });
-  }
-
-  /**
-   * Create JWTProof and add it to url
-   * @param url
-   * @param certificateId
-   */
-    public createActionArianeeAccessTokenLink= async (url:string, certificateId: number) => {
-      const arianeeAccessToken = await this.createCertificateArianeeAccessToken(certificateId);
-
-      return appendQuery(url, { arianeeAccessToken });
-    }
 
   /**
    * Decode proof and return it
@@ -79,7 +53,8 @@ export class ArianeeAccessTokenService {
    */
   public isCertificateArianeeAccessTokenValid = async (token): Promise<boolean> => {
     const { payload } = this.jwtService.decode(token);
-    const owner = await this.contractService.smartAssetContract.methods.ownerOf(payload.subId).call().catch(e => '');
+    const certificateId = payload.subId;
+    const owner = await this.arianeeProxyService.ownerOf(certificateId).catch(e => '');
 
     return this.jwtService.isValidJWT(token, owner);
   };

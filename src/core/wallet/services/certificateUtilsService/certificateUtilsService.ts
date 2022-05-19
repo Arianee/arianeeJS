@@ -7,6 +7,7 @@ import { ConfigurationService } from '../configurationService/configurationServi
 import { ContractService } from '../contractService/contractsService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
+import { ArianeeBlockchainProxyService } from '../arianeeBlockchainProxyService/arianeeBlockchainProxyService';
 
 @injectable()
 export class CertificateUtilsService {
@@ -16,12 +17,14 @@ export class CertificateUtilsService {
         private configurationService: ConfigurationService,
         private contractService: ContractService,
         private certificateDetails: CertificateDetails,
-        private walletService: WalletService) {
+        private walletService: WalletService,
+        private arianeeProxyService:ArianeeBlockchainProxyService
+  ) {
   }
 
     public isCertificateIdFree = async (certificateId:number):Promise<boolean> => {
       try {
-        await this.contractService.smartAssetContract.methods.ownerOf(certificateId).call();
+        await this.arianeeProxyService.ownerOf(certificateId.toString());
         return false;
       } catch {
         return true;
@@ -30,10 +33,10 @@ export class CertificateUtilsService {
 
     public canCreateCertificateWithCertificateId = async (certificateId:number):Promise<boolean> => {
       try {
-        const owner = await this.contractService.smartAssetContract.methods.ownerOf(certificateId).call();
+        const owner = await this.arianeeProxyService.ownerOf(certificateId);
         const imprint = await this.contractService.smartAssetContract.methods.tokenImprint(certificateId).call();
         const imprintIsEmpty = !imprint || imprint === '0x0000000000000000000000000000000000000000000000000000000000000000';
-        const isOwner = owner === this.walletService.address;
+        const isOwner = owner.toLowerCase() === this.walletService.address.toLowerCase();
 
         return imprintIsEmpty && isOwner;
       } catch {

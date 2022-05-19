@@ -14,34 +14,36 @@ import { ContractService } from '../contractService/contractsService';
 import { DiagnosisService } from '../diagnosisService/diagnosisService';
 import { EventService } from '../eventService/eventsService';
 import { IdentityService } from '../identityService/identityService';
-import { ArianeeAccessTokenService } from '../ArianeeAccessToken/ArianeeAccessTokenService';
+import { ArianeeAccessTokenValidatorService } from '../ArianeeAccessToken/arianeeAccessTokenValidatorService';
 import { LostAndStolenService } from '../lostAndStolenService/lostAndStolenService';
 import { MessageService } from '../messageService/messageService';
 import { POAAndAriaService } from '../POAAndAriaFaucet/POAAndAriaService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
 import { GasStationService } from '../gasStationService/gasStationService';
+import { ArianeeAccessTokenCreatorService } from '../ArianeeAccessToken/arianeeAccessTokenCreatorService';
 
 @injectable()
 export class WalletCustomMethodService {
   constructor (private httpClient: ArianeeHttpClient,
-              private configurationService: ConfigurationService,
-              private web3Service: Web3Service,
-              private contractService: ContractService,
-              private eventService: EventService,
-              private messageService: MessageService,
-              private walletService: WalletService,
-              private certificateService: CertificateService,
-               private poaAndAriaService:POAAndAriaService,
-               private identityService:IdentityService,
-               private certificateAuthorizationService:CertificateAuthorizationService,
-               private balanceService:BalanceService,
-               private diagnosisService:DiagnosisService,
-               private arianeeAccessTokenService:ArianeeAccessTokenService,
-               private certificateProofService:CertificateProofService,
-               private gasStationService: GasStationService,
-               private blockchainUtilsService:BlockchainUtilsService,
-               private lostAndStolenService:LostAndStolenService
+                private configurationService: ConfigurationService,
+                private web3Service: Web3Service,
+                private contractService: ContractService,
+                private eventService: EventService,
+                private messageService: MessageService,
+                private walletService: WalletService,
+                private certificateService: CertificateService,
+                private poaAndAriaService: POAAndAriaService,
+                private identityService: IdentityService,
+                private certificateAuthorizationService: CertificateAuthorizationService,
+                private balanceService: BalanceService,
+                private diagnosisService: DiagnosisService,
+                private arianeeAccessTokenValidatorService: ArianeeAccessTokenValidatorService,
+                private arianeeAccessTokenCreatorService: ArianeeAccessTokenCreatorService,
+                private certificateProofService: CertificateProofService,
+                private gasStationService: GasStationService,
+                private blockchainUtilsService: BlockchainUtilsService,
+                private lostAndStolenService: LostAndStolenService
   ) {
 
   }
@@ -85,8 +87,8 @@ export class WalletCustomMethodService {
             all: (objParams: { verifyOwnership?: boolean, query?: ConsolidatedCertificateRequest }) =>
               this.certificateService.getMyCertificates(objParams.query, objParams.verifyOwnership),
             groupByIssuer:
-                (objParams: { query?: ConsolidatedCertificateRequest }) =>
-                  this.certificateService.getMyCertificatesGroupByIssuer(objParams.query)
+                            (objParams: { query?: ConsolidatedCertificateRequest }) =>
+                              this.certificateService.getMyCertificatesGroupByIssuer(objParams.query)
           }
         },
         creation: {
@@ -95,80 +97,80 @@ export class WalletCustomMethodService {
           createAndStore: (objParams: { data: hydrateTokenParameters, urlOfRPCServer: string }) =>
             this.certificateService.createAndStoreCertificate(objParams.data, objParams.urlOfRPCServer),
           storeContent: (objParams: {
-            certificateId: ArianeeTokenId, content, url?: string
-          }) => this.certificateService.storeContentInRPCServer(objParams.certificateId, objParams.content, objParams.url),
+                        certificateId: ArianeeTokenId, content, url?: string
+                    }) => this.certificateService.storeContentInRPCServer(objParams.certificateId, objParams.content, objParams.url),
           batch: (objParams: { datas: hydrateTokenParameters[] }) => this.certificateService.customHydrateTokenBatch(objParams.datas)
         },
         arianeeAccessToken: {
-          create: (objParams:{url:string, certificateId: number}) =>
-            this.arianeeAccessTokenService.createActionArianeeAccessTokenLink(objParams.url, objParams.certificateId),
-          decode: (objParams:{arianeeAccessToken}) =>
-            this.arianeeAccessTokenService.decodeArianeeAccessToken(objParams.arianeeAccessToken),
-          isArianeeAccessTokenValid: (objParams:{arianeeAccessToken}) =>
-            this.arianeeAccessTokenService.isCertificateArianeeAccessTokenValid(objParams.arianeeAccessToken),
-          isCertificateProofValid: (objParams:{
-            certificateId: number,
-            passphrase?: string,
-            arianeeAccessToken?:string
-          }) => this.certificateProofService.isCertificateProofValid(objParams.certificateId, objParams.passphrase, objParams.arianeeAccessToken),
-          isCertificateProofValidFromLink: (objParams:{proofLink:string}) =>
+          create: (objParams: { url: string, certificateId: number }) =>
+            this.arianeeAccessTokenCreatorService.createActionArianeeAccessTokenLink(objParams.url, objParams.certificateId),
+          decode: (objParams: { arianeeAccessToken }) =>
+            this.arianeeAccessTokenValidatorService.decodeArianeeAccessToken(objParams.arianeeAccessToken),
+          isArianeeAccessTokenValid: (objParams: { arianeeAccessToken }) =>
+            this.arianeeAccessTokenValidatorService.isCertificateArianeeAccessTokenValid(objParams.arianeeAccessToken),
+          isCertificateProofValid: (objParams: {
+                        certificateId: number,
+                        passphrase?: string,
+                        arianeeAccessToken?: string
+                    }) => this.certificateProofService.isCertificateProofValid(objParams.certificateId, objParams.passphrase, objParams.arianeeAccessToken),
+          isCertificateProofValidFromLink: (objParams: { proofLink: string }) =>
             this.certificateProofService.isCertificateProofValidFromLink(objParams.proofLink),
-          isCertificateProofValidFromActionProofLink: (objParams:{actionProofLink:string}) =>
+          isCertificateProofValidFromActionProofLink: (objParams: { actionProofLink: string }) =>
             this.certificateProofService.isAuthURL(objParams.actionProofLink)
         },
         proof: {
-          createCertificateProofLink: (objParams:{certificateId: number, passphrase?: string}) =>
+          createCertificateProofLink: (objParams: { certificateId: number, passphrase?: string }) =>
             this.certificateProofService.createCertificateProofLink(objParams.certificateId, objParams.passphrase),
-          createActionProofLink: (objParams:{url:string, certificateId: number, passphrase?: string}) =>
+          createActionProofLink: (objParams: { url: string, certificateId: number, passphrase?: string }) =>
             this.certificateProofService.createActionProofLink(objParams.url, objParams.certificateId, objParams.passphrase),
-          isCertificateProofValid: (objParams:{
-            certificateId: number,
-            passphrase?: string,
-            arianeeAccessToken?:string
-          }) => this.certificateProofService.isCertificateProofValid(objParams.certificateId, objParams.passphrase, objParams.arianeeAccessToken),
-          isCertificateProofValidFromLink: (objParams:{proofLink:string}) =>
+          isCertificateProofValid: (objParams: {
+                        certificateId: number,
+                        passphrase?: string,
+                        arianeeAccessToken?: string
+                    }) => this.certificateProofService.isCertificateProofValid(objParams.certificateId, objParams.passphrase, objParams.arianeeAccessToken),
+          isCertificateProofValidFromLink: (objParams: { proofLink: string }) =>
             this.certificateProofService.isCertificateProofValidFromLink(objParams.proofLink),
-          isCertificateProofValidFromActionProofLink: (objParams:{actionProofLink:string}) =>
+          isCertificateProofValidFromActionProofLink: (objParams: { actionProofLink: string }) =>
             this.certificateProofService.isAuthURL(objParams.actionProofLink)
         },
         ownership: {
-          destroy: (objParams:{certificateId:ArianeeTokenId}) =>
+          destroy: (objParams: { certificateId: ArianeeTokenId }) =>
             this.certificateService.destroyCertificate(objParams.certificateId),
-          recover: (objParams:{certificateId:ArianeeTokenId}) =>
+          recover: (objParams: { certificateId: ArianeeTokenId }) =>
             this.certificateService.recoverCertificate(objParams.certificateId),
-          request: (objParams:{certificateId:ArianeeTokenId, passphrase:string}) =>
+          request: (objParams: { certificateId: ArianeeTokenId, passphrase: string }) =>
             this.certificateService.requestCertificateOwnershipWithPassphrase(objParams.certificateId, objParams.passphrase),
-          isRequestable: (objParams:{certificateId:ArianeeTokenId, passphrase:string}) =>
+          isRequestable: (objParams: { certificateId: ArianeeTokenId, passphrase: string }) =>
             this.certificateService.isCertificateOwnershipRequestable(objParams.certificateId, objParams.passphrase),
-          createRequestLink: (objParams:{certificateId:ArianeeTokenId, passphrase:string}) =>
+          createRequestLink: (objParams: { certificateId: ArianeeTokenId, passphrase: string }) =>
             this.certificateService.createCertificateRequestOwnershipLink(objParams.certificateId, objParams.passphrase)
         }
       },
       arianeeEvent: {
         accept: (objParams: { eventId: string }) => this.eventService.acceptArianeeEvent(objParams.eventId),
         refuse: (objParams: { eventId: string }) => this.eventService.refuseArianeeEvent(objParams.eventId),
-        setMessageAuthorization: (objParams:{
-          certificateId:ArianeeTokenId, senderAddress:string, isAuthorized:boolean
-        }) => this.certificateAuthorizationService
+        setMessageAuthorization: (objParams: {
+                    certificateId: ArianeeTokenId, senderAddress: string, isAuthorized: boolean
+                }) => this.certificateAuthorizationService
           .setMessageAuthorizationFor(objParams.certificateId, objParams.senderAddress, objParams.isAuthorized),
         senders: this.certificateAuthorizationService.getMessageSenders,
         creation: {
           create: this.eventService.createArianeeEvent,
-          storeContent: (objParams:{
-            certificateId:ArianeeTokenId,
-            arianeeEventId:number,
-            content,
-            url:string
-          }) => this.eventService
+          storeContent: (objParams: {
+                        certificateId: ArianeeTokenId,
+                        arianeeEventId: number,
+                        content,
+                        url: string
+                    }) => this.eventService
             .storeArianeeEventContentInRPCServer(objParams.certificateId, objParams.arianeeEventId, objParams.content, objParams.url),
-          createAndStore: (objParams:{
-              data: {
-                uri?: string;
-                certificateId: number,
-                arianeeEventId?:number;
-                content?: { $schema: string;[key: string]: any };
-              }, urlOfRPC:string
-          }
+          createAndStore: (objParams: {
+                                         data: {
+                                             uri?: string;
+                                             certificateId: number,
+                                             arianeeEventId?: number;
+                                             content?: { $schema: string; [key: string]: any };
+                                         }, urlOfRPC: string
+                                     }
           ) => this.eventService.createAndStoreArianeeEvent(objParams.data, objParams.urlOfRPC)
         }
       },
@@ -184,30 +186,30 @@ export class WalletCustomMethodService {
           one: this.messageService.getMessage
         },
         creation: {
-          send: (objParams:{
-            data: {
-              uri?: string;
-              certificateId: number,
-              content?: { $schema: string;[key: string]: any };
-              messageId?: number;
-            }, url:string
-          }) => this.messageService.createAndStoreMessage(objParams.data, objParams.url),
-          storeContent: (objParams:{
-            messageId:number,
-            content,
-            url:string
-          }) => this.messageService.storeMessageContentInRPCServer(objParams.messageId, objParams.messageId, objParams.url),
+          send: (objParams: {
+                        data: {
+                            uri?: string;
+                            certificateId: number,
+                            content?: { $schema: string; [key: string]: any };
+                            messageId?: number;
+                        }, url: string
+                    }) => this.messageService.createAndStoreMessage(objParams.data, objParams.url),
+          storeContent: (objParams: {
+                        messageId: number,
+                        content,
+                        url: string
+                    }) => this.messageService.storeMessageContentInRPCServer(objParams.messageId, objParams.messageId, objParams.url),
           create: this.messageService.createMessage,
-          createAndStore: (objParams:{
-            data: {
-              uri?: string;
-              certificateId: number,
-              content?: { $schema: string;[key: string]: any };
-              messageId?: number;
-            }, url:string
-          }) => this.messageService.createAndStoreMessage(objParams.data, objParams.url)
+          createAndStore: (objParams: {
+                        data: {
+                            uri?: string;
+                            certificateId: number,
+                            content?: { $schema: string; [key: string]: any };
+                            messageId?: number;
+                        }, url: string
+                    }) => this.messageService.createAndStoreMessage(objParams.data, objParams.url)
         },
-        markAsRead: (objParams:{certificateId:ArianeeTokenId}) => this.messageService.markAsRead(objParams.certificateId)
+        markAsRead: (objParams: { certificateId: ArianeeTokenId }) => this.messageService.markAsRead(objParams.certificateId)
       }
     };
   }
@@ -276,13 +278,13 @@ export class WalletCustomMethodService {
 
       diagnosis: this.diagnosisService.diagnosis,
 
-      createActionArianeeAccessTokenLink: this.arianeeAccessTokenService.createActionArianeeAccessTokenLink,
-      decodeArianeeAccessToken: this.arianeeAccessTokenService.decodeArianeeAccessToken,
-      createCertificateArianeeAccessToken: this.arianeeAccessTokenService.createCertificateArianeeAccessToken,
-      isCertificateArianeeAccessTokenValid: this.arianeeAccessTokenService.isCertificateArianeeAccessTokenValid,
-      isArianeeAccessTokenValid: this.arianeeAccessTokenService.isArianeeAccessTokenValid,
-      getArianeeAccessTokenJWT: this.arianeeAccessTokenService.getArianeeAccessTokenJWT,
-      createWalletAccessToken: this.arianeeAccessTokenService.createWalletAccessToken,
+      createActionArianeeAccessTokenLink: this.arianeeAccessTokenCreatorService.createActionArianeeAccessTokenLink,
+      decodeArianeeAccessToken: this.arianeeAccessTokenValidatorService.decodeArianeeAccessToken,
+      createCertificateArianeeAccessToken: this.arianeeAccessTokenCreatorService.createCertificateArianeeAccessToken,
+      isCertificateArianeeAccessTokenValid: this.arianeeAccessTokenValidatorService.isCertificateArianeeAccessTokenValid,
+      isArianeeAccessTokenValid: this.arianeeAccessTokenValidatorService.isArianeeAccessTokenValid,
+      getArianeeAccessTokenJWT: this.arianeeAccessTokenValidatorService.getArianeeAccessTokenJWT,
+      createWalletAccessToken: this.arianeeAccessTokenCreatorService.createWalletAccessToken,
 
       createAuthURL: this.certificateProofService.createAuthURL,
       isAuthURL: this.certificateProofService.isAuthURL,
@@ -301,36 +303,36 @@ export class WalletCustomMethodService {
     };
   }
 
-  private approveStore = () => {
-    return this.contractService.ariaContract.methods
-      .approve(
-        this.configurationService.arianeeConfiguration.store.address,
-        '10000000000000000000000000000'
-      )
-      .send();
-  }
-
-  public getCreditTypes = () => Object.values(creditTypeEnum);
-
-  public buyCredits = async (creditType: string, quantity: number, receiver?: string) => {
-    if (!Object.prototype.hasOwnProperty.call(creditTypeEnum, creditType)) {
-      throw new Error('this credit type does not exist !!! ' + creditType);
-    }
-
-    receiver = receiver || this.walletService.address;
-
-    try {
-      var result = await this.contractService.storeContract.methods
-        .buyCredit(creditNameToType[creditType], quantity, receiver)
+    private approveStore = () => {
+      return this.contractService.ariaContract.methods
+        .approve(
+          this.configurationService.arianeeConfiguration.store.address,
+          '10000000000000000000000000000'
+        )
         .send();
-
-      return result;
-    } catch (e) {
-      const diagnosis = await this.diagnosisService.diagnosis([
-        this.diagnosisService.isStoreApprove(),
-        this.diagnosisService.isAriaCredit()
-      ], e);
-      return Promise.reject(diagnosis);
     }
-  }
+
+    public getCreditTypes = () => Object.values(creditTypeEnum);
+
+    public buyCredits = async (creditType: string, quantity: number, receiver?: string) => {
+      if (!Object.prototype.hasOwnProperty.call(creditTypeEnum, creditType)) {
+        throw new Error('this credit type does not exist !!! ' + creditType);
+      }
+
+      receiver = receiver || this.walletService.address;
+
+      try {
+        var result = await this.contractService.storeContract.methods
+          .buyCredit(creditNameToType[creditType], quantity, receiver)
+          .send();
+
+        return result;
+      } catch (e) {
+        const diagnosis = await this.diagnosisService.diagnosis([
+          this.diagnosisService.isStoreApprove(),
+          this.diagnosisService.isAriaCredit()
+        ], e);
+        return Promise.reject(diagnosis);
+      }
+    }
 }

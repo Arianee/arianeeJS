@@ -10,6 +10,8 @@ describe('CertificateProofService', () => {
       undefined,
       undefined,
         { createLink: createLinkMock, createPassphrase: () => 'generatePassphrase' } as any,
+        {} as any,
+        {} as any,
         {} as any
     );
 
