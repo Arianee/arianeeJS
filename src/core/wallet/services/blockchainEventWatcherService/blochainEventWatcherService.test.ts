@@ -50,6 +50,8 @@ describe('Event Watcher', () => {
 
     let blockNumber = 10;
 
+    const configurationServiceMock = { isProxyEnable: () => false } as ConfigurationService;
+
     web3Service = {
 
       web3: {
@@ -65,9 +67,10 @@ describe('Event Watcher', () => {
       store,
       arianeeEventEmitter,
       web3Service,
-            {
-              getPastEvents: stubGetPastEvent
-            } as any);
+      {
+        getPastEvents: stubGetPastEvent
+      } as any,
+      configurationServiceMock);
     eventWatcher.timeout = 10;
   });
 
