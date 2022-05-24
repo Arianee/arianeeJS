@@ -27,6 +27,7 @@ import { GlobalConfigurationService } from '../globalConfigurationService/global
 import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
+import { ArianeeBlockchainProxyService } from '../arianeeBlockchainProxyService/arianeeBlockchainProxyService';
 
 @injectable()
 export class CertificateDetails {
@@ -39,7 +40,8 @@ export class CertificateDetails {
     private utils: UtilsService,
     private store: SimpleStore,
     private arianeeAuthentificationService:ArianeeAuthentificationService,
-    private globalConfigurationService:GlobalConfigurationService
+    private globalConfigurationService:GlobalConfigurationService,
+    private arianeeProxyService:ArianeeBlockchainProxyService
   ) {
   }
 
@@ -67,9 +69,7 @@ export class CertificateDetails {
     certificateId: ArianeeTokenId,
     certificateBuilder?: CertificateSummaryBuilder
   ) => {
-    const owner = await this.contractService.smartAssetContract.methods
-      .ownerOf(certificateId.toString())
-      .call();
+    const owner = await this.arianeeProxyService.ownerOf(certificateId.toString());
 
     if (certificateBuilder) certificateBuilder.setOwner(owner, this.walletService.address);
 

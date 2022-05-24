@@ -34,7 +34,10 @@ import { WalletService } from './services/walletService/walletService';
 import { Web3Service } from './services/web3Service/web3Service';
 import { TransactionObject } from '@arianee/arianee-abi/types/types';
 import { GetPastEventService } from './services/getPastEventService/getPastEventService';
+import { ArianeeBlockchainProxyService } from './services/arianeeBlockchainProxyService/arianeeBlockchainProxyService';
 import EventEmitter = require('eventemitter3');
+import { ArianeeAccessTokenValidatorService } from './services/ArianeeAccessToken/arianeeAccessTokenValidatorService';
+import { ArianeeAccessTokenCreatorService } from './services/ArianeeAccessToken/arianeeAccessTokenCreatorService';
 
 export interface ClassicConfiguration{
     account:any,
@@ -73,11 +76,14 @@ export class ArianeeWallet {
         Web3Service,
         JWTService,
         CertificateUtilsService,
+        ArianeeAccessTokenValidatorService,
+        ArianeeAccessTokenCreatorService,
         ArianeePrivacyGatewayService,
         BlockchainUtilsService,
         LostAndStolenService,
         GasStationService,
-        GetPastEventService
+        GetPastEventService,
+        ArianeeBlockchainProxyService
       );
 
       if (configuration.web3) {

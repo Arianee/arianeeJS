@@ -77,7 +77,7 @@ export class JWTGeneric {
         return false;
       }
 
-      return pubKey === decode;
+      return pubKey.toLowerCase() === decode.toLowerCase();
     }
 
     private arePropertiesValid=(payload) => {

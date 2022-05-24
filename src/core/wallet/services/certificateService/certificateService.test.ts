@@ -14,7 +14,7 @@ import { EventService } from '../eventService/eventsService';
 import { Web3Service } from '../web3Service/web3Service';
 import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 import { BatchService } from '../batchService/batchService';
-import { ArianeeAccessTokenService } from '../ArianeeAccessToken/ArianeeAccessTokenService';
+import { ArianeeAccessTokenValidatorService } from '../ArianeeAccessToken/arianeeAccessTokenValidatorService';
 import { ArianeeBlockchainProxyService } from '../arianeeBlockchainProxyService/arianeeBlockchainProxyService';
 
 describe('CertificateService > ', () => {
@@ -39,7 +39,7 @@ describe('CertificateService > ', () => {
     const simpleStore:SimpleStore = {} as SimpleStore;
     const batchService:BatchService = {} as BatchService;
     const diagnosisService:DiagnosisService = {} as DiagnosisService;
-    const jwtProofService:ArianeeAccessTokenService = {} as ArianeeAccessTokenService;
+    const jwtProofService:ArianeeAccessTokenValidatorService = {} as ArianeeAccessTokenValidatorService;
     const certificateUtilsService:CertificateUtilsService = {} as CertificateUtilsService;
     const arianeeBlockchainProxyService:ArianeeBlockchainProxyService = {} as ArianeeBlockchainProxyService;
 

@@ -6,7 +6,7 @@ import { blockchainEventsName } from '../../../../models/blockchainEventsName';
 import { ExtendedBoolean } from '../../../../models/extendedBoolean';
 import { QueryAndSearchParams } from '../../../../models/queryAndSearchParams.enum';
 import { sortEvents } from '../../../libs/sort/sortEvents';
-import { ArianeeAccessTokenService } from '../ArianeeAccessToken/ArianeeAccessTokenService';
+import { ArianeeAccessTokenValidatorService } from '../ArianeeAccessToken/arianeeAccessTokenValidatorService';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ContractName, ContractService } from '../contractService/contractsService';
 import { UtilsService } from '../utilService/utilsService';
@@ -14,17 +14,21 @@ import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
 import { get } from 'lodash';
 import { GetPastEventService } from '../getPastEventService/getPastEventService';
+import { ArianeeBlockchainProxyService } from '../arianeeBlockchainProxyService/arianeeBlockchainProxyService';
+import { ArianeeAccessTokenCreatorService } from '../ArianeeAccessToken/arianeeAccessTokenCreatorService';
 
 @injectable()
 export class CertificateProofService {
   constructor (
     private contractService: ContractService,
     private configurationService: ConfigurationService,
-    private arianeeAccessTokenService:ArianeeAccessTokenService,
+    private arianeeAccessTokenService:ArianeeAccessTokenValidatorService,
     private walletService: WalletService,
     private web3Service:Web3Service,
     private utils: UtilsService,
-    private getPastEventService:GetPastEventService
+    private getPastEventService:GetPastEventService,
+    private arianeeBlockchainProxyService:ArianeeBlockchainProxyService,
+    private arianeeAccessTokenCreatorService:ArianeeAccessTokenCreatorService
   ) {
 
   }
@@ -78,7 +82,7 @@ export class CertificateProofService {
     if (type === 'proof') {
       return this.createActionProofLink(url, certificateId);
     } else if (type === 'arianeeAccessToken') {
-      return Promise.resolve(this.arianeeAccessTokenService.createActionArianeeAccessTokenLink(url, certificateId));
+      return Promise.resolve(this.arianeeAccessTokenCreatorService.createActionArianeeAccessTokenLink(url, certificateId));
     } else {
       throw new Error(`this type ${type} is not supported`);
     }
@@ -222,11 +226,9 @@ export class CertificateProofService {
       lastEvent.transactionHash
     );
 
-    const actualOwner = await this.contractService.smartAssetContract.methods
-      .ownerOf(certificateId)
-      .call();
+    const actualOwner = await this.arianeeBlockchainProxyService.ownerOf(certificateId);
 
-    if (lastEventTransaction && lastEventTransaction.from !== actualOwner) {
+    if (lastEventTransaction && lastEventTransaction.from.toLowerCase() !== actualOwner.toLowerCase()) {
       return {
         isTrue: false,
         code: 'proof.token.notowner',

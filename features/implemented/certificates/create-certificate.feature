@@ -38,6 +38,7 @@ Feature: Certificate creation
   Scenario: User wants to create a certificate with a token already used
     Then user1 tries to create 2 certificates with the same certificateId
 
+    @dev
   Scenario: User wnat to create a certificate with a reserved certificateId
     Given user1 reserve a certificateId1
     Then user1 create a certificate with certificateId1
