@@ -10,6 +10,7 @@ import { Web3Service } from '../web3Service/web3Service';
 import { blockchainEventsName } from '../../../../models/blockchainEventsName';
 import { WatchParameter } from '../../../../models/watchParameter';
 import { GetPastEventService } from '../getPastEventService/getPastEventService';
+import { ConfigurationService } from '../configurationService/configurationService';
 
 const blockchainEventCursorNamespaceKey = 'blockchainEventCursor';
 
@@ -21,7 +22,8 @@ export class BlockchainEventWatcherService {
       public store: SimpleStore,
       private eventEmitter: ArianeeEventEmitter,
       private web3Service:Web3Service,
-      private getPastEventService:GetPastEventService
+      private getPastEventService:GetPastEventService,
+      private configurationService: ConfigurationService
   ) {
     eventEmitter.EE.on(ArianeListenerEvent.newListener, async (event) => {
       this.watcherParameters
@@ -84,22 +86,27 @@ export class BlockchainEventWatcherService {
   public watch = async (conf:WatchParameter) => {
     setTimeout(async () => {
       const { contract, filter, blockchainEvent, eventNames } = conf;
-
       const contractAddress = contract.options.address;
       const cursorKey = blockchainEvent.concat(JSON.stringify(filter)) + contractAddress;
+      const isProxyfied = this.configurationService.isProxyEnable();
 
-      const currentBlock = await this.web3Service.web3.eth.getBlockNumber();
-
+      const currentBlock = isProxyfied ? 'latest' : await this.web3Service.web3.eth.getBlockNumber();
       const cursor:number = await this.store.get(blockchainEventCursorNamespaceKey, cursorKey, () => Promise.resolve(currentBlock - 1));
 
-      if (currentBlock > cursor) {
+      if (currentBlock > cursor || currentBlock === 'latest') {
         const pastEvent = await this.getPastEventService.getPastEvents(
           contractAddress,
           blockchainEvent,
           { fromBlock: cursor, toBlock: currentBlock, filter: filter }
         );
 
-        this.store.set(blockchainEventCursorNamespaceKey, cursorKey, currentBlock + 1);
+        if (isProxyfied) {
+          if (pastEvent.length > 0) {
+            this.store.set(blockchainEventCursorNamespaceKey, cursorKey, pastEvent[pastEvent.length - 1].blockNumber + 1);
+          }
+        } else {
+          this.store.set(blockchainEventCursorNamespaceKey, cursorKey, currentBlock + 1);
+        }
 
         eventNames.forEach((eventName) => {
           if (pastEvent.length > 0) {
@@ -107,6 +114,7 @@ export class BlockchainEventWatcherService {
           }
         });
       }
+
       const sumOfListeners = eventNames.reduce((acc, eventName) => {
         return acc + this.eventEmitter.EE.listeners(eventName).length;
       }, 0);
