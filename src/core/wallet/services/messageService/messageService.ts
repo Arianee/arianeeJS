@@ -1,4 +1,4 @@
-import { get, range } from 'lodash';
+import { get } from 'lodash';
 import { injectable } from 'tsyringe';
 import { ExtendedBoolean } from '../../../../models/extendedBoolean';
 import { StoreNamespace } from '../../../../models/storeNamespace';
@@ -17,6 +17,7 @@ import { IdentityService } from '../identityService/identityService';
 import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { GetPastEventService } from '../getPastEventService/getPastEventService';
+import { ArianeeBlockchainProxyService } from '../arianeeBlockchainProxyService/arianeeBlockchainProxyService';
 
 @injectable()
 export class MessageService {
@@ -31,7 +32,8 @@ export class MessageService {
     private store: SimpleStore,
     private certificateService: CertificateService,
     private arianeePrivacyGateWayService:ArianeePrivacyGatewayService,
-    private getPastEvent:GetPastEventService
+    private getPastEvent:GetPastEventService,
+    private arianeeProxyService:ArianeeBlockchainProxyService
   ) {
   }
 
@@ -169,18 +171,13 @@ export class MessageService {
     return messageSummary;
   }
 
+  public getAllMyMessageIds=this.arianeeProxyService.getAllMyMessageIds;
+
   public getMyMessages=async (parameters?:{
     query?:ConsolidatedCertificateRequest,
     url?:string
   }) => {
-    const nbMessages = await this.contractService.messageContract.methods.messageLengthByReceiver(this.walletService.address).call();
-
-    const rangeOfMessage = range(0, +nbMessages);
-
-    const messageIds = await Promise.all(rangeOfMessage
-      .map(index => this.contractService.messageContract.methods.receiverToMessageIds(this.walletService.address, index)
-        .call()));
-
+    const messageIds = await this.getAllMyMessageIds();
     return Promise.all(messageIds.map(messageId => {
       return this.getMessage({ messageId: <unknown>messageId as number, ...parameters })
         .catch(d => undefined);
