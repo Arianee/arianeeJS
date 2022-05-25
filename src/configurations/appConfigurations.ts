@@ -36,5 +36,12 @@ export default deepFreeze({
     deepLink: 'poly.arian.ee',
     alternativeDeeplink: [],
     protocolVersion: 2
+  },
+  [NETWORK.arialabs]: {
+    networkName: NETWORK.arialabs,
+    faucetUrl: `https://faucet.arianee.net/faucet?network=${NETWORK.arialabs}`,
+    deepLink: 'arialabs.arian.ee',
+    alternativeDeeplink: [],
+    protocolVersion: 2
   }
 });
