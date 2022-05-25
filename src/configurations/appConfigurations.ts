@@ -25,14 +25,14 @@ export default deepFreeze({
   },
   [NETWORK.mumbai]: {
     networkName: NETWORK.mumbai,
-    faucetUrl: `https://test.faucet.arianee.net/faucet?network=${NETWORK.mumbai}`,
+    faucetUrl: `https://faucet.arianee.net/faucet?network=${NETWORK.mumbai}`,
     deepLink: 'testnet.poly.arian.ee',
     alternativeDeeplink: ['mumbai.arian.ee'],
     protocolVersion: 2
   },
   [NETWORK.polygon]: {
     networkName: NETWORK.polygon,
-    faucetUrl: `https://test.faucet.arianee.net/faucet?network=${NETWORK.polygon}`,
+    faucetUrl: `https://faucet.arianee.net/faucet?network=${NETWORK.polygon}`,
     deepLink: 'poly.arian.ee',
     alternativeDeeplink: [],
     protocolVersion: 2
