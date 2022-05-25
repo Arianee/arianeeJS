@@ -231,6 +231,7 @@ export class WalletCustomMethodService {
       destroyCertificate: this.certificateService.destroyCertificate,
       recoverCertificate: this.certificateService.recoverCertificate,
       getMyCertificates: this.certificateService.getMyCertificates,
+      getCertificatesId: this.certificateService.getMyCertificateIds,
       getMyCertificatesGroupByIssuer: this.certificateService.getMyCertificatesGroupByIssuer,
       getIdentity: this.identityService.getSimpleIdentity,
       getIdentityByShortId: this.identityService.getIdentityByShortId,
@@ -267,6 +268,7 @@ export class WalletCustomMethodService {
       createAndStoreArianeeEvent: this.eventService.createAndStoreArianeeEvent,
 
       getMyMessages: this.messageService.getMyMessages,
+      getAllMyMessageIds: this.messageService.getAllMyMessageIds,
       getMessage: this.messageService.getMessage,
 
       isMessageRead: this.messageService.isMessageRead,

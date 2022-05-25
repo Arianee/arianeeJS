@@ -1,10 +1,12 @@
 import { injectable } from 'tsyringe';
-import { ContractService } from '../contractService/contractsService';
+import { ContractName, ContractService } from '../contractService/contractsService';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { ConfigurationService } from '../configurationService/configurationService';
 import { ArianeeTokenId } from '../../../../models';
 import { WalletService } from '../walletService/walletService';
 import { ArianeeAccessTokenCreatorService } from '../ArianeeAccessToken/arianeeAccessTokenCreatorService';
+import { range } from 'lodash';
+import { GetPastEventService } from '../getPastEventService/getPastEventService';
 
 @injectable()
 export class ArianeeBlockchainProxyService {
@@ -12,8 +14,35 @@ export class ArianeeBlockchainProxyService {
               private arianeeHttpClient: ArianeeHttpClient,
               private configurationService: ConfigurationService,
                private walletService:WalletService,
-               private arianeeAccessTokenCreatorService:ArianeeAccessTokenCreatorService
+               private arianeeAccessTokenCreatorService:ArianeeAccessTokenCreatorService,
+               private getPastEvent:GetPastEventService
   ) {
+  }
+
+  public getAllMyMessageIds=async ():Promise<any | number[]> => {
+    if (this.configurationService.isProxyEnable()) {
+      const messagesEvent = await this.getPastEvent.getPastEvents(ContractName.messageContract,
+        'MessageSent',
+        {
+          fromBlock: 0,
+          toBlock: 'latest',
+          filter:
+              {
+                _receiver:
+                this.walletService.address
+              }
+        });
+
+      return messagesEvent.map(d => parseInt(d.returnValues._messageId, 10));
+    } else {
+      const nbMessages = await this.contractService.messageContract.methods.messageLengthByReceiver(this.walletService.address).call();
+
+      const rangeOfMessage = range(0, +nbMessages);
+
+      return Promise.all(rangeOfMessage
+        .map(index => this.contractService.messageContract.methods.receiverToMessageIds(this.walletService.address, index)
+          .call()));
+    }
   }
 
   /**
