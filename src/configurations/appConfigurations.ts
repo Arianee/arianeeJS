@@ -43,5 +43,12 @@ export default deepFreeze({
     deepLink: 'arialabs.arian.ee',
     alternativeDeeplink: [],
     protocolVersion: 2
+  },
+  [NETWORK.stadetoulousain]: {
+    networkName: NETWORK.stadetoulousain,
+    faucetUrl: `https://faucet.arianee.net/faucet?network=${NETWORK.stadetoulousain}`,
+    deepLink: 'stadetoulousain.arian.ee',
+    alternativeDeeplink: [],
+    protocolVersion: 2
   }
 });
