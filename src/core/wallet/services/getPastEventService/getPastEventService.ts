@@ -50,7 +50,7 @@ export class GetPastEventService {
     fromBlock?: number,
     toBlock?: number | 'latest'
   }): Promise<BlockchainEvent[]> => {
-    const contractInstance:Contract = this.contractService.getContractInstanceFromAddressOrContractName(contractAddressOrContractName);
+    const contractInstance:Contract = this.contractService.getInstanceFromAddressOrName(contractAddressOrContractName);
     if (!contractInstance) {
       throw new Error(`this contract does not exist ${contractAddressOrContractName}`);
     }

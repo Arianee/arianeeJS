@@ -10,7 +10,7 @@ describe('getPastEvent', () => {
     }
   } as any;
   const getPastEventsBlockChainMock = jest.fn();
-  const mockgetContractInstanceFromAddressOrContractName = () => {
+  const mockgetInstanceFromAddressOrName = () => {
     return {
       getPastEvents: getPastEventsBlockChainMock,
       options: {
@@ -22,7 +22,7 @@ describe('getPastEvent', () => {
     let instance:GetPastEventService;
     beforeEach(() => {
       instance = new GetPastEventService({
-        getContractInstanceFromAddressOrContractName: mockgetContractInstanceFromAddressOrContractName
+        getInstanceFromAddressOrName: mockgetInstanceFromAddressOrName
 
       } as any,
               {} as any,
@@ -80,7 +80,7 @@ describe('getPastEvent', () => {
     });
     test('should call proxy', async () => {
       instance = new GetPastEventService({
-        getContractInstanceFromAddressOrContractName: mockgetContractInstanceFromAddressOrContractName
+        getInstanceFromAddressOrName: mockgetInstanceFromAddressOrName
       } as any,
           {
             fetch: mockFetch
@@ -111,7 +111,7 @@ describe('getPastEvent', () => {
     });
     test('should call blockchain', async () => {
       instance = new GetPastEventService({
-        getContractInstanceFromAddressOrContractName: mockgetContractInstanceFromAddressOrContractName
+        getInstanceFromAddressOrName: mockgetInstanceFromAddressOrName
       } as any,
           {
             fetch: mockFetch
