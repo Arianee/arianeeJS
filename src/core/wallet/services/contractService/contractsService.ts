@@ -111,7 +111,7 @@ export class ContractService {
    * Get web3 contract instance from address
    * @param addressOrContractName
    */
-  public getContractInstanceFromAddressOrContractName=(addressOrContractName:string | ContractName):Contract => {
+  public getInstanceFromAddressOrName=(addressOrContractName:string | ContractName):Contract => {
     const contractName = this.reverseMapper[addressOrContractName];
     return this[contractName] || this[addressOrContractName];
   }
