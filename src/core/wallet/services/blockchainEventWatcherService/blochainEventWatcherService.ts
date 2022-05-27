@@ -85,44 +85,49 @@ export class BlockchainEventWatcherService {
 
   public watch = async (conf:WatchParameter) => {
     setTimeout(async () => {
-      const { contract, filter, blockchainEvent, eventNames } = conf;
-      const contractAddress = contract.options.address;
-      const cursorKey = blockchainEvent.concat(JSON.stringify(filter)) + contractAddress;
-      const isProxyfied = this.configurationService.isProxyEnable();
+      try {
+        const { contract, filter, blockchainEvent, eventNames } = conf;
+        const contractAddress = contract.options.address;
+        const cursorKey = blockchainEvent.concat(JSON.stringify(filter)) + contractAddress;
+        const isProxyfied = this.configurationService.isProxyEnable();
 
-      const currentBlock = isProxyfied ? 'latest' : await this.web3Service.web3.eth.getBlockNumber();
-      const cursor:number = await this.store.get(blockchainEventCursorNamespaceKey, cursorKey, () => Promise.resolve(currentBlock - 1));
+        const currentBlock = isProxyfied ? 'latest' : await this.web3Service.web3.eth.getBlockNumber();
+        const defaultCursor = currentBlock === 'latest' ? 0 : currentBlock - 1;
+        const cursor:number = await this.store.get(blockchainEventCursorNamespaceKey, cursorKey, () => Promise.resolve(defaultCursor));
 
-      if (currentBlock > cursor || currentBlock === 'latest') {
-        const pastEvent = await this.getPastEventService.getPastEvents(
-          contractAddress,
-          blockchainEvent,
-          { fromBlock: cursor, toBlock: currentBlock, filter: filter }
-        );
+        if (currentBlock > cursor || currentBlock === 'latest') {
+          const pastEvent = await this.getPastEventService.getPastEvents(
+            contractAddress,
+            blockchainEvent,
+            { fromBlock: cursor, toBlock: currentBlock, filter: filter }
+          );
 
-        if (isProxyfied) {
-          if (pastEvent.length > 0) {
-            this.store.set(blockchainEventCursorNamespaceKey, cursorKey, pastEvent[pastEvent.length - 1].blockNumber + 1);
+          if (isProxyfied) {
+            if (pastEvent.length > 0) {
+              this.store.set(blockchainEventCursorNamespaceKey, cursorKey, pastEvent[pastEvent.length - 1].blockNumber + 1);
+            }
+          } else {
+            this.store.set(blockchainEventCursorNamespaceKey, cursorKey, currentBlock + 1);
           }
-        } else {
-          this.store.set(blockchainEventCursorNamespaceKey, cursorKey, currentBlock + 1);
+
+          eventNames.forEach((eventName) => {
+            if (pastEvent.length > 0) {
+              this.eventEmitter.EE.emit(eventName, pastEvent);
+            }
+          });
         }
 
-        eventNames.forEach((eventName) => {
-          if (pastEvent.length > 0) {
-            this.eventEmitter.EE.emit(eventName, pastEvent);
-          }
-        });
-      }
+        const sumOfListeners = eventNames.reduce((acc, eventName) => {
+          return acc + this.eventEmitter.EE.listeners(eventName).length;
+        }, 0);
 
-      const sumOfListeners = eventNames.reduce((acc, eventName) => {
-        return acc + this.eventEmitter.EE.listeners(eventName).length;
-      }, 0);
-
-      if (sumOfListeners > 0) {
-        this.watch(conf);
-      } else {
-        this.onGoingWatchers.delete(this.createCompositeIdWatcher(conf.eventNames));
+        if (sumOfListeners > 0) {
+          this.watch(conf);
+        } else {
+          this.onGoingWatchers.delete(this.createCompositeIdWatcher(conf.eventNames));
+        }
+      } catch (e) {
+        console.error(e);
       }
     }, this.timeout);
   };
