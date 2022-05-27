@@ -431,12 +431,12 @@ export class CertificateService {
     /**
      * Get all certificate ids owned by this wallet
      */
-    public getMyCertificateIds = async (): Promise<ArianeeTokenId[]> => {
+    public getMyCertificateIds = async (verifyOwnership:boolean = false): Promise<ArianeeTokenId[]> => {
       if (this.walletService.address === '0x0000000000000000000000000000000000000000') {
         return [];
       }
 
-      return this.arianeeProxyService.getAllMyCertificateIds();
+      return this.store.get<ArianeeTokenId[]>(StoreNamespace.certificateIds, this.walletService.address, () => this.arianeeProxyService.getAllMyCertificateIds(), verifyOwnership);
     }
 
     public getMyCertificates = async (
@@ -444,7 +444,7 @@ export class CertificateService {
       verifyOwnership?: boolean
     ): Promise<CertificateSummary[]> => {
       // Fetch number of certificates this user owns
-      const certificateIds = await this.store.get<ArianeeTokenId[]>(StoreNamespace.certificateIds, this.walletService.address, () => this.getMyCertificateIds(), verifyOwnership);
+      const certificateIds = await this.getMyCertificateIds(verifyOwnership);
 
       // Fetch details of each certificate
       const results = await Promise.all(
