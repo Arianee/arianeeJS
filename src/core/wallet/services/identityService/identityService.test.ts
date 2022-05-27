@@ -7,6 +7,7 @@ import { UtilsService } from '../utilService/utilsService';
 import { WalletService } from '../walletService/walletService';
 import { Web3Service } from '../web3Service/web3Service';
 import { IdentityService } from './identityService';
+import { ArianeeBlockchainProxyService } from '../arianeeBlockchainProxyService/arianeeBlockchainProxyService';
 
 describe('IdentityService', () => {
   const getAllDependencies = () => {
@@ -28,13 +29,16 @@ describe('IdentityService', () => {
     const walletService: WalletService = {} as WalletService;
     const eventService: EventService = {} as EventService;
     const web3Service: Web3Service = {} as Web3Service;
-
+    const arianeeBlockchainProxyService: ArianeeBlockchainProxyService = {
+      getAddressURI: () => Promise.resolve('https://Myuri.com')
+    } as any;
     return {
       utils,
       simpleStore,
       httpClient,
       contractService,
-      globalConfigurationService
+      globalConfigurationService,
+      arianeeBlockchainProxyService
     };
   };
 
@@ -44,7 +48,8 @@ describe('IdentityService', () => {
       , deps.utils
       , deps.contractService
       , deps.globalConfigurationService
-      , deps.simpleStore);
+      , deps.simpleStore
+      , deps.arianeeBlockchainProxyService);
 
     expect(instance).toBeDefined();
   });
@@ -58,7 +63,8 @@ describe('IdentityService', () => {
           , deps.utils
           , deps.contractService
           , deps.globalConfigurationService
-          , deps.simpleStore);
+          , deps.simpleStore
+          , deps.arianeeBlockchainProxyService);
 
         var d = await instance.getIdentity({ address: '0', query: { issuer: true } });
 
@@ -74,13 +80,14 @@ describe('IdentityService', () => {
         const deps = getAllDependencies();
 
         const spyWaitingURI = jest.spyOn(deps.contractService.identityContract.methods, 'waitingURI');
-        const spyAddressURI = jest.spyOn(deps.contractService.identityContract.methods, 'addressURI');
+        const spyAddressURI = jest.spyOn(deps.arianeeBlockchainProxyService, 'getAddressURI');
 
         const instance = new IdentityService(deps.httpClient
           , deps.utils
           , deps.contractService
           , deps.globalConfigurationService
-          , deps.simpleStore);
+          , deps.simpleStore
+          , deps.arianeeBlockchainProxyService);
 
         await instance.getIdentity({ address: '0', query: { issuer: true } });
 
@@ -98,7 +105,8 @@ describe('IdentityService', () => {
           , deps.utils
           , deps.contractService
           , deps.globalConfigurationService
-          , deps.simpleStore);
+          , deps.simpleStore
+          , deps.arianeeBlockchainProxyService);
 
         await instance.getIdentity({ address: '0', query: { issuer: { waitingIdentity: true } } });
 
