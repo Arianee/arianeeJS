@@ -6,13 +6,15 @@ import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpCl
 import appendQuery from 'append-query';
 import { Contract } from 'web3-eth-contract';
 import { Web3Service } from '../web3Service/web3Service';
+import { UtilsService } from '../utilService/utilsService';
 
 @injectable()
 export class GetPastEventService {
   constructor (private contractService: ContractService,
                private arianeeHttpClient: ArianeeHttpClient,
                private configurationService: ConfigurationService,
-               private web3Service:Web3Service
+               private web3Service:Web3Service,
+               private utils:UtilsService
   ) {
   }
 
@@ -60,8 +62,15 @@ export class GetPastEventService {
       const result = await this.arianeeHttpClient.fetch(url);
       return result;
     } else {
-      return contractInstance
+      const events = await contractInstance
         .getPastEvents(eventName, parameters);
+      return Promise.all(events.map(async bcEvent => {
+        const timestamp = await this.utils.getTimestampFromBlock(bcEvent.blockNumber);
+        return {
+          ...bcEvent,
+          timestamp
+        };
+      }));
     }
   }
 }

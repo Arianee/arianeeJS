@@ -33,7 +33,8 @@ describe('getPastEvent', () => {
                   networkName: 'myNetwork'
                 }
               } as any,
-              web3Service
+              web3Service,
+          {} as any
       );
     });
 
@@ -96,7 +97,8 @@ describe('getPastEvent', () => {
               }
             }
           } as any,
-          web3Service
+          web3Service,
+          { getTimestampFromBlock: () => Promise.resolve(2949) } as any
       );
       const expectedValue = 'http://myendpoint.com/report/77/contract/0xsmartAssetContract/MyEvent';
 
@@ -127,7 +129,9 @@ describe('getPastEvent', () => {
               }
             }
           } as any,
-          web3Service
+          web3Service,
+          { getTimestampFromBlock: () => Promise.resolve(2949) } as any
+
       );
       const expectedValue = 'http://myendpoint.com/report/77/contract/0xsmartAssetContract/MyEvent';
 
