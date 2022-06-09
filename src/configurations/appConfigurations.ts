@@ -50,5 +50,12 @@ export default deepFreeze({
     deepLink: 'stadetoulousain.arian.ee',
     alternativeDeeplink: [],
     protocolVersion: 2
+  },
+  [NETWORK.ysl]: {
+    networkName: NETWORK.ysl,
+    faucetUrl: `https://faucet.arianee.net/faucet?network=${NETWORK.ysl}`,
+    deepLink: 'polygon.yslbeauty.com',
+    alternativeDeeplink: [],
+    protocolVersion: 2
   }
 });
