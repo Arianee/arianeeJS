@@ -15,6 +15,7 @@ import {
 import { ContractService } from '../contractService/contractsService';
 import { GlobalConfigurationService } from '../globalConfigurationService/globalConfigurationService';
 import { UtilsService } from '../utilService/utilsService';
+import { ArianeeBlockchainProxyService } from '../arianeeBlockchainProxyService/arianeeBlockchainProxyService';
 
 @injectable()
 export class IdentityService {
@@ -23,7 +24,9 @@ export class IdentityService {
     private utils: UtilsService,
     private contractService: ContractService,
     private globalConfigurationService:GlobalConfigurationService,
-    private store: SimpleStore) {
+    private store: SimpleStore,
+    private arianeeBlockchainProxyService:ArianeeBlockchainProxyService
+  ) {
   }
 
   public getIdentityByShortId = async (shortId:string) => {
@@ -127,9 +130,7 @@ export class IdentityService {
    */
   private fetchIdentity = async (address: string): Promise<IdentitySummary> => {
     try {
-      const identityURI = await this.contractService.identityContract.methods
-        .addressURI(address)
-        .call();
+      const identityURI = await this.arianeeBlockchainProxyService.getAddressURI(address);
 
       if (identityURI) {
         const identityContentData = await this.httpClient.fetch(

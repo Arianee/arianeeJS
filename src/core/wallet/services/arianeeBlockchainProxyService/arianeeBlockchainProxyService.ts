@@ -7,6 +7,7 @@ import { WalletService } from '../walletService/walletService';
 import { ArianeeAccessTokenCreatorService } from '../ArianeeAccessToken/arianeeAccessTokenCreatorService';
 import { range } from 'lodash';
 import { GetPastEventService } from '../getPastEventService/getPastEventService';
+import { Web3Service } from '../web3Service/web3Service';
 
 @injectable()
 export class ArianeeBlockchainProxyService {
@@ -15,8 +16,32 @@ export class ArianeeBlockchainProxyService {
               private configurationService: ConfigurationService,
                private walletService:WalletService,
                private arianeeAccessTokenCreatorService:ArianeeAccessTokenCreatorService,
-               private getPastEvent:GetPastEventService
+               private getPastEvent:GetPastEventService,
+               private web3Service:Web3Service
   ) {
+  }
+
+  /**
+   * Get uri of validated address
+   * @param address
+   */
+  public getAddressURI=async (address:string) => {
+    if (this.configurationService.isProxyEnable()) {
+      const checkSumAddress = this.web3Service.web3.utils.toChecksumAddress(address);
+      const events = await this.getPastEvent.getPastEvents(ContractName.identityContract,
+        'URIValidate', {
+          filter: { _identity: checkSumAddress }
+        });
+
+      if (events) {
+        return events[0].returnValues._uri;
+      }
+    } else {
+      return this.contractService.identityContract.methods
+        .addressURI(address)
+        .call();
+    }
+    throw new Error('No uri validated for this identity');
   }
 
   public getAllMyMessageIds=async ():Promise<any | number[]> => {
