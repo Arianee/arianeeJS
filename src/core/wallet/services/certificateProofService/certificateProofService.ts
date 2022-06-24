@@ -194,13 +194,26 @@ export class CertificateProofService {
 
     const currentBlock = await this.web3Service.web3.eth.getBlockNumber();
 
+    const isProxyfied = this.configurationService.isProxyEnable();
+    const getPastEventsParameters:{
+      filter?: any,
+      fromBlock?: number,
+      toBlock?: number | 'latest'
+    } = {
+      fromBlock: currentBlock - Math.round(259200 / 5 + 30), // search the proof in the last 3 days
+      toBlock: currentBlock
+    };
+
+    if (isProxyfied) {
+      getPastEventsParameters.filter = {
+        _tokenId: certificateId.toString()
+      };
+    }
+
     let events: BlockchainEvent[] = await this.getPastEventService.getPastEvents(
       ContractName.smartAssetContract,
       blockchainEventsName.smartAsset.tokenAccessAdded,
-      {
-        fromBlock: currentBlock - Math.round(259200 / 5 + 30), // search the proof in the last 3 days
-        toBlock: currentBlock
-      }
+      getPastEventsParameters
     );
 
     events = events.filter(event => {
