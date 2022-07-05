@@ -39,7 +39,8 @@ export class Arianee {
       blockchainProxy?:{
         enable:boolean,
         host?:string
-      }
+      },
+      jwtGetter?:()=>Promise<any>
     } = {}
   ): Promise<ArianeeWalletBuilder> {
     const arianeeConfiguration: ArianeeConfig = {
@@ -118,6 +119,10 @@ export class Arianee {
       arianeeConfiguration.brandDataHubReward = arianeeCustomConfiguration.brandDataHubReward;
     }
     arianeeConfiguration.blockchainProxy = arianeeCustomConfiguration.blockchainProxy;
+
+    if (arianeeCustomConfiguration.jwtGetter) {
+      arianeeConfiguration.jwtGetter = arianeeCustomConfiguration.jwtGetter;
+    }
 
     return new ArianeeWalletBuilder(arianeeConfiguration);
   }

@@ -43,5 +43,6 @@ export interface ArianeeConfig {
   blockchainProxy?:{
     enable:boolean,
     host?:string
-  }
+  },
+  jwtGetter:()=>Promise<any>
 }
