@@ -44,5 +44,5 @@ export interface ArianeeConfig {
     enable:boolean,
     host?:string
   },
-  jwtGetter:()=>Promise<any>
+  jwtGetter:(arianeeAccessToken:string)=>Promise<any>
 }

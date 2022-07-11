@@ -40,7 +40,7 @@ export class Arianee {
         enable:boolean,
         host?:string
       },
-      jwtGetter?:()=>Promise<any>
+      jwtGetter?:(arianeeAccessToken:string)=>Promise<any>
     } = {}
   ): Promise<ArianeeWalletBuilder> {
     const arianeeConfiguration: ArianeeConfig = {

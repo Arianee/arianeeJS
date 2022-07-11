@@ -13,14 +13,15 @@ export class POAAndAriaService {
   ) {}
 
     public requestPoa = async (): Promise<any> => {
+      const aat = await this.arianeeAccessTokenCreatorService.createWalletAccessToken();
       const httpClient:any = {
         headers: {
-          aat: await this.arianeeAccessTokenCreatorService.createWalletAccessToken()
+          aat
         }
       };
 
       if (this.configurationService.arianeeConfiguration.jwtGetter) {
-        httpClient.headers.Authorization = await this.configurationService.arianeeConfiguration.jwtGetter();
+        httpClient.headers.Authorization = await this.configurationService.arianeeConfiguration.jwtGetter(aat);
       }
 
       const url = this.configurationService.arianeeConfiguration.faucetUrl +
