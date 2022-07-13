@@ -9,7 +9,7 @@ declare var ArianeeLib;
 
   const wallet = arianee.fromRandomKey();
 
-  const poa$ = wallet.requestPoa();
+  /*const poa$ = wallet.requestPoa();
 
   const aria$ = wallet
     .requestAria()
@@ -23,7 +23,7 @@ declare var ArianeeLib;
   await Promise.all([poa$, aria$, approveStore$]);
 
   await wallet.methods.buyCredits('certificate', 2)
-    .then(i => console.log('success buying credits'))
+    .then(i => console.log('success buying credits'))*/
 
   const el = document.createElement('div');
   el.setAttribute('id', 'successFullID');
