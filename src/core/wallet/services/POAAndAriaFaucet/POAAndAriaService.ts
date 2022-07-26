@@ -14,21 +14,21 @@ export class POAAndAriaService {
 
     public requestPoa = async (): Promise<any> => {
       const aat = await this.arianeeAccessTokenCreatorService.createWalletAccessToken();
-      const httpClient:any = {
+      const httpClientOptions:any = {
         headers: {
           aat
         }
       };
 
       if (this.configurationService.arianeeConfiguration.jwtGetter) {
-        httpClient.headers.Authorization = await this.configurationService.arianeeConfiguration.jwtGetter(aat);
+        httpClientOptions.headers.Authorization = await this.configurationService.arianeeConfiguration.jwtGetter(aat);
       }
 
       const url = this.configurationService.arianeeConfiguration.faucetUrl +
           '&address=' +
           this.walletService.account.address;
       try {
-        return await this.httpClient.fetch(url, httpClient);
+        return await this.httpClient.fetch(url, httpClientOptions);
       } catch (e) {
         console.warn(e);
         const message = `An error occured when requesting POA. url: ${url}`;
@@ -38,12 +38,23 @@ export class POAAndAriaService {
     }
 
     public requestAria = async (): Promise<any> => {
+      const aat = await this.arianeeAccessTokenCreatorService.createWalletAccessToken();
+      const httpClientOptions:any = {
+        headers: {
+          aat
+        }
+      };
+
+      if (this.configurationService.arianeeConfiguration.jwtGetter) {
+        httpClientOptions.headers.Authorization = await this.configurationService.arianeeConfiguration.jwtGetter(aat);
+      }
+
       const url = this.configurationService.arianeeConfiguration.faucetUrl +
           '&address=' +
           this.walletService.account.address +
           '&aria=true';
       try {
-        return await this.httpClient.fetch(url);
+        return await this.httpClient.fetch(url, httpClientOptions);
       } catch (e) {
         console.warn(e);
         const message = `An error occured when requesting Aria. url: ${url}`;
