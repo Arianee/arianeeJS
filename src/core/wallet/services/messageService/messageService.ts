@@ -48,6 +48,11 @@ export class MessageService {
     return this.store.get<Message>(StoreNamespace.messages, parameters.messageId, () => this.fetchMessage(parameters), forceRefresh);
   }
 
+  private async markAsReadInStore (message : Message) {
+    message.isRead = true;
+    await this.store.set(StoreNamespace.messages, message.messageId, message);
+  }
+
   /**
    * Fetch message and apply i18n
    * @param {{messageId: number; query?: ConsolidatedCertificateRequest; url?: string}} parameters
@@ -189,16 +194,20 @@ export class MessageService {
     messageId: number
   ):Promise<ExtendedBoolean> => {
     const walletReward = this.configurationService.arianeeConfiguration.walletReward.address;
-
     const isAlreadyRead = await this.isMessageRead(messageId);
 
     if (isAlreadyRead) {
+      await this.getMessage({ messageId: messageId, forceRefresh: true });
+
       return {
         isTrue: false,
         code: 'message.markasread',
         message: 'message was already mark as read or cant be mark as read'
       };
     } else {
+      const messageFromStore = await this.getMessage({ messageId });
+      if (!messageFromStore.isRead) await this.markAsReadInStore(messageFromStore);
+
       await this.contractService.storeContract.methods.readMessage(messageId, walletReward).send();
       await this.getMessage({ messageId: messageId, forceRefresh: true });
 
