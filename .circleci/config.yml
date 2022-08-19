@@ -71,7 +71,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "a9:f1:db:7a:fa:cf:ed:6c:2f:4b:f4:80:08:ae:8a:06"
+            - "66:05:66:0b:67:7a:59:b2:25:4b:88:f9:97:50:c4:88"
       - run:
           name: Config Github account
           command: |
