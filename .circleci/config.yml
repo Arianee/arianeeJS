@@ -51,12 +51,18 @@ jobs:
       - run:
           name: Run tests
           command: npm run test:playwright
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - "*"
 
   deploy-npm: 
     docker: 
       - image: cimg/node:16.14.2
     steps:
       - checkout
+      - attach_workspace:
+          at: ./
       - node/install-packages
       - run: 
           name: Auth With NPM
