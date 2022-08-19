@@ -4,6 +4,7 @@ version: 2.1
 
 orbs:
   node: circleci/node@4.5.1
+  gh: circleci/github-cli@2.1.0
 
 jobs:
   build-and-test-uat:
@@ -51,7 +52,7 @@ jobs:
           name: Run tests
           command: npm run test:playwright
 
-  deploy: 
+  deploy-npm: 
     docker: 
       - image: cimg/node:16.14.2
     steps:
@@ -64,7 +65,7 @@ jobs:
           name: Publish to NPM
           command: npm publish --ignore-scripts
 
-  push-github:
+  bump-version-github:
     docker:
       - image: cimg/node:16.14.2
     steps:
@@ -78,8 +79,20 @@ jobs:
             git config user.name "Package Version Bot"
             git config user.email "tech@arianee.org"
       - run:
-          name: Publish new version to Github
-          command: npm run postpublish
+          name: Change version in package.json
+          command: npm run bump:minor
+
+  push-gh-release:
+      docker:
+          - image: cimg/node:16.14.2
+      steps:
+          - checkout
+          - gh/setup:
+              version: 2.14.3
+              token: GITHUBTOKEN
+          - run:
+              command: 'gh release create v$(grep ''"version": "'' package.json | cut -d ''"'' -f4) --generate-notes'
+              name: Create Github Release
 
 workflows:
   sample:
@@ -95,9 +108,12 @@ workflows:
             branches:
               only:
                 - master
-      - deploy:
+      - deploy-npm:
           requires:
             - deploy-approval
-      - push-github:
+      - push-gh-release:
           requires:
-            - deploy
+            - deploy-npm
+      - bump-version-github:
+          requires:
+            - deploy-npm
