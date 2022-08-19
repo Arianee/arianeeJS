@@ -1,6 +1,6 @@
 {
   "name": "@arianee/arianeejs",
-  "version": "1.99.0",
+  "version": "1.100.0",
   "main": "dist/src/index.js",
   "browser": "dist/src/index.browser-bundle.js",
   "unpkg": "browser/bundle.js",
@@ -20,6 +20,7 @@
     "doc": "./node_modules/.bin/typedoc  --out doc/ src/ --mode file --ignoreCompilerErrors --includeDeclarations --excludeExternals",
     "prepare": "npm run build",
     "prepare:publish": "npm run build && npm run test",
+    "postpublish": "npm version minor -m 'feat(version): update to version %s [ci skip]' && git push",
     "build": "npm run build-web && npm run build-node",
     "build-web": "parcel build ./src/index.browser-bundle.ts --out-dir=browser --out-file=bundle.js --global=ArianeeLib && npm run build-webFileForTest",
     "build-webFileForTest": "parcel build ./example/myexecfile.ts --out-dir=dist",

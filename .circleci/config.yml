@@ -50,8 +50,54 @@ jobs:
       - run:
           name: Run tests
           command: npm run test:playwright
+
+  deploy: 
+    docker: 
+      - image: cimg/node:16.14.2
+    steps:
+      - checkout
+      - node/install-packages
+      - run: 
+          name: Auth With NPM
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+      - run:
+          name: Publish to NPM
+          command: npm publish --ignore-scripts
+
+  push-github:
+    docker:
+      - image: cimg/node:16.14.2
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "66:05:66:0b:67:7a:59:b2:25:4b:88:f9:97:50:c4:88"
+      - run:
+          name: Config Github account
+          command: |
+            git config user.name "Package Version Bot"
+            git config user.email "tech@arianee.org"
+      - run:
+          name: Publish new version to Github
+          command: npm run postpublish
+
 workflows:
   sample:
     jobs:
       - build-and-test-uat
       - build-and-test-playwright
+      - deploy-approval:
+          type: approval
+          requires:
+            - build-and-test-uat
+            - build-and-test-playwright
+          filters:
+            branches:
+              only:
+                - master
+      - deploy:
+          requires:
+            - deploy-approval
+      - push-github:
+          requires:
+            - deploy
