@@ -60,8 +60,6 @@ export class DiagnosisService {
     }
 
     public isRequestable = async (tokenId: ArianeeTokenId, passphrase: string): Promise<ExtendedBoolean> => {
-      this.certificateUtilsService.isCertificateOwnershipRequestable(tokenId, passphrase);
-
       return this.certificateUtilsService.isCertificateOwnershipRequestable(tokenId, passphrase);
     };
 
