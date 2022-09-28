@@ -40,7 +40,8 @@ export class Arianee {
         enable:boolean,
         host?:string
       },
-      jwtGetter?:(arianeeAccessToken:string)=>Promise<any>
+      jwtGetter?:(arianeeAccessToken:string)=>Promise<any>,
+      faucetUrl?:string
     } = {}
   ): Promise<ArianeeWalletBuilder> {
     const arianeeConfiguration: ArianeeConfig = {
@@ -122,6 +123,10 @@ export class Arianee {
 
     if (arianeeCustomConfiguration.jwtGetter) {
       arianeeConfiguration.jwtGetter = arianeeCustomConfiguration.jwtGetter;
+    }
+
+    if (arianeeCustomConfiguration.faucetUrl) {
+      arianeeConfiguration.faucetUrl = arianeeCustomConfiguration.faucetUrl;
     }
 
     return new ArianeeWalletBuilder(arianeeConfiguration);
