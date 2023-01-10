@@ -114,7 +114,13 @@ export class ArianeeWallet {
       return this.container.resolve(GlobalConfigurationService);
     }
 
-    public setCustomSendTransaction (send:(transaction:Transaction)=>Promise<any>):ArianeeWallet {
+    /**
+     * Function to override the default wallet send method
+     * @param send( transaction:Transaction, data:TransactionObject<any>):Promise<any>
+     *     transaction: the transaction to send (encoded)
+     *     data: the non encoded transaction
+     */
+    public setCustomSendTransaction (send:(transaction:Transaction, data?:any)=>Promise<any>):ArianeeWallet {
       const walletService:WalletService = this.container.resolve(WalletService);
       walletService.userCustomSendTransaction = send;
 

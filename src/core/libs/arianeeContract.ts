@@ -95,9 +95,10 @@ export class ArianeeContract<ContractImplementation extends Contract> {
   ): Promise<any> => {
     const encodeABI = data.encodeABI();
     const preparedTransaction:any = await this.utilsService.prepareTransaction(encodeABI, this.contract.options.address, false, transaction);
+
     if (this.walletService.isCustomSendTransaction()) {
       return this.walletService
-        .customSendTransaction(preparedTransaction);
+        .customSendTransaction(preparedTransaction, data);
     } else {
       if (this.walletService.isRemoteAccount()) {
         return this.web3Service.web3.eth.sendTransaction(preparedTransaction)
