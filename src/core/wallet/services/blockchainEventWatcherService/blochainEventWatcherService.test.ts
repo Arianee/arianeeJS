@@ -45,7 +45,7 @@ describe('Event Watcher', () => {
     contractService = {} as ContractService;
     store = new SimpleStore(new Store(),
       configurationService,
-      new WalletService({} as any, {} as any),
+      new WalletService({} as any, {} as any, {} as any),
       arianeeEventEmitter);
 
     let blockNumber = 10;
@@ -63,7 +63,7 @@ describe('Event Watcher', () => {
 
     eventWatcher = new BlockchainEventWatcherService(
       contractService,
-      new WalletService({} as any, {} as any),
+      new WalletService({} as any, {} as any, {} as any),
       store,
       arianeeEventEmitter,
       web3Service,

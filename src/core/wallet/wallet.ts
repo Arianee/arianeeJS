@@ -38,6 +38,7 @@ import { ArianeeBlockchainProxyService } from './services/arianeeBlockchainProxy
 import EventEmitter = require('eventemitter3');
 import { ArianeeAccessTokenValidatorService } from './services/ArianeeAccessToken/arianeeAccessTokenValidatorService';
 import { ArianeeAccessTokenCreatorService } from './services/ArianeeAccessToken/arianeeAccessTokenCreatorService';
+import { TransactionReadableService } from './services/transactionReadableService/transactionReadableService';
 
 export interface ClassicConfiguration{
     account:any,
@@ -83,7 +84,8 @@ export class ArianeeWallet {
         LostAndStolenService,
         GasStationService,
         GetPastEventService,
-        ArianeeBlockchainProxyService
+        ArianeeBlockchainProxyService,
+        TransactionReadableService
       );
 
       if (configuration.web3) {

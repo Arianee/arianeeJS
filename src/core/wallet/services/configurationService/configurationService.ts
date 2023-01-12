@@ -34,6 +34,13 @@ export class ConfigurationService {
     return assignIn({}, this.defaultArianeeConfiguration, this._arianeeConfiguration);
   };
 
+  public getContractNameFromAddress=(address:string) => {
+    const index = Object.values(this.arianeeConfiguration.contractAddresses.contractAdresses)
+      .findIndex(d => d.toLowerCase() === address.toLowerCase());
+    const contractNames = Object.keys(this.arianeeConfiguration.contractAddresses.contractAdresses);
+    return contractNames[index];
+  }
+
   public walletFactory (): ArianeeWalletBuilder {
     return new ArianeeWalletBuilder(this.arianeeConfiguration);
   }

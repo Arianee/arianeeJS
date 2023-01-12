@@ -6,6 +6,7 @@ import { MixedTransaction, TransactionMapper } from '../../../etherjsWeb3Transac
 import { ConfigurationService } from '../configurationService/configurationService';
 import { Web3Service } from '../web3Service/web3Service';
 import { TransactionObject } from '@arianee/arianee-abi/types/types';
+import { TransactionReadableService } from '../transactionReadableService/transactionReadableService';
 
 @injectable()
 export class WalletService {
@@ -17,34 +18,16 @@ export class WalletService {
     public userCustomCall: (transaction: Transaction, data: TransactionObject<any>) => Promise<any>;
 
     constructor (private web3Service: Web3Service,
-                private configurationService: ConfigurationService) {
+                private configurationService: ConfigurationService,
+                 private transactionReadableService:TransactionReadableService
+    ) {
     }
 
     public get customSendTransaction () {
       return async (transaction, data) => {
         const { constant, inputs, name, outputs, payable, stateMutability, type, signature } = data._method;
-        const readableArguments = data.arguments
-          .map((value, index) => {
-            return {
-              value,
-              name: inputs[index].name
-            };
-          });
 
-        const { from, to } = transaction;
-        const readableTransaction = {
-          from,
-          to,
-          constant,
-          inputs,
-          name,
-          outputs,
-          payable,
-          stateMutability,
-          type,
-          signature,
-          arguments: readableArguments
-        };
+        const readableTransaction = await this.transactionReadableService.getReadableTransaction({ data, transaction });
 
         const result = await this.userCustomSendTransaction(transaction, readableTransaction);
         return {

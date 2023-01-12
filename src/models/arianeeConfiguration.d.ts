@@ -1,6 +1,7 @@
 import { provider } from 'web3-core';
 import { ArianeeHttpClient } from '../core/libs/arianeeHttpClient/arianeeHttpClient';
 import { NETWORK } from './networkConfiguration';
+import { ContractAddressConvention } from './contractAddress';
 
 interface ContractConfiguration {
   abi: string;
@@ -38,6 +39,7 @@ export interface ArianeeConfig {
   transactionOptions?:TransactionOptions,
   defaultArianeePrivacyGateway?:string,
 
+  contractAddresses:ContractAddressConvention,
   arianeeHttpClient:ArianeeHttpClient,
   protocolVersion?:number,
   blockchainProxy?:{

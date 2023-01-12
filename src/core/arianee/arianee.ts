@@ -74,6 +74,7 @@ export class Arianee {
     arianeeConfiguration.alternativeDeeplink = alternativeDeeplink;
     arianeeConfiguration.networkName = currentNetworkName;
     arianeeConfiguration.protocolVersion = protocolVersion;
+    arianeeConfiguration.contractAddresses = addressesResult;
 
     arianeeConfiguration.defaultArianeePrivacyGateway = arianeeCustomConfiguration.defaultArianeePrivacyGateway;
 
