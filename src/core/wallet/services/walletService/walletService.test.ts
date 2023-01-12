@@ -23,7 +23,8 @@ describe('WalletService', () => {
               chainId: 77,
               networkName: 'testnet'
             }
-          }as any
+          }as any,
+          {} as any
       );
 
       walletService.account = {
@@ -58,7 +59,8 @@ describe('WalletService', () => {
               chainId: 77,
               networkName: 'testnet'
             }
-          } as any
+          } as any,
+          {} as any
       );
 
       const data = await walletService.sign(
@@ -76,7 +78,8 @@ describe('WalletService', () => {
             chainId: 77,
             networkName: 'testnet'
           }
-        }as any
+        }as any,
+          {} as any
       );
 
       const data = await walletService.sign(
@@ -106,7 +109,8 @@ describe('WalletService', () => {
               chainId: 77,
               networkName: 'testnet'
             }
-          }as any
+          }as any,
+          {} as any
       );
 
       walletService.account = {
@@ -131,7 +135,8 @@ describe('WalletService', () => {
               chainId: 77,
               networkName: 'testnet'
             }
-          }as any
+          }as any,
+          {} as any
       );
 
       walletService.metamask = true;
