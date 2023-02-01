@@ -28,27 +28,34 @@ export class MessageService {
     private configurationService: ConfigurationService,
     private httpClient: ArianeeHttpClient,
     private utils: UtilsService,
-    private diagnosisService:DiagnosisService,
+    private diagnosisService: DiagnosisService,
     private store: SimpleStore,
     private certificateService: CertificateService,
-    private arianeePrivacyGateWayService:ArianeePrivacyGatewayService,
-    private getPastEvent:GetPastEventService,
-    private arianeeProxyService:ArianeeBlockchainProxyService
+    private arianeePrivacyGateWayService: ArianeePrivacyGatewayService,
+    private getPastEvent: GetPastEventService,
+    private arianeeProxyService: ArianeeBlockchainProxyService
   ) {
   }
 
-  public getMessage=async (parameters:{
+  public getMessage = async (parameters: {
     messageId: number,
-    query?:ConsolidatedCertificateRequest,
-    url?:string,
-    forceRefresh?:boolean
-  }):Promise<Message> => {
+    query?: ConsolidatedCertificateRequest,
+    url?: string,
+    forceRefresh?: boolean
+  }): Promise<Message> => {
     const forceRefresh = parameters.forceRefresh || false;
 
-    return this.store.get<Message>(StoreNamespace.messages, parameters.messageId, () => this.fetchMessage(parameters), forceRefresh);
-  }
+    let messageSummary = await this.store.get<Message>(StoreNamespace.messages, parameters.messageId, () => this.fetchMessage(parameters), forceRefresh);
 
-  private async markAsReadInStore (message : Message) {
+    if (get(parameters.query, 'advanced.languages') &&
+      get(messageSummary.content, 'data') &&
+      isSchemai18n(messageSummary.content.data)) {
+      messageSummary = replaceLanguage(messageSummary, parameters.query.advanced.languages) as any;
+    }
+    return messageSummary;
+  };
+
+  private async markAsReadInStore (message: Message) {
     message.isRead = true;
     await this.store.set(StoreNamespace.messages, message.messageId, message);
   }
@@ -58,21 +65,12 @@ export class MessageService {
    * @param {{messageId: number; query?: ConsolidatedCertificateRequest; url?: string}} parameters
    * @returns {Promise<Message>}
    */
-  public fetchMessage=async (parameters:{
+  public fetchMessage = async (parameters: {
     messageId: number,
     query?: ConsolidatedCertificateRequest,
     url?: string
   }): Promise<Message> => {
-    const { query } = parameters;
-    let messageSummary = await this.fetchRawMessage(parameters);
-
-    if (get(query, 'advanced.languages') &&
-        get(messageSummary.content, 'data') &&
-        isSchemai18n(messageSummary.content.data)) {
-      messageSummary = replaceLanguage(messageSummary, query.advanced.languages) as any;
-    }
-
-    return messageSummary;
+    return await this.fetchRawMessage(parameters);
   };
 
   /**
@@ -168,19 +166,19 @@ export class MessageService {
 
     };
     if (get(query, 'advanced.languages') &&
-        get(content, 'data') &&
-        isSchemai18n(content.data)) {
+      get(content, 'data') &&
+      isSchemai18n(content.data)) {
       messageSummary = replaceLanguage(messageSummary, query.advanced.languages) as any;
     }
 
     return messageSummary;
-  }
+  };
 
-  public getAllMyMessageIds=this.arianeeProxyService.getAllMyMessageIds;
+  public getAllMyMessageIds = this.arianeeProxyService.getAllMyMessageIds;
 
-  public getMyMessages=async (parameters?:{
-    query?:ConsolidatedCertificateRequest,
-    url?:string
+  public getMyMessages = async (parameters?: {
+    query?: ConsolidatedCertificateRequest,
+    url?: string
   }) => {
     const messageIds = await this.getAllMyMessageIds();
     return Promise.all(messageIds.map(messageId => {
@@ -188,11 +186,11 @@ export class MessageService {
         .catch(d => undefined);
     }
     ));
-  }
+  };
 
-  public markAsRead=async (
+  public markAsRead = async (
     messageId: number
-  ):Promise<ExtendedBoolean> => {
+  ): Promise<ExtendedBoolean> => {
     const walletReward = this.configurationService.arianeeConfiguration.walletReward.address;
     const isAlreadyRead = await this.isMessageRead(messageId);
 
@@ -217,11 +215,11 @@ export class MessageService {
         message: 'message was mark as read'
       };
     }
-  }
+  };
 
-  public isMessageRead=async (
+  public isMessageRead = async (
     messageId?: number
-  ):Promise<boolean> => {
+  ): Promise<boolean> => {
     const messageReadEvents = await this.getPastEvent.getPastEvents(
       ContractName.messageContract,
       'MessageRead',
@@ -229,12 +227,12 @@ export class MessageService {
     );
 
     return messageReadEvents.length > 0;
-  }
+  };
 
-  public storeMessageContentInRPCServer =async (
-    messageId:number,
+  public storeMessageContentInRPCServer = async (
+    messageId: number,
     content,
-    url?:string) => {
+    url?: string) => {
     const arianeePrivacyGatewayURL = await this
       .arianeePrivacyGateWayService
       .getArianeePrivacyURLORFallback(url);
@@ -243,21 +241,21 @@ export class MessageService {
       messageId,
       json: content
     });
-  }
+  };
 
-  public createAndStoreMessage=async (data: {
+  public createAndStoreMessage = async (data: {
     uri?: string;
     certificateId: number,
-    content?: { $schema: string;[key: string]: any };
-      messageId?: number;
-  }, url?:string) => {
+    content?: { $schema: string; [key: string]: any };
+    messageId?: number;
+  }, url?: string) => {
     const result = await this.createMessage(data);
     await this.storeMessageContentInRPCServer(result.messageId, data.content, url);
 
     return result;
-  }
+  };
 
-  generateAvailableMessageId= async ():Promise<number> => {
+  generateAvailableMessageId = async (): Promise<number> => {
     const messageId = this.utils.createUID();
 
     const isFree = this.isMessageIdFree(messageId);
@@ -267,24 +265,26 @@ export class MessageService {
     } else {
       return this.generateAvailableMessageId();
     }
-  }
+  };
 
-  private isMessageIdFree = async (arianeeEventId:number):Promise<boolean> => {
+  private isMessageIdFree = async (arianeeEventId: number): Promise<boolean> => {
     const message = await this.contractService.messageContract.methods.messages(arianeeEventId).call();
 
     return message.sender === '0x0000000000000000000000000000000000000000';
-  }
+  };
 
-  public createMessage=async (data: {
+  public createMessage = async (data: {
     contentImprint?: string;
     certificateId: number,
-    content?: { $schema: string;[key: string]: any };
+    content?: { $schema: string; [key: string]: any };
     messageId?: number;
 
-  }):Promise<
-      { contentImprint: string,
-       messageId: number}
-    > => {
+  }): Promise<
+    {
+      contentImprint: string,
+      messageId: number
+    }
+  > => {
     let { messageId, certificateId, contentImprint, content } = data;
     const brandReward = this.configurationService.arianeeConfiguration.brandDataHubReward.address;
 
@@ -333,5 +333,5 @@ export class MessageService {
       ], e);
       return Promise.reject(diagnosis);
     }
-  }
+  };
 }
