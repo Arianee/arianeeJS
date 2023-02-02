@@ -14,17 +14,17 @@ const httpMock = {
     store: '0x4f001a00034e0d823c30819166dea654cd8b1939',
     whitelist: '0x3579669219DC20Aa79E74eEFD5fB2EcB0CE5fE0D'
   },
-  httpProvider: 'https://sokol.poa.network',
+  httpProvider: 'https://sokol.arianee.net',
   chainId: 77
 };
 jest.mock('../libs/arianeeHttpClient/arianeeHttpClient', () => ({
   ArianeeHttpClient: class ArianeeHttpClientStub {
-        public fetch = ArianeeHttpClientStub.fetch;
+    public fetch = ArianeeHttpClientStub.fetch;
 
-        public static fetch = url => {
-          myFetchMock(url);
-          return Promise.resolve(httpMock);
-        };
+    public static fetch = url => {
+      myFetchMock(url);
+      return Promise.resolve(httpMock);
+    };
   }
 }));
 
