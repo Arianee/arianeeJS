@@ -5,3 +5,4 @@ export { hasParentCertificate } from './hasParentCertificate/hasParentCertificat
 export { deepFreeze } from './deepFreeze/deepFreeze';
 export { replaceLanguageContentWithFavUserLanguage } from './i18nSchemaLanguageManager/i18nSchemaLanguageManager';
 export { sortEvents } from './sort/sortEvents';
+export { getIdentityAuthenticityAndApproval } from './identity/identity';
