@@ -1,8 +1,8 @@
-import {Given, Then} from '@cucumber/cucumber';
-import {expect} from 'chai';
-import {ArianeeWallet} from '../../src/core/wallet';
-import {ArianeeWalletBuilder} from '../../src/core/wallet/walletBuilder';
-import {makeWalletReady} from './helpers/walletCreator';
+import { Given, Then } from '@cucumber/cucumber';
+import { expect } from 'chai';
+import { ArianeeWallet } from '../../src/core/wallet';
+import { ArianeeWalletBuilder } from '../../src/core/wallet/walletBuilder';
+import { makeWalletReady, legacyRequestPoa, legacyRequestAria } from './helpers/walletCreator';
 
 Given('user{int} has a valid wallet', async function (userIndex) {
   const wallet = this.store.getUserWallet(userIndex);
@@ -76,9 +76,9 @@ Given('user{int} can retrieve its mnemonic', async function (userIndex) {
 
 Given('user{int} requests credits of POA and ARIA', async function (userIndex) {
   const wallet: ArianeeWallet = this.store.getUserWallet(userIndex);
-  await wallet.requestPoa();
+  await legacyRequestPoa(wallet.address);
 
-  await wallet.requestAria();
+  await legacyRequestAria(wallet.address);
 });
 
 Given('user{int} with account from {word}', async function (userIndex, type) {
