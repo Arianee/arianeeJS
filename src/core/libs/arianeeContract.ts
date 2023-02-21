@@ -145,12 +145,7 @@ export class ArianeeContract<ContractImplementation extends Contract> {
 
         return { receipt };
       } else {
-        const signTransaction = this.walletService.signTransaction(preparedTransaction);
-
-        const [{ rawTransaction }] = await Promise.all([
-          signTransaction,
-          this.poaAndAriaService.requestPoa().catch()
-        ]);
+        const { rawTransaction } = await this.walletService.signTransaction(preparedTransaction);
 
         return new Promise((resolve, reject) => {
           this.web3Service.web3.eth

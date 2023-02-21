@@ -1,10 +1,10 @@
-import {Given, Then, When} from '@cucumber/cucumber';
-import {expect} from 'chai';
-import {makeWalletReady} from './helpers/walletCreator';
+import { Given, Then, When } from '@cucumber/cucumber';
+import { expect } from 'chai';
+import { makeWalletReady, legacyRequestPoa, legacyRequestAria } from './helpers/walletCreator';
 
 When('user{int} claims faucet', async function (userIndex) {
   const wallet = this.store.getUserWallet(userIndex);
-  await wallet.requestPoa();
+  await legacyRequestPoa(wallet.address);
 });
 
 When('user{int} with valid wallet and aria and faucet', async function (userIndex) {
@@ -16,7 +16,7 @@ When('user{int} with valid wallet and aria and faucet', async function (userInde
 });
 When('user{int} claims Aria', async function (userIndex) {
   const wallet = this.store.getUserWallet(userIndex);
-  await wallet.requestAria();
+  await legacyRequestAria(wallet.address);
 });
 
 When('user{int} buys {int} credit of type {word}', async function (userIndex, quantity, creditType) {
