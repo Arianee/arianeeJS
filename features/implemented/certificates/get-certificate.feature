@@ -28,6 +28,7 @@ Feature: Certificate creation
     Given user1 creates a new certificate0 with uri "https://jsonplaceholder.typicode.com/todos/1"
     Given user1 creates a new certificate1 with uri "https://jsonplaceholder.typicode.com/todos/1"
     Given user1 creates a new certificate2 with uri "https://jsonplaceholder.typicode.com/todos/1"
+    Given user1 requests credits of POA and ARIA
     Given user1 creates a new certificate3 with uri "https://jsonplaceholder.typicode.com/todos/1"
 
     Then user1 can see its 4 certificates from getMyCertificates

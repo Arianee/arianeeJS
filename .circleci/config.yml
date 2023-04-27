@@ -9,7 +9,7 @@ orbs:
 jobs:
   build-and-test-uat:
     machine:
-      image: ubuntu-2004:202010-01
+      image: ubuntu-2204:2023.04.2
     resource_class: large
     steps:
       - checkout
@@ -22,10 +22,12 @@ jobs:
       - run:
           name: Declare domain wallet
           command: echo 127.0.0.1 wallet | sudo tee -a /etc/hosts
+      - node/install:
+          node-version: 16.19.0
       - node/install-packages
       - run:
           name: Launch docker
-          command: docker-compose up --build --detach --force-recreate
+          command: docker-compose up --build --detach --force-recreate privacy-gateway
       - run:
           name: Run tests
           command: npm test
@@ -41,6 +43,8 @@ jobs:
           command: |
             apt-get update -y
             apt-get install -y python3.8 python3-pip
+      - node/install:
+          node-version: 16.19.0
       - node/install-packages
       - run:
           name: Fix up git URLs
@@ -63,6 +67,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: ./
+      - node/install:
+          node-version: 16.19.0
       - node/install-packages
       - run:
           name: Auth With NPM

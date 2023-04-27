@@ -4,6 +4,8 @@ Feature: Message authorization
     Given user1 is a brand
     Given user1 buys 1 credit of type certificate
     Given user2 with account from randomKey
+    Given user1 claims faucet
+    Given user2 claims faucet
 
   Scenario: A brand creates a certificate, user1 is the owner and transfert its certificate to user2
     Given user1 creates a new certificate0 with uri "https://jsonplaceholder.typicode.com/todos/1"
