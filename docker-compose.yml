@@ -17,8 +17,8 @@ services:
       context: "https://${GITHUBTOKEN}@github.com/Arianee/docker-rpc-server.git#master"
     links:
       - mongo
-    depends_on:
-      - mongo
+      - blockchain
+      - faucet
     ports:
       - 3002:3000
     environment:

@@ -23,6 +23,7 @@ Feature: Arianee JWT
   Scenario: Not owner of certificate creates Arianee Proof Token. User cannot see certificate
     Given user1 buys 1 credit of type certificate
     And user2 with account from randomKey
+    Given user2 requests credits of POA and ARIA
     And user3 with account from randomKey
     And user1 createsAndStores certificate0
     Given user1 makes certificate0 transferable with passphrase MyPassPhrase

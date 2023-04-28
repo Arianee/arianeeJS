@@ -11,7 +11,8 @@ describe('POAandAriaService', () => {
     } as ArianeeHttpClient;
     const ConfigurationService = {
       arianeeConfiguration: {
-        faucetUrl: 'testfauceturl.com'
+        faucetUrl: 'testfauceturl.com',
+        networkName: 'testnet'
       }
     } as ConfigurationService;
     const WalletService = {
@@ -33,14 +34,13 @@ describe('POAandAriaService', () => {
     const {
       ArianeeHttpClient,
       ConfigurationService,
-      WalletService,
-      ArianeeAccessTokenCreatorService
+      WalletService
     } = getAllDependencies();
 
-    ArianeeHttpClient.fetch = jest.fn().mockReturnValue(Promise.reject());
+    ArianeeHttpClient.fetch = () => Promise.reject();
     const instance = new POAAndAriaService(ArianeeHttpClient, ConfigurationService, WalletService);
     try {
-      await instance.requestPoa();
+      await instance.requestAria();
       expect(true).toBe(false);
     } catch (e) {
       expect(true).toBe(true);
