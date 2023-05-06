@@ -65,7 +65,7 @@
     "playwright": "^1.12.3",
     "source-map-loader": "^0.2.4",
     "ts-generator": "0.0.8",
-    "ts-jest": "^23.10.5",
+    "ts-jest": "^29.1.0",
     "ts-loader": "^5.4.5",
     "tslint": "^5.20.0",
     "typechain": "^0.3.14",
