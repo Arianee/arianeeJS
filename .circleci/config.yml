@@ -63,6 +63,7 @@ jobs:
   deploy-npm:
     docker:
       - image: cimg/node:18.16.0
+    resource_class: large
     steps:
       - checkout
       - attach_workspace:
