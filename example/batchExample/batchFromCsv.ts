@@ -43,7 +43,7 @@ const checkIdsAvailablity = async (ids) => {
     return new Promise((resolve, reject) => {
       wallet.contracts.smartAssetContract.methods.ownerOf(id).call()
         .then(() => { reject('ID ' + id + ' is not available'); })
-        .catch(err => { resolve(); });
+        .catch(err => { resolve(true); });
     });
   }));
 };
