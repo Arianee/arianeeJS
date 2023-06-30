@@ -57,5 +57,12 @@ export default deepFreeze({
     deepLink: 'polygon.yslbeauty.com',
     alternativeDeeplink: [],
     protocolVersion: 2
+  },
+  [NETWORK.testnetSbt]: {
+    networkName: NETWORK.testnetSbt,
+    faucetUrl: `https://faucet2.arianee.net/faucet?network=${NETWORK.testnet}`,
+    deepLink: 'testsbt.arianee.net',
+    alternativeDeeplink: ['testsbt.arian.ee'],
+    protocolVersion: 2
   }
 });
