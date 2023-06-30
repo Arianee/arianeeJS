@@ -6,7 +6,8 @@ export enum NETWORK {
   polygon='polygon',
   arialabs='arialabs',
   stadetoulousain='stadetoulousain',
-  ysl= 'ysl'
+  ysl= 'ysl',
+  testnetSbt= 'testnetSbt'
 }
 
 export const networkURL = {
@@ -18,4 +19,5 @@ export const networkURL = {
   [NETWORK.arialabs]: 'https://cert.arianee.net/contractAddresses/arialabs.json',
   [NETWORK.stadetoulousain]: 'https://cert.arianee.net/contractAddresses/stadetoulousain.json',
   [NETWORK.ysl]: 'https://cert.arianee.net/contractAddresses/ysl.json',
+  [NETWORK.testnetSbt]: 'https://cert.arianee.net/contractAddresses/testnetSbt.json',
 };
