@@ -46,5 +46,6 @@ export interface ArianeeConfig {
     enable:boolean,
     host?:string
   },
-  jwtGetter:(arianeeAccessToken:string)=>Promise<any>
+  jwtGetter:(arianeeAccessToken:string)=>Promise<any>,
+  isSoulbound:boolean
 }
