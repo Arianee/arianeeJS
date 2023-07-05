@@ -75,6 +75,7 @@ export class Arianee {
     arianeeConfiguration.networkName = currentNetworkName;
     arianeeConfiguration.protocolVersion = protocolVersion;
     arianeeConfiguration.contractAddresses = addressesResult;
+    arianeeConfiguration.isSoulbound = addressesResult.soulbound ?? false;
 
     arianeeConfiguration.defaultArianeePrivacyGateway = arianeeCustomConfiguration.defaultArianeePrivacyGateway;
 
