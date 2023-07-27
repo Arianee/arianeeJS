@@ -71,5 +71,12 @@ export default deepFreeze({
     deepLink: 'supernet.arianee.net',
     alternativeDeeplink: ['supernet.arian.ee'],
     protocolVersion: 2
+  },
+  [NETWORK.arianeesbt]: {
+    networkName: NETWORK.arianeesbt,
+    faucetUrl: `https://faucet.arianee.net/faucet?network=${NETWORK.arianeeSupernet}`,
+    deepLink: 'arianeesbt.arianee.net',
+    alternativeDeeplink: ['arianeesbt.arian.ee'],
+    protocolVersion: 2
   }
 });
