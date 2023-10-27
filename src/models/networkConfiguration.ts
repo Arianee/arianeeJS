@@ -9,7 +9,8 @@ export enum NETWORK {
   ysl= 'ysl',
   testnetSbt= 'testnetSbt',
   arianeeSupernet= 'arianeeSupernet',
-  arianeesbt = 'arianeesbt'
+  arianeesbt = 'arianeesbt',
+  tezostestnet = 'tezostestnet'
 }
 
 export const networkURL = {
@@ -24,4 +25,5 @@ export const networkURL = {
   [NETWORK.testnetSbt]: 'https://cert.arianee.net/contractAddresses/testnetSbt.json',
   [NETWORK.arianeeSupernet]: 'https://cert.arianee.net/contractAddresses/arianeeSupernet.json',
   [NETWORK.arianeesbt]: 'https://cert.arianee.net/contractAddresses/arianeesbt.json',
+  [NETWORK.tezostestnet]: 'https://cert.arianee.net/contractAddresses/tezostestnet.json',
 };
