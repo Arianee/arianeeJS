@@ -78,5 +78,12 @@ export default deepFreeze({
     deepLink: 'arianeesbt.arianee.net',
     alternativeDeeplink: ['arianeesbt.arian.ee'],
     protocolVersion: 2
+  },
+  [NETWORK.tezostestnet]: {
+    networkName: NETWORK.tezostestnet,
+    faucetUrl: `https://faucet.arianee.net/faucet?network=${NETWORK.tezostestnet}`,
+    deepLink: 'tezostestnet.arianee.net',
+    alternativeDeeplink: ['tezostestnet.arian.ee'],
+    protocolVersion: 2
   }
 });
