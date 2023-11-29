@@ -1,6 +1,6 @@
 {
   "name": "@arianee/arianeejs",
-  "version": "1.115.0",
+  "version": "1.116.0",
   "main": "dist/src/index.js",
   "browser": "dist/src/index.browser-bundle.js",
   "unpkg": "browser/bundle.js",
