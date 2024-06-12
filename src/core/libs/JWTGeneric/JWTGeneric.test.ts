@@ -78,7 +78,7 @@ describe('JWTGeneric', function () {
 
         expect(isAuthentic).toBeFalsy();
       });
-      test('it should be true if not expired', async () => {
+      test('it should be true if not expired in ms', async () => {
         const jwt = new JWTGeneric(signer, decoder as any);
         var exp = new Date();
         exp.setMinutes(exp.getMinutes() + 5);
@@ -86,6 +86,25 @@ describe('JWTGeneric', function () {
           userId: '1101001',
           name: 'John Doe',
           exp: exp.getTime()
+        };
+
+        const jwtService = await jwt.setPayload(payload);
+        const token = await jwtService.sign();
+
+        const isAuthentic = jwt
+          .setToken(token)
+          .verify(pubKey);
+
+        expect(isAuthentic).toBeTruthy();
+      });
+      test('it should be true if not expired in seconds', async () => {
+        const jwt = new JWTGeneric(signer, decoder as any);
+        var exp = new Date();
+        exp.setMinutes(exp.getMinutes() + 5);
+        const payload = {
+          userId: '1101001',
+          name: 'John Doe',
+          exp: exp.getTime() / 1000 // seconds
         };
 
         const jwtService = await jwt.setPayload(payload);
