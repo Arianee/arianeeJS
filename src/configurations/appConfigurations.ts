@@ -99,6 +99,12 @@ export default deepFreeze({
     deepLink: 'supernettestnet.arianee.net',
     alternativeDeeplink: ['supernettestnet.arian.ee'],
     protocolVersion: 2
+  },
+  [NETWORK.etherlinktestnet]: {
+    networkName: NETWORK.etherlinktestnet,
+    faucetUrl: `https://faucet.arianee.net/faucet?network=${NETWORK.etherlinktestnet}`,
+    deepLink: 'etherlinktestnet.arianee.net',
+    alternativeDeeplink: [],
+    protocolVersion: 2
   }
-
 });
