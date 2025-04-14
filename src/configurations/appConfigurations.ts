@@ -79,13 +79,6 @@ export default deepFreeze({
     alternativeDeeplink: ['arianeesbt.arian.ee'],
     protocolVersion: 2
   },
-  [NETWORK.tezostestnet]: {
-    networkName: NETWORK.tezostestnet,
-    faucetUrl: `https://faucet.arianee.net/faucet?network=${NETWORK.tezostestnet}`,
-    deepLink: 'tezostestnet.arianee.net',
-    alternativeDeeplink: ['tezostestnet.arian.ee'],
-    protocolVersion: 2
-  },
   [NETWORK.richemontsupernet]: {
     networkName: NETWORK.richemontsupernet,
     faucetUrl: `https://faucet.arianee.net/faucet?network=${NETWORK.arianeeSupernet}`,
@@ -98,13 +91,6 @@ export default deepFreeze({
     faucetUrl: `https://faucet.arianee.net/faucet?network=${NETWORK.supernettestnet}`,
     deepLink: 'supernettestnet.arianee.net',
     alternativeDeeplink: ['supernettestnet.arian.ee'],
-    protocolVersion: 2
-  },
-  [NETWORK.etherlinktestnet]: {
-    networkName: NETWORK.etherlinktestnet,
-    faucetUrl: `https://faucet.arianee.net/faucet?network=${NETWORK.etherlinktestnet}`,
-    deepLink: 'etherlinktestnet.arianee.net',
-    alternativeDeeplink: [],
     protocolVersion: 2
   }
 });
