@@ -63,4 +63,56 @@ describe('certificateParentMerger', () => {
       ]
     });
   });
+
+  const parentNotice = { type: 'website', title: 'Notice', url: 'https://example.com/notice' };
+  const childLink = { type: 'website', title: 'Child link', url: 'https://example.com/child' };
+
+  test('it should concatenate child externalContents after the parent ones instead of overriding them (ARI-3292)', () => {
+    const merged = certificateParentMerger([
+      { name: 'parent name', externalContents: [parentNotice] },
+      { name: 'child name', externalContents: [childLink] }
+    ]);
+
+    expect(merged.name).toEqual('child name');
+    expect(merged.externalContents).toEqual([parentNotice, childLink]);
+  });
+
+  test('it should keep parent externalContents when the child has none', () => {
+    const merged = certificateParentMerger([
+      { externalContents: [parentNotice] },
+      { name: 'child name' }
+    ]);
+
+    expect(merged.externalContents).toEqual([parentNotice]);
+  });
+
+  test('it should remove externalContents duplicated between parent and child', () => {
+    const merged = certificateParentMerger([
+      { externalContents: [parentNotice] },
+      { externalContents: [{ ...parentNotice }, childLink] }
+    ]);
+
+    expect(merged.externalContents).toEqual([parentNotice, childLink]);
+  });
+
+  test('it should concatenate i18n externalContents by language and keep parent-only languages (ARI-3292)', () => {
+    const parentNoticeEn = { type: 'website', title: 'Notice EN', url: 'https://example.com/notice-en' };
+    const parentNoticeFr = { type: 'website', title: 'Notice FR', url: 'https://example.com/notice-fr' };
+    const childLinkEn = { type: 'website', title: 'Child link EN', url: 'https://example.com/child-en' };
+
+    const merged = certificateParentMerger([
+      {
+        i18n: [
+          { language: 'fr-FR', externalContents: [parentNoticeFr] },
+          { language: 'en-US', externalContents: [parentNoticeEn] }
+        ]
+      },
+      { i18n: [{ language: 'en-US', externalContents: [childLinkEn] }] }
+    ]);
+
+    expect((merged as any).i18n).toEqual([
+      { language: 'fr-FR', externalContents: [parentNoticeFr] },
+      { language: 'en-US', externalContents: [parentNoticeEn, childLinkEn] }
+    ]);
+  });
 });
