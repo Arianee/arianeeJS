@@ -1,3 +1,4 @@
+import { NETWORK } from '../../../../models/networkConfiguration';
 import { ArianeeHttpClient } from '../../../libs/arianeeHttpClient/arianeeHttpClient';
 import { SimpleStore } from '../../../libs/simpleStore/simpleStore';
 import { BalanceService } from '../balanceService/balanceService';
@@ -67,6 +68,26 @@ describe('DigagnosisService ', () => {
     );
 
     expect(certificateService).toBeDefined();
+  });
+  test('isPOACredit should name the wallet and the network when native gas is empty', async () => {
+    const dep = getAllDependencies();
+    dep.balanceService.balanceOfPoa = jest.fn().mockResolvedValue('0');
+    dep.configurationService.arianeeConfiguration = { networkName: NETWORK.arianeeSupernet } as ConfigurationService['arianeeConfiguration'];
+    Object.defineProperty(dep.walletService, 'address', { value: '0xabc' });
+
+    const diagnosisService = new DiagnosisService(
+      dep.contractService,
+      dep.configurationService,
+      dep.balanceService,
+      dep.walletService,
+      dep.certificateUtilsService
+    );
+
+    const result = await diagnosisService.isPOACredit();
+
+    expect(result.isTrue).toBe(false);
+    expect(result.code).toBe('credit.POA');
+    expect(result.message).toContain('Wallet 0xabc has no native gas on arianeeSupernet');
   });
   test('it should return possible errors', async (done) => {
     const dep = getAllDependencies();

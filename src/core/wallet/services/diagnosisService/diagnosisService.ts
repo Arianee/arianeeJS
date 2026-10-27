@@ -146,11 +146,13 @@ export class DiagnosisService {
       const balance = await this.balanceService.balanceOfPoa();
 
       const isTrue = (+balance.toString()) > 0;
+      const { networkName } = this.configurationService.arianeeConfiguration;
 
+      // Native gas of any network, not only POA: code kept as credit.POA for existing integrations
       return {
         isTrue,
         rawValue: balance,
-        message: 'You poa credit credit should be higher than 0',
+        message: `Wallet ${this.walletService.address} has no native gas on ${networkName}: the transaction could not be funded. Arianee RPC gateways fund it automatically, if this persists contact Arianee support`,
         code: ErrorCodeEnum.creditPOA
       };
     }
