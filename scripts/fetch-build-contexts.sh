@@ -7,6 +7,11 @@
 # what this replaces. We clone them with plain git instead and point the contexts
 # at local paths.
 #
+# Why -F /dev/null: CircleCI's add_ssh_keys appends its own IdentityFile lines
+# to ~/.ssh/config, and IdentitiesOnly=yes does NOT exclude those - ssh offers
+# them in order and GitHub accepts the first valid one, so every clone ended up
+# authenticating as the first key. Ignoring that config is what makes -i bind.
+#
 # Why each clone pins its own key: these are per-repository DEPLOY keys. SSH
 # offers the first key the server accepts, and GitHub maps that key to exactly one
 # repository, so any other repository answers "Repository not found". Each clone
@@ -35,11 +40,11 @@ clone_at() {
   dir="$DEST/$repo"
   keyfile=$(key_for "$fp")
   if [ -n "$keyfile" ]; then
-    export GIT_SSH_COMMAND="ssh -i $keyfile -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"
+    export GIT_SSH_COMMAND="ssh -F /dev/null -i $keyfile -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"
     echo "  $repo: using key $keyfile ($fp)"
     # GitHub names the repository a deploy key belongs to, which is the only
     # reliable way to tell whether the right key was picked.
-    ssh -i "$keyfile" -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new \
+    ssh -F /dev/null -i "$keyfile" -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new \
         -T git@github.com 2>&1 | sed 's/^/    github says: /' || true
   else
     echo "  note: no key matching $fp in ~/.ssh, using the default SSH setup"
