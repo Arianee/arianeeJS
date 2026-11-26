@@ -36,6 +36,9 @@ jobs:
           name: Trust github.com host key
           command: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
       - run:
+          name: Fetch private build contexts
+          command: ./scripts/fetch-build-contexts.sh
+      - run:
           name: Launch docker
           command: docker-compose up --build --detach --force-recreate privacy-gateway
       - run:
