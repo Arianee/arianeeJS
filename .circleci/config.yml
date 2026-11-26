@@ -41,6 +41,23 @@ jobs:
       - run:
           name: Launch docker
           command: docker-compose up --build --detach --force-recreate privacy-gateway
+      # `docker-compose up --detach` returns as soon as the containers are
+      # started, not when the app inside is listening. The suite used to race it
+      # and die on ECONNREFUSED 127.0.0.1:3002 on its first scenario.
+      - run:
+          name: Wait for the privacy gateway to listen
+          command: |
+            for i in $(seq 1 60); do
+              if curl -sf -o /dev/null http://127.0.0.1:3002 \
+                 || curl -s -o /dev/null http://127.0.0.1:3002; then
+                echo "gateway answering after ${i}s"
+                exit 0
+              fi
+              sleep 1
+            done
+            echo "gateway still silent after 60s - container logs follow:"
+            docker-compose logs --no-color --tail=80 privacy-gateway || true
+            exit 1
       - run:
           name: Run tests
           command: npm test
