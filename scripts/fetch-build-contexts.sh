@@ -36,6 +36,11 @@ clone_at() {
   keyfile=$(key_for "$fp")
   if [ -n "$keyfile" ]; then
     export GIT_SSH_COMMAND="ssh -i $keyfile -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"
+    echo "  $repo: using key $keyfile ($fp)"
+    # GitHub names the repository a deploy key belongs to, which is the only
+    # reliable way to tell whether the right key was picked.
+    ssh -i "$keyfile" -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new \
+        -T git@github.com 2>&1 | sed 's/^/    github says: /' || true
   else
     echo "  note: no key matching $fp in ~/.ssh, using the default SSH setup"
     unset GIT_SSH_COMMAND || true
