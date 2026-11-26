@@ -60,8 +60,5 @@ clone_at() {
 }
 
 echo "Fetching private build contexts:"
-# TEMPORARY: pinned to the fix branch of docker-rpc-server while
-# Arianee/docker-rpc-server#6 is unmerged. Put `master` back once it lands -
-# leaving it here would silently freeze the gateway on a side branch.
-clone_at docker-rpc-server fix/node-14       c5:22:5b:2f:6b:d4:a7:7f:b5:f8:70:1d:24:7a:b5:d3
+clone_at docker-rpc-server master             c5:22:5b:2f:6b:d4:a7:7f:b5:f8:70:1d:24:7a:b5:d3
 clone_at arianee-faucet    clever-cloud 8d:a2:8f:78:a0:24:b3:19:be:d3:ba:b2:ea:33:a2:80
