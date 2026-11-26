@@ -11,6 +11,13 @@ jobs:
     machine:
       image: ubuntu-2204:2023.04.2
     resource_class: large
+    environment:
+      # The suite builds its gateway URL as
+      # `http://localhost:3002/${process.env.NETWORK}/rpc`, with no fallback in
+      # the steps that store and read content. Unset, that addresses
+      # `/undefined/rpc` and the calls never reach the gateway at all. This is
+      # the same network hooks.step.ts falls back to when initialising wallets.
+      NETWORK: arianeetestnet
     steps:
       - checkout
       - run:
@@ -36,11 +43,42 @@ jobs:
           name: Trust github.com host key
           command: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
       - run:
+          name: Fetch private build contexts
+          command: ./scripts/fetch-build-contexts.sh
+      - run:
           name: Launch docker
           command: docker-compose up --build --detach --force-recreate privacy-gateway
+      # `docker-compose up --detach` returns as soon as the containers are
+      # started, not when the app inside is listening. The suite used to race it
+      # and die on ECONNREFUSED 127.0.0.1:3002 on its first scenario.
+      - run:
+          name: Wait for the privacy gateway to listen
+          command: |
+            for i in $(seq 1 60); do
+              # Any HTTP answer means the gateway is up; the status code does
+              # not matter, so plain `curl -s` is the right probe.
+              if curl -s --max-time 2 -o /dev/null http://127.0.0.1:3002; then
+                echo "gateway answering after ${i}s"
+                exit 0
+              fi
+              sleep 1
+            done
+            echo "gateway still silent after 60s - container logs follow:"
+            docker-compose logs --no-color --tail=80 privacy-gateway || true
+            exit 1
       - run:
           name: Run tests
           command: npm test
+      # The suite talks to the gateway over RPC; when a step hangs, the only
+      # place that says why is the gateway itself. Dumped whatever happens.
+      - run:
+          name: Gateway and mongo logs
+          when: always
+          command: |
+            echo '----- privacy-gateway -----'
+            docker-compose logs --no-color --tail=120 privacy-gateway || true
+            echo '----- mongo -----'
+            docker-compose logs --no-color --tail=40 mongo || true
   build-and-test-playwright:
     docker:
       - image: mcr.microsoft.com/playwright:focal
