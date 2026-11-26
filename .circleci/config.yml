@@ -11,6 +11,13 @@ jobs:
     machine:
       image: ubuntu-2204:2023.04.2
     resource_class: large
+    environment:
+      # The suite builds its gateway URL as
+      # `http://localhost:3002/${process.env.NETWORK}/rpc`, with no fallback in
+      # the steps that store and read content. Unset, that addresses
+      # `/undefined/rpc` and the calls never reach the gateway at all. This is
+      # the same network hooks.step.ts falls back to when initialising wallets.
+      NETWORK: arianeetestnet
     steps:
       - checkout
       - run:
