@@ -14,7 +14,7 @@ services:
   privacy-gateway:
     container_name: rpc
     build:
-      context: "git@github.com:Arianee/docker-rpc-server.git#master"
+      context: ./.build-contexts/docker-rpc-server # cloned by scripts/fetch-build-contexts.sh
     links:
       - mongo
       - blockchain
@@ -28,7 +28,7 @@ services:
   faucet:
     container_name: faucet
     build:
-      context: "git@github.com:Arianee/arianee-faucet.git#clever-cloud"
+      context: ./.build-contexts/arianee-faucet # cloned by scripts/fetch-build-contexts.sh
     ports:
       - 3000:3000
 
