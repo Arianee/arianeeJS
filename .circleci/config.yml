@@ -25,6 +25,16 @@ jobs:
       - node/install:
           node-version: 18.16.0
       - node/install-packages
+      # The two build contexts are private repositories fetched over SSH, so the
+      # job needs their read-only deploy keys. This replaces a GitHub token that
+      # was interpolated straight into the context URL.
+      - add_ssh_keys:
+          fingerprints:
+            - "c5:22:5b:2f:6b:d4:a7:7f:b5:f8:70:1d:24:7a:b5:d3" # read-only on docker-rpc-server
+            - "8d:a2:8f:78:a0:24:b3:19:be:d3:ba:b2:ea:33:a2:80" # read-only on arianee-faucet
+      - run:
+          name: Trust github.com host key
+          command: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
       - run:
           name: Launch docker
           command: docker-compose up --build --detach --force-recreate privacy-gateway
